@@ -134,7 +134,7 @@
             "object" : "ex_comments",
             "scripts" : [ { "src" : "ext/comments.js" } ],
             "enabled" : true 
-        },
+        }
         
         
     ]

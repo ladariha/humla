@@ -7,8 +7,7 @@ var handle = {
     "/start":   handlers.start,
     "/upload" : handlers.upload,
     "/show":    handlers.show,
-    "/rest/v1": handlers.rest,
-    "/favicon.ico": handlers.serve
+    "/rest/v1": handlers.rest    
 }
 
 

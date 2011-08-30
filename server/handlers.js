@@ -1,9 +1,11 @@
-
 //handlery nemůžou jenom returnovat odpověď, protože pak by to celé bylo blokující
 // tady je správné místo na oddělení view do zvláštního fajlu
+
 var querystring = require("querystring"),
     fs = require("fs"),
-    formidable = require("formidable");
+    formidable = require("formidable"),
+    path = require('path'),
+    paperboy = require("./lib/paperboy");
 
 exports.start = function start(response) {
   console.log("Request handler 'start' was called.");
@@ -57,7 +59,7 @@ exports.show = function show(response) {
   });
 }
 
-exports.rest = function start(response) {
+exports.rest = function rest(response) {
   console.log("Reuest handler 'rest' was called");
 
   var body = '<html>'+
@@ -75,8 +77,22 @@ exports.rest = function start(response) {
     response.end();
 }
 
-exports.serve = function show(res, req) {
-  console.log("Request handler 'show' was called.");
+exports.serve = function serve(res, req) {
+  console.log("Request handler 'serve' was called.");  
+    var ip = req.connection.remoteAddress;
+    var FILEPATH = path.join(path.dirname(__filename),  '../examples');
+    paperboy
+    .deliver(FILEPATH, req, res)
+    .addHeader('Expires', 300)
+    .addHeader('X-PaperRoute', 'Node')
+    .before(function() {
+      console.log('Received Request ' +req.connection.remoteAddress + " " + FILEPATH + " : " + req.url);
+    })
+    .after(function(statCode) {
+      console.log('Data sent');
+    })
+  
+  /*req.
   fs.readFile("/tmp/test.png", "binary", function(error, file) {
     if(error) {
       res.writeHead(500, {"Content-Type": "text/plain"});
@@ -87,5 +103,5 @@ exports.serve = function show(res, req) {
       res.write(file, "binary");
       res.end();
     }
-  });
+  });*/
 }
