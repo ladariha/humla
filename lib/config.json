@@ -128,7 +128,13 @@
                 "account" : "UA-xxx"
             },
             "enabled" : true 
-        }
+        },
+        
+        {   "id" : "comments",
+            "object" : "ex_comments",
+            "scripts" : [ { "src" : "ext/comments.js" } ],
+            "enabled" : true 
+        },
         
         
     ]
