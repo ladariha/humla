@@ -1,41 +1,29 @@
-var path = require('path'),
-    paperboy = require("./lib/paperboy");
+var sys = require('sys');
+var parseURL = require('url').parse;
+
+//TODO: cache regexps
+exports.route = function(req, res, urls, passed_args){
+    var args, path = parseURL(req.url).pathname;
+    for (var i=0, n = urls.length; i<n; i++) {
+        args = new RegExp(urls[i][0]).exec(path);
+        if (args !== null){
+            args.shift();
+            args.unshift(res, req);
+            if (typeof passed_args == 'array')
+                args.concat(passed_args);
+            urls[i][1].apply(this, args);
+            return true;
+        }
+    }
+    return false;
+};
+
+//used for nesting url lookups
+exports.include = function(urls){
+    return function(req, res){
+        route(req, res, urls, Array.prototype.slice.call(arguments, 2));
+    };
+};
 
 
-exports.route = function route(handle, pathname, res, req) {
-  console.log("About to route a request for " + pathname);
-  
-  
-  //TODO: zatim jenom paperboy, ale pak udělat dynamickej router
-  
-  var ip = req.connection.remoteAddress;
-    var FILEPATH = path.join(path.dirname(__filename),  '..');
-    paperboy
-    .deliver(FILEPATH, req, res)
-    //.addHeader('Expires', 300)
-    .addHeader('X-PaperRoute', 'Node')
-    .before(function() {
-      console.log('Received Request ' +req.url);
-    })
-    .after(function(statCode) {
-      console.log('Data sent ' +req.url);
-    })
-     .otherwise(function() {
-      res.writeHead(404, {'Content-Type': 'text/plain'});
-      res.write('Sorry, no paper this morning!');
-      res.end();
-    });
-  
-  
-/*  
-  if (typeof handle[pathname] === 'function') {
-    handle[pathname](response, request);
-  } else {
-    console.log("No request handler found for " + pathname);
-    response.writeHead(404, {"Content-Type": "text/html"});
-    response.write("404 Not found");
-    response.end();
-  }
-*/
-}
 

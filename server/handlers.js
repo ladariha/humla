@@ -1,14 +1,11 @@
 //handlery nemůžou jenom returnovat odpověď, protože pak by to celé bylo blokující
-// tady je správné místo na oddělení view do zvláštního fajlu
+//tady je správné místo na oddělení view do zvláštního fajlu
 
-var querystring = require("querystring"),
-    fs = require("fs"),
-    formidable = require("formidable"),
-    path = require('path'),
-    paperboy = require("./lib/paperboy");
+var fs = require("fs");
+var path = require('path');
+var paperboy = require("./lib/paperboy");
 
-exports.start = function start(response) {
-  console.log("Request handler 'start' was called.");
+exports.start = function start(res) {
 
   var body = '<html>'+
     '<head>'+
@@ -24,42 +21,12 @@ exports.start = function start(response) {
     '</body>'+
     '</html>';
 
-    response.writeHead(200, {"Content-Type": "text/html"});
-    response.write(body);
-    response.end();
+    res.writeHead(200, {"Content-Type": "text/html"});
+    res.write(body);
+    res.end();
 }
 
-exports.upload = function upload(response, request) {
-  console.log("Request handler 'upload' was called.");
-
-  var form = new formidable.IncomingForm();
-  console.log("about to parse");
-  form.parse(request, function(error, fields, files) {
-    console.log("parsing done");
-    fs.renameSync(files.upload.path, "/tmp/test.png");
-    response.writeHead(200, {"Content-Type": "text/html"});
-    response.write("received image:<br/>");
-    response.write("<img src='/show' />");
-    response.end();
-  });
-}
-
-exports.show = function show(response) {
-  console.log("Request handler 'show' was called.");
-  fs.readFile("/tmp/test.png", "binary", function(error, file) {
-    if(error) {
-      response.writeHead(500, {"Content-Type": "text/plain"});
-      response.write(error + "\n");
-      response.end();
-    } else {
-      response.writeHead(200, {"Content-Type": "image/png"});
-      response.write(file, "binary");
-      response.end();
-    }
-  });
-}
-
-exports.rest = function rest(response) {
+exports.rest = function rest(res) {
   console.log("Reuest handler 'rest' was called");
 
   var body = '<html>'+
@@ -68,32 +35,49 @@ exports.rest = function rest(response) {
     'charset=UTF-8" />'+
     '</head>'+
     '<body>'+
-    '<div>REST API</div>'
+    '<div>REST API</div>'+
     '</body>'+
     '</html>';
 
-    response.writeHead(200, {"Content-Type": "text/html"});
-    response.write(body);
-    response.end();
+    res.writeHead(200, {"Content-Type": "text/html"});
+    res.write(body);
+    res.end();
 }
 
-exports.serve = function serve(res, req) {
-  console.log("Request handler 'serve' was called.");  
-    var ip = req.connection.remoteAddress;
-    var FILEPATH = path.join(path.dirname(__filename),  '../examples');
+
+exports.serve = function serve(res,req) {
+    req.url = req.url.substring(7); // -("/static") TODO: udělat lépe
+      
+    //var ip = req.connection.remoteAddress;
+    var FILEPATH = path.join(path.dirname(__filename),  "..");
+    //var FILEPATH = path.dirname(__filename);
+    console.log("FILE: " + FILEPATH);
     paperboy
     .deliver(FILEPATH, req, res)
-    .addHeader('Expires', 300)
+    //.addHeader('Expires', 300)
     .addHeader('X-PaperRoute', 'Node')
     .before(function() {
-      console.log('Received Request ' +req.connection.remoteAddress + " " + FILEPATH + " : " + req.url);
+      console.log('Received req: ' +req.url);
     })
     .after(function(statCode) {
-      console.log('Data sent');
+      console.log('Data sent: ' +req.url);
     })
+    .error(function(statCode, msg) {
+      res.writeHead(statCode, {'Content-Type': 'text/plain'});
+      res.end("Error " + statCode);
+      console.log('Error: ' +req.url);
+    })
+    .otherwise(function() {
+      res.writeHead(404, {'Content-Type': 'text/plain'});
+      res.write('Sorry, no paper this morning!');
+      res.end();
+    });
   
-  /*req.
-  fs.readFile("/tmp/test.png", "binary", function(error, file) {
+}
+
+
+exports.favicon = function favicon(res,req) {
+    fs.readFile(path.join(path.dirname(__filename),  "favicon.ico"), "binary", function(error, file) {
     if(error) {
       res.writeHead(500, {"Content-Type": "text/plain"});
       res.write(error + "\n");
@@ -103,5 +87,15 @@ exports.serve = function serve(res, req) {
       res.write(file, "binary");
       res.end();
     }
-  });*/
+  });
+
 }
+
+exports.manifest = function manifest(res) {
+    var body = 'CACHE MANIFEST\n'+(new Date());
+    
+    res.writeHead(200, {"Content-Type": "text/cache-manifest"});
+    res.write(body);
+    res.end();
+}
+
