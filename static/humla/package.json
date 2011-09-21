@@ -1,0 +1,15 @@
+{
+  "name"          : "Humla",
+  "description"   : "HTML5 Presentation Environment.",
+  "homepage"      : "https://github.com/tomvit/humla",
+  "keywords"      : ["slides", "html5", "education", "presentation"],
+  "author"        : "Tomas Vitvar <t.vitvar@google.com>",
+  "contributors": [
+                    { "name": "Tomas Vitvar", 
+                      "name": "Petr Mikota",
+                      "name": "Vladimir Riha"}
+                  ],
+  "dependencies"  : {                      
+                    },
+  "version"       : "0.1.0"
+}
