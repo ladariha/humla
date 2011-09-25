@@ -48,9 +48,9 @@ exports.rest = function rest(res, req) {
     
     // TODO: použít ten handler z connectu
     
-    var newPostFormRegex  = new RegExp("^/posts/new/?$"); // ? znamená, že se poslední znak (/) neřeší
-    var pathName = url.parse(req.url).pathname;
-    var bool = newPostFormRegex.test(pathName);
+    //var newPostFormRegex  = new RegExp("^/posts/new/?$"); // ? znamená, že se poslední znak (/) neřeší
+    //var pathName = url.parse(req.url).pathname;
+    //var bool = newPostFormRegex.test(pathName);
     
     
     
