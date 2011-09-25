@@ -1,0 +1,494 @@
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+abbr, address, cite, code,
+del, dfn, em, img, ins, kbd, q, samp,
+small, strong, sub, sup, var,
+b, i,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section, summary,
+time, mark, audio, video {
+  margin:0;
+  padding:0;
+  border:0;
+  outline:0;
+  font-size:100%;
+  vertical-align:baseline;
+  background:transparent;
+}                  
+
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section { 
+    display:block;
+}
+
+nav ul { list-style:none; }
+
+blockquote, q { quotes:none; }
+
+blockquote:before, blockquote:after,
+q:before, q:after { content:''; content:none; }
+
+a { margin:0; padding:0; font-size:100%; vertical-align:baseline; background:transparent; }
+
+ins { background-color:#ff9; color:#000; text-decoration:none; }
+
+mark { background-color:#ff9; color:#000; font-style:italic; font-weight:bold; }
+
+del { text-decoration: line-through; }
+
+abbr[title], dfn[title] { border-bottom:1px dotted; cursor:help; }
+
+/* tables still need cellspacing="0" in the markup */
+table { border-collapse:collapse; border-spacing:0; }
+
+hr { display:block; height:1px; border:0; border-top:1px solid #ccc; margin:1em 0; padding:0; }
+
+input, select { vertical-align:middle; }
+
+/* END RESET CSS */
+
+body { font:13px/1.231 sans-serif; *font-size:small; } /* hack retained to preserve specificity */
+
+select, input, textarea, button { font:99% sans-serif; }
+
+pre, code, kbd, samp { font-family: monospace, sans-serif; }
+ 
+
+/* 
+ * minimal base styles 
+ */
+
+
+body, select, input, textarea {   
+  color: #555;   
+  font: 70%/1.5  Verdana, 'Trebuchet MS', arial, sans-serif;
+}
+
+/* Headers (h1,h2,etc) have no default font-size or margin,
+   you'll want to define those yourself. */ 
+h1,h2,h3,h4,h5,h6 { font-weight: bold; }
+
+/* always force a scrollbar in non-IE */ 
+html { overflow-y: scroll; }
+
+ 
+/* Accessible focus treatment: people.opera.com/patrickl/experiments/keyboard/test */
+a:hover, a:active { outline: none; }
+
+a, a:active, a:visited { color: #607890; }
+a:hover { color: #036; }
+
+
+ul, ol { margin-left: 1.8em; }
+ol { list-style-type: decimal; }
+
+/* Remove margins for navigation lists */
+nav ul, nav li { margin: 0; } 
+
+small { font-size: 85%; }
+strong, th { font-weight: bold; }
+
+td, td img { vertical-align: top; } 
+
+sub { vertical-align: sub; font-size: smaller; }
+sup { vertical-align: super; font-size: smaller; }
+
+pre { 
+  padding: 15px; 
+  
+  /* www.pathf.com/blogs/2008/05/formatting-quoted-code-in-blog-posts-css21-white-space-pre-wrap/ */
+  white-space: pre; /* CSS2 */
+  white-space: pre-wrap; /* CSS 2.1 */
+  white-space: pre-line; /* CSS 3 (and 2.1 as well, actually) */
+  word-wrap: break-word; /* IE */
+}
+ 
+textarea { overflow: auto; } /* thnx ivannikolic! www.sitepoint.com/blogs/2010/08/20/ie-remove-textarea-scrollbars/ */
+
+.ie6 legend, .ie7 legend { margin-left: -7px; } /* thnx ivannikolic! */
+
+/* align checkboxes, radios, text inputs with their label
+   by: Thierry Koblentz tjkdesign.com/ez-css/css/base.css  */
+input[type="radio"] { vertical-align: text-bottom; }
+input[type="checkbox"] { vertical-align: bottom; }
+.ie7 input[type="checkbox"] { vertical-align: baseline; }
+.ie6 input { vertical-align: text-bottom; }
+
+/* hand cursor on clickable input elements */
+label, input[type=button], input[type=submit], button { cursor: pointer; }
+ 
+/* webkit browsers add a 2px margin outside the chrome of form elements */  
+button, input, select, textarea { margin: 0; }
+
+/* colors for form validity */
+input:valid, textarea:valid   {  }
+input:invalid, textarea:invalid { 
+      border-radius: 1px;
+    -moz-box-shadow: 0px 0px 5px red; 
+ -webkit-box-shadow: 0px 0px 5px red; 
+         box-shadow: 0px 0px 5px red;
+}
+.no-boxshadow input:invalid, 
+.no-boxshadow textarea:invalid { background-color: #f0dddd; }
+
+
+/* These selection declarations have to be separate.
+   No text-shadow: twitter.com/miketaylr/status/12228805301 
+   Also: hot pink. */
+::-moz-selection{ background: #FF5E99; color:#fff; text-shadow: none; }
+::selection { background:#FF5E99; color:#fff; text-shadow: none; } 
+
+/*  j.mp/webkit-tap-highlight-color */
+a:link { -webkit-tap-highlight-color: #FF5E99; } 
+
+/* make buttons play nice in IE:    
+   www.viget.com/inspire/styling-the-button-element-in-internet-explorer/ */
+button {  width: auto; overflow: visible; }
+ 
+/* bicubic resizing for non-native sized IMG: 
+   code.flickr.com/blog/2008/11/12/on-ui-quality-the-little-things-client-side-image-resizing/ */
+.ie7 img { -ms-interpolation-mode: bicubic; }
+
+
+
+/* 
+ * Non-semantic helper classes 
+ */
+
+/* for image replacement */
+.ir { display: block; text-indent: -999em; overflow: hidden; background-repeat: no-repeat; text-align: left; direction: ltr; }
+
+/* Hide for both screenreaders and browsers
+   css-discuss.incutio.com/wiki/Screenreader_Visibility */
+.hidden { display: none; visibility: hidden; } 
+
+/* Hide only visually, but have it available for screenreaders 
+   www.webaim.org/techniques/css/invisiblecontent/  &  j.mp/visuallyhidden  */
+.visuallyhidden { position: absolute !important;    
+  clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+  clip: rect(1px, 1px, 1px, 1px); }
+
+/* Hide visually and from screenreaders, but maintain layout */
+.invisible { visibility: hidden; }
+
+/* >> The Magnificent CLEARFIX: Updated to prevent margin-collapsing on child elements << j.mp/bestclearfix */
+.clearfix:before, .clearfix:after {
+  content: "\0020"; display: block; height: 0; visibility: hidden;	
+} 
+
+.clearfix:after { clear: both; }
+/* Fix clearfix: blueprintcss.lighthouseapp.com/projects/15318/tickets/5-extra-margin-padding-bottom-of-page */
+.clearfix { zoom: 1; }
+
+
+/*---------------- Vlastní styly -----------------------*
+ |  Author: Petr Mikota                                 |
+ *------------------------------------------------------*/
+
+
+body {
+    background-color: #3A3A3A;
+    text-align: center;
+    margin: 15px 0;
+}
+
+a	{
+    color: #72A545;
+    background: inherit;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #006699;
+    background: inherit;
+}
+
+h1, h2 {
+    font-family: 'Trebuchet MS', Arial, sans-serif;
+    font-weight: bold;
+}
+h1 {
+    font-size: 1.5em;
+}
+h2 {
+    text-transform: uppercase;
+    font-size: 1.3em;
+    color: #fff;
+    padding: 10px 0px;
+}
+
+/* images */
+img {
+    border: 2px solid #fff;
+}
+
+/* form elements */
+form {
+    margin:9px 15px; padding: 0;
+    border: 1px solid #EAEAEA;
+    background-color: #FAFAFA;
+}
+label {
+    display:block;
+    font-weight:bold;
+    margin:5px 0;
+}
+input {
+    padding:3px;
+    border:1px solid #aaa;
+    font: normal 1em Verdana, sans-serif;
+    color:#555;
+}
+textarea {
+    width:400px;
+    padding:4px;
+    font: normal 1em Verdana, sans-serif;
+    border:1px solid #eee;
+    height:100px;
+    display:block;
+    color:#777;
+}
+input.button {
+    margin: 0;
+    font: bolder 12px Arial, Sans-serif;
+    border: 1px solid #EAEAEA;
+    padding: 2px 3px;
+    background: #CCC url(../img/buttonbg.gif) repeat-x left bottom;
+    color: #333;/* color: #339900; */
+}
+
+/*****************************
+      LAYOUT
+******************************/
+.shadow {
+    -moz-box-shadow: 0px 0px 6px #000;
+    -webkit-box-shadow: 0px 0px 6px #000;
+    box-shadow: 0px 0px 6px #000;
+}
+
+#wrap {
+    margin: 0 auto ;
+    padding:0;
+    text-align: left;
+    background-color:#FFF;
+    width: 820px;
+}
+#content-wrap {
+    clear:both;
+    margin:0px; padding:0;
+    width: 820px;
+}
+
+/* header */
+header {
+    position: relative;
+    clear:left;
+    width: 820px;
+    height: 40px;
+    margin: 0; padding: 0;
+    background-color: #000;
+}
+header h1#logo-text {
+    position: absolute;
+    margin: 0; padding: 0;
+    font: bolder 2.1em 'Trebuchet MS', Arial, Sans-serif;
+    letter-spacing: -2px;
+    color: #FFF;
+    text-transform: none;
+    text-shadow: 1px 1px 4px rgba(0,20,0,0.5);
+    top: 6px; right: 15px;
+}
+header #header-left {
+    width: 68%;
+    height: 40px;
+    float: left;
+    text-align: left;
+    margin: 0;
+}
+header #header-right {
+    width: 25%;
+    height: 40px;
+    float: right;
+    text-align: right;
+    margin: 0;
+}
+header form {
+    width: 790px;
+    background-color: #000;
+    border: 0px;
+}
+
+header #map {
+    width: 400px;
+    height: 460px
+
+}
+#tooltip #tooltip-left {
+    width: 360px;
+    float: left;
+    text-align: left;
+    margin: 0;
+}
+
+header label {
+    display:inline;
+    font-weight:normal;
+}
+
+header .setting {
+    width: 120px;
+}
+
+header .textbox{
+    margin: 0 5px 0 0;
+    font: bold 100% Arial, Sans-serif;
+    border: 0;
+    background: #FFF url(../img/input.png) no-repeat top left;
+    color: #333;
+}
+header .options{
+    width: 90px;
+    margin: 0 5px 0 0;
+    font: bold 100% Arial, Sans-serif;
+    border: 0;
+    background: #FFF url(../img/input.png) no-repeat top left;
+    color: #333;
+}
+
+header .slider{
+    margin: 0px 15px;
+    height: 0px;
+    width: 80px;
+    padding: 5px !important;
+}
+
+header input.searchbutton {
+    margin: 0;
+    border: 0;
+    font: bold 100% Arial, Sans-serif;
+    background: #eee url(../img/buttonbg.gif) repeat-x left bottom;
+}
+
+header form #tooltip {
+    padding: 15px;
+    position: absoulute;
+    color: #ccc;
+}
+
+header form input  {
+    margin-right: 10px;
+}
+
+
+nav {
+    width: 100px;
+    float: right;
+    margin: 15px;
+
+}
+
+#main {
+    margin:15px; padding:0;
+    min-height: 200px;
+    width: 660px;
+    float: left;
+}
+
+#main #info {
+    text-align: center;
+    vertical-align: middle;
+    width: 790px;
+    margin-top: 50px;
+    font: bolder italic 2em 'Trebuchet MS', Arial, Sans-serif;
+    color: #006699;
+}
+
+
+/* footer */
+footer {
+    clear: both;
+    height: 40px;
+    color: #CCC;
+    background: #000;
+    margin: 0;
+    font-size: 92%;
+}
+footer a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #FFF;
+}
+footer #footer-left {
+    width: 68%;
+    float: left;
+    text-align: left;
+    margin: 0; padding: 11px;
+}
+footer #footer-right {
+    width: 25%;
+    float: right;
+    text-align: right;
+    margin: 0; padding: 11px;
+}
+
+
+/* alignment classes */
+.float-left  { float: left; }
+.float-right { float: right; }
+.left   {text-align: left;}
+.right  {text-align: right;}
+.center {text-align:center;}
+.restH  {width: 100%;}
+.restV  {height: 100%;}
+
+
+/* additional classes */
+.clear { clear: both;	}
+.hide  { display: none; }
+.gray  { color: #CCC; }
+
+
+
+
+
+
+
+/*
+ * Media queries for responsive design
+ * These follow after primary styles so they will successfully override. 
+ */
+
+@media all and (orientation:portrait) { }  /* Style adjustments for portrait mode goes here */ 
+@media all and (orientation:landscape) { } /* Style adjustments for landscape mode goes here */  
+
+/* Grade-A Mobile Browsers (Opera Mobile, iPhone Safari, Android Chrome)  
+   Consider this: www.cloudfour.com/css-media-query-for-mobile-is-fools-gold/ */
+@media screen and (max-device-width: 480px) {
+  
+  
+  /* Uncomment if you don't want iOS and WinMobile to mobile-optimize the text for you
+     j.mp/textsizeadjust 
+  html { -webkit-text-size-adjust:none; -ms-text-size-adjust:none; } */
+}
+
+/* 
+ * print styles
+ * inlined to avoid required HTTP connection www.phpied.com/delay-loading-your-print-css/ 
+ */
+@media print {
+  * { background: transparent !important; color: #444 !important; text-shadow: none !important; }
+  a, a:visited { color: #444 !important; text-decoration: underline; }
+  a:after { content: " (" attr(href) ")"; } 
+  abbr:after { content: " (" attr(title) ")"; }
+  .ir a:after { content: ""; }  /* Don't show links for images */
+  pre, blockquote { border: 1px solid #999; page-break-inside: avoid; }
+  thead { display: table-header-group; } /* css-discuss.incutio.com/wiki/Printing_Tables */ 
+  tr, img { page-break-inside: avoid; }
+  @page { margin: 0.5cm; }
+  p, h2, h3 { orphans: 3; widows: 3; }
+  h2, h3{ page-break-after: avoid; }
+}
+
