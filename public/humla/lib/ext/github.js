@@ -1,3 +1,8 @@
+var fs     = require('fs');
+var jquery = fs.readFileSync('./public/lib/jquery-1.6.3.min.js').toString();
+var https = require('https');
+var http = require('http');
+
 
 function refreshGithubCode(id) {
     var e = humla.utils.document.getElementById(id);
@@ -88,9 +93,9 @@ var ex_github = {
                 config.element.setAttribute("id", config.id);
                 
                 config.lineFrom = ((l = config.lines.match("^\s*([0-9]{1,3}).*"))) ? 
-                    parseInt(l[1]) : 1;
+                parseInt(l[1]) : 1;
                 config.lineTo = ((l = config.lines.match(".*\-\s*([0-9]{1,3})\s*$"))) ? 
-                    parseInt(l[1]) : 99;
+                parseInt(l[1]) : 99;
 
                 if (config.lineTo > 100) {
                     if (!config.conf)
@@ -108,10 +113,10 @@ var ex_github = {
                 config.tb = humla.utils.document.createElement("div");
                 config.tb.setAttribute("class", "toolbar2");
                 config.tb.innerHTML = "<a class='icon' target='github-source' title='See source at github' href='https://github.com/" + 
-                    config.urepo + "/blob/" + config.cid + "/" + config.name + "#L" + 
-                    config.lineFrom + "-" + config.lineTo +"'>R</a>";
+                config.urepo + "/blob/" + config.cid + "/" + config.name + "#L" + 
+                config.lineFrom + "-" + config.lineTo +"'>R</a>";
                 config.tb.innerHTML += "<a class='icon' title='Refresh' href='javascript:refreshGithubCode(\"" + 
-                    config.id + "\");'>1</a>";
+                config.id + "\");'>1</a>";
 
                 config.update = updateCode;
                 
@@ -128,3 +133,23 @@ var ex_github = {
         }            
     }
 };
+
+exports.parse =function parse($,slideIndex,response, _pathToCourse, _filename){
+ $(this).find('.h-github').each(function(){  
+        code = {};
+        code.owner = $(this).attr('user-repo');
+        code.file = $(this).attr('name');
+        if(code.owner!==null && code.owner.length>0){
+            var githubInfo = (code.owner).split("/");
+            code.owner = githubInfo[0];
+            if(githubInfo.length===2){
+                code.project = githubInfo[1];
+            }
+        }
+        code.title= slideIndex.content.titles[slide-1];
+        code.slide = slide; // this corresponds to number in slide's URL, so first slide has number 1
+        slideIndex.github.push(code);
+    });
+    slideIndex.sendResponse(slideIndex,response, _pathToCourse, _filename); 
+
+}

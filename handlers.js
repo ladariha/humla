@@ -2,7 +2,7 @@
 //TODO: oddělit view do jiného fajlu
 var fs = require("fs");
 var path = require('path');
-var paperboy = require("./lib/paperboy");
+//var paperboy = require("./lib/paperboy");
 
 
 /**
@@ -11,48 +11,26 @@ var paperboy = require("./lib/paperboy");
  * - about 
  * ...
  */
-exports.start = function start(res) {
-
-    /*var body = '<html>'+
-    '<head>'+
-    '<meta http-equiv="Content-Type" content="text/html; '+
-    'charset=UTF-8" />'+
-    '</head>'+
-    '<body>'+
-    '<form action="/upload" enctype="multipart/form-data" '+
-    'method="post">'+
-    '<input type="file" name="upload" multiple="multiple">'+
-    '<input type="submit" value="Upload file" />'+
-    '</form>'+
-    '</body>'+
-    '</html>';*/
-    
-    
-    
-	fs.readFile('./public/pages/index.html', function(error, content) {
-		if (error) {
-			res.writeHead(500);
-			res.end();
-		}
-		else {
-			res.writeHead(200, { 'Content-Type': 'text/html' });
-			res.end(content, 'utf-8');
-		}
-	});   
+exports.begin = function begin(req,res) {   
+    fs.readFile('./public/pages/index.html', function(error, content) {
+        if (error) {
+            res.writeHead(500);
+            res.end();
+        }
+        else {
+            res.writeHead(200, {
+                'Content-Type': 'text/html'
+            });
+            res.end(content, 'utf-8');
+        }
+    });   
     
 }
 
 //Comments API
-exports.rest = function rest(res, req) {
-    console.log("REST API CALL" + req.url);
-    
-    // TODO: použít ten handler z connectu
-    
-    //var newPostFormRegex  = new RegExp("^/posts/new/?$"); // ? znamená, že se poslední znak (/) neřeší
-    //var pathName = url.parse(req.url).pathname;
-    //var bool = newPostFormRegex.test(pathName);
-    
-    
+exports.rest = function rest(req, res) {
+    console.log("REST API CALL" + req.url);   
+        
     
     // LIST comments for all slides (in one presentation)
     
@@ -83,7 +61,7 @@ exports.rest = function rest(res, req) {
 }
 
 
-exports.serve = function serve(res,req) {
+exports.serve = function serve(req,res) {
     req.url = req.url.substring(7); // -("/static") TODO: udělat lépe
       
     //var ip = req.connection.remoteAddress;
@@ -117,8 +95,9 @@ exports.serve = function serve(res,req) {
   
 }
 
-exports.manifest = function manifest(res) {
-    var body = 'CACHE MANIFEST\n'+(new Date());
+exports.manifest = function manifest(req,res) {
+    var body = 'CACHE MANIFEST\n#'+(new Date());
+    body += "\nError" //TODO: odebrat
     
     res.writeHead(200, {
         "Content-Type": "text/cache-manifest"

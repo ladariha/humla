@@ -1,50 +1,71 @@
-var http = require('http');
-var url = require("url");
-var paperboy = require("./lib/paperboy");
+/**
+ * Humla Server - using Express
+ * 
+ * 
+ * 
+ */
+
+var express = require('express');
 
 
-exports.run = function run(route, handle, PORT, WEBROOT) {
+
+var app = null;
+
+exports.run = function run(handlers, PORT, WEBROOT) {    
+
+    app = express.createServer();
     
-    function onRequest(request, response) {
-        //var pathname = url.parse(request.url).pathname;
-        var ip = request.connection.remoteAddress;
-        printRequest(request);
-        request.setEncoding("utf8");
-        var postData = "";
-        request.addListener("data", function(postDataChunk) {
-            postData += postDataChunk;
-            console.log("Received POST data chunk '"+  postDataChunk + "'.");
+    // Configuration
+    app.configure( function() {
+        app.set('view engine', 'jade');
+        app.set('views', __dirname + '/views');
+        app.set('view options', {
+            layout: 'shared/layout'
         });
+        app.use(express.methodOverride());        
+        app.use(express.bodyParser());
+        app.use(express.cookieParser());
+        app.use(express.session({
+            secret: "HumlaSecretChange"
+        }));
+    });
+    app.configure('development', function(){
+        app.use(express.logger({ format: ':method :url' }));
+        app.use(app.router);
+        app.use(express.static(WEBROOT));
+        app.use(express.errorHandler({
+            dumpExceptions: true, 
+            showStack: true
+        }));
+    });
+    app.configure('production', function(){
+        var oneYear = 31557600000;
+        app.use(express.static(WEBROOT, {    //__dirname + '/public', {
+            maxAge: oneYear
+        }));
+        app.use(express.errorHandler());
+    });
     
-        request.addListener("end", function() {
+    
+    
+    
+    // ROUTES -----
+    app.get('/', handlers.begin);
+    //app.get('/cache.manifest', handlers.manifest);
+    
+    // api
+    app.get('/api/slideindexer/*', require("./handlers/slideindexer").api);
+    app.get('/api/v1/', handlers.rest);
 
-            paperboy // handle static files
-            .deliver(WEBROOT, request, response)
-            .addHeader('Expires', 300)
-            .addHeader('X-PaperRoute', 'Node')
-            .before(function() {
-                //console.log('Received Request');
-            })
-            .after(function(statCode) {
-                log(statCode, request.url, ip);
-            })
-            .error(function(statCode, msg) {
-                response.writeHead(statCode, {
-                    'Content-Type': 'text/plain'
-                });
-                response.end("Error " + statCode);
-                log(statCode, request.url, ip, msg);
-            })
-            .otherwise(function(err) { // no static files => try to handle request with router
-                console.log(">> Paperboy: No joy...");
-                route(request, response, handle); // can handle any other request - REST API etc.
-            });
-        });
-    }
-
-    http.createServer(onRequest).listen(PORT);
-    console.log("Humla-Server has started, 127.0.0.1:"+PORT);
+    app.post('/blog/new', function(req, res){});
+    
+    
+    app.listen(PORT);   
+    console.log("Humla-Server has started, 127.0.0.1:"+PORT)
+    
 }
+
+
 
 function printRequest(request){
     var pathname = url.parse(request.url).pathname;
@@ -52,10 +73,10 @@ function printRequest(request){
 }
 
 function log(statCode, url, ip, err) {
-  var logStr = statCode + ' - ' + url + ' - ' + ip;
-  if (err)
-    logStr += ' - ' + err;
-  console.log(logStr);
+    var logStr = statCode + ' - ' + url + ' - ' + ip;
+    if (err)
+        logStr += ' - ' + err;
+    console.log(logStr);
 }
 
 
