@@ -134,8 +134,12 @@ var ex_github = {
     }
 };
 
-exports.parse =function parse($,slideIndex,response, _pathToCourse, _filename){
- $(this).find('.h-github').each(function(){  
+//exports.parse =function parse($,slideIndex,response, _pathToCourse, _filename){
+exports.parse =function parse($,slideIndex){
+    console.log("AHOJ");
+ var slide=1; 
+ $('body').find('.slide').each(function(){
+     $(this).find('.h-github').each(function(){
         code = {};
         code.owner = $(this).attr('user-repo');
         code.file = $(this).attr('name');
@@ -146,10 +150,13 @@ exports.parse =function parse($,slideIndex,response, _pathToCourse, _filename){
                 code.project = githubInfo[1];
             }
         }
-        code.title= slideIndex.content.titles[slide-1];
+        code.title= slideIndex.content.slides.titles[slide-1];
         code.slide = slide; // this corresponds to number in slide's URL, so first slide has number 1
-        slideIndex.github.push(code);
+        slideIndex.content.github.push(code);
     });
-    slideIndex.sendResponse(slideIndex,response, _pathToCourse, _filename); 
+    slide++;
+ });
+ 
+    slideIndex.sendResponse(slideIndex); 
 
 }

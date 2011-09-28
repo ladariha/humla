@@ -272,7 +272,7 @@ function parseDocument(response, request, body, pathToCourse, filename){
 /**
  * Parses html document. This is the new version where parsing of drawings, 
  * github codes etc is left to Humla's extensions. Each extension has to export
- * function parse($,slideIndex,response, pathToCourse, filename), which 
+ * function parse($,slideIndex), which 
  * takes following parameters:
  * <ul>
  * <li>$ - jQuery operator, so you can perform common jQuery operations</li>
@@ -311,35 +311,58 @@ function parseDocument2(response, request, body, pathToCourse, filename){
                     var $ = window.$;
                     var slideIndex = {
                         numberOfCalledExtensions : 0,
-
-                        sendResponse : function(slideIndex, response, pathToCourse, filename){
+                        check :0,
+                        drawingsCount: 0,
+                        images: [],
+                        content: {
+                            title : "",
+                            course : "",
+                            lecture : "",
+                            keywords : "",
+                            keywords: [],
+                            numberOfSlide : 0,
+                            slides : {
+                                titles : [],
+                                sectionSlide : [],
+                                chapterSlide : [],
+                                simpleSlide : []
+                                  
+                            },
+                            images : [],
+                            codeBlocks : [],
+                            github : [],
+                            drawings : []
+                            
+                        },
+                        sendResponse : function(slideIndex){
                             this.check = this.check+1;
+                            console.log("CHECK "+this.check);
                             if(this.check === this.numberOfCalledExtensions){
-                                response.writeHead(200, {
+                                this.response.writeHead(200, {
                                     'Content-Type': 'application/json'
                                 });
-                                var jsonindex = JSON.stringify(slideIndex, null, 4);
-                                response.write(jsonindex);
-                                response.end();
-                                path.exists(JSON_DIRECTORY+pathToCourse, function (exists) {
+                                var jsonindex = JSON.stringify(slideIndex.content, null, 4);
+                                this.response.write(jsonindex);
+                                this.response.end();
+                                path.exists(JSON_DIRECTORY+slideIndex.pathToCourse, function (exists) {
                                     if(exists){
 
-                                        fs.writeFile(JSON_DIRECTORY+pathToCourse+filename+".json", jsonindex, function (err) {
+                                        fs.writeFile(JSON_DIRECTORY+slideIndex.pathToCourse+slideIndex.filename+".json", jsonindex, function (err) {
                                             if (err) {
                                                 console.error('Error while saving '+err);
                                             }else{
-                                                console.log('It\'s saved!');
+                                             console.log('It\'s saved!'+ slideIndex.pathToCourse+slideIndex.filename+".json");
                                             }
                                         });
                                     }else{
                 
                                         fs.mkdir(JSON_DIRECTORY+pathToCourse, 0777, function(e) {
                                             if(!e){
-                                                fs.writeFile(JSON_DIRECTORY+pathToCourse+filename+".json", jsonindex, function (err) {
+                                                fs.writeFile(JSON_DIRECTORY+slideIndex.pathToCourse+slideIndex.filename+".json", jsonindex, function (err) {
                                                     if (err) {
                                                         console.error('Error while saving '+err);
                                                     }else{
-                                                        console.log('It\'s saved!');
+                                                        console.log('It\'s saved!'+ slideIndex.pathToCourse+slideIndex.filename+".json");
                                                     }
                                                 });
                                             }
@@ -350,16 +373,13 @@ function parseDocument2(response, request, body, pathToCourse, filename){
                            
                         }  
                     };
+                    slideIndex.response = response;
+                    slideIndex.pathToCourse = pathToCourse;
+                    slideIndex.filename = filename;
                     
-
                     parseTitles(slideIndex, $);
-                    slideIndex.images = [];
-                    slideIndex.check = 0;
-                    slideIndex.codeBlocks = [];
-                    slideIndex.github= [];
-                    slideIndex.drawingsCount = 0;
                     parseImagesAndCodeBlocks(slideIndex,$);
-                    slideIndex.drawings = [];
+                    
                     
                     extensions.forEach(function (ext){
                         if(ext.parse !== null && typeof ext.parse== 'function'){
@@ -369,10 +389,12 @@ function parseDocument2(response, request, body, pathToCourse, filename){
                     
                     extensions.forEach(function (ext){
                         if(ext.parse !== null && typeof ext.parse== 'function'){
-                            ext.parse($,slideIndex,response, pathToCourse, filename);     
+//                            ext.parse($,slideIndex,response, pathToCourse, filename);     
+                            ext.parse($,slideIndex);     
                         }
                     });
-                }catch(err){
+                }
+                catch(err){
                     response.writeHead(500, {
                         'Content-Type': 'text/plain'
                     });
@@ -456,19 +478,12 @@ function getDocumentFromFileSystem(response, request, pathToCourse, filename){
  */
 function parseTitles(slideIndex,$){
 
-    slideIndex.title = $('title').text();
-    slideIndex.course = $('meta[name="course"]').attr('content');
-    slideIndex.lecture = $('meta[name="lecture"]').attr('content');
+    slideIndex.content.title = $('title').text();
+    slideIndex.content.course = $('meta[name="course"]').attr('content');
+    slideIndex.content.lecture = $('meta[name="lecture"]').attr('content');
     var keywords = $('meta[name="keywords"]').attr('content');
-    slideIndex.keywords=keywords.split(',');
-    slideIndex.numberOfSlide = $('div.slide').length+1;// +1 for slide intro
-        
-    var content = {};
-    content.titles = [];
-    content.sectionSlide = [];
-    content.chapterSlide = [];
-    content.simpleSlide = [];
-    slideIndex.content = content;
+    slideIndex.content.keywords=keywords.split(',');
+    slideIndex.content.numberOfSlide = $('div.slide').length+1;// +1 for slide intro
                 
     var i=0;
     var iterator=1;
@@ -482,8 +497,8 @@ function parseTitles(slideIndex,$){
                     $(this).find('hgroup h1').each(function(){
                         //                                        console.log(iterator+'- '+ decodeURI($(this).text()));
                         iterator++;
-                        slideIndex.content.sectionSlide.push(decodeURI($(this).text()));
-                        slideIndex.content.titles.push(decodeURI($(this).text()));
+                        slideIndex.content.slides.sectionSlide.push(decodeURI($(this).text()));
+                        slideIndex.content.slides.titles.push(decodeURI($(this).text()));
                     })
                 }
                 break;
@@ -496,8 +511,8 @@ function parseTitles(slideIndex,$){
                     if($(this).text()!== ''){
                         sec = decodeURI($(this).text()).trim();
                         //                                        console.log(iterator+'- '+ (sec));
-                        slideIndex.content.sectionSlide.push(sec);
-                        slideIndex.content.titles.push(sec);
+                        slideIndex.content.slides.sectionSlide.push(sec);
+                        slideIndex.content.slides.titles.push(sec);
                         iterator++;
                     }
                     if($(section).has('section').length > 0){
@@ -511,8 +526,8 @@ function parseTitles(slideIndex,$){
                                         parentSection: parent,
                                         title: sec
                                     };
-                                    slideIndex.content.chapterSlide.push(tmp);
-                                    slideIndex.content.titles.push(sec);
+                                    slideIndex.content.slides.chapterSlide.push(tmp);
+                                    slideIndex.content.slides.titles.push(sec);
                                     chapterParent++;
                                     //                                                    console.log(iterator+'-- '+ decodeURI($(this).text()));
                                     iterator++;                                                
@@ -524,8 +539,8 @@ function parseTitles(slideIndex,$){
                                             parentChapter: chapterParent,
                                             title: tmpTitle
                                         };
-                                        slideIndex.content.simpleSlide.push(tmp);
-                                        slideIndex.content.titles.push(tmpTitle);
+                                        slideIndex.content.slides.simpleSlide.push(tmp);
+                                        slideIndex.content.slides.titles.push(tmpTitle);
                                                     
                                         //                                                        console.log(iterator+'--- '+decodeURI($(this).has('h1').text()).trim());
                                         iterator++;
@@ -534,8 +549,8 @@ function parseTitles(slideIndex,$){
                                             parentChapter: chapterParent,
                                             title: sec
                                         };
-                                        slideIndex.content.simpleSlide.push(tmp);
-                                        slideIndex.content.titles.push(sec);
+                                        slideIndex.content.slides.simpleSlide.push(tmp);
+                                        slideIndex.content.slides.titles.push(sec);
                                         //                                                        console.log(iterator+'--- '+sec);
                                         iterator++;
                                     }
@@ -552,8 +567,8 @@ function parseTitles(slideIndex,$){
                                     parentSection: parent,
                                     title: tmpTitle
                                 };
-                                slideIndex.content.chapterSlide.push(tmp);
-                                slideIndex.content.titles.push(tmpTitle);
+                                slideIndex.content.slides.chapterSlide.push(tmp);
+                                slideIndex.content.slides.titles.push(tmpTitle);
                                 chapterParent++;
                                 //                                                console.log(iterator+'-- '+decodeURI($(this).has('h1').text()).trim());
                                 iterator++;
@@ -563,8 +578,8 @@ function parseTitles(slideIndex,$){
                                     title: sec
                                 };
                                 chapterParent++;
-                                slideIndex.content.chapterSlide.push(tmp);
-                                slideIndex.content.titles.push(sec);
+                                slideIndex.content.slides.chapterSlide.push(tmp);
+                                slideIndex.content.slides.titles.push(sec);
                                 //                                                console.log(iterator+'-- '+sec);
                                 iterator++;
                             }
@@ -588,7 +603,7 @@ function parseImagesAndCodeBlocks(slideIndex,$){
     }else{
         slide = 0;
     }
-    
+    //    slideIndex.content.codeBlocks = [];
     $('body').find('.slide').each(function(){ // each slide
         
         slide++; // first div with class slide has index 
@@ -599,13 +614,13 @@ function parseImagesAndCodeBlocks(slideIndex,$){
             image.filename = image.filename.substring(image.filename.lastIndexOf('/')+1);
             image.slide = slide; // this corresponds to number in slide's URL, so first slide has number 1
             image.type = 'picture';
-            slideIndex.images.push(image);
+            slideIndex.content.images.push(image);
         });
         
         $(this).find('pre').each(function(){
             code = {};
             code.slide = slide;
-            code.title= slideIndex.content.titles[slide-1];
+            code.title= slideIndex.content.slides.titles[slide-1];
             var classAtr = $(this).prop('class');
             var i = classAtr.indexOf("brush:")+6;
             var j = classAtr.indexOf(";", i);
@@ -616,7 +631,7 @@ function parseImagesAndCodeBlocks(slideIndex,$){
             }
             code.language = slideindexer.styles[code.language];
             
-            slideIndex.codeBlocks.push(code);
+            slideIndex.content.codeBlocks.push(code);
         });
     });   
 }
