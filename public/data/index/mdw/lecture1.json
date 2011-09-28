@@ -1,0 +1,301 @@
+{
+    "title": "Motivation and Course Overview",
+    "course": "Middleware and Web Services",
+    "lecture": "Lecture 1",
+    "keywords": [
+        "motivation",
+        " scope",
+        " requirements",
+        " resources"
+    ],
+    "numberOfSlide": 39,
+    "slides": {
+        "titles": [
+            "Hellos",
+            "Web Engineering Curriculla",
+            "Web Engineering Curricula",
+            "Bird's View",
+            "Course at a Glance",
+            "Motivation and Scope",
+            "Motivation in Brief",
+            "Spaghetti Architecture",
+            "SOA Architecture",
+            "REST Architecture",
+            "Good Performance  Traditional Solution",
+            "Good Performance  Cloud Solution",
+            "Scope",
+            "Big Picture",
+            "Requirements and Organization",
+            "General Requirements",
+            "Organization of Lectures",
+            "Organization of Labs",
+            "Solution Architecture",
+            "Methodology for Lab Work",
+            "Methodology for Lab Work (cont.)",
+            "Technologies/Development Platform",
+            "Development Platforms",
+            "Amazon EC2 Free Usage Tier",
+            "Assessment",
+            "Assessment",
+            "Final Marks",
+            "Communication and Resources",
+            "Communication",
+            "Overview of Resources",
+            "About Slides",
+            "Code Examples",
+            "Github Repo",
+            "Use and Alter the Code",
+            "Tasks from Lectures",
+            "FAQ",
+            "Frequently Asked Questions",
+            "Frequently Asked Questions (cont.)"
+        ],
+        "sectionSlide": [
+            "Hellos",
+            "Web Engineering Curriculla",
+            "Course at a Glance",
+            "Assessment",
+            "Communication and Resources",
+            "FAQ"
+        ],
+        "chapterSlide": [
+            {
+                "parentSection": 1,
+                "title": "Web Engineering Curricula"
+            },
+            {
+                "parentSection": 1,
+                "title": "Bird's View"
+            },
+            {
+                "parentSection": 2,
+                "title": "Motivation and Scope"
+            },
+            {
+                "parentSection": 2,
+                "title": "Requirements and Organization"
+            },
+            {
+                "parentSection": 2,
+                "title": "Technologies/Development Platform"
+            },
+            {
+                "parentSection": 3,
+                "title": "Assessment"
+            },
+            {
+                "parentSection": 3,
+                "title": "Final Marks"
+            },
+            {
+                "parentSection": 4,
+                "title": "Communication"
+            },
+            {
+                "parentSection": 4,
+                "title": "Overview of Resources"
+            },
+            {
+                "parentSection": 4,
+                "title": "About Slides"
+            },
+            {
+                "parentSection": 4,
+                "title": "Code Examples"
+            },
+            {
+                "parentSection": 4,
+                "title": "Github Repo"
+            },
+            {
+                "parentSection": 4,
+                "title": "Use and Alter the Code"
+            },
+            {
+                "parentSection": 4,
+                "title": "Tasks from Lectures"
+            },
+            {
+                "parentSection": 5,
+                "title": "Frequently Asked Questions"
+            },
+            {
+                "parentSection": 5,
+                "title": "Frequently Asked Questions (cont.)"
+            }
+        ],
+        "simpleSlide": [
+            {
+                "parentChapter": 2,
+                "title": "Motivation in Brief"
+            },
+            {
+                "parentChapter": 2,
+                "title": "Spaghetti Architecture"
+            },
+            {
+                "parentChapter": 2,
+                "title": "SOA Architecture"
+            },
+            {
+                "parentChapter": 2,
+                "title": "REST Architecture"
+            },
+            {
+                "parentChapter": 2,
+                "title": "Good Performance  Traditional Solution"
+            },
+            {
+                "parentChapter": 2,
+                "title": "Good Performance  Cloud Solution"
+            },
+            {
+                "parentChapter": 2,
+                "title": "Scope"
+            },
+            {
+                "parentChapter": 2,
+                "title": "Big Picture"
+            },
+            {
+                "parentChapter": 3,
+                "title": "General Requirements"
+            },
+            {
+                "parentChapter": 3,
+                "title": "Organization of Lectures"
+            },
+            {
+                "parentChapter": 3,
+                "title": "Organization of Labs"
+            },
+            {
+                "parentChapter": 3,
+                "title": "Solution Architecture"
+            },
+            {
+                "parentChapter": 3,
+                "title": "Methodology for Lab Work"
+            },
+            {
+                "parentChapter": 3,
+                "title": "Methodology for Lab Work (cont.)"
+            },
+            {
+                "parentChapter": 4,
+                "title": "Development Platforms"
+            },
+            {
+                "parentChapter": 4,
+                "title": "Amazon EC2 Free Usage Tier"
+            }
+        ]
+    },
+    "images": [
+        {
+            "alt": "Amazon EC2 Free Usage Tier",
+            "filename": "ec2-free-tier.png",
+            "slide": 24,
+            "type": "picture"
+        },
+        {
+            "alt": "Cloud9 IDE",
+            "filename": "c9-ide-screenshot.png",
+            "slide": 34,
+            "type": "picture"
+        }
+    ],
+    "codeBlocks": [
+        {
+            "slide": 32,
+            "title": "Code Examples",
+            "language": "Java"
+        },
+        {
+            "slide": 32,
+            "title": "Code Examples",
+            "language": "JavaScript"
+        },
+        {
+            "slide": 32,
+            "title": "Code Examples",
+            "language": "XML"
+        },
+        {
+            "slide": 32,
+            "title": "Code Examples",
+            "language": "Bash/shell"
+        },
+        {
+            "slide": 34,
+            "title": "Use and Alter the Code",
+            "language": "Bash/shell"
+        }
+    ],
+    "github": [
+        {
+            "owner": "",
+            "file": "discovery/category-discovery.js",
+            "title": "Github Repo",
+            "slide": 33
+        }
+    ],
+    "drawings": [
+        {
+            "alt": "Representational State Transfer",
+            "id": "1dOevmc1cKlJNHz6h416ybvOmYSTQD_cqPbgXjpjOY-0",
+            "slide": 10,
+            "type": "drawing",
+            "filename": "RESTArchitecture.png"
+        },
+        {
+            "alt": "Traditional Hardware Model",
+            "id": "17jEYye-th5U5T-N-iE1gR7f_k5Bwrk9P7z9yYC4EZlw",
+            "slide": 11,
+            "type": "drawing",
+            "filename": "traditional-hardware.png"
+        },
+        {
+            "alt": "Spaghetti Integration",
+            "id": "123tDQFo3Zq0LEzzhquKp1xJX4YZ6YiWC0GDNGGK1UA0",
+            "slide": 8,
+            "type": "drawing",
+            "filename": "OnetoOneSpaghettiIntegration.png"
+        },
+        {
+            "alt": "Web Engineering Overview",
+            "id": "1oyGz6GdF-K_hln9g_l3Cp1eNK843S4NKE4tO8HMUYGw",
+            "slide": 5,
+            "type": "drawing",
+            "filename": "web-20-context.png"
+        },
+        {
+            "alt": "SOA Integration",
+            "id": "1-uHnuWoYea9KZgEBRkGmdpbKDT5THls9dn56XolZ1Lg",
+            "slide": 9,
+            "type": "drawing",
+            "filename": "soa-integration.png"
+        },
+        {
+            "alt": "Cloud Computing Solution",
+            "id": "1yeHPc2AqDeXanOV0Zi8MirHApMjf1Sa_2UCOt_9Avds",
+            "slide": 12,
+            "type": "drawing",
+            "filename": "scalable-cloud-model.png"
+        },
+        {
+            "alt": "",
+            "id": "1wb1OFJYZ1ukRLlKOXE7JWkhFGCeLvhIO6bveWUVpiBI",
+            "slide": 19,
+            "type": "drawing",
+            "filename": "Labs-architecture.png"
+        },
+        {
+            "alt": "MDW Big Picture",
+            "id": "1i5681Erf2sYIeXg8p1lhiNvJqAAifdFs8o4DAshx2C4",
+            "slide": 14,
+            "type": "drawing",
+            "filename": "mdw-big-picture.png"
+        }
+    ]
+}

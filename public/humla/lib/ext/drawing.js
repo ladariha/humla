@@ -45,8 +45,8 @@ var ex_drawing = {
     }
     
 };
-
-exports.parse =function parse($,slideIndex,response, _pathToCourse, _filename){
+exports.parse =function parse($,slideIndex){
+//exports.parse =function parse($,slideIndex,response, _pathToCourse, _filename){
     var temporary = {};      
     temporary.drawings = [];
     var slide=1; 
@@ -64,7 +64,8 @@ exports.parse =function parse($,slideIndex,response, _pathToCourse, _filename){
         slide++;    
     });    
     for(i in temporary.drawings){
-        parseSingleDrawing(temporary.drawings[i],slideIndex,response, _pathToCourse, _filename);
+//        parseSingleDrawing(temporary.drawings[i],slideIndex,response, _pathToCourse, _filename);
+        parseSingleDrawing(temporary.drawings[i],slideIndex);
     }
 
 }
@@ -79,7 +80,8 @@ exports.parse =function parse($,slideIndex,response, _pathToCourse, _filename){
  * identify the drawing on Google Docs
  *
  */
-function parseSingleDrawing(drawing,slideIndex,response, _pathToCourse, _filename){
+function parseSingleDrawing(drawing,slideIndex){
+//function parseSingleDrawing(drawing,slideIndex,response, _pathToCourse, _filename){
     
     var id = drawing.id;
     var options = {
@@ -95,17 +97,19 @@ function parseSingleDrawing(drawing,slideIndex,response, _pathToCourse, _filenam
             var i = contDisp.indexOf("filename=\"")+10;
             var j = contDisp.lastIndexOf("\"");
             drawing.filename = contDisp.substring(i,j);
-            slideIndex.drawings.push(drawing);
+            slideIndex.content.drawings.push(drawing);
                 
         }else{
             // TODO handle error
             drawing.filename = 'Error while requesting from Google Docs '+res.statusCode;
-            slideIndex.drawings.push(drawing);
+            slideIndex.content.drawings.push(drawing);
                 
         }
         slideIndex.drawingsCount--;
         if(slideIndex.drawingsCount === 0){
-            slideIndex.sendResponse(slideIndex,response, _pathToCourse, _filename); 
+            console.log("CAS");
+            slideIndex.sendResponse(slideIndex); 
+//            slideIndex.sendResponse(slideIndex,response, _pathToCourse, _filename); 
             return slideIndex;
         }
             
@@ -115,9 +119,10 @@ function parseSingleDrawing(drawing,slideIndex,response, _pathToCourse, _filenam
 
     req.on('error', function(e) {
         drawing.filename = 'Error while requesting from Google Docs '+e.message;
-        slideIndex.drawings.push(drawing);
+        slideIndex.content.drawings.push(drawing);
         if(slideIndex.drawingsCount === 0){
-            slideIndex.sendResponse(slideIndex,response, _pathToCourse, _filename); 
+            slideIndex.sendResponse(slideIndex); 
+//            slideIndex.sendResponse(slideIndex,response, _pathToCourse, _filename); 
             return slideIndex;
         }
     });   
