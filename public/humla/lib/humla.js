@@ -127,7 +127,7 @@ var humla = {
                         dataReady(mainConfig, suplConfig);
                     }
                 }
-            );
+                );
 
             // calculate a path for this slides home
             var path = window.location + "";
@@ -152,7 +152,7 @@ var humla = {
                         dataReady(mainConfig, suplConfig);
                     }
                 }
-            );    
+                );    
         };        
     
         this.utils.loadScripts(function() {
@@ -172,36 +172,36 @@ var humla = {
 
             // register listener to handle errors 
             window.addEventListener("error", function(event) {
-                    humla.reportError(event.message);
-                }, false);
+                humla.reportError(event.message);
+            }, false);
 
             // register keydown listener
             window.addEventListener("keydown", function(event) {
                 humla.controler.keydown(event);
-                }, false);
+            }, false);
 
             // register keyup listener
             window.addEventListener("keyup", function(event) {
                 humla.controler.keyup(event);
-                }, false);
+            }, false);
 
             // register listener to handle fullscreen 
             window.addEventListener("resize", function(event) {
-                    humla.controler.updateFullscreenWindow(event);
-                    if (humla.utils.msgbox)
-                        humla.msgbox.updatePosition();
-                }, false);
+                humla.controler.updateFullscreenWindow(event);
+                if (humla.utils.msgbox)
+                    humla.msgbox.updatePosition();
+            }, false);
                 
             // on changing hash to update the date 
             window.addEventListener("hashchange", function(event) {
-                    humla.controler.updateControlerState();
-                }, false);                                
+                humla.controler.updateControlerState();
+            }, false);                                
                 
             // read configuration and initialize the controler
             readConfig(
                 function(mainConfig, suplConfig) {
                     humla.controler.keys = suplConfig.data && suplConfig.data.key ? 
-                        suplConfig.data.keys : mainConfig.data.keys;
+                    suplConfig.data.keys : mainConfig.data.keys;
                     
                     if (suplConfig.data !== null) {
                         // delete all views from main config that are in supl config
@@ -261,7 +261,11 @@ var humla = {
                     humla.controler.run();
                 });
             
-        }, [{ src : humla.home + "core/humla-core.js" }, { src : humla.home + "core/humla-controler.js" }]);    
+        }, [{
+            src : humla.home + "core/humla-core.js"
+        }, {
+            src : humla.home + "core/humla-controler.js"
+        }]);    
     }    
 };
 
@@ -468,8 +472,12 @@ var MessageBox = function(message) {
             this.div = humla.utils.document.createElement("div");
             this.div.id = "msgbox";
             this.div.className = "msgbox";
-            this.div.addEventListener("mouseover", function() {humla.msgbox.updateTimer(true);}, false);
-            this.div.addEventListener("mouseout", function() {humla.msgbox.updateTimer();}, false);
+            this.div.addEventListener("mouseover", function() {
+                humla.msgbox.updateTimer(true);
+            }, false);
+            this.div.addEventListener("mouseout", function() {
+                humla.msgbox.updateTimer();
+            }, false);
             this.div.innerHTML = "<span class='close' onclick='humla.msgbox.dismiss();'></span>";
         }
         
@@ -513,15 +521,15 @@ document.addEventListener("DOMContentLoaded", function() {
         (browser.browser == "Chrome" && browser.version >= 13) ||
         (browser.browser == "Safari" && browser.version >= 5.1) || 
         (browser.browser == "Opera") || 
-         browser.browser == "wkhtmltopdf") {
+        browser.browser == "wkhtmltopdf") {
         document.getElementsByTagName("body")[0].style.visibility = "hidden";
         
         humla.load();
     } else {
         document.getElementsByTagName("body")[0].innerHTML = 
         "<p style=\"margin-left: auto; margin-right: auto; width: 700px; font-size: 24px; text-align: center; color: #666\">" + 
-        "We are sorry but Humla currently only works on the versions of Chrome 13 and Safari 5.1 or higher. " + 
-        "<a href=\"https://github.com/tomvit/humla\">Fork it on github</a> and improve it!</p>";
+    "We are sorry but Humla currently only works on the versions of Chrome 13 and Safari 5.1 or higher. " + 
+    "<a href=\"https://github.com/tomvit/humla\">Fork it on github</a> and improve it!</p>";
     }    
 }, false);
 
@@ -530,127 +538,128 @@ document.addEventListener("DOMContentLoaded", function() {
 var browser = {
     
     init: function () {
-    	this.browser = this.searchString(this.dataBrowser) || "An unknown browser";
-		this.version = this.searchVersion(navigator.userAgent)
-			|| this.searchVersion(navigator.appVersion)
-			|| 0;
-		this.OS = this.searchString(this.dataOS) || "an unknown OS";
-	},
+        this.browser = this.searchString(this.dataBrowser) || "An unknown browser";
+        this.version = this.searchVersion(navigator.userAgent)
+        || this.searchVersion(navigator.appVersion)
+        || 0;
+        this.OS = this.searchString(this.dataOS) || "an unknown OS";
+    },
     
-	searchString: function (data) {
-		for (var i=0;i<data.length;i++)	{
-			var dataString = data[i].string;
-			var dataProp = data[i].prop;
-			this.versionSearchString = data[i].versionSearch || data[i].identity;
-			if (dataString) {
-				if (dataString.indexOf(data[i].subString) != -1)
-					return data[i].identity;
-			}
-			else if (dataProp)
-				return data[i].identity;
-		}
-	},
+    searchString: function (data) {
+        for (var i=0;i<data.length;i++)	{
+            var dataString = data[i].string;
+            var dataProp = data[i].prop;
+            this.versionSearchString = data[i].versionSearch || data[i].identity;
+            if (dataString) {
+                if (dataString.indexOf(data[i].subString) != -1)
+                    return data[i].identity;
+            }
+            else if (dataProp)
+                return data[i].identity;
+        }
+    },
     
-	searchVersion: function (dataString) {
-		var index = dataString.indexOf(this.versionSearchString);
-		if (index == -1) return;
-		return parseFloat(dataString.substring(index+this.versionSearchString.length+1));
-	},
+    searchVersion: function (dataString) {
+        var index = dataString.indexOf(this.versionSearchString);
+        if (index == -1) return;
+        return parseFloat(dataString.substring(index+this.versionSearchString.length+1));
+    },
     
-	dataBrowser: [
-    	{
-			string: navigator.userAgent,
-			subString: "Qt",
-			identity: "wkhtmltopdf",
-            versionSearch: "Qt/"
-		},
-		{
-			string: navigator.userAgent,
-			subString: "Chrome",
-			identity: "Chrome"
-		},
-		{ 	string: navigator.userAgent,
-			subString: "OmniWeb",
-			versionSearch: "OmniWeb/",
-			identity: "OmniWeb"
-		},
-		{
-			string: navigator.vendor,
-			subString: "Apple",
-			identity: "Safari",
-			versionSearch: "Version"
-		},
-		{
-			prop: window.opera,
-			identity: "Opera"
-		},
-		{
-			string: navigator.vendor,
-			subString: "iCab",
-			identity: "iCab"
-		},
-		{
-			string: navigator.vendor,
-			subString: "KDE",
-			identity: "Konqueror"
-		},
-		{
-			string: navigator.userAgent,
-			subString: "Firefox",
-			identity: "Firefox"
-		},
-		{
-			string: navigator.vendor,
-			subString: "Camino",
-			identity: "Camino"
-		},
-		{		// for newer Netscapes (6+)
-			string: navigator.userAgent,
-			subString: "Netscape",
-			identity: "Netscape"
-		},
-		{
-			string: navigator.userAgent,
-			subString: "MSIE",
-			identity: "Explorer",
-			versionSearch: "MSIE"
-		},
-		{
-			string: navigator.userAgent,
-			subString: "Gecko",
-			identity: "Mozilla",
-			versionSearch: "rv"
-		},
-		{ 		// for older Netscapes (4-)
-			string: navigator.userAgent,
-			subString: "Mozilla",
-			identity: "Netscape",
-			versionSearch: "Mozilla"
-		}
-	],
+    dataBrowser: [
+    {
+        string: navigator.userAgent,
+        subString: "Qt",
+        identity: "wkhtmltopdf",
+        versionSearch: "Qt/"
+    },
+    {
+        string: navigator.userAgent,
+        subString: "Chrome",
+        identity: "Chrome"
+    },
+    {
+        string: navigator.userAgent,
+        subString: "OmniWeb",
+        versionSearch: "OmniWeb/",
+        identity: "OmniWeb"
+    },
+    {
+        string: navigator.vendor,
+        subString: "Apple",
+        identity: "Safari",
+        versionSearch: "Version"
+    },
+    {
+        prop: window.opera,
+        identity: "Opera"
+    },
+    {
+        string: navigator.vendor,
+        subString: "iCab",
+        identity: "iCab"
+    },
+    {
+        string: navigator.vendor,
+        subString: "KDE",
+        identity: "Konqueror"
+    },
+    {
+        string: navigator.userAgent,
+        subString: "Firefox",
+        identity: "Firefox"
+    },
+    {
+        string: navigator.vendor,
+        subString: "Camino",
+        identity: "Camino"
+    },
+    {		// for newer Netscapes (6+)
+        string: navigator.userAgent,
+        subString: "Netscape",
+        identity: "Netscape"
+    },
+    {
+        string: navigator.userAgent,
+        subString: "MSIE",
+        identity: "Explorer",
+        versionSearch: "MSIE"
+    },
+    {
+        string: navigator.userAgent,
+        subString: "Gecko",
+        identity: "Mozilla",
+        versionSearch: "rv"
+    },
+    { 		// for older Netscapes (4-)
+        string: navigator.userAgent,
+        subString: "Mozilla",
+        identity: "Netscape",
+        versionSearch: "Mozilla"
+    }
+    ],
     
-	dataOS : [
-		{
-			string: navigator.platform,
-			subString: "Win",
-			identity: "Windows"
-		},
-		{
-			string: navigator.platform,
-			subString: "Mac",
-			identity: "Mac"
-		},
-		{
-			   string: navigator.userAgent,
-			   subString: "iPhone",
-			   identity: "iPhone/iPod"
-	    },
-		{
-			string: navigator.platform,
-			subString: "Linux",
-			identity: "Linux"
-		}
-	]
+    dataOS : [
+    {
+        string: navigator.platform,
+        subString: "Win",
+        identity: "Windows"
+    },
+    {
+        string: navigator.platform,
+        subString: "Mac",
+        identity: "Mac"
+    },
+    {
+        string: navigator.userAgent,
+        subString: "iPhone",
+        identity: "iPhone/iPod"
+    },
+    {
+        string: navigator.platform,
+        subString: "Linux",
+        identity: "Linux"
+    }
+    ]
 
 };
 

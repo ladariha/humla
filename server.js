@@ -5,11 +5,12 @@
  * 
  */
 
-var express = require('express');
+var express = require("express");
+var models = require("./models/comment");
+var mongoose = require('mongoose');
 
 
-
-var app = null;
+app = null; // je to schválně bez var - aby to bylo v module contextu
 
 exports.run = function run(handlers, PORT, WEBROOT) {    
 
@@ -22,16 +23,19 @@ exports.run = function run(handlers, PORT, WEBROOT) {
         app.set('view options', {
             layout: 'shared/layout'
         });
-        app.use(express.methodOverride());        
+        app.use(express.methodOverride());   // pak mužeme z formu posílat put <input type="hidden" name="_method" value="put" />
         app.use(express.bodyParser());
         app.use(express.cookieParser());
         app.use(express.session({
             secret: "HumlaSecretChange"
         }));
+        app.use(app.router);
+        app.set('db-uri', 'mongodb://localhost/humla');
     });
     app.configure('development', function(){
-        app.use(express.logger({ format: ':method :url' }));
-        app.use(app.router);
+        app.use(express.logger({
+            format: '\x1b[1m:method\x1b[0m \x1b[33m:url\x1b[0m :response-time ms'
+        }))
         app.use(express.static(WEBROOT));
         app.use(express.errorHandler({
             dumpExceptions: true, 
@@ -46,37 +50,35 @@ exports.run = function run(handlers, PORT, WEBROOT) {
         app.use(express.errorHandler());
     });
     
+    /*models.defineModels(mongoose, function() {
+        app.Document = Document = mongoose.model('Document');
+        app.User = User = mongoose.model('User');
+        app.LoginToken = LoginToken = mongoose.model('LoginToken');
+        db = mongoose.connect(app.set('db-uri'));
+    })*/
+
+
     
+    // Handlers (Routes) 
     
+    require("./handlers/defaults")
+    require("./handlers/api");
     
-    // ROUTES -----
-    app.get('/', handlers.begin);
-    //app.get('/cache.manifest', handlers.manifest);
+    // plugins (TODO: move to plugins folder and make auto-loading mechanism)
+    require("./handlers/comments");
+    require("./handlers/likes");
     
-    // api
     app.get('/api/slideindexer/*', require("./handlers/slideindexer").api);
-    app.get('/api/v1/', handlers.rest);
+    
 
-    app.post('/blog/new', function(req, res){});
     
     
+    
+   
     app.listen(PORT);   
-    console.log("Humla-Server has started, 127.0.0.1:"+PORT)
+    console.log("Humla (server) has started, 127.0.0.1:%d, Using Express %s",PORT,express.version);    
     
 }
 
-
-
-function printRequest(request){
-    var pathname = url.parse(request.url).pathname;
-    console.log("<< Received request for "+pathname);
-}
-
-function log(statCode, url, ip, err) {
-    var logStr = statCode + ' - ' + url + ' - ' + ip;
-    if (err)
-        logStr += ' - ' + err;
-    console.log(logStr);
-}
 
 
