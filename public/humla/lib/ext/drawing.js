@@ -57,7 +57,7 @@ exports.parse =function parse($,slideIndex){
             var image = {};
             image.alt = $(this).attr('alt'); // prop() doesn't work here
             image.id = $(this).prop('id');
-            image.slide = slide; // this corresponds to number in slide's URL, so first slide has number 1
+            image.slide = slideIndex.baseURL+'#/'+slide; // this corresponds to number in slide's URL, so first slide has number 1
             image.type = 'drawing';
             temporary.drawings.push(image);
         });
@@ -93,9 +93,10 @@ function parseSingleDrawing(drawing,slideIndex){
     
     var req = https.request(options, function(res) {
         if(res.statusCode === 200){
-            var contDisp = res.headers["content-disposition"];
+            var contDisp = res.headers['content-disposition'];
             var i = contDisp.indexOf("filename=\"")+10;
             var j = contDisp.lastIndexOf("\"");
+            drawing.exportURL = 'https://docs.google.com/drawings/d/'+id+'/export/png?id='+id+'&pageid=p';
             drawing.filename = contDisp.substring(i,j);
             slideIndex.content.drawings.push(drawing);
                 
