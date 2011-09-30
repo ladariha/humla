@@ -10,6 +10,7 @@ var path = require('path');
 var JSON_DIRECTORY = (path.join(path.dirname(__filename), '../public/data/index')).toString();
 var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../public/data/slides')).toString();
 var EXTENSIONS_DIRECTORY = (path.join(path.dirname(__filename), '../public/humla/lib/ext')).toString();
+var GENERAL_LECTURE_NAME = 'lecture';
 var extensions = new Array();
 
 fs.readdir( EXTENSIONS_DIRECTORY, function( err, files ) { // require() all js files in humla extensions directory
@@ -195,9 +196,9 @@ function getIndex(response, request){
                 });
             }else{
                 if(url === undefined){
-                    getDocumentFromFileSystem(response, request, pathToCourse,filename);
+                    getDocumentFromFileSystem(response, request, pathToCourse,filename, lecture, course);
                 }else{
-                    getDocumentFromUrl(response, request, url, pathToCourse, filename);    
+                    getDocumentFromUrl(response, request, url, pathToCourse, filename, lecture, course);    
                 }      
                     
             } 
@@ -205,9 +206,9 @@ function getIndex(response, request){
     }else{ // parse the document again and update JSON index file
         if(refresh==="true"){
             if(url === undefined){
-                getDocumentFromFileSystem(response, request, pathToCourse,filename);
+                getDocumentFromFileSystem(response, request, pathToCourse,filename, lecture, course);
             }else{
-                getDocumentFromUrl(response, request, url, pathToCourse, filename);    
+                getDocumentFromUrl(response, request, url, pathToCourse, filename,lecture, course);    
             }            
         }else{
             response.writeHead(400, {
@@ -220,72 +221,19 @@ function getIndex(response, request){
 }
 
 /**
- * Parses html document
- * @param response http response to be returned
- * @param request http request
- * @param body html source code to be parsed
- * @param pathToCourse name of folder for courses's slides and indices, for example "/mdw/"
- * @param filename file name (without preffix) based on lecture order, for example "lecture1"
- *
- */
-function parseDocument(response, request, body, pathToCourse, filename){
-    jsdom.env({
-        html: body,
-        src: [
-        jquery
-        ],
-        done: function(errors, window) {
-            if(errors){
-                response.writeHead(500, {
-                    'Content-Type': 'text/plain'
-                });
-                response.write('Error while parsing document by jsdom');
-                response.end()   
-            }else{
-                try{
-                    var $ = window.$;
-                    var slideIndex = {};
-                    var temporary = {};
-                    temporary.images = []; // for internal usage only
-                    temporary.drawings = [];
-                    parseTitles(slideIndex, $);
-                    slideIndex.images = [];
-                    slideIndex.codeBlocks = [];
-                    slideIndex.github= [];
-                    slideIndex.drawingsCount = 0;
-                    parseImagesAndCodeBlocks(slideIndex,temporary,$);
-                    slideIndex.drawings = [];
-                    parseDrawingAsync(slideIndex,temporary,response, pathToCourse, filename);
-                }catch(err){
-                    response.writeHead(500, {
-                        'Content-Type': 'text/plain'
-                    });
-                    response.write('Error while parsing document: '+err.description);
-                    response.end() 
-                }
-                         
-            }
-        }
-    }); 
-}
-
-/**
  * Parses html document. This is the new version where parsing of drawings, 
  * github codes etc is left to Humla's extensions. Each extension has to export
- * function parse($,slideIndex,response, pathToCourse, filename), which 
+ * function parse($,slideIndex), which 
  * takes following parameters:
  * <ul>
  * <li>$ - jQuery operator, so you can perform common jQuery operations</li>
  * <li>slideIndex - object that will be returned in HTTP Request, feel free to add properties that you want to return to client</li>
- * <li>response - HTTP request that will be send when it's all done</li>
- * <li>_pathToCourse filename - DO NOT CHANGE, represents where the index file will be stored</li>
- * <li>filename - DO NOT CHANGE, represents name of the index file </li>
  * </ul>
- * After parse() method in your extension performs all operations you want, called 
- * method slideIndex.sendResponse(slideIndex, response, pathToCourse, filename).
- * The slideIndex parameter is again what will be returned. This calling will
- * notify SlideIndexer that you have finished. After all extension called sendResponse(),
- * HTTP response will be send to client
+ * After parse() method in your extension performs all operations you want, the extensio
+ * must call method slideIndex.sendResponse(slideIndex). The slideIndex parameter 
+ * is again what will be returned. This calling will notify SlideIndexer that 
+ * you have finished. After all extension called sendResponse(), HTTP response
+ * will be send to client
  * @param response http response to be returned
  * @param request http request
  * @param body html source code to be parsed
@@ -293,7 +241,7 @@ function parseDocument(response, request, body, pathToCourse, filename){
  * @param filename file name (without preffix) based on lecture order, for example "lecture1"
  *
  */
-function parseDocument2(response, request, body, pathToCourse, filename){
+function parseDocument(response, request, body, pathToCourse, filename, lecture, course){
     jsdom.env({
         html: body,
         src: [
@@ -310,36 +258,70 @@ function parseDocument2(response, request, body, pathToCourse, filename){
                 try{
                     var $ = window.$;
                     var slideIndex = {
+                        pathToCourse : pathToCourse,
+                        host : request.headers.host,
+                        filename : filename,
+                        course : course,
+                        lecture: lecture,
                         numberOfCalledExtensions : 0,
-
-                        sendResponse : function(slideIndex, response, pathToCourse, filename){
+                        check :0,
+                        drawingsCount: 0,
+                        images: [],
+                        content: {
+                            title : "",
+                            course : "",
+                            lecture : "",
+                            keywords : "",
+                            keywords: [],
+                            numberOfSlide : 0,
+                            slides : {
+                                titles : [],
+                                sectionSlide : [],
+                                chapterSlide : [],
+                                simpleSlide : []
+                                  
+                            },
+                            images : [],
+                            codeBlocks : [],
+                            github : [],
+                            drawings : []
+                            
+                        },
+                        sendResponse : function(slideIndex){
                             this.check = this.check+1;
+                            console.log("CHECK "+this.check);
+                            console.log("FILE "+this.filename)
                             if(this.check === this.numberOfCalledExtensions){
-                                response.writeHead(200, {
+                                this.response.writeHead(200, {
                                     'Content-Type': 'application/json'
                                 });
-                                var jsonindex = JSON.stringify(slideIndex, null, 4);
-                                response.write(jsonindex);
-                                response.end();
+                                console.log("TUT");
+                                delete slideIndex.content.slides;
+                                
+                                var jsonindex = JSON.stringify(slideIndex.content, null, 4);
+                                this.response.write(jsonindex);
+                                this.response.end();
+                                var pathToCourse = this.pathToCourse;
+                                var file = this.filename;
                                 path.exists(JSON_DIRECTORY+pathToCourse, function (exists) {
                                     if(exists){
 
-                                        fs.writeFile(JSON_DIRECTORY+pathToCourse+filename+".json", jsonindex, function (err) {
+                                        fs.writeFile(JSON_DIRECTORY+pathToCourse+file+".json", jsonindex, function (err) {
                                             if (err) {
                                                 console.error('Error while saving '+err);
                                             }else{
-                                                console.log('It\'s saved!');
+                                                console.log('It\'s saved!'+ pathToCourse+file+".json");
                                             }
                                         });
                                     }else{
                 
                                         fs.mkdir(JSON_DIRECTORY+pathToCourse, 0777, function(e) {
                                             if(!e){
-                                                fs.writeFile(JSON_DIRECTORY+pathToCourse+filename+".json", jsonindex, function (err) {
+                                                fs.writeFile(JSON_DIRECTORY+pathToCourse+file+".json", jsonindex, function (err) {
                                                     if (err) {
                                                         console.error('Error while saving '+err);
                                                     }else{
-                                                        console.log('It\'s saved!');
+                                                        console.log('It\'s saved!'+ pathToCourse+file+".json");
                                                     }
                                                 });
                                             }
@@ -350,16 +332,11 @@ function parseDocument2(response, request, body, pathToCourse, filename){
                            
                         }  
                     };
-                    
-
+                    slideIndex.response = response;
                     parseTitles(slideIndex, $);
-                    slideIndex.images = [];
-                    slideIndex.check = 0;
-                    slideIndex.codeBlocks = [];
-                    slideIndex.github= [];
-                    slideIndex.drawingsCount = 0;
+                    slideIndex.content.structure = makeStructureHierarchical(slideIndex);
                     parseImagesAndCodeBlocks(slideIndex,$);
-                    slideIndex.drawings = [];
+                    
                     
                     extensions.forEach(function (ext){
                         if(ext.parse !== null && typeof ext.parse== 'function'){
@@ -369,10 +346,12 @@ function parseDocument2(response, request, body, pathToCourse, filename){
                     
                     extensions.forEach(function (ext){
                         if(ext.parse !== null && typeof ext.parse== 'function'){
-                            ext.parse($,slideIndex,response, pathToCourse, filename);     
+                            //                            ext.parse($,slideIndex,response, pathToCourse, filename);     
+                            ext.parse($,slideIndex);     
                         }
                     });
-                }catch(err){
+                }
+                catch(err){
                     response.writeHead(500, {
                         'Content-Type': 'text/plain'
                     });
@@ -388,7 +367,7 @@ function parseDocument2(response, request, body, pathToCourse, filename){
  * Returns html document from remote URL
  */
  
-function getDocumentFromUrl(response, request, url, pathToCourse, filename){
+function getDocumentFromUrl(response, request, url, pathToCourse, filename, lecture, course){
     url = decodeURI(url);
     url = url.replace('http://',''); // TODO no support for other than HTTP protocol
     var stop = url.indexOf('/');
@@ -409,7 +388,7 @@ function getDocumentFromUrl(response, request, url, pathToCourse, filename){
 
         res.on('end', function () {
             if(res.statusCode === 200){
-                parseDocument2(response, request, content, pathToCourse, filename);
+                parseDocument(response, request, content, pathToCourse, filename,lecture, course);
             }else{ // TODO verify
                 response.writeHead(res.statusCode, {
                     'Content-Type': 'text/plain'
@@ -436,7 +415,7 @@ function getDocumentFromUrl(response, request, url, pathToCourse, filename){
  * Returns html document from file system
  */
  
-function getDocumentFromFileSystem(response, request, pathToCourse, filename){
+function getDocumentFromFileSystem(response, request, pathToCourse, filename, lecture, course){
     fs.readFile(SLIDES_DIRECTORY+pathToCourse+filename+".html", function (err, data) {
         if (err){
             response.writeHead(500, {
@@ -446,7 +425,7 @@ function getDocumentFromFileSystem(response, request, pathToCourse, filename){
             response.write(err.message)
             response.end()  
         }else{
-            parseDocument2(response, request, data, pathToCourse, filename);   
+            parseDocument(response, request, data, pathToCourse, filename,lecture, course);   
         }
     });
 }
@@ -456,19 +435,12 @@ function getDocumentFromFileSystem(response, request, pathToCourse, filename){
  */
 function parseTitles(slideIndex,$){
 
-    slideIndex.title = $('title').text();
-    slideIndex.course = $('meta[name="course"]').attr('content');
-    slideIndex.lecture = $('meta[name="lecture"]').attr('content');
+    slideIndex.content.title = $('title').text();
+    slideIndex.content.course = $('meta[name="course"]').attr('content');
+    slideIndex.content.lecture = $('meta[name="lecture"]').attr('content');
     var keywords = $('meta[name="keywords"]').attr('content');
-    slideIndex.keywords=keywords.split(',');
-    slideIndex.numberOfSlide = $('div.slide').length+1;// +1 for slide intro
-        
-    var content = {};
-    content.titles = [];
-    content.sectionSlide = [];
-    content.chapterSlide = [];
-    content.simpleSlide = [];
-    slideIndex.content = content;
+    slideIndex.content.keywords=keywords.split(',');
+    slideIndex.content.numberOfSlide = $('div.slide').length+1;// +1 for slide intro
                 
     var i=0;
     var iterator=1;
@@ -482,8 +454,8 @@ function parseTitles(slideIndex,$){
                     $(this).find('hgroup h1').each(function(){
                         //                                        console.log(iterator+'- '+ decodeURI($(this).text()));
                         iterator++;
-                        slideIndex.content.sectionSlide.push(decodeURI($(this).text()));
-                        slideIndex.content.titles.push(decodeURI($(this).text()));
+                        slideIndex.content.slides.sectionSlide.push(decodeURI($(this).text()));
+                        slideIndex.content.slides.titles.push(decodeURI($(this).text()));
                     })
                 }
                 break;
@@ -496,8 +468,8 @@ function parseTitles(slideIndex,$){
                     if($(this).text()!== ''){
                         sec = decodeURI($(this).text()).trim();
                         //                                        console.log(iterator+'- '+ (sec));
-                        slideIndex.content.sectionSlide.push(sec);
-                        slideIndex.content.titles.push(sec);
+                        slideIndex.content.slides.sectionSlide.push(sec);
+                        slideIndex.content.slides.titles.push(sec);
                         iterator++;
                     }
                     if($(section).has('section').length > 0){
@@ -511,8 +483,8 @@ function parseTitles(slideIndex,$){
                                         parentSection: parent,
                                         title: sec
                                     };
-                                    slideIndex.content.chapterSlide.push(tmp);
-                                    slideIndex.content.titles.push(sec);
+                                    slideIndex.content.slides.chapterSlide.push(tmp);
+                                    slideIndex.content.slides.titles.push(sec);
                                     chapterParent++;
                                     //                                                    console.log(iterator+'-- '+ decodeURI($(this).text()));
                                     iterator++;                                                
@@ -524,8 +496,8 @@ function parseTitles(slideIndex,$){
                                             parentChapter: chapterParent,
                                             title: tmpTitle
                                         };
-                                        slideIndex.content.simpleSlide.push(tmp);
-                                        slideIndex.content.titles.push(tmpTitle);
+                                        slideIndex.content.slides.simpleSlide.push(tmp);
+                                        slideIndex.content.slides.titles.push(tmpTitle);
                                                     
                                         //                                                        console.log(iterator+'--- '+decodeURI($(this).has('h1').text()).trim());
                                         iterator++;
@@ -534,8 +506,8 @@ function parseTitles(slideIndex,$){
                                             parentChapter: chapterParent,
                                             title: sec
                                         };
-                                        slideIndex.content.simpleSlide.push(tmp);
-                                        slideIndex.content.titles.push(sec);
+                                        slideIndex.content.slides.simpleSlide.push(tmp);
+                                        slideIndex.content.slides.titles.push(sec);
                                         //                                                        console.log(iterator+'--- '+sec);
                                         iterator++;
                                     }
@@ -552,8 +524,8 @@ function parseTitles(slideIndex,$){
                                     parentSection: parent,
                                     title: tmpTitle
                                 };
-                                slideIndex.content.chapterSlide.push(tmp);
-                                slideIndex.content.titles.push(tmpTitle);
+                                slideIndex.content.slides.chapterSlide.push(tmp);
+                                slideIndex.content.slides.titles.push(tmpTitle);
                                 chapterParent++;
                                 //                                                console.log(iterator+'-- '+decodeURI($(this).has('h1').text()).trim());
                                 iterator++;
@@ -563,8 +535,8 @@ function parseTitles(slideIndex,$){
                                     title: sec
                                 };
                                 chapterParent++;
-                                slideIndex.content.chapterSlide.push(tmp);
-                                slideIndex.content.titles.push(sec);
+                                slideIndex.content.slides.chapterSlide.push(tmp);
+                                slideIndex.content.slides.titles.push(sec);
                                 //                                                console.log(iterator+'-- '+sec);
                                 iterator++;
                             }
@@ -588,24 +560,24 @@ function parseImagesAndCodeBlocks(slideIndex,$){
     }else{
         slide = 0;
     }
-    
+    //    slideIndex.content.codeBlocks = [];
     $('body').find('.slide').each(function(){ // each slide
         
         slide++; // first div with class slide has index 
         $(this).find('img').each(function(){
             image = {};
             image.alt = $(this).prop('alt');
-            image.filename = $(this).prop('src');
-            image.filename = image.filename.substring(image.filename.lastIndexOf('/')+1);
-            image.slide = slide; // this corresponds to number in slide's URL, so first slide has number 1
+            image.url = $(this).prop('src');
+            image.filename = image.url.substring(image.url.lastIndexOf('/')+1);
+            image.slideURL = slideIndex.baseURL+"#/"+slide; // this corresponds to number in slide's URL, so first slide has number 1
             image.type = 'picture';
-            slideIndex.images.push(image);
+            slideIndex.content.images.push(image);
         });
         
         $(this).find('pre').each(function(){
             code = {};
-            code.slide = slide;
-            code.title= slideIndex.content.titles[slide-1];
+            code.slideURL = slideIndex.baseURL+"#/"+slide;
+            code.title= slideIndex.content.slides.titles[slide-1];
             var classAtr = $(this).prop('class');
             var i = classAtr.indexOf("brush:")+6;
             var j = classAtr.indexOf(";", i);
@@ -616,198 +588,54 @@ function parseImagesAndCodeBlocks(slideIndex,$){
             }
             code.language = slideindexer.styles[code.language];
             
-            slideIndex.codeBlocks.push(code);
+            slideIndex.content.codeBlocks.push(code);
         });
     });   
 }
 
 
-/**
- * <b>OBSOLETE</b>, see <code>parseDrawingAsync()</code> instead
- * <p>Parses Google Docs Drawings from document and returns the requested index to client (blocking I/O)</p>
- * @obsolete
- */
-function parseDrawings(slideIndex,temporary,response, request, pathToCourse, filename){
-    // console.log("   -- parseDrawings()");
-    if(temporary.drawings.length>0){ // if there are some drawings left, get their names
-        var drawing = temporary.drawings.pop();
-        var id = drawing.id;
-    
-        var options = {
-            host: 'docs.google.com',
-            port: 443,
-            path: '/drawings/d/'+id+'/export/png?id='+id+'&pageid=p',
-            method: 'HEAD'
-        };
-
-        var req = https.request(options, function(res) {
-            if(res.statusCode === 200){
-                var contDisp = res.headers["content-disposition"];
-                var i = contDisp.indexOf("filename=\"")+10;
-                var j = contDisp.lastIndexOf("\"");
-                drawing.filename = contDisp.substring(i,j);
-                slideIndex.drawings.push(drawing);
-                parseDrawings(slideIndex, temporary,response, request, pathToCourse, filename);
-            }else{
-                // TODO handle error
-                drawing.filename = 'Error while requesting from Google Docs '+res.statusCode;
-                slideIndex.drawings.push(drawing);
-                parseDrawings(slideIndex, temporary,response, request, pathToCourse, filename);
-            }
-            res.on('data', function(d) {
-    
-                });
-        });
-        req.end();
-
-        req.on('error', function(e) {
-            console.error(e.message);
-            drawing.filename = 'Error while requesting from Google Docs '+e.message;
-            slideIndex.drawings.push(drawing);
-            parseDrawings(slideIndex, temporary,response, request, pathToCourse, filename);
-        });
-    }else{
-        // all drawings has been processed
-        response.writeHead(200, {
-            'Content-Type': 'application/json'
-        });
-        var jsonindex = JSON.stringify(slideIndex, null, 4);
-        response.write(jsonindex);
-        response.end();
-        path.exists(JSON_DIRECTORY+pathToCourse, function (exists) {
-            if(exists){
-                fs.writeFile(JSON_DIRECTORY+pathToCourse+filename+".json", jsonindex, function (err) {
-                    if (err) {
-                        console.error('Error while saving '+err);
-                    }else{
-                        console.log('It\'s saved!');
-                    }
-                });
-            }else{
-                
-                fs.mkdir(JSON_DIRECTORY+pathToCourse, 0777, function(e) {
-                    if(!e){
-                        fs.writeFile(JSON_DIRECTORY+pathToCourse+filename+".json", jsonindex, function (err) {
-                            if (err) {
-                                console.error('Error while saving '+err);
-                            }else{
-                                console.log('It\'s saved!');
-                            }
-                        });
-                    }
-                });
-            }
-            
-        });   
-    }
-}
-
-/**
- *<b>OBSOLETE</b>, Parsing of drawings is handled by Humla extension
- * Calls method to parse each parsing
- */
-function parseDrawingAsync(slideIndex,temporary,response, pathToCourse, filename){
-    console.log("Count: "+slideIndex.drawingsCount);
-    
-    for(i in temporary.drawings){
-        parseSingleDrawing(temporary.drawings[i],slideIndex,response, pathToCourse, filename);
-    }
-    
-}
-
-/**
- *<b>OBSOLETE</b>, Parsing of drawings is handled by Humla extension
- * Parses single drawing. <p>Based on given drawing id, the HTTP HEAD request is made
- * and filename is taken from HTTP response. After this, the function checks
- * if all drawings have been parsed (variable slideIndex.drawingsCount is decreased
- * by one after each successful parsing), then method <code>sendResponse()</code> is called</p>
- * @param drawing Object that represents drawing, it's property id is use to 
- * identify the drawing on Google Docs
- *
- */
-function parseSingleDrawing(drawing,slideIndex,response, pathToCourse, filename){
-    
-    var id = drawing.id;
-    var options = {
-        host: 'docs.google.com',
-        port: 443,
-        path: '/drawings/d/'+id+'/export/png?id='+id+'&pageid=p',
-        method: 'HEAD'
-    };
-    
-    var req = https.request(options, function(res) {
-        if(res.statusCode === 200){
-            var contDisp = res.headers["content-disposition"];
-            var i = contDisp.indexOf("filename=\"")+10;
-            var j = contDisp.lastIndexOf("\"");
-            drawing.filename = contDisp.substring(i,j);
-            slideIndex.drawings.push(drawing);
-                
-        }else{
-            // TODO handle error
-            drawing.filename = 'Error while requesting from Google Docs '+res.statusCode;
-            slideIndex.drawings.push(drawing);
-                
-        }
-        slideIndex.drawingsCount--;
-        if(slideIndex.drawingsCount === 0){
-            sendResponse(slideIndex,response, pathToCourse, filename); 
-        }
-            
-        res.on('data', function(d) {});
-    });
-    req.end();
-
-    req.on('error', function(e) {
-        console.error(e.message);
-        drawing.filename = 'Error while requesting from Google Docs '+e.message;
-        slideIndex.drawings.push(drawing);
-        if(slideIndex.drawingsCount === 0){
-            sendResponse(slideIndex,response, pathToCourse, filename); 
-        }
-    });   
-}
-
-
-/**
- *<b>OBSOLETE</b>, Method sendResponse is a member of slideIndex, left for BC
- * Sends response to client after whole documents is parsed. If index file doesn't exist
- * yet, then it also creates new json index file
- */
-function sendResponse(slideIndex,response, pathToCourse, filename){
-    console.log("_________________");
-    response.writeHead(200, {
-        'Content-Type': 'application/json'
-    });
-    var jsonindex = JSON.stringify(slideIndex, null, 4);
-    response.write(jsonindex);
-    response.end();
-    path.exists(JSON_DIRECTORY+pathToCourse, function (exists) {
-        if(exists){
-            fs.writeFile(JSON_DIRECTORY+pathToCourse+filename+".json", jsonindex, function (err) {
-                if (err) {
-                    console.error('Error while saving '+err);
-                }else{
-                    console.log('It\'s saved!');
+function makeStructureHierarchical(slideIndex){
+    var sections = {};
+    var newcontent = new Array();
+    var baseURL = slideIndex.host+ SLIDES_DIRECTORY+"/"+slideIndex.course+"/"+GENERAL_LECTURE_NAME+slideIndex.lecture+".html";
+    var counter = 1;
+    slideIndex.baseURL = baseURL;
+    baseURL = baseURL + "#/";
+    for(var section in slideIndex.content.slides.sectionSlide){
+        counter++;
+        var tmp = {};
+        //        tmp.chapters = new Array();
+        tmp.title  = slideIndex.content.slides.sectionSlide[section];
+        tmp.url = baseURL+counter;
+        for(var ch in slideIndex.content.slides.chapterSlide){
+            if(slideIndex.content.slides.chapterSlide[ch].parentSection == section){
+                if(tmp.chapters==undefined){
+                    tmp.chapters = new Array();
                 }
-            });
-        }else{
-                
-            fs.mkdir(JSON_DIRECTORY+pathToCourse, 0777, function(e) {
-                if(!e){
-                    fs.writeFile(JSON_DIRECTORY+pathToCourse+filename+".json", jsonindex, function (err) {
-                        if (err) {
-                            console.error('Error while saving '+err);
-                        }else{
-                            console.log('It\'s saved!');
+                counter++;    
+                var chapter = {};
+                chapter.title = slideIndex.content.slides.chapterSlide[ch].title;
+                chapter.url = baseURL+counter;
+                for(var s in slideIndex.content.slides.simpleSlide){
+                    if(slideIndex.content.slides.simpleSlide[s].parentChapter == ch){
+                        if(chapter.slides==undefined){
+                            chapter.slides = new Array();
                         }
-                    });
-                }
-            });
+                        counter++;
+                        var slide = {};
+                        slide.title = slideIndex.content.slides.simpleSlide[s].title;
+                        slide.url = baseURL+counter;
+                        chapter.slides.push(slide);
+                    }         
+                }   
+                tmp.chapters.push(chapter);    
+            }       
         }
-    }); 
+        newcontent.push(tmp);    
+    } 
+    sections.index = newcontent;
+    return sections;
 }
-
 /**
  * Tests if string ends with given suffix
  */
