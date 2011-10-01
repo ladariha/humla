@@ -7,6 +7,7 @@ var jsdom = require('jsdom');
 var fs     = require('fs');
 var jquery = fs.readFileSync('./public/lib/jquery-1.6.3.min.js').toString();
 var path = require('path');
+var RAW_SLIDES_DIRECTORY = '/public/data/slides';
 var JSON_DIRECTORY = (path.join(path.dirname(__filename), '../public/data/index')).toString();
 var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../public/data/slides')).toString();
 var EXTENSIONS_DIRECTORY = (path.join(path.dirname(__filename), '../public/humla/lib/ext')).toString();
@@ -24,26 +25,9 @@ fs.readdir( EXTENSIONS_DIRECTORY, function( err, files ) { // require() all js f
 
 var slideindexer={};
 slideindexer.urls = [ // list of available URL that this plugin handles
-    ['^/api/slideindex/index',  index],
+    ['^/api/[A-Za-z0-9-_]+/[A-Za-z0-9-_]+/index',  index],
     ];
     
-
-app.get('/api/:lecture/:course/index', function api(req, res) {
-    console.log("MAM TO");
-    //var query = require('url').parse(req.url).query;
-    var args, path = parseURL(req.url).pathname;
-    for (var i=0, n = slideindexer.urls.length; i<n; i++) { // projde vsechna url
-        args = new RegExp(slideindexer.urls[i][0]).exec(path);
-        if (args !== null){ // if shoda 
-            args.shift();
-            args.unshift(res, req);
-            if (typeof passed_args == 'array')
-                args.concat(passed_args);
-            slideindexer.urls[i][1].apply(this, args);
-        }
-    }
-}
-);
 
 
 // taken from http://alexgorbatchev.com/SyntaxHighlighter/manual/brushes/
@@ -96,6 +80,7 @@ slideindexer.styles["xslt"]="XML";
 
 
 
+
 /**
  * api/slideindexer/
  * provides routing for slideindexer plugin
@@ -119,19 +104,13 @@ slideindexer.styles["xslt"]="XML";
  *  <div>
  *  <h2>RESTful API description</h2>
  *  <ul>
- *  <li>URL: /api/slideindexer/index</li>
+ *  <li>URL: /api/{course}/{lectureX}/index - where X is number of lecture</li>
  *  <li>HTTP Methods: GET </li>
  *  <li>Parameters:
  *  <ul>
  *  <li>(optional) refresh: if you want to update index file; value: true</li>
- *  <li>One of following:
+ *  <li>optionally:
  *  <ul>
- *  <li> course & lecture
- *  <ul>
- *  <li>course: course code in lower cases; value: par, mdw...</li>
- *  <li>lecture: number of lecture; value: 1,2,...</li>
- *  </ul>
- *  </li>
  *  <li>url: full url of slide presentation encoded with decodeURI(); value: url address </li>
  *  </ul>
  *  </li>
@@ -141,14 +120,15 @@ slideindexer.styles["xslt"]="XML";
  *  <p>
  *  Sample urls:
  *  <ul>
- *  <li>api/slideindexer/index?course=mdw&lecture=1</li>
- *  <li>api/slideindexer/index?course=mdw&lecture=1&refresh=true</li>
- *  <li>api/slideindexer/index?url=[url]</li>
+ *  <li>api/mdw/lecture1/index</li>
+ *  <li>api/mdw/lecture1/index?refresh=true</li>
+ *  <li>api/mdw/lecture1/index?url=[url]</li>
  *  </ul>
  *  </p>
  *  </div>
  */
-function api(req, res) {
+
+app.get('/api/:lecture/:course/index', function api(req, res) {
     //var query = require('url').parse(req.url).query;
     var args, path = parseURL(req.url).pathname;
     for (var i=0, n = slideindexer.urls.length; i<n; i++) { // projde vsechna url
@@ -162,6 +142,7 @@ function api(req, res) {
         }
     }
 }
+);
 
 
 /**
@@ -169,7 +150,6 @@ function api(req, res) {
  * 
  */
 function index(response, request){
-
     switch(request.method){
         case 'GET':
             //            getDocumentFromUrl(response, request)
@@ -189,8 +169,10 @@ function index(response, request){
  */
 function getIndex(response, request){
     
-    var course = querystring.parse(require('url').parse(request.url).query)['course'];
-    var lecture = querystring.parse(require('url').parse(request.url).query)['lecture'];
+    var regx =/^\/api\/([A-Za-z0-9-_]+)\/([A-Za-z0-9-_]+)\/index/; 
+    request.url.match(regx);
+    var course = RegExp.$1;
+    var lecture = RegExp.$2;
     var url = querystring.parse(require('url').parse(request.url).query)['url'];
     var refresh = querystring.parse(require('url').parse(request.url).query)['refresh'];
     var pathToCourse = '/'+course+'/';
@@ -307,13 +289,10 @@ function parseDocument(response, request, body, pathToCourse, filename, lecture,
                         },
                         sendResponse : function(slideIndex){
                             this.check = this.check+1;
-                            console.log("CHECK "+this.check);
-                            console.log("FILE "+this.filename)
                             if(this.check === this.numberOfCalledExtensions){
                                 this.response.writeHead(200, {
                                     'Content-Type': 'application/json'
                                 });
-                                console.log("TUT");
                                 delete slideIndex.content.slides;
                                 
                                 var jsonindex = JSON.stringify(slideIndex.content, null, 4);
@@ -615,7 +594,7 @@ function parseImagesAndCodeBlocks(slideIndex,$){
 function makeStructureHierarchical(slideIndex){
     var sections = {};
     var newcontent = new Array();
-    var baseURL = slideIndex.host+ SLIDES_DIRECTORY+"/"+slideIndex.course+"/"+GENERAL_LECTURE_NAME+slideIndex.lecture+".html";
+    var baseURL = slideIndex.host+ RAW_SLIDES_DIRECTORY+"/"+slideIndex.course+"/"+GENERAL_LECTURE_NAME+slideIndex.lecture+".html";
     var counter = 1;
     slideIndex.baseURL = baseURL;
     baseURL = baseURL + "#/";
@@ -661,4 +640,3 @@ function endsWith(string, suffix) {
     return string.indexOf(suffix, string.length - suffix.length) !== -1;
 }
 
-exports.api = api;

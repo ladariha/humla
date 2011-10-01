@@ -12,7 +12,7 @@ var path = require('path')
 var HANDLERS_DIRECTORY = (path.join(path.dirname(__filename), './handlers/')).toString();
 var handlers = new Array();
 
-require('fs').readdir( HANDLERS_DIRECTORY, function( err, files ) { // require() all js files in humla extensions directory
+require('fs').readdir( HANDLERS_DIRECTORY, function( err, files ) { // require() all js files in handlers directory
     files.forEach(function(file) {
         if(endsWith(file, "js")){
             var req = require( HANDLERS_DIRECTORY+'/'+file );

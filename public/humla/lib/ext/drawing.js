@@ -46,7 +46,6 @@ var ex_drawing = {
     
 };
 exports.parse =function parse($,slideIndex){
-//exports.parse =function parse($,slideIndex,response, _pathToCourse, _filename){
     var temporary = {};      
     temporary.drawings = [];
     var slide=1; 
@@ -64,7 +63,6 @@ exports.parse =function parse($,slideIndex){
         slide++;    
     });    
     for(i in temporary.drawings){
-//        parseSingleDrawing(temporary.drawings[i],slideIndex,response, _pathToCourse, _filename);
         parseSingleDrawing(temporary.drawings[i],slideIndex);
     }
 
@@ -110,7 +108,6 @@ function parseSingleDrawing(drawing,slideIndex){
         if(slideIndex.drawingsCount === 0){
             console.log("CAS");
             slideIndex.sendResponse(slideIndex); 
-//            slideIndex.sendResponse(slideIndex,response, _pathToCourse, _filename); 
             return slideIndex;
         }
             
@@ -123,7 +120,6 @@ function parseSingleDrawing(drawing,slideIndex){
         slideIndex.content.drawings.push(drawing);
         if(slideIndex.drawingsCount === 0){
             slideIndex.sendResponse(slideIndex); 
-//            slideIndex.sendResponse(slideIndex,response, _pathToCourse, _filename); 
             return slideIndex;
         }
     });   
