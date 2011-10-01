@@ -7,7 +7,7 @@ var jsdom = require('jsdom');
 var fs     = require('fs');
 var jquery = fs.readFileSync('./public/lib/jquery-1.6.3.min.js').toString();
 var path = require('path');
-var RAW_SLIDES_DIRECTORY = '/public/data/slides';
+var RAW_SLIDES_DIRECTORY = '/data/slides';
 var JSON_DIRECTORY = (path.join(path.dirname(__filename), '../public/data/index')).toString();
 var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../public/data/slides')).toString();
 var EXTENSIONS_DIRECTORY = (path.join(path.dirname(__filename), '../public/humla/lib/ext')).toString();
@@ -174,31 +174,50 @@ function getIndex(response, request){
     var course = RegExp.$1;
     var lecture = RegExp.$2;
     var url = querystring.parse(require('url').parse(request.url).query)['url'];
+    var alt = querystring.parse(require('url').parse(request.url).query)['alt'];
+    if(alt == undefined){
+        alt = "json"; // set json as default
+    }else{
+        if(alt!=="json" && alt!="xml"){
+            // incorrect format requested
+            response.writeHead(400, { // TODO fix status code
+                'Content-Type': 'text/plain'
+            });
+            response.write("Incorrect value of optional alt attribute. Allowed values are xml or json.");
+            response.end();
+        }
+    }
     var refresh = querystring.parse(require('url').parse(request.url).query)['refresh'];
     var pathToCourse = '/'+course+'/';
-    var filename = "lecture"+lecture;
-    var indexfile = JSON_DIRECTORY+pathToCourse+filename+".json";
+    var filename = lecture;
+    var indexfile = JSON_DIRECTORY+pathToCourse+filename+"."+alt;
     if(!refresh){
         path.exists(indexfile, function (exists) {
             if(exists){
                 fs.readFile(indexfile, function(err, data) {
                     if(err){
-                        console.error("ERROR reading JSON file "+indexfile);
+                        console.error("ERROR reading "+alt+" file "+indexfile);
                         console.error("   => parsing source html file instead");
                     }else{
-                        response.writeHead(200, {
-                            'Content-Type': 'application/json'
-                        });
-                        var jsonindex = data.toString();
-                        response.write(jsonindex);
+                        if(alt==="json"){
+                            response.writeHead(200, {
+                                'Content-Type': 'application/json'
+                            });
+                        }else{
+                              response.writeHead(200, {
+                                'Content-Type': 'application/xml'
+                            });
+                        }
+                        var textindex = data.toString();
+                        response.write(textindex);
                         response.end();    
                     }
                 });
             }else{
                 if(url === undefined){
-                    getDocumentFromFileSystem(response, request, pathToCourse,filename, lecture, course);
+                    getDocumentFromFileSystem(response, request, pathToCourse,filename, lecture, course, alt);
                 }else{
-                    getDocumentFromUrl(response, request, url, pathToCourse, filename, lecture, course);    
+                    getDocumentFromUrl(response, request, url, pathToCourse, filename, lecture, course, alt);    
                 }      
                     
             } 
@@ -206,9 +225,10 @@ function getIndex(response, request){
     }else{ // parse the document again and update JSON index file
         if(refresh==="true"){
             if(url === undefined){
-                getDocumentFromFileSystem(response, request, pathToCourse,filename, lecture, course);
+                console.log("REFRESH");
+                getDocumentFromFileSystem(response, request, pathToCourse,filename, lecture, course, alt);
             }else{
-                getDocumentFromUrl(response, request, url, pathToCourse, filename,lecture, course);    
+                getDocumentFromUrl(response, request, url, pathToCourse, filename,lecture, course, alt);    
             }            
         }else{
             response.writeHead(400, {
@@ -239,9 +259,12 @@ function getIndex(response, request){
  * @param body html source code to be parsed
  * @param pathToCourse name of folder for courses's slides and indices, for example "/mdw/"
  * @param filename file name (without preffix) based on lecture order, for example "lecture1"
+ * @param lecture
+ * @param course
+ * @param alt - output format, either json or xml (case sensitive)
  *
  */
-function parseDocument(response, request, body, pathToCourse, filename, lecture, course){
+function parseDocument(response, request, body, pathToCourse, filename, lecture, course, alt){
     jsdom.env({
         html: body,
         src: [
@@ -259,6 +282,7 @@ function parseDocument(response, request, body, pathToCourse, filename, lecture,
                     var $ = window.$;
                     var slideIndex = {
                         pathToCourse : pathToCourse,
+                        format : alt,
                         host : request.headers.host,
                         filename : filename,
                         course : course,
@@ -295,30 +319,35 @@ function parseDocument(response, request, body, pathToCourse, filename, lecture,
                                 });
                                 delete slideIndex.content.slides;
                                 
-                                var jsonindex = JSON.stringify(slideIndex.content, null, 4);
-                                this.response.write(jsonindex);
+                                var textindex ="";
+                                if(slideIndex.format === "json"){
+                                    textindex = JSON.stringify(slideIndex.content, null, 4);
+                                }else{
+                                    textindex = "XML";
+                                }
+                                this.response.write(textindex);
                                 this.response.end();
                                 var pathToCourse = this.pathToCourse;
                                 var file = this.filename;
                                 path.exists(JSON_DIRECTORY+pathToCourse, function (exists) {
                                     if(exists){
 
-                                        fs.writeFile(JSON_DIRECTORY+pathToCourse+file+".json", jsonindex, function (err) {
+                                        fs.writeFile(JSON_DIRECTORY+pathToCourse+file+"."+slideIndex.format, textindex, function (err) {
                                             if (err) {
                                                 console.error('Error while saving '+err);
                                             }else{
-                                                console.log('It\'s saved!'+ pathToCourse+file+".json");
+                                                console.log('It\'s saved!'+ pathToCourse+file+"."+slideIndex.format);
                                             }
                                         });
                                     }else{
                 
                                         fs.mkdir(JSON_DIRECTORY+pathToCourse, 0777, function(e) {
                                             if(!e){
-                                                fs.writeFile(JSON_DIRECTORY+pathToCourse+file+".json", jsonindex, function (err) {
+                                                fs.writeFile(JSON_DIRECTORY+pathToCourse+file+"."+slideIndex.format, textindex, function (err) {
                                                     if (err) {
                                                         console.error('Error while saving '+err);
                                                     }else{
-                                                        console.log('It\'s saved!'+ pathToCourse+file+".json");
+                                                        console.log('It\'s saved!'+ pathToCourse+file+"."+slideIndex.format);
                                                     }
                                                 });
                                             }
@@ -343,7 +372,6 @@ function parseDocument(response, request, body, pathToCourse, filename, lecture,
                     
                     extensions.forEach(function (ext){
                         if(ext.parse !== null && typeof ext.parse== 'function'){
-                            //                            ext.parse($,slideIndex,response, pathToCourse, filename);     
                             ext.parse($,slideIndex);     
                         }
                     });
@@ -364,7 +392,7 @@ function parseDocument(response, request, body, pathToCourse, filename, lecture,
  * Returns html document from remote URL
  */
  
-function getDocumentFromUrl(response, request, url, pathToCourse, filename, lecture, course){
+function getDocumentFromUrl(response, request, url, pathToCourse, filename, lecture, course, alt){
     url = decodeURI(url);
     url = url.replace('http://',''); // TODO no support for other than HTTP protocol
     var stop = url.indexOf('/');
@@ -385,8 +413,8 @@ function getDocumentFromUrl(response, request, url, pathToCourse, filename, lect
 
         res.on('end', function () {
             if(res.statusCode === 200){
-                parseDocument(response, request, content, pathToCourse, filename,lecture, course);
-            }else{ // TODO verify
+                parseDocument(response, request, content, pathToCourse, filename,lecture, course, alt);
+            }else{
                 response.writeHead(res.statusCode, {
                     'Content-Type': 'text/plain'
                 });
@@ -412,7 +440,7 @@ function getDocumentFromUrl(response, request, url, pathToCourse, filename, lect
  * Returns html document from file system
  */
  
-function getDocumentFromFileSystem(response, request, pathToCourse, filename, lecture, course){
+function getDocumentFromFileSystem(response, request, pathToCourse, filename, lecture, course, alt){
     fs.readFile(SLIDES_DIRECTORY+pathToCourse+filename+".html", function (err, data) {
         if (err){
             response.writeHead(500, {
@@ -422,7 +450,7 @@ function getDocumentFromFileSystem(response, request, pathToCourse, filename, le
             response.write(err.message)
             response.end()  
         }else{
-            parseDocument(response, request, data, pathToCourse, filename,lecture, course);   
+            parseDocument(response, request, data, pathToCourse, filename,lecture, course, alt);   
         }
     });
 }
@@ -457,7 +485,7 @@ function parseTitles(slideIndex,$){
                 }
                 break;
             case 'section':
-                parent++; // TODO recheck if increasing here is correct???
+                parent++;
                 var sec='';
                 var section = this;
                 var section2;
@@ -564,7 +592,7 @@ function parseImagesAndCodeBlocks(slideIndex,$){
         $(this).find('img').each(function(){
             image = {};
             image.alt = $(this).prop('alt');
-            image.url = $(this).prop('src');
+            image.url = $(this).prop('src'); // TODO FIX RELATIVE URL
             image.filename = image.url.substring(image.url.lastIndexOf('/')+1);
             image.slideURL = slideIndex.baseURL+"#/"+slide; // this corresponds to number in slide's URL, so first slide has number 1
             image.type = 'picture';

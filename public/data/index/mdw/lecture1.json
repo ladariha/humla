@@ -14,40 +14,40 @@
             "alt": "Amazon EC2 Free Usage Tier",
             "url": "img/ec2-free-tier.png",
             "filename": "ec2-free-tier.png",
-            "slideURL": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/24",
+            "slideURL": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/24",
             "type": "picture"
         },
         {
             "alt": "Cloud9 IDE",
             "url": "img/c9-ide-screenshot.png",
             "filename": "c9-ide-screenshot.png",
-            "slideURL": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/34",
+            "slideURL": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/34",
             "type": "picture"
         }
     ],
     "codeBlocks": [
         {
-            "slideURL": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/32",
+            "slideURL": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/32",
             "title": "Code Examples",
             "language": "Java"
         },
         {
-            "slideURL": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/32",
+            "slideURL": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/32",
             "title": "Code Examples",
             "language": "JavaScript"
         },
         {
-            "slideURL": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/32",
+            "slideURL": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/32",
             "title": "Code Examples",
             "language": "XML"
         },
         {
-            "slideURL": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/32",
+            "slideURL": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/32",
             "title": "Code Examples",
             "language": "Bash/shell"
         },
         {
-            "slideURL": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/34",
+            "slideURL": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/34",
             "title": "Use and Alter the Code",
             "language": "Bash/shell"
         }
@@ -57,22 +57,30 @@
             "owner": "",
             "file": "discovery/category-discovery.js",
             "title": "Github Repo",
-            "slide": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/33"
+            "slide": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/33"
         }
     ],
     "drawings": [
         {
             "alt": "Representational State Transfer",
             "id": "1dOevmc1cKlJNHz6h416ybvOmYSTQD_cqPbgXjpjOY-0",
-            "slide": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/10",
+            "slide": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/10",
             "type": "drawing",
             "exportURL": "https://docs.google.com/drawings/d/1dOevmc1cKlJNHz6h416ybvOmYSTQD_cqPbgXjpjOY-0/export/png?id=1dOevmc1cKlJNHz6h416ybvOmYSTQD_cqPbgXjpjOY-0&pageid=p",
             "filename": "RESTArchitecture.png"
         },
         {
+            "alt": "Spaghetti Integration",
+            "id": "123tDQFo3Zq0LEzzhquKp1xJX4YZ6YiWC0GDNGGK1UA0",
+            "slide": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/8",
+            "type": "drawing",
+            "exportURL": "https://docs.google.com/drawings/d/123tDQFo3Zq0LEzzhquKp1xJX4YZ6YiWC0GDNGGK1UA0/export/png?id=123tDQFo3Zq0LEzzhquKp1xJX4YZ6YiWC0GDNGGK1UA0&pageid=p",
+            "filename": "OnetoOneSpaghettiIntegration.png"
+        },
+        {
             "alt": "Traditional Hardware Model",
             "id": "17jEYye-th5U5T-N-iE1gR7f_k5Bwrk9P7z9yYC4EZlw",
-            "slide": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/11",
+            "slide": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/11",
             "type": "drawing",
             "exportURL": "https://docs.google.com/drawings/d/17jEYye-th5U5T-N-iE1gR7f_k5Bwrk9P7z9yYC4EZlw/export/png?id=17jEYye-th5U5T-N-iE1gR7f_k5Bwrk9P7z9yYC4EZlw&pageid=p",
             "filename": "traditional-hardware.png"
@@ -80,23 +88,15 @@
         {
             "alt": "SOA Integration",
             "id": "1-uHnuWoYea9KZgEBRkGmdpbKDT5THls9dn56XolZ1Lg",
-            "slide": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/9",
+            "slide": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/9",
             "type": "drawing",
             "exportURL": "https://docs.google.com/drawings/d/1-uHnuWoYea9KZgEBRkGmdpbKDT5THls9dn56XolZ1Lg/export/png?id=1-uHnuWoYea9KZgEBRkGmdpbKDT5THls9dn56XolZ1Lg&pageid=p",
             "filename": "soa-integration.png"
         },
         {
-            "alt": "Spaghetti Integration",
-            "id": "123tDQFo3Zq0LEzzhquKp1xJX4YZ6YiWC0GDNGGK1UA0",
-            "slide": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/8",
-            "type": "drawing",
-            "exportURL": "https://docs.google.com/drawings/d/123tDQFo3Zq0LEzzhquKp1xJX4YZ6YiWC0GDNGGK1UA0/export/png?id=123tDQFo3Zq0LEzzhquKp1xJX4YZ6YiWC0GDNGGK1UA0&pageid=p",
-            "filename": "OnetoOneSpaghettiIntegration.png"
-        },
-        {
             "alt": "Web Engineering Overview",
             "id": "1oyGz6GdF-K_hln9g_l3Cp1eNK843S4NKE4tO8HMUYGw",
-            "slide": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/5",
+            "slide": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/5",
             "type": "drawing",
             "exportURL": "https://docs.google.com/drawings/d/1oyGz6GdF-K_hln9g_l3Cp1eNK843S4NKE4tO8HMUYGw/export/png?id=1oyGz6GdF-K_hln9g_l3Cp1eNK843S4NKE4tO8HMUYGw&pageid=p",
             "filename": "web-20-context.png"
@@ -104,7 +104,7 @@
         {
             "alt": "Cloud Computing Solution",
             "id": "1yeHPc2AqDeXanOV0Zi8MirHApMjf1Sa_2UCOt_9Avds",
-            "slide": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/12",
+            "slide": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/12",
             "type": "drawing",
             "exportURL": "https://docs.google.com/drawings/d/1yeHPc2AqDeXanOV0Zi8MirHApMjf1Sa_2UCOt_9Avds/export/png?id=1yeHPc2AqDeXanOV0Zi8MirHApMjf1Sa_2UCOt_9Avds&pageid=p",
             "filename": "scalable-cloud-model.png"
@@ -112,7 +112,7 @@
         {
             "alt": "MDW Big Picture",
             "id": "1i5681Erf2sYIeXg8p1lhiNvJqAAifdFs8o4DAshx2C4",
-            "slide": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/14",
+            "slide": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/14",
             "type": "drawing",
             "exportURL": "https://docs.google.com/drawings/d/1i5681Erf2sYIeXg8p1lhiNvJqAAifdFs8o4DAshx2C4/export/png?id=1i5681Erf2sYIeXg8p1lhiNvJqAAifdFs8o4DAshx2C4&pageid=p",
             "filename": "mdw-big-picture.png"
@@ -120,7 +120,7 @@
         {
             "alt": "",
             "id": "1wb1OFJYZ1ukRLlKOXE7JWkhFGCeLvhIO6bveWUVpiBI",
-            "slide": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/19",
+            "slide": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/19",
             "type": "drawing",
             "exportURL": "https://docs.google.com/drawings/d/1wb1OFJYZ1ukRLlKOXE7JWkhFGCeLvhIO6bveWUVpiBI/export/png?id=1wb1OFJYZ1ukRLlKOXE7JWkhFGCeLvhIO6bveWUVpiBI&pageid=p",
             "filename": "Labs-architecture.png"
@@ -130,105 +130,105 @@
         "index": [
             {
                 "title": "Hellos",
-                "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/2"
+                "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/2"
             },
             {
                 "title": "Web Engineering Curriculla",
-                "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/3",
+                "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/3",
                 "chapters": [
                     {
                         "title": "Web Engineering Curricula",
-                        "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/4"
+                        "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/4"
                     },
                     {
                         "title": "Bird's View",
-                        "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/5"
+                        "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/5"
                     }
                 ]
             },
             {
                 "title": "Course at a Glance",
-                "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/6",
+                "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/6",
                 "chapters": [
                     {
                         "title": "Motivation and Scope",
-                        "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/7",
+                        "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/7",
                         "slides": [
                             {
                                 "title": "Motivation in Brief",
-                                "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/8"
+                                "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/8"
                             },
                             {
                                 "title": "Spaghetti Architecture",
-                                "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/9"
+                                "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/9"
                             },
                             {
                                 "title": "SOA Architecture",
-                                "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/10"
+                                "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/10"
                             },
                             {
                                 "title": "REST Architecture",
-                                "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/11"
+                                "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/11"
                             },
                             {
                                 "title": "Good Performance  Traditional Solution",
-                                "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/12"
+                                "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/12"
                             },
                             {
                                 "title": "Good Performance  Cloud Solution",
-                                "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/13"
+                                "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/13"
                             },
                             {
                                 "title": "Scope",
-                                "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/14"
+                                "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/14"
                             },
                             {
                                 "title": "Big Picture",
-                                "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/15"
+                                "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/15"
                             }
                         ]
                     },
                     {
                         "title": "Requirements and Organization",
-                        "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/16",
+                        "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/16",
                         "slides": [
                             {
                                 "title": "General Requirements",
-                                "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/17"
+                                "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/17"
                             },
                             {
                                 "title": "Organization of Lectures",
-                                "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/18"
+                                "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/18"
                             },
                             {
                                 "title": "Organization of Labs",
-                                "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/19"
+                                "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/19"
                             },
                             {
                                 "title": "Solution Architecture",
-                                "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/20"
+                                "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/20"
                             },
                             {
                                 "title": "Methodology for Lab Work",
-                                "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/21"
+                                "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/21"
                             },
                             {
                                 "title": "Methodology for Lab Work (cont.)",
-                                "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/22"
+                                "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/22"
                             }
                         ]
                     },
                     {
                         "title": "Technologies/Development Platform",
-                        "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/23",
+                        "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/23",
                         "slides": [
                             {
                                 "title": "Development Platforms",
-                                "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/24"
+                                "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/24"
                             },
                             {
                                 "title": "Amazon EC2 Free Usage Tier",
-                                "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/25"
+                                "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/25"
                             }
                         ]
                     }
@@ -236,63 +236,63 @@
             },
             {
                 "title": "Assessment",
-                "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/26",
+                "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/26",
                 "chapters": [
                     {
                         "title": "Assessment",
-                        "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/27"
+                        "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/27"
                     },
                     {
                         "title": "Final Marks",
-                        "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/28"
+                        "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/28"
                     }
                 ]
             },
             {
                 "title": "Communication and Resources",
-                "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/29",
+                "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/29",
                 "chapters": [
                     {
                         "title": "Communication",
-                        "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/30"
+                        "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/30"
                     },
                     {
                         "title": "Overview of Resources",
-                        "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/31"
+                        "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/31"
                     },
                     {
                         "title": "About Slides",
-                        "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/32"
+                        "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/32"
                     },
                     {
                         "title": "Code Examples",
-                        "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/33"
+                        "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/33"
                     },
                     {
                         "title": "Github Repo",
-                        "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/34"
+                        "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/34"
                     },
                     {
                         "title": "Use and Alter the Code",
-                        "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/35"
+                        "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/35"
                     },
                     {
                         "title": "Tasks from Lectures",
-                        "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/36"
+                        "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/36"
                     }
                 ]
             },
             {
                 "title": "FAQ",
-                "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/37",
+                "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/37",
                 "chapters": [
                     {
                         "title": "Frequently Asked Questions",
-                        "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/38"
+                        "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/38"
                     },
                     {
                         "title": "Frequently Asked Questions (cont.)",
-                        "url": "127.0.0.1:1337/public/data/slides/mdw/lecture1.html#/39"
+                        "url": "127.0.0.1:1337/data/slides/mdw/lecturelecture1.html#/39"
                     }
                 ]
             }
