@@ -24,9 +24,27 @@ fs.readdir( EXTENSIONS_DIRECTORY, function( err, files ) { // require() all js f
 
 var slideindexer={};
 slideindexer.urls = [ // list of available URL that this plugin handles
-    ['^/api/slideindexer/index',  index],
+    ['^/api/slideindex/index',  index],
     ];
     
+
+app.get('/api/:lecture/:course/index', function api(req, res) {
+    console.log("MAM TO");
+    //var query = require('url').parse(req.url).query;
+    var args, path = parseURL(req.url).pathname;
+    for (var i=0, n = slideindexer.urls.length; i<n; i++) { // projde vsechna url
+        args = new RegExp(slideindexer.urls[i][0]).exec(path);
+        if (args !== null){ // if shoda 
+            args.shift();
+            args.unshift(res, req);
+            if (typeof passed_args == 'array')
+                args.concat(passed_args);
+            slideindexer.urls[i][1].apply(this, args);
+        }
+    }
+}
+);
+
 
 // taken from http://alexgorbatchev.com/SyntaxHighlighter/manual/brushes/
 slideindexer.styles = new Array();

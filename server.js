@@ -8,11 +8,24 @@
 var express = require("express");
 var models = require("./models/comment");
 var mongoose = require('mongoose');
+var path = require('path')
+var HANDLERS_DIRECTORY = (path.join(path.dirname(__filename), './handlers/')).toString();
+var handlers = new Array();
+
+require('fs').readdir( HANDLERS_DIRECTORY, function( err, files ) { // require() all js files in humla extensions directory
+    files.forEach(function(file) {
+        if(endsWith(file, "js")){
+            var req = require( HANDLERS_DIRECTORY+'/'+file );
+            handlers.push(req);
+        }
+    });
+});
+
 
 
 app = null; // je to schválně bez var - aby to bylo v module contextu
 
-exports.run = function run(handlers, PORT, WEBROOT) {    
+exports.run = function run( PORT, WEBROOT) {    
 
     app = express.createServer();
     
@@ -59,26 +72,21 @@ exports.run = function run(handlers, PORT, WEBROOT) {
 
 
     
-    // Handlers (Routes) 
-    
-    require("./handlers/defaults")
-    require("./handlers/api");
-    
-    // plugins (TODO: move to plugins folder and make auto-loading mechanism)
-    require("./handlers/comments");
-    require("./handlers/likes");
-    
-    app.get('/api/slideindexer/*', require("./handlers/slideindexer").api);
-    
-
-    
-    
-    
+    // Handlers (Routes)     
+    handlers.forEach(function (hand){
+        require(hand);
+    });
    
     app.listen(PORT);   
     console.log("Humla (server) has started, 127.0.0.1:%d, Using Express %s",PORT,express.version);    
     
 }
 
+/**
+ * Tests if string ends with given suffix
+ */
+function endsWith(string, suffix) {
+    return string.indexOf(suffix, string.length - suffix.length) !== -1;
+}
 
 
