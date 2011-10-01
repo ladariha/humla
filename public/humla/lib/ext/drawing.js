@@ -48,6 +48,7 @@ var ex_drawing = {
 exports.parse =function parse($,slideIndex){
     var temporary = {};      
     temporary.drawings = [];
+    slideIndex.content.drawings = [];
     var slide=1; 
     slideIndex.drawingsCount = 0;
     $('body').find('.slide').each(function(){
@@ -119,7 +120,7 @@ function parseSingleDrawing(drawing,slideIndex){
         drawing.filename = 'Error while requesting from Google Docs '+e.message;
         slideIndex.content.drawings.push(drawing);
         if(slideIndex.drawingsCount === 0){
-            slideIndex.sendResponse(slideIndex); 
+            slideIndex.sendResponse(); 
             return slideIndex;
         }
     });   

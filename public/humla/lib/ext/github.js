@@ -137,6 +137,7 @@ var ex_github = {
 //exports.parse =function parse($,slideIndex,response, _pathToCourse, _filename){
 exports.parse =function parse($,slideIndex){
  var slide=1; 
+ slideIndex.content.github = [];
  $('body').find('.slide').each(function(){
      $(this).find('.h-github').each(function(){
         code = {};
@@ -156,6 +157,6 @@ exports.parse =function parse($,slideIndex){
     slide++;
  });
  
-    slideIndex.sendResponse(slideIndex); 
+    slideIndex.sendResponse(); 
 
 }

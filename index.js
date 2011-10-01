@@ -10,7 +10,7 @@ var server = require("./server");
 
 // root for static delivery
 var WEBROOT = path.join(path.dirname(__filename), 'public');
-var PORT = 1337; //TODO: musím předávat?
+var PORT = 1338; //TODO: musím předávat?
 
 //server.run(handlers, PORT, WEBROOT);
 server.run(PORT, WEBROOT);

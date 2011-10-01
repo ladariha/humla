@@ -4,6 +4,7 @@ var querystring = require('querystring');
 var http = require('http');
 var https = require('https');
 var jsdom = require('jsdom');
+var jsonxml = require('jsontoxml');
 var fs     = require('fs');
 var jquery = fs.readFileSync('./public/lib/jquery-1.6.3.min.js').toString();
 var path = require('path');
@@ -204,7 +205,7 @@ function getIndex(response, request){
                                 'Content-Type': 'application/json'
                             });
                         }else{
-                              response.writeHead(200, {
+                            response.writeHead(200, {
                                 'Content-Type': 'application/xml'
                             });
                         }
@@ -225,7 +226,6 @@ function getIndex(response, request){
     }else{ // parse the document again and update JSON index file
         if(refresh==="true"){
             if(url === undefined){
-                console.log("REFRESH");
                 getDocumentFromFileSystem(response, request, pathToCourse,filename, lecture, course, alt);
             }else{
                 getDocumentFromUrl(response, request, url, pathToCourse, filename,lecture, course, alt);    
@@ -295,7 +295,6 @@ function parseDocument(response, request, body, pathToCourse, filename, lecture,
                             title : "",
                             course : "",
                             lecture : "",
-                            keywords : "",
                             keywords: [],
                             numberOfSlide : 0,
                             slides : {
@@ -306,28 +305,28 @@ function parseDocument(response, request, body, pathToCourse, filename, lecture,
                                   
                             },
                             images : [],
-                            codeBlocks : [],
-                            github : [],
-                            drawings : []
-                            
+                            codeBlocks : []                            
                         },
-                        sendResponse : function(slideIndex){
+                        sendResponse : function(){
                             this.check = this.check+1;
-                            if(this.check === this.numberOfCalledExtensions){
+                            console.log("> check "+this.check)
+                            if(this.check === this.numberOfCalledExtensions || this.numberOfCalledExtensions===0){
                                 this.response.writeHead(200, {
                                     'Content-Type': 'application/json'
                                 });
-                                delete slideIndex.content.slides;
+                                delete this.content.slides;
                                 
                                 var textindex ="";
-                                if(slideIndex.format === "json"){
-                                    textindex = JSON.stringify(slideIndex.content, null, 4);
+                                if(this.format === "json"){
+                                    textindex = JSON.stringify(this.content, null, 4);
                                 }else{
-                                    textindex = "XML";
+                                    console.log("jejda "+this.format );
+                                    textindex = ""+createXMLIndex(this);
                                 }
                                 this.response.write(textindex);
                                 this.response.end();
                                 var pathToCourse = this.pathToCourse;
+                                var slideIndex  = this;
                                 var file = this.filename;
                                 path.exists(JSON_DIRECTORY+pathToCourse, function (exists) {
                                     if(exists){
@@ -369,14 +368,21 @@ function parseDocument(response, request, body, pathToCourse, filename, lecture,
                             slideIndex.numberOfCalledExtensions = slideIndex.numberOfCalledExtensions +1;
                         }
                     });
-                    
+                                        
                     extensions.forEach(function (ext){
                         if(ext.parse !== null && typeof ext.parse== 'function'){
                             ext.parse($,slideIndex);     
                         }
                     });
+
+                    if(slideIndex.numberOfCalledExtensions === 0){
+                        console.log("ZERO")
+                        slideIndex.sendResponse();
+                    }
+
                 }
                 catch(err){
+                    console.log(">>>"+err);
                     response.writeHead(500, {
                         'Content-Type': 'text/plain'
                     });
@@ -661,6 +667,65 @@ function makeStructureHierarchical(slideIndex){
     sections.index = newcontent;
     return sections;
 }
+
+function createXMLIndex(slideIndexer){
+    console.log("AHOJ");
+
+    parseObjectToXML(slideIndexer.content, 0);
+
+
+}
+
+function parseObjectToXML(object, ind){
+    var indentation = "";
+    for (var i = 0;  i < ind;  i++) {
+        indentation = indentation+" ";
+    }
+    for (var key in object) {
+        if (object.hasOwnProperty(key)) {
+            console.log(indentation+"<"+key+">");
+            
+            if(typeof(object[key])=='object'){
+                var t_ind = ind+1;
+                if(object[key].length){
+                    parseArrayToXML(object[key], t_ind ,key);
+                }else{
+                    parseObjectToXML(object[key], t_ind);    
+                }
+                
+            }else{
+                console.log(indentation+object[key]);
+            }
+            console.log(indentation+"</"+key+">");
+        }
+    }
+    
+    
+}
+
+function parseArrayToXML(array, ind, string){
+    var indentation = "";
+    for (var i = 0;  i < ind;  i++) {
+        indentation = indentation+" ";
+    }
+    var t_ind = ind+1;
+    for(var object in array){
+        console.log(indentation+"<"+string+"_"+object+">");
+        if(typeof(array[object])=='object'){
+            if(array[object].length){
+                parseArrayToXML(array[object], t_ind, string)
+            }else{
+                parseObjectToXML(array[object], t_ind);
+            }
+        }else{
+            console.log(indentation+array[object]);
+        }
+     
+        console.log(indentation+"</"+string+"_"+object+">");
+    }
+}
+
+
 /**
  * Tests if string ends with given suffix
  */
