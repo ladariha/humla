@@ -1,0 +1,72 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+	<title>FacetedPictures!</title> 
+	<meta charset="utf-8" /> 
+	<script type="text/javascript" src="js/jquery-1.6.3.min.js"></script> 
+	<link rel="stylesheet" href="css/intro.css" type="text/css" /> 
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#triggerSPI").click(function(){
+		$("#panelSPI").toggle("fast");
+		$(this).toggleClass("active");
+		return false;
+	});
+});
+
+$(document).ready(function(){
+	$("#triggerW20").click(function(){
+		$("#panelW20").toggle("fast");
+		$(this).toggleClass("active");
+		return false;
+	});
+});
+
+$(document).ready(function(){
+	$("#triggerMDW").click(function(){
+		$("#panelMDW").toggle("fast");
+		$(this).toggleClass("active");
+		return false;
+	});
+});
+
+$(document).ready(function(){
+	$("#triggerPAR").click(function(){
+		$("#panelPAR").toggle("fast");
+		$(this).toggleClass("active");
+		return false;
+	});
+});
+</script>
+ 
+</head> 
+ 
+<body id="index" class="home"> 
+	
+	<header id="banner" class="body"> 
+		<h1><a href="#">Humla presentations </a></h1> 
+		<nav><ul > 
+                        
+			<li><a href="#" id="triggerMDW">MDW</a></li> 
+			<li><a href="#" id="triggerW20">W20</a></li> 
+			<li><a href="#" id="triggerPAR">PAR</a></li> 
+			<li><a href="#" id="triggerSPI">SPI</a></li> 
+			
+		</ul>
+		<div  id="panelMDW">list of presentations</div>
+		<div  id="panelW20">list of presentations</div>
+		<div  id="panelPAR">list of presentations</div>
+		<div  id="panelSPI">list of presentations</div>
+		</nav> 
+	</header>	
+	<section id="content" class="body"> 
+	 
+		 <a href="#">Some link</a>
+		
+	</section>
+	
+	<footer id="contentinfo" class="body"> 
+	</footer>
+ 
+</body> 
+</html>

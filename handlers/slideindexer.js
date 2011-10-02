@@ -309,19 +309,21 @@ function parseDocument(response, request, body, pathToCourse, filename, lecture,
                         },
                         sendResponse : function(){
                             this.check = this.check+1;
-                            console.log("> check "+this.check)
                             if(this.check === this.numberOfCalledExtensions || this.numberOfCalledExtensions===0){
-                                this.response.writeHead(200, {
-                                    'Content-Type': 'application/json'
-                                });
+                       
                                 delete this.content.slides;
                                 
                                 var textindex ="";
                                 if(this.format === "json"){
+                                    this.response.writeHead(200, {
+                                        'Content-Type': 'application/json'
+                                    });
                                     textindex = JSON.stringify(this.content, null, 4);
                                 }else{
-                                    console.log("jejda "+this.format );
-                                    textindex = ""+createXMLIndex(this);
+                                    this.response.writeHead(200, {
+                                        'Content-Type': 'application/xml'
+                                    });
+                                    textindex ="<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<index url='"+encodeURIComponent(this.baseURL)+"'>\n"+createXMLIndex(this)+"\n</index>";
                                 }
                                 this.response.write(textindex);
                                 this.response.end();
@@ -669,60 +671,60 @@ function makeStructureHierarchical(slideIndex){
 }
 
 function createXMLIndex(slideIndexer){
-    console.log("AHOJ");
 
-    parseObjectToXML(slideIndexer.content, 0);
+    return parseObjectToXML(slideIndexer.content, 0);
 
 
 }
 
 function parseObjectToXML(object, ind){
     var indentation = "";
-    for (var i = 0;  i < ind;  i++) {
+    var toReturn = '';
+    for (var i = 0;  i < ind*3;  i++) {
         indentation = indentation+" ";
     }
     for (var key in object) {
         if (object.hasOwnProperty(key)) {
-            console.log(indentation+"<"+key+">");
-            
+            toReturn = toReturn + indentation+'<'+encodeURIComponent(key)+'>'+"\n";
             if(typeof(object[key])=='object'){
                 var t_ind = ind+1;
                 if(object[key].length){
-                    parseArrayToXML(object[key], t_ind ,key);
+                    toReturn = toReturn+parseArrayToXML(object[key], t_ind ,key);
                 }else{
-                    parseObjectToXML(object[key], t_ind);    
+                    toReturn = toReturn+parseObjectToXML(object[key], t_ind);    
                 }
                 
             }else{
-                console.log(indentation+object[key]);
+                toReturn = toReturn+indentation+encodeURIComponent(object[key])+"\n";
             }
-            console.log(indentation+"</"+key+">");
+            toReturn = toReturn + indentation+'</'+encodeURIComponent(key)+'>'+"\n";
         }
     }
-    
+    return toReturn;
     
 }
 
 function parseArrayToXML(array, ind, string){
     var indentation = "";
-    for (var i = 0;  i < ind;  i++) {
+    var toReturn = '';
+    for (var i = 0;  i < ind*3;  i++) {
         indentation = indentation+" ";
     }
     var t_ind = ind+1;
     for(var object in array){
-        console.log(indentation+"<"+string+"_"+object+">");
+        toReturn = toReturn+indentation+'<'+encodeURIComponent(string)+'_'+object+'>'+"\n";
         if(typeof(array[object])=='object'){
             if(array[object].length){
-                parseArrayToXML(array[object], t_ind, string)
+                toReturn = toReturn+parseArrayToXML(array[object], t_ind, string)
             }else{
-                parseObjectToXML(array[object], t_ind);
+                toReturn = toReturn+parseObjectToXML(array[object], t_ind);
             }
         }else{
-            console.log(indentation+array[object]);
+            toReturn = toReturn+indentation+encodeURIComponent(array[object])+"\n";
         }
-     
-        console.log(indentation+"</"+string+"_"+object+">");
+        toReturn = toReturn + indentation+'</'+encodeURIComponent(string)+'_'+object+'>'+"\n";
     }
+    return toReturn;
 }
 
 
