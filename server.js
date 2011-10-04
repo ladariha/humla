@@ -5,6 +5,9 @@
  * 
  */
 
+// Návod pro MongoDB na Win : http://www.webiyo.com/2011/02/install-mongodb-service-on-windows-7.html
+
+
 var express = require("express");
 var models = require("./models/comment");
 var mongoose = require('mongoose');
@@ -62,6 +65,8 @@ exports.run = function run( PORT, WEBROOT) {
         }));
         app.use(express.errorHandler());
     });
+    
+    
     
     /*models.defineModels(mongoose, function() {
         app.Document = Document = mongoose.model('Document');
