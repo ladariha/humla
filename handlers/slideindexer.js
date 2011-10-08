@@ -4,7 +4,6 @@ var querystring = require('querystring');
 var http = require('http');
 var https = require('https');
 var jsdom = require('jsdom');
-var jsonxml = require('jsontoxml');
 var fs     = require('fs');
 var jquery = fs.readFileSync('./public/lib/jquery-1.6.3.min.js').toString();
 var path = require('path');
@@ -671,10 +670,7 @@ function makeStructureHierarchical(slideIndex){
 }
 
 function createXMLIndex(slideIndexer){
-
     return parseObjectToXML(slideIndexer.content, 0);
-
-
 }
 
 function parseObjectToXML(object, ind){
@@ -700,8 +696,7 @@ function parseObjectToXML(object, ind){
             toReturn = toReturn + indentation+'</'+encodeURIComponent(key)+'>'+"\n";
         }
     }
-    return toReturn;
-    
+    return toReturn;   
 }
 
 function parseArrayToXML(array, ind, string){
