@@ -128,7 +128,7 @@ slideindexer.styles["xslt"]="XML";
  *  </div>
  */
 
-app.get('/api/:lecture/:course/index', function api(req, res) {
+app.all('/api/:lecture/:course/index', function api(req, res) {
     //var query = require('url').parse(req.url).query;
     var args, path = parseURL(req.url).pathname;
     for (var i=0, n = slideindexer.urls.length; i<n; i++) { // projde vsechna url
@@ -275,7 +275,7 @@ function parseDocument(response, request, body, pathToCourse, filename, lecture,
                     'Content-Type': 'text/plain'
                 });
                 response.write('Error while parsing document by jsdom');
-                response.end()   
+                response.end();   
             }else{
                 try{
                     var $ = window.$;
@@ -377,7 +377,6 @@ function parseDocument(response, request, body, pathToCourse, filename, lecture,
                     });
 
                     if(slideIndex.numberOfCalledExtensions === 0){
-                        console.log("ZERO")
                         slideIndex.sendResponse();
                     }
 
@@ -388,7 +387,7 @@ function parseDocument(response, request, body, pathToCourse, filename, lecture,
                         'Content-Type': 'text/plain'
                     });
                     response.write('Error while parsing document: '+err);
-                    response.end() 
+                    response.end();
                 }
             }
         }
@@ -437,8 +436,8 @@ function getDocumentFromUrl(response, request, url, pathToCourse, filename, lect
             'Content-Type': 'text/plain'
         });
         
-        response.write(e.message)
-        response.end()  
+        response.write(e.message);
+        response.end();  
     });
 }
 
@@ -454,8 +453,8 @@ function getDocumentFromFileSystem(response, request, pathToCourse, filename, le
                 'Content-Type': 'text/plain'
             });
         
-            response.write(err.message)
-            response.end()  
+            response.write(err.message);
+            response.end();  
         }else{
             parseDocument(response, request, data, pathToCourse, filename,lecture, course, alt);   
         }
@@ -710,7 +709,7 @@ function parseArrayToXML(array, ind, string){
         toReturn = toReturn+indentation+'<'+encodeURIComponent(string)+'_'+object+'>'+"\n";
         if(typeof(array[object])=='object'){
             if(array[object].length){
-                toReturn = toReturn+parseArrayToXML(array[object], t_ind, string)
+                toReturn = toReturn+parseArrayToXML(array[object], t_ind, string);
             }else{
                 toReturn = toReturn+parseObjectToXML(array[object], t_ind);
             }
