@@ -10,6 +10,11 @@ var editorAPI={};
 editorAPI.urls = [ // list of available URL that this plugin handles
     ['^/api/[A-Za-z0-9-_]+/[A-Za-z0-9-_]+/slide[0-9]+/editor',  editor],
     ];
+    
+    
+var Document;
+    
+    
 
 app.all('/api/:lecture/:course/slide:id/editor', function api(req, res) {
     var query = require('url').parse(req.url).query;
@@ -35,9 +40,9 @@ function editor(response, request){
         case 'PUT':
             editSlide(response, request);
             break;
-//        case 'POST':
-//            editSlide(response, request);
-//            break;
+        //        case 'POST':
+        //            editSlide(response, request);
+        //            break;
         default:
             response.writeHead(405, {
                 'Content-Type': 'text/plain'
@@ -48,11 +53,13 @@ function editor(response, request){
 }
 
 function editSlide(response, request){
+    var host = request.headers.host;
     var regx =/^\/api\/([A-Za-z0-9-_]+)\/([A-Za-z0-9-_]+)\/slide([0-9]+)\/editor/; 
     request.url.match(regx);
     var course = RegExp.$1;
     var lecture = RegExp.$2;
     var slide = RegExp.$3;
+    
     if(request.body === undefined || request.body.slide === undefined){
         response.writeHead(400, {
             'Content-Type': 'text/plain'
@@ -62,11 +69,55 @@ function editSlide(response, request){
         response.end();   
     }else{
         var content=request.body.slide;
-        var host = request.headers.host;
-        console.log(content);// FIX CONTENT NENI UPLNY :(
         editSlideContent(course, lecture, slide, content, response, host);
     
     }
+    
+    
+    
+    
+//    request.on("data", function(chunk) {
+//        // called when a new chunk of data was received
+//        postData+=chunk;
+//        console.log("Received POST data chunk '"+chunk + "'.");
+//    });
+//
+//    request.on("end", function() {
+//        // called when all chunks of data have been received
+//        console.log(postData.slide);
+//        console.log(postData.body.slide); 
+//        var host = request.headers.host;
+//        var regx =/^\/api\/([A-Za-z0-9-_]+)\/([A-Za-z0-9-_]+)\/slide([0-9]+)\/editor/; 
+//        request.url.match(regx);
+//        var course = RegExp.$1;
+//        var lecture = RegExp.$2;
+//        var slide = RegExp.$3;
+//    
+//        if(request.body === undefined || request.body.slide === undefined){
+//            response.writeHead(400, {
+//                'Content-Type': 'text/plain'
+//            });
+//        
+//            response.write("Missing field \"slide\"" );
+//            response.end();   
+//        }else{
+//
+//            console.log(content);// FIX CONTENT NENI UPLNY :(
+//            editSlideContent(course, lecture, slide, content, response, host);
+//    
+//        }
+//    
+//    
+//    
+//    //            var content=request.body.slide;
+//    //            var host = request.headers.host;
+//    //            console.log(content);// FIX CONTENT NENI UPLNY :(
+//    //            editSlideContent(course, lecture, slide, content, response, host);
+//    });
+//        
+//    
+//    
+  
  
 }
 
