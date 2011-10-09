@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Humla editor</title>
+        <meta charset=utf-8>
+        <script src="./lib/codemirror.js"></script>
+        <script src="./lib/customScripts.js"></script>
+        <script src="./mode/xml/xml.js"></script>
+        <script src="./mode/javascript/javascript.js"></script>
+        <script src="./mode/css/css.js"></script>
+        <script src="./mode/htmlmixed/htmlmixed.js"></script>
+        <link rel=stylesheet type="text/css" href="./lib/codemirror.css">
+        <link type="text/css" rel=stylesheet href="./theme/default.css">
+        <link type="text/css" rel=stylesheet href="./css/docs.css">
+        <style type="text/css">
+            .CodeMirror {
+                float: left;
+                width: 50%;
+                height: 400px;
+                border: 1px solid black;
+            }
+            iframe {
+                width: 49%;
+                float: left;
+                height: 400px;
+                border: 1px solid black;
+                border-left: 0px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1 id="title">Edit slide <span id="slide">#number</span> of <span id="course">#course</span>: <span id="lecture">#lecture</span></h1>
+        <div id="msg"></div>
+        <textarea id="code" name="code">
+        </textarea>
+        <iframe id="preview"></iframe>
+        <script>
+            var delay;
+            // Initialize CodeMirror editor with a nice html5 canvas demo.
+            var editor = CodeMirror.fromTextArea(document.getElementById('code'), {
+                mode: 'text/html',
+                tabMode: 'indent',
+                onChange: function() {
+                    clearTimeout(delay);
+                    delay = setTimeout(updatePreview, 100);
+                }
+            });
+      
+            function updatePreview() {
+                var previewFrame = document.getElementById('preview');
+                var preview =  previewFrame.contentDocument ||  previewFrame.contentWindow.document;
+                preview.open();
+                preview.write(editor.getValue());
+                preview.close();
+            }
+            setTimeout(updatePreview, 100);      
+        </script>
+        <div>
+            <button type="button" onClick="sendData();">Save</button>
+            <a href="" id="cancelLink"><button type="button">Cancel</button> </a>
+        </div>
+    </body>
+</html>
