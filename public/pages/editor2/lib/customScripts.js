@@ -3,13 +3,11 @@ function sendData(){
 
     var data = editor.getValue();
     var url = "/api/"+document.getElementById("course").innerHTML+"/"+document.getElementById("lecture").innerHTML+"/slide"+document.getElementById("slide").innerHTML+"/editor";
-    
     var params = "slide="+data;
     var request = new XMLHttpRequest;
-    //    request.open("PUT", url, true);
     request.open("PUT", url, true);
     request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    request.setRequestHeader("Content-length", params.length);
+    request.setRequestHeader("Content-length", params.length*2);
     request.setRequestHeader("Connection", "close");
     request.onreadystatechange = function(){
         if (request.readyState==4) {
