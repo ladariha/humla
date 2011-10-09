@@ -9,20 +9,15 @@
 
 
 var express = require("express");
-var models = require("./models/comment");
 var mongoose = require('mongoose');
+var fs = require("fs");
 var path = require('path')
 var HANDLERS_DIRECTORY = (path.join(path.dirname(__filename), './handlers/')).toString();
-var handlers = new Array();
+var MODELS_DIRECTORY = (path.join(path.dirname(__filename), './models/')).toString();
 
-require('fs').readdir( HANDLERS_DIRECTORY, function( err, files ) { // require() all js files in handlers directory
-    files.forEach(function(file) {
-        if(endsWith(file, "js")){
-            var req = require( HANDLERS_DIRECTORY+'/'+file );
-            handlers.push(req);
-        }
-    });
-});
+var handlers = loadFiles(HANDLERS_DIRECTORY);
+var models = loadFiles(MODELS_DIRECTORY);
+
 
 
 
@@ -50,7 +45,7 @@ exports.run = function run( PORT, WEBROOT) {
     });
     app.configure('development', function(){
         app.use(express.logger({
-            format: '\x1b[1m:method\x1b[0m \x1b[33m:url\x1b[0m :response-time ms'
+            format: '\x1b[1m:method\x1b[0m \x1b[33m:url\x1b[0m :response-time ms :status'
         }))
         app.use(express.static(WEBROOT));
         app.use(express.errorHandler({
@@ -67,31 +62,46 @@ exports.run = function run( PORT, WEBROOT) {
     });
     
     
+    var db = mongoose.connect(app.set('db-uri'));    
     
-    /*models.defineModels(mongoose, function() {
-        app.Document = Document = mongoose.model('Document');
-        app.User = User = mongoose.model('User');
-        app.LoginToken = LoginToken = mongoose.model('LoginToken');
-        db = mongoose.connect(app.set('db-uri'));
-    })*/
+    //require("./models/comment")
 
 
+    // Models (MongoDB)
+    models.forEach(function (model){
+        require(model);
+    });    
     
     // Handlers (Routes)     
     handlers.forEach(function (hand){
+        //console.log("X-"+hand)
         require(hand);
     });
    
     app.listen(PORT);   
     console.log("Humla (server) has started, 127.0.0.1:%d, Using Express %s",PORT,express.version);    
-    
 }
 
 /**
- * Tests if string ends with given suffix
- */
+* Tests if string ends with given suffix
+*/
 function endsWith(string, suffix) {
     return string.indexOf(suffix, string.length - suffix.length) !== -1;
 }
 
 
+/**
+ * Return array of paths
+ * @param path Folder path to .js files
+ */
+function loadFiles(path) {
+    var arr =[];
+    var files = fs.readdirSync( path);    
+    files.forEach(function(file) {
+        if(endsWith(file, "js")){
+            //var req = require( HANDLERS_DIRECTORY+'/'+file );
+            arr.push(path+file );
+        }
+    });    
+    return arr;
+}

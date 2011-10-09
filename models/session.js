@@ -3,7 +3,7 @@
     *
     * Used for session persistence.
     */
-   
+
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
@@ -54,3 +54,4 @@ LoginToken.virtual('cookieValue')
 mongoose.model('LoginToken', LoginToken);
 
 //  fn(); //callback
+

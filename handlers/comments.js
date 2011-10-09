@@ -4,43 +4,39 @@
  * 
  */
 
-//require("../models/comment")
+var mongoose = require("mongoose"); 
+var Comment = mongoose.model("Comment"); // Model toho commentu, můžu instanciovat
 
-var comments = require("../models/comment").comments;
 
-app.get('/api/:course/:lecture/comments', function(req, res) {
-    res.writeHead(200, {
-        "Content-Type": "application/json"
+app.get('/api/:course/:lecture/:slide/comments', function(req, res) {    
+    
+    // show all comments TODO: filter by lecture
+    Comment.find({}, function(err,com){   
+        if(!err) console.log("found! "+com)        
+        res.writeHead(200, {
+            "Content-Type": "application/json"
+        });
+        res.write(JSON.stringify(com));
+        res.end();            
+    })
+});
+
+
+
+app.post('/api/:course/:lecture/:slide/comments/', function(req, res, next){
+    var com = new Comment();
+    com.body = "Tělo komentáře";
+    com.courseID = req.params.course;
+    com.lectureID = req.params.lecture;
+    com.save(function(err) {
+        if(err) {
+            console.log("ERR");
+            throw err;
+        }
+        console.log("Comment saved to DB");
+        
+        res.writeHead(200);
+        res.write("k thx bye");
+        res.end();
     });
-    res.write(JSON.stringify(comments));
-    res.end();
-    
-    
 });
-
-app.get('/api/:course/:lecture/comments/:slideid',function(req, res) {    
-    res.writeHead(200, {
-        "Content-Type": "application/json"
-    });
-    res.write(JSON.stringify(comments[req.params.slideid]));
-    res.end();
-    
-    
-});
-
-
-app.post('/api/:course/:lecture/comments/:slideid', function(req, res){
-    comments[req.params.slideid] = {
-        "id": 1,
-        "name": "jmeno",
-        "lecture": req.params.lecture,
-        "course": req.params.course,
-        "text": "comment"        
-    };    
-    res.write("k thx bye");
-    res.end();
-    
-});
-
-
-app.post('/api/:lecture/:course/comments/:slideid/:op', function(req, res, next){});
