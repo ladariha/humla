@@ -35,9 +35,9 @@ function editor(response, request){
         case 'PUT':
             editSlide(response, request);
             break;
-        //        case 'POST':
-        //            editSlide(response, request);
-        //            break;
+//        case 'POST':
+//            editSlide(response, request);
+//            break;
         default:
             response.writeHead(405, {
                 'Content-Type': 'text/plain'
@@ -63,6 +63,7 @@ function editSlide(response, request){
     }else{
         var content=request.body.slide;
         var host = request.headers.host;
+        console.log(content);// FIX CONTENT NENI UPLNY :(
         editSlideContent(course, lecture, slide, content, response, host);
     
     }
@@ -103,7 +104,7 @@ function editSlideContent(course, lecture, slide, content, response, host){
                             var $ = window.$;
                             var resourceURL = host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html#/"+slide;
                             var slideCounter=1;
-                            var toReturn = JSON.stringify(resourceURL, null, 4);
+                            var toReturn = "";
                             $('body').find('.slide').each(function(){
                                 if(slideCounter === slide){                            
                                     $(this).html(content);
@@ -137,8 +138,9 @@ function editSlideContent(course, lecture, slide, content, response, host){
                                     }else{
                                         console.log('It\'s saved!');
                                         response.writeHead(200, {
-                                            'Content-Type': 'application/json'
+                                            'Content-Type': 'text/html'
                                         });
+                                        toReturn = "Document updated, <a href=\"http://"+resourceURL+"\">back to presentation</a>";
                                         response.write(toReturn);
                                         response.end();
                                     }
@@ -168,10 +170,12 @@ function getSlide(response, request){
     var slide = RegExp.$3;
     var pathToCourse = '/'+course+'/';
     var htmlfile = SLIDES_DIRECTORY+pathToCourse+lecture+".html";
-    getDocumentFromFileSystem(response, request, htmlfile, slide)   
+    var host = request.headers.host;
+    var resourceURL = host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html#/"+slide;
+    getDocumentFromFileSystem(response, request, htmlfile, slide,resourceURL)   
 }
 
-function getDocumentFromFileSystem(response, request, htmlfile, slide){
+function getDocumentFromFileSystem(response, request, htmlfile, slide,resourceURL){
     fs.readFile(htmlfile, function (err, data) {
         if (err){
             response.writeHead(500, {
@@ -180,14 +184,14 @@ function getDocumentFromFileSystem(response, request, htmlfile, slide){
             response.write(err.message);
             response.end();  
         }else{
-            parseDocument(response, request, data, slide);   
+            parseDocument(response, request, data, slide, resourceURL);   
         }
     });
 }
 
 
 
-function parseDocument(response, request, htmlfile, slide){
+function parseDocument(response, request, htmlfile, slide, resourceURL){
     slide  = parseInt(slide);
     var slideSend=0;
     jsdom.env({
@@ -209,9 +213,12 @@ function parseDocument(response, request, htmlfile, slide){
                     $('body').find('.slide').each(function(){
                         if(slideCounter === slide){                            
                             response.writeHead(200, {
-                                'Content-Type': 'text/html'
+                                'Content-Type': 'application/json'
                             });
-                            response.write($(this).html());
+                            var r = {};
+                            r.url = resourceURL;
+                            r.html= $(this).html();
+                            response.write(JSON.stringify(r, null, 4));
                             response.end();
                             slideSend = 1;
                         }

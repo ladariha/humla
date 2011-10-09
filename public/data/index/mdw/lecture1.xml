@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<index url='127.0.0.1:1338/data/slides/mdw/lecturelecture1.html'>
+<index url='127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html'>
 <title>
 Motivation%20and%20Course%20Overview
 </title>
@@ -446,26 +446,6 @@ Lecture%201
 <drawings>
    <drawings_0>
       <alt>
-      Spaghetti%20Integration
-      </alt>
-      <id>
-      123tDQFo3Zq0LEzzhquKp1xJX4YZ6YiWC0GDNGGK1UA0
-      </id>
-      <slide>
-      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F8
-      </slide>
-      <type>
-      drawing
-      </type>
-      <exportURL>
-      https%3A%2F%2Fdocs.google.com%2Fdrawings%2Fd%2F123tDQFo3Zq0LEzzhquKp1xJX4YZ6YiWC0GDNGGK1UA0%2Fexport%2Fpng%3Fid%3D123tDQFo3Zq0LEzzhquKp1xJX4YZ6YiWC0GDNGGK1UA0%26pageid%3Dp
-      </exportURL>
-      <filename>
-      OnetoOneSpaghettiIntegration.png
-      </filename>
-   </drawings_0>
-   <drawings_1>
-      <alt>
       Representational%20State%20Transfer
       </alt>
       <id>
@@ -482,6 +462,26 @@ Lecture%201
       </exportURL>
       <filename>
       RESTArchitecture.png
+      </filename>
+   </drawings_0>
+   <drawings_1>
+      <alt>
+      Spaghetti%20Integration
+      </alt>
+      <id>
+      123tDQFo3Zq0LEzzhquKp1xJX4YZ6YiWC0GDNGGK1UA0
+      </id>
+      <slide>
+      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F8
+      </slide>
+      <type>
+      drawing
+      </type>
+      <exportURL>
+      https%3A%2F%2Fdocs.google.com%2Fdrawings%2Fd%2F123tDQFo3Zq0LEzzhquKp1xJX4YZ6YiWC0GDNGGK1UA0%2Fexport%2Fpng%3Fid%3D123tDQFo3Zq0LEzzhquKp1xJX4YZ6YiWC0GDNGGK1UA0%26pageid%3Dp
+      </exportURL>
+      <filename>
+      OnetoOneSpaghettiIntegration.png
       </filename>
    </drawings_1>
    <drawings_2>
