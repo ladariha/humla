@@ -18,7 +18,8 @@ function sendData(){
     request.setRequestHeader("Connection", "close");
     request.onreadystatechange = function(){
         if (request.readyState==4) {
-            document.getElementById("msg").innerHTML=request.responseText;
+            var object = eval('(' + request.responseText + ')');
+            document.getElementById("msg").innerHTML=object.html;
             loadSlide();
         }else{
             editor.setValue(request.responseText);

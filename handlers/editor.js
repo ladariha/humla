@@ -47,6 +47,103 @@ function editor(response, request){
     }   
 }
 
+
+function deleteSlide(response, request){
+    
+    var host = request.headers.host;
+    var regx =/^\/api\/([A-Za-z0-9-_]+)\/([A-Za-z0-9-_]+)\/slide([0-9]+)\/editor/; 
+    request.url.match(regx);
+    var course = RegExp.$1;
+    var lecture = RegExp.$2;
+    var slide = RegExp.$3;  
+     
+    var pathToCourse = '/'+course+'/';
+    var htmlfile = SLIDES_DIRECTORY+pathToCourse+lecture+".html";
+    fs.readFile(htmlfile, function (err, data) {
+        if (err){
+            response.writeHead(500, {
+                'Content-Type': 'text/plain'
+            });
+        
+            response.write(err.message);
+            response.end();  
+        }else{
+            
+            slide  = parseInt(slide);
+            var slideSend=0;
+            jsdom.env({
+                html: htmlfile,
+                src: [
+                jquery
+                ],
+                done: function(errors, window) {
+                    if(errors){
+                        response.writeHead(500, {
+                            'Content-Type': 'text/plain'
+                        });
+                        response.write('Error while parsing document by jsdom');
+                        response.end();   
+                    }else{
+                        try{
+                            var $ = window.$;
+                            var resourceURL = host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html#/"+slide;
+                            var slideCounter=1;
+                            var toReturn = "";
+                            $('body').find('.slide').each(function(){
+                                if(slideCounter === slide){                            
+                                    $(this).remove();
+                                    slideSend = 1;
+                                }
+                                slideCounter++;
+                            });   
+
+                            var newcontent= $("html").html();
+                            if(slideSend===0){
+                                response.writeHead(404, {
+                                    'Content-Type': 'text/plain'
+                                });
+                                response.write("Slide "+slide+" not found");
+                                response.end();
+                            }else{
+                                fs.writeFile(htmlfile, newcontent, function (err) {
+                                    if (err) {
+                                        console.error('Error while saving '+err);
+                                        response.writeHead(500, {
+                                            'Content-Type': 'text/plain'
+                                        });
+                                        response.write('Problem with saving document: '+err);
+                                        response.end();
+                                    }else{
+                                        console.log('It\'s saved!');
+                                        response.writeHead(200, {
+                                            'Content-Type': 'application/json'
+                                        });
+                                        var t = {};
+                                        t.URL = "http://"+resourceURL+"/v1";
+                                        t.html =  "Document updated, <a href=\"http://"+resourceURL+"/v1\">back to presentation</a>";
+                                        response.write(JSON.stringify(t, null, 4));
+                                        response.end();
+                                    }
+                                });
+                            }
+                        }
+                        catch(err){
+                            response.writeHead(500, {
+                                'Content-Type': 'text/plain'
+                            });
+                            response.write('Error while parsing document: '+err);
+                            response.end();
+                        }
+                    }
+                }
+            });   
+        }
+    });
+     
+    
+}
+
+
 function editSlide(response, request){
     var host = request.headers.host;
     var regx =/^\/api\/([A-Za-z0-9-_]+)\/([A-Za-z0-9-_]+)\/slide([0-9]+)\/editor/; 
@@ -136,10 +233,12 @@ function editSlideContentAppend(course, lecture, slide, content, response, host)
                                     }else{
                                         console.log('It\'s saved!');
                                         response.writeHead(200, {
-                                            'Content-Type': 'text/html'
+                                            'Content-Type': 'application/json'
                                         });
-                                        toReturn = "Document updated, <a href=\"http://"+resourceURL+"/v1\">back to presentation</a>";
-                                        response.write(toReturn);
+                                        var t = {};
+                                        t.URL = "http://"+resourceURL+"/v1";
+                                        t.html =  "Document updated, <a href=\"http://"+resourceURL+"/v1\">back to presentation</a>";
+                                        response.write(JSON.stringify(t, null, 4));
                                         response.end();
                                     }
                                 });
@@ -201,7 +300,7 @@ function editSlideContent(course, lecture, slide, content, response, host){
                                 slideCounter++;
                             });   
 
-                            var newcontent= $("html").html();
+                            var newcontent= $("html").html();                            
                             newcontent = newcontent.replace(/\&amp;/g,'&');
                             if(slideSend===0){
                                 response.writeHead(404, {
@@ -221,10 +320,12 @@ function editSlideContent(course, lecture, slide, content, response, host){
                                     }else{
                                         console.log('It\'s saved!');
                                         response.writeHead(200, {
-                                            'Content-Type': 'text/html'
+                                            'Content-Type': 'application/json'
                                         });
-                                        toReturn = "Document updated, <a href=\"http://"+resourceURL+"/v1\">back to presentation</a>";
-                                        response.write(toReturn);
+                                        var t = {};
+                                        t.URL = "http://"+resourceURL+"/v1";
+                                        t.html =  "Document updated, <a href=\"http://"+resourceURL+"/v1\">back to presentation</a>";
+                                        response.write(JSON.stringify(t, null, 4));
                                         response.end();
                                     }
                                 });
