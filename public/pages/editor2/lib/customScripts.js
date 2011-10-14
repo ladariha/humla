@@ -1,9 +1,16 @@
 
 function sendData(){
-
     var data = editor.getValue();
+    data = encodeURIComponent(data);
     var url = "/api/"+document.getElementById("course").innerHTML+"/"+document.getElementById("lecture").innerHTML+"/slide"+document.getElementById("slide").innerHTML+"/editor";
-    var params = "slide="+data;
+    
+    var append = getParameterByName('append');
+    var params;
+    if(append.length > 0 && append==="true"){
+        params = "slide="+data+"&append=true";
+    }else{
+        params = "slide="+data;
+    }
     var request = new XMLHttpRequest;
     request.open("PUT", url, true);
     request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -11,13 +18,11 @@ function sendData(){
     request.setRequestHeader("Connection", "close");
     request.onreadystatechange = function(){
         if (request.readyState==4) {
-            
             document.getElementById("msg").innerHTML=request.responseText;
             loadSlide();
-            
         }else{
-            
-    }
+            editor.setValue(request.responseText);
+        }
         
     };
     request.send(params);
@@ -43,32 +48,76 @@ function loadSlide(){
     var course = getParameterByName('course');
     var lecture = getParameterByName('lecture');
     var slide = getParameterByName('slide');
+    var append = getParameterByName('append');
     if(course.length > 0 && lecture.length>0 && slide.length>0){
-        var url = "/api/"+course+"/"+lecture+"/"+"slide"+slide+"/editor"; 
-        var request = new XMLHttpRequest;
-        request.open("GET", url, true);
-        request.onreadystatechange = function(){
-            if (request.readyState==4) {
-                var object = eval('(' + request.responseText + ')');
+        if(append.length > 0){
+            
+            var url = "/api/"+course+"/"+lecture+"/"+"slide0"+"/editor"; 
+            
+            var request = new XMLHttpRequest;
+            request.open("GET", url, true);
+            request.onreadystatechange = function(){
+                if (request.readyState==4) {
+                    var object = eval('(' + request.responseText + ')');
                             
-                var textarray = object.html.split("\n");
-                var finalString = '';
-                for(var k in textarray){
-                    finalString = finalString+"\n"+textarray[k].replace(/^\s\s{6}/, ' ') ;
+                    var textarray = object.html.split("\n");
+                    var finalString = '';
+                    for(var k in textarray){
+                        if(textarray[k].length>0){
+                            finalString = finalString+"\n"+textarray[k].replace(/^\s\s{6}/, ' ') ;
+                        }
+                    }
+                    finalString = finalString.replace(/\&amp;/g,'&');
+                    editor.setValue(finalString);
+                    document.getElementById("append").innerHTML = "Append after";
+                    document.getElementById("slide").innerHTML = slide;
+                    document.getElementById("lecture").innerHTML = lecture;
+                    document.getElementById("course").innerHTML = course;
+                    var v = getParameterByName('v');
+                    if(v.length>0){
+                        document.getElementById("cancelLink").href="http://"+object.url+"/"+v;    
+                    }else{
+                        document.getElementById("cancelLink").href="http://"+object.url+"/v1";    
+                    }
                 }
-                finalString = finalString.replace(/\&amp;/g,'&');
-                editor.setValue(finalString);
-                document.getElementById("slide").innerHTML = slide;
-                document.getElementById("lecture").innerHTML = lecture;
-                document.getElementById("course").innerHTML = course;
-                var v = getParameterByName('v');
-                if(v.length>0){
-                    document.getElementById("cancelLink").href="http://"+object.url+"/"+v;    
+            };
+            request.send(null);  
+            
+            
+        }else{
+            
+            var url = "/api/"+course+"/"+lecture+"/"+"slide"+slide+"/editor"; 
+            var request = new XMLHttpRequest;
+            request.open("GET", url, true);
+            request.onreadystatechange = function(){
+                if (request.readyState==4) {
+                    var object = eval('(' + request.responseText + ')');
+                            
+                    var textarray = object.html.split("\n");
+                    var finalString = '';
+                    for(var k in textarray){
+                        if(textarray[k].length>0){
+                            finalString = finalString+"\n"+textarray[k].replace(/^\s\s{6}/, ' ') ;
+                        }
+                    }
+                    finalString = finalString.replace(/\&amp;/g,'&');
+                    editor.setValue(finalString);
+                    document.getElementById("slide").innerHTML = slide;
+                    document.getElementById("lecture").innerHTML = lecture;
+                    document.getElementById("course").innerHTML = course;
+                    var v = getParameterByName('v');
+                    if(v.length>0){
+                        document.getElementById("cancelLink").href="http://"+object.url+"/"+v;    
+                    }else{
+                        document.getElementById("cancelLink").href="http://"+object.url+"/v1";    
+                    }
                 }else{
-                    document.getElementById("cancelLink").href="http://"+object.url+"/v1";    
+                    editor.setValue(request.responseText);
                 }
-            }
-        };
-        request.send(null);
+            };
+            request.send(null);     
+            
+        }
+     
     }
 }

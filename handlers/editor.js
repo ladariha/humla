@@ -5,16 +5,11 @@ var jsdom = require('jsdom');
 var jquery = fs.readFileSync('./public/lib/jquery-1.6.3.min.js').toString();
 var RAW_SLIDES_DIRECTORY = '/data/slides';
 var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../public/data/slides')).toString();
-
+var SLIDE_TEMPLATE = (path.join(path.dirname(__filename),'../public/data/templates')).toString();
 var editorAPI={};
 editorAPI.urls = [ // list of available URL that this plugin handles
     ['^/api/[A-Za-z0-9-_]+/[A-Za-z0-9-_]+/slide[0-9]+/editor',  editor],
     ];
-    
-    
-var Document;
-    
-    
 
 app.all('/api/:lecture/:course/slide:id/editor', function api(req, res) {
     var query = require('url').parse(req.url).query;
@@ -40,9 +35,9 @@ function editor(response, request){
         case 'PUT':
             editSlide(response, request);
             break;
-        //        case 'POST':
-        //            editSlide(response, request);
-        //            break;
+        case 'DELETE':
+            deleteSlide(response, request);
+            break;
         default:
             response.writeHead(405, {
                 'Content-Type': 'text/plain'
@@ -59,7 +54,6 @@ function editSlide(response, request){
     var course = RegExp.$1;
     var lecture = RegExp.$2;
     var slide = RegExp.$3;
-    
     if(request.body === undefined || request.body.slide === undefined){
         response.writeHead(400, {
             'Content-Type': 'text/plain'
@@ -69,58 +63,101 @@ function editSlide(response, request){
         response.end();   
     }else{
         var content=request.body.slide;
-        editSlideContent(course, lecture, slide, content, response, host);
-    
+        var append = request.body.append;
+        content = decodeURIComponent(content);
+        if(append==="true"){
+            editSlideContentAppend(course, lecture, slide, content, response, host);
+        }else{
+            editSlideContent(course, lecture, slide, content, response, host);
+        } 
     }
-    
-    
-    
-    
-//    request.on("data", function(chunk) {
-//        // called when a new chunk of data was received
-//        postData+=chunk;
-//        console.log("Received POST data chunk '"+chunk + "'.");
-//    });
-//
-//    request.on("end", function() {
-//        // called when all chunks of data have been received
-//        console.log(postData.slide);
-//        console.log(postData.body.slide); 
-//        var host = request.headers.host;
-//        var regx =/^\/api\/([A-Za-z0-9-_]+)\/([A-Za-z0-9-_]+)\/slide([0-9]+)\/editor/; 
-//        request.url.match(regx);
-//        var course = RegExp.$1;
-//        var lecture = RegExp.$2;
-//        var slide = RegExp.$3;
-//    
-//        if(request.body === undefined || request.body.slide === undefined){
-//            response.writeHead(400, {
-//                'Content-Type': 'text/plain'
-//            });
-//        
-//            response.write("Missing field \"slide\"" );
-//            response.end();   
-//        }else{
-//
-//            console.log(content);// FIX CONTENT NENI UPLNY :(
-//            editSlideContent(course, lecture, slide, content, response, host);
-//    
-//        }
-//    
-//    
-//    
-//    //            var content=request.body.slide;
-//    //            var host = request.headers.host;
-//    //            console.log(content);// FIX CONTENT NENI UPLNY :(
-//    //            editSlideContent(course, lecture, slide, content, response, host);
-//    });
-//        
-//    
-//    
-  
- 
 }
 
+
+function editSlideContentAppend(course, lecture, slide, content, response, host){
+    var pathToCourse = '/'+course+'/';
+    var htmlfile = SLIDES_DIRECTORY+pathToCourse+lecture+".html";
+    fs.readFile(htmlfile, function (err, data) {
+        if (err){
+            response.writeHead(500, {
+                'Content-Type': 'text/plain'
+            });
+        
+            response.write(err.message);
+            response.end();  
+        }else{
+            
+            
+            slide  = parseInt(slide);
+            var slideSend=0;
+            jsdom.env({
+                html: htmlfile,
+                src: [
+                jquery
+                ],
+                done: function(errors, window) {
+                    if(errors){
+                        response.writeHead(500, {
+                            'Content-Type': 'text/plain'
+                        });
+                        response.write('Error while parsing document by jsdom');
+                        response.end();   
+                    }else{
+                        try{
+                            var $ = window.$;
+                            var resourceURL = host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html#/"+(slide+1);
+                            var slideCounter=1;
+                            var toReturn = "";
+                            $('body').find('.slide').each(function(){
+                                if(slideCounter === slide){                            
+                                    $(this).after("<div class=\"slide\">"+content+"</div>");
+                                    slideSend = 1;
+                                }
+                                slideCounter++;
+                            });   
+                            var newcontent= $("html").html();
+                            newcontent = newcontent.replace(/\&amp;/g,'&');
+                       
+                            if(slideSend===0){
+                                response.writeHead(404, {
+                                    'Content-Type': 'text/plain'
+                                });
+                                response.write("Slide "+slide+" not found");
+                                response.end();
+                            }else{
+                                fs.writeFile(htmlfile, newcontent, function (err) {
+                                    if (err) {
+                                        console.error('Error while saving '+err);
+                                        response.writeHead(500, {
+                                            'Content-Type': 'text/plain'
+                                        });
+                                        response.write('Problem with saving document: '+err);
+                                        response.end();
+                                    }else{
+                                        console.log('It\'s saved!');
+                                        response.writeHead(200, {
+                                            'Content-Type': 'text/html'
+                                        });
+                                        toReturn = "Document updated, <a href=\"http://"+resourceURL+"/v1\">back to presentation</a>";
+                                        response.write(toReturn);
+                                        response.end();
+                                    }
+                                });
+                            }
+                        }
+                        catch(err){
+                            response.writeHead(500, {
+                                'Content-Type': 'text/plain'
+                            });
+                            response.write('Error while parsing document: '+err);
+                            response.end();
+                        }
+                    }
+                }
+            });   
+        }
+    });
+}
 
 function editSlideContent(course, lecture, slide, content, response, host){
     var pathToCourse = '/'+course+'/';
@@ -163,14 +200,9 @@ function editSlideContent(course, lecture, slide, content, response, host){
                                 }
                                 slideCounter++;
                             });   
-                            
-                            
-                            
-                            if(slideSend === 0 && slideCounter === slide){
-                                $('.slide').last().after(content);
-                                slideSend=1;
-                            }
+
                             var newcontent= $("html").html();
+                            newcontent = newcontent.replace(/\&amp;/g,'&');
                             if(slideSend===0){
                                 response.writeHead(404, {
                                     'Content-Type': 'text/plain'
@@ -191,7 +223,7 @@ function editSlideContent(course, lecture, slide, content, response, host){
                                         response.writeHead(200, {
                                             'Content-Type': 'text/html'
                                         });
-                                        toReturn = "Document updated, <a href=\"http://"+resourceURL+"\">back to presentation</a>";
+                                        toReturn = "Document updated, <a href=\"http://"+resourceURL+"/v1\">back to presentation</a>";
                                         response.write(toReturn);
                                         response.end();
                                     }
@@ -261,6 +293,7 @@ function parseDocument(response, request, htmlfile, slide, resourceURL){
                 try{
                     var $ = window.$;
                     var slideCounter=1;
+                    
                     $('body').find('.slide').each(function(){
                         if(slideCounter === slide){                            
                             response.writeHead(200, {
@@ -276,15 +309,34 @@ function parseDocument(response, request, htmlfile, slide, resourceURL){
                         slideCounter++;
                     });   
   
-                    if(slideSend === 0 && slideCounter === slide){
-                    // TODO return template for new empty slide
-                    }
-                    if(slideSend===0){
-                        response.writeHead(404, {
-                            'Content-Type': 'text/plain'
+                    if(slideSend === 0 && slide===0){ 
+                        fs.readFile(SLIDE_TEMPLATE+'/emptySlide.html', function (err, data) {
+                            if (err){
+                                response.writeHead(500, {
+                                    'Content-Type': 'text/plain'
+                                });
+        
+                                response.write(err.message);
+                                response.end();  
+                            }else{
+                                var r = {};
+                                r.url = resourceURL;
+                                r.html= data.toString();
+                                response.write(JSON.stringify(r, null, 4));
+                                response.end();
+                                slideSend = 1;
+              
+                            }
                         });
-                        response.write("Slide "+slide+" not found");
-                        response.end();
+                    
+                    }else{
+                        if(slideSend===0){
+                            response.writeHead(404, {
+                                'Content-Type': 'text/plain'
+                            });
+                            response.write("Slide "+slide+" not found");
+                            response.end();
+                        }
                     }
                 }
                 catch(err){
