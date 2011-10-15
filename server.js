@@ -79,7 +79,7 @@ exports.run = function run( PORT, WEBROOT) {
     });
    
     app.listen(PORT);   
-    console.log("Humla (server) has started, 127.0.0.1:%d, Using Express %s",PORT,express.version);    
+    console.log("Humla (server) has started, 127.0.0.1:%d, Using Express %s", PORT, express.version);    
 }
 
 /**

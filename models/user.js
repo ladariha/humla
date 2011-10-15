@@ -4,6 +4,28 @@
  * MongoDB Entity
  * 
  */
+var mongoose = require("mongoose");
+var Schema = mongoose.Schema;
+var ObjectId = Schema.ObjectId;
+
+
+var UserSchema = new Schema({
+    userID: ObjectId,
+    email: {
+            type: String, 
+            validate: /b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}/
+        },
+    username: String,
+    dateLogged  :  {
+        type: Date
+    }
+    
+});
+
+mongoose.model('User', UserSchema);  
+
+
+
 /*
  Model.define('User',{
 
