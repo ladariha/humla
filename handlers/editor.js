@@ -53,10 +53,9 @@ function deleteSlide(response, request){
     var host = request.headers.host;
     var regx =/^\/api\/([A-Za-z0-9-_]+)\/([A-Za-z0-9-_]+)\/slide([0-9]+)\/editor/; 
     request.url.match(regx);
-    var course = RegExp.$1;
-    var lecture = RegExp.$2;
-    var slide = RegExp.$3;  
-     
+    var course = request.body.course;
+    var lecture = request.body.lecture;
+    var slide = request.body.slide;  
     var pathToCourse = '/'+course+'/';
     var htmlfile = SLIDES_DIRECTORY+pathToCourse+lecture+".html";
     fs.readFile(htmlfile, function (err, data) {
