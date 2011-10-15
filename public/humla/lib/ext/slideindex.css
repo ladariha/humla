@@ -1,0 +1,24 @@
+.slideindex-structure-top{
+    font-size: 13px;
+    
+}
+.slideindex-ul{
+    margin: 0;
+    font-size: 13px;
+}
+
+.slideindex-li{
+    font-size: 13px;
+}
+.slideindex-hidden{
+      margin: 0;
+    display:none;
+}
+.slideindex-visible{
+      margin: 0;
+    display:block;
+}
+
+.slideindex-ul  img{
+    cursor: pointer;
+}
