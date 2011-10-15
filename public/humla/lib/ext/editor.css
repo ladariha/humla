@@ -1,0 +1,22 @@
+#editor-toolbar{
+    text-align: right;
+    position:absolute;
+    top:20px;
+}
+
+img{
+    width:20px;
+    margin: 5px 5px;
+    opacity: 0.3;
+    filter:alpha(opacity=30); /* For IE8 and earlier */
+}
+
+.editor-link:hover{
+    width:20px;
+    opacity:1;
+}
+
+img:hover{
+    opacity:1;
+    filter:alpha(opacity=1); /* For IE8 and earlier */
+}

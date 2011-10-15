@@ -10,7 +10,7 @@ var path = require('path');
 var RAW_SLIDES_DIRECTORY = '/data/slides';
 var JSON_DIRECTORY = (path.join(path.dirname(__filename), '../public/data/index')).toString();
 var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../public/data/slides')).toString();
-var EXTENSIONS_DIRECTORY = (path.join(path.dirname(__filename), '../public/humla/lib/ext')).toString();
+var EXTENSIONS_DIRECTORY = (path.join(path.dirname(__filename), './ext')).toString();
 var GENERAL_LECTURE_NAME = 'lecture';
 var extensions = new Array();
 
@@ -178,7 +178,7 @@ function getIndex(response, request){
     if(alt == undefined){
         alt = "json"; // set json as default
     }else{
-        if(alt!=="json" && alt!="xml"){
+        if(alt!=="json" && alt!=="xml"){
             // incorrect format requested
             response.writeHead(400, { // TODO fix status code
                 'Content-Type': 'text/plain'

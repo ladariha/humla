@@ -24,7 +24,7 @@ Lecture%201
    </keywords_3>
 </keywords>
 <numberOfSlide>
-39
+38
 </numberOfSlide>
 <images>
    <images_0>
@@ -38,7 +38,7 @@ Lecture%201
       ec2-free-tier.png
       </filename>
       <slideURL>
-      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F24
+      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F23
       </slideURL>
       <type>
       picture
@@ -55,7 +55,7 @@ Lecture%201
       c9-ide-screenshot.png
       </filename>
       <slideURL>
-      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F34
+      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F33
       </slideURL>
       <type>
       picture
@@ -65,10 +65,10 @@ Lecture%201
 <codeBlocks>
    <codeBlocks_0>
       <slideURL>
-      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F32
+      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F31
       </slideURL>
       <title>
-      Code%20Examples
+      About%20Slides
       </title>
       <language>
       Java
@@ -76,10 +76,10 @@ Lecture%201
    </codeBlocks_0>
    <codeBlocks_1>
       <slideURL>
-      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F32
+      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F31
       </slideURL>
       <title>
-      Code%20Examples
+      About%20Slides
       </title>
       <language>
       JavaScript
@@ -87,10 +87,10 @@ Lecture%201
    </codeBlocks_1>
    <codeBlocks_2>
       <slideURL>
-      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F32
+      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F31
       </slideURL>
       <title>
-      Code%20Examples
+      About%20Slides
       </title>
       <language>
       XML
@@ -98,10 +98,10 @@ Lecture%201
    </codeBlocks_2>
    <codeBlocks_3>
       <slideURL>
-      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F32
+      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F31
       </slideURL>
       <title>
-      Code%20Examples
+      About%20Slides
       </title>
       <language>
       Bash%2Fshell
@@ -109,10 +109,10 @@ Lecture%201
    </codeBlocks_3>
    <codeBlocks_4>
       <slideURL>
-      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F34
+      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F33
       </slideURL>
       <title>
-      Use%20and%20Alter%20the%20Code
+      Github%20Repo
       </title>
       <language>
       Bash%2Fshell
@@ -446,22 +446,22 @@ Lecture%201
 <drawings>
    <drawings_0>
       <alt>
-      Representational%20State%20Transfer
+      SOA%20Integration
       </alt>
       <id>
-      1dOevmc1cKlJNHz6h416ybvOmYSTQD_cqPbgXjpjOY-0
+      1-uHnuWoYea9KZgEBRkGmdpbKDT5THls9dn56XolZ1Lg
       </id>
       <slide>
-      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F10
+      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F8
       </slide>
       <type>
       drawing
       </type>
       <exportURL>
-      https%3A%2F%2Fdocs.google.com%2Fdrawings%2Fd%2F1dOevmc1cKlJNHz6h416ybvOmYSTQD_cqPbgXjpjOY-0%2Fexport%2Fpng%3Fid%3D1dOevmc1cKlJNHz6h416ybvOmYSTQD_cqPbgXjpjOY-0%26pageid%3Dp
+      https%3A%2F%2Fdocs.google.com%2Fdrawings%2Fd%2F1-uHnuWoYea9KZgEBRkGmdpbKDT5THls9dn56XolZ1Lg%2Fexport%2Fpng%3Fid%3D1-uHnuWoYea9KZgEBRkGmdpbKDT5THls9dn56XolZ1Lg%26pageid%3Dp
       </exportURL>
       <filename>
-      RESTArchitecture.png
+      soa-integration.png
       </filename>
    </drawings_0>
    <drawings_1>
@@ -472,7 +472,7 @@ Lecture%201
       123tDQFo3Zq0LEzzhquKp1xJX4YZ6YiWC0GDNGGK1UA0
       </id>
       <slide>
-      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F8
+      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F7
       </slide>
       <type>
       drawing
@@ -486,53 +486,13 @@ Lecture%201
    </drawings_1>
    <drawings_2>
       <alt>
-      Traditional%20Hardware%20Model
-      </alt>
-      <id>
-      17jEYye-th5U5T-N-iE1gR7f_k5Bwrk9P7z9yYC4EZlw
-      </id>
-      <slide>
-      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F11
-      </slide>
-      <type>
-      drawing
-      </type>
-      <exportURL>
-      https%3A%2F%2Fdocs.google.com%2Fdrawings%2Fd%2F17jEYye-th5U5T-N-iE1gR7f_k5Bwrk9P7z9yYC4EZlw%2Fexport%2Fpng%3Fid%3D17jEYye-th5U5T-N-iE1gR7f_k5Bwrk9P7z9yYC4EZlw%26pageid%3Dp
-      </exportURL>
-      <filename>
-      traditional-hardware.png
-      </filename>
-   </drawings_2>
-   <drawings_3>
-      <alt>
-      SOA%20Integration
-      </alt>
-      <id>
-      1-uHnuWoYea9KZgEBRkGmdpbKDT5THls9dn56XolZ1Lg
-      </id>
-      <slide>
-      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F9
-      </slide>
-      <type>
-      drawing
-      </type>
-      <exportURL>
-      https%3A%2F%2Fdocs.google.com%2Fdrawings%2Fd%2F1-uHnuWoYea9KZgEBRkGmdpbKDT5THls9dn56XolZ1Lg%2Fexport%2Fpng%3Fid%3D1-uHnuWoYea9KZgEBRkGmdpbKDT5THls9dn56XolZ1Lg%26pageid%3Dp
-      </exportURL>
-      <filename>
-      soa-integration.png
-      </filename>
-   </drawings_3>
-   <drawings_4>
-      <alt>
       Web%20Engineering%20Overview
       </alt>
       <id>
       1oyGz6GdF-K_hln9g_l3Cp1eNK843S4NKE4tO8HMUYGw
       </id>
       <slide>
-      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F5
+      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F4
       </slide>
       <type>
       drawing
@@ -543,6 +503,46 @@ Lecture%201
       <filename>
       web-20-context.png
       </filename>
+   </drawings_2>
+   <drawings_3>
+      <alt>
+      Representational%20State%20Transfer
+      </alt>
+      <id>
+      1dOevmc1cKlJNHz6h416ybvOmYSTQD_cqPbgXjpjOY-0
+      </id>
+      <slide>
+      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F9
+      </slide>
+      <type>
+      drawing
+      </type>
+      <exportURL>
+      https%3A%2F%2Fdocs.google.com%2Fdrawings%2Fd%2F1dOevmc1cKlJNHz6h416ybvOmYSTQD_cqPbgXjpjOY-0%2Fexport%2Fpng%3Fid%3D1dOevmc1cKlJNHz6h416ybvOmYSTQD_cqPbgXjpjOY-0%26pageid%3Dp
+      </exportURL>
+      <filename>
+      RESTArchitecture.png
+      </filename>
+   </drawings_3>
+   <drawings_4>
+      <alt>
+      Traditional%20Hardware%20Model
+      </alt>
+      <id>
+      17jEYye-th5U5T-N-iE1gR7f_k5Bwrk9P7z9yYC4EZlw
+      </id>
+      <slide>
+      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F10
+      </slide>
+      <type>
+      drawing
+      </type>
+      <exportURL>
+      https%3A%2F%2Fdocs.google.com%2Fdrawings%2Fd%2F17jEYye-th5U5T-N-iE1gR7f_k5Bwrk9P7z9yYC4EZlw%2Fexport%2Fpng%3Fid%3D17jEYye-th5U5T-N-iE1gR7f_k5Bwrk9P7z9yYC4EZlw%26pageid%3Dp
+      </exportURL>
+      <filename>
+      traditional-hardware.png
+      </filename>
    </drawings_4>
    <drawings_5>
       <alt>
@@ -552,7 +552,7 @@ Lecture%201
       1yeHPc2AqDeXanOV0Zi8MirHApMjf1Sa_2UCOt_9Avds
       </id>
       <slide>
-      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F12
+      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F11
       </slide>
       <type>
       drawing
@@ -572,7 +572,7 @@ Lecture%201
       1i5681Erf2sYIeXg8p1lhiNvJqAAifdFs8o4DAshx2C4
       </id>
       <slide>
-      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F14
+      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F13
       </slide>
       <type>
       drawing
@@ -592,7 +592,7 @@ Lecture%201
       1wb1OFJYZ1ukRLlKOXE7JWkhFGCeLvhIO6bveWUVpiBI
       </id>
       <slide>
-      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F19
+      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F18
       </slide>
       <type>
       drawing
@@ -614,10 +614,10 @@ Lecture%201
       discovery%2Fcategory-discovery.js
       </file>
       <title>
-      Github%20Repo
+      Code%20Examples
       </title>
       <slide>
-      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F33
+      127.0.0.1%3A1338%2Fdata%2Fslides%2Fmdw%2Flecturelecture1.html%23%2F32
       </slide>
    </github_0>
 </github>
