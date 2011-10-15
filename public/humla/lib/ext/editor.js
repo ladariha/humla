@@ -33,10 +33,12 @@ function removeSlide(course, lecture, slideNumber){
     request.setRequestHeader("Connection", "close");
     request.onreadystatechange = function(){
         if (request.readyState==4) {
-            
-            window.location.reload();
-            alert("Slide " +slideNumber+" removed.");
-            
+            if(request.status==200){
+                window.location.reload();
+                alert("Slide " +slideNumber+" removed.");
+            }else{
+                alert(request.status+": "+request.statusText);
+            }
         }else{
             alert(request.responseText);
         }

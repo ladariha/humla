@@ -20,10 +20,16 @@ var ex_slideindex = {
         request.setRequestHeader("Connection", "close");
         request.onreadystatechange = function(){
             if (request.readyState==4) {
-                var index = eval('(' + request.responseText + ')');
-                ext.designIndex(slide, index);
+                if (request.status == 200){
+                    var index = eval('(' + request.responseText + ')');
+                    ext.designIndex(slide, index);
+                }else{
+                    alert(request.status+": "+request.statusText);
+                }
             
             }else{
+                console.log("> "+request.readyState);
+                
                 alert(request.responseText);
             }
         
@@ -114,7 +120,7 @@ var ex_slideindex = {
             var d = index.codeBlocks[i];
             ul+="<li class=\"slideindex-li\">";
             
-                ul+=d.title;
+            ul+=d.title;
             
             ul+="<img src=\"../../../humla/lib/ext/slideindex-left.png\" onClick=\"dropdown(this, 'slideindex-codes"+i+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-codes"+i+"\" class=\"slideindex-hidden\" >\n";
             ul+="<li class=\"slideindex-li\">Slide: <a href=\"http://"+d.slideURL+"\">"+d.slideURL+"</a> </li>"
@@ -163,7 +169,6 @@ function dropdown(img, idOflist){
         img.title = "Hide content";
         img.alt="Hide content";
         document.getElementById(idOflist).setAttribute("class", 'slideindex-visible');
-        console.log(document.getElementById(idOflist))
     }else{
         img.src="../../../humla/lib/ext/slideindex-left.png";  
         document.getElementById(idOflist).setAttribute("class", 'slideindex-hidden');
