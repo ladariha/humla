@@ -178,7 +178,7 @@ function getIndex(response, request){
     if(alt == undefined){
         alt = "json"; // set json as default
     }else{
-        if(alt!=="json" && alt!="xml"){
+        if(alt!=="json" && alt!=="xml"){
             // incorrect format requested
             response.writeHead(400, { // TODO fix status code
                 'Content-Type': 'text/plain'
