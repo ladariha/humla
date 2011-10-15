@@ -18,96 +18,97 @@
         "view6"     : [],
         "view7"     : [],
         "view8"     : [],
-        "view9"     : []
+        "view9"     : [],
+        "index"     :[73]
     },
 
     "views": [
-        {   "id"     : "1",
+        {"id"     : "1",
             "object" : "view_browser",
-            "script" : { "src" : "views/browser.js" }, 
-            "style"  : { "src" : "views/browser.css", "media" : "screen" }
+            "script" : {"src" : "views/browser.js"}, 
+            "style"  : {"src" : "views/browser.css", "media" : "screen"}
         }, 
 
-        {   "id"     : "2", 
+        {"id"     : "2", 
             "object" : "view_slideshow",
-            "script" : { "src" : "views/slideshow.js" }, 
-            "style"  : { "src" : "views/slideshow.css", "media" : "screen" }  
+            "script" : {"src" : "views/slideshow.js"}, 
+            "style"  : {"src" : "views/slideshow.css", "media" : "screen"}  
         }, 
 
-        {   "id"     : "3", 
+        {"id"     : "3", 
             "object" : "view_grid",
-            "script" : { "src" : "views/grid.js" }, 
-            "style"  : { "src" : "views/grid.css", "media" : "screen" },  
+            "script" : {"src" : "views/grid.js"}, 
+            "style"  : {"src" : "views/grid.css", "media" : "screen"},  
             "keys_disabled" : ["prev", "next", "first", "last", "goto"]             
         }, 
 
-        {   "id"     : "4", 
+        {"id"     : "4", 
             "object" : "view_print",        
-            "script" : { "src" : "views/print.js" }, 
-            "style"  : { "src" : "views/print.css", "media" : "screen, print" },  
+            "script" : {"src" : "views/print.js"}, 
+            "style"  : {"src" : "views/print.css", "media" : "screen, print"},  
             "keys_disabled" : ["prev", "next", "first", "last", "goto"]             
         }
         
     ],
     
     "extensions": [
-        {   "id" : "outline",
+        {"id" : "outline",
             "object" : "ex_outline",
-            "scripts"  : [ { "src" : "ext/outline.js" } ],  
-            "styles"   : [ { "src" : "ext/outline.css", "media" : "screen, print" } ], 
+            "scripts"  : [ {"src" : "ext/outline.js"} ],  
+            "styles"   : [ {"src" : "ext/outline.css", "media" : "screen, print"} ], 
             "enabled" : true 
         },
         
-        {   "id" : "params",
+        {"id" : "params",
             "object" : "ex_params",
-            "scripts"  : [ { "src" : "ext/params.js" } ], 
+            "scripts"  : [ {"src" : "ext/params.js"} ], 
             "enabled" : true
         },
         
-        {   "id" : "latex",
+        {"id" : "latex",
             "object" : "ex_latex",
-            "scripts"  : [ { "src" : "ext/latex.js" } ],    
-            "styles"   : [ { "src" : "ext/latex.css", "media" : "screen, print" } ],
+            "scripts"  : [ {"src" : "ext/latex.js"} ],    
+            "styles"   : [ {"src" : "ext/latex.css", "media" : "screen, print"} ],
             "params"   : {
                 "mathtex" : "your_mathtex_url_here"
             },
             "enabled" : true 
         },        
         
-        {   "id" : "drawing",
+        {"id" : "drawing",
             "object" : "ex_drawing",
-            "scripts"  : [ { "src" : "ext/drawing.js" } ],  
-            "styles"   : [ { "src" : "ext/drawing.css", "media" : "screen, print" } ],
+            "scripts"  : [ {"src" : "ext/drawing.js"} ],  
+            "styles"   : [ {"src" : "ext/drawing.css", "media" : "screen, print"} ],
             "params"   : {
                 "format" : "svg"
             },
             "enabled" : true 
         }, 
         
-        {   "id" : "syntaxhighlighter",
+        {"id" : "syntaxhighlighter",
             "object" : "ex_syntaxhighlighter",
-            "scripts" : [ { "src" : "../support/SyntaxHighlighter/scripts/XRegExp.js" },
-                { "src" : "../support/SyntaxHighlighter/scripts/shCore.js", "g" : 1 },
-                { "src" : "../support/SyntaxHighlighter/scripts/shBrushJScript.js", "g" : 2 },
-                { "src" : "../support/SyntaxHighlighter/scripts/shBrushXml.js", "g" : 2 },
-                { "src" : "../support/SyntaxHighlighter/scripts/shBrushPlain.js", "g" : 2 },
-                { "src" : "../support/SyntaxHighlighter/scripts/shBrushJava.js", "g" : 2 },
-                { "src" : "../support/SyntaxHighlighter/scripts/shBrushBash.js", "g" : 2 },                          
-                { "src" : "ext/syntaxhighlighter.js", "g" : 2 } ],
-            "styles"  : [ { "src" : "../support/SyntaxHighlighter/styles/shCoreDefault.css",  "media" : "screen, print" },
-                { "src" : "ext/syntaxhighlighter.css", "media" : "screen, print" } ],               
+            "scripts" : [ {"src" : "../support/SyntaxHighlighter/scripts/XRegExp.js"},
+                {"src" : "../support/SyntaxHighlighter/scripts/shCore.js", "g" : 1},
+                {"src" : "../support/SyntaxHighlighter/scripts/shBrushJScript.js", "g" : 2},
+                {"src" : "../support/SyntaxHighlighter/scripts/shBrushXml.js", "g" : 2},
+                {"src" : "../support/SyntaxHighlighter/scripts/shBrushPlain.js", "g" : 2},
+                {"src" : "../support/SyntaxHighlighter/scripts/shBrushJava.js", "g" : 2},
+                {"src" : "../support/SyntaxHighlighter/scripts/shBrushBash.js", "g" : 2},                          
+                {"src" : "ext/syntaxhighlighter.js", "g" : 2} ],
+            "styles"  : [ {"src" : "../support/SyntaxHighlighter/styles/shCoreDefault.css",  "media" : "screen, print"},
+                {"src" : "ext/syntaxhighlighter.css", "media" : "screen, print"} ],               
             "params"  : {
                 "defaults" : [
-                    { "key" : "toolbar", "value" : "false" }
+                    {"key" : "toolbar", "value" : "false"}
                 ]
             },
             "enabled" : true
         },
 
-        {   "id" : "github",
+        {"id" : "github",
             "object" : "ex_github",
-            "scripts" : [ { "src" : "ext/github.js" } ],
-            "styles"  : [ { "src" : "ext/github.css", "media" : "screen, print" } ],
+            "scripts" : [ {"src" : "ext/github.js"} ],
+            "styles"  : [ {"src" : "ext/github.css", "media" : "screen, print"} ],
             "params"  : {
                 "url"  : "http://proxy.vitvar.com/raw.github",
                 "user-repo" : "tomvit/mdw-examples"
@@ -115,30 +116,36 @@
             "enabled" : true 
         },
 
-        {   "id" : "rssfeed",
+        {"id" : "rssfeed",
             "object" : "ex_rssfeed",
-            "scripts" : [ { "src" : "ext/rssfeed.js" } ],
+            "scripts" : [ {"src" : "ext/rssfeed.js"} ],
             "enabled" : true 
         },
         
-        {   "id" : "ga",
+        {"id" : "ga",
             "object" : "ex_ga",
-            "scripts" : [ { "src" : "ext/ga.js" } ],
+            "scripts" : [ {"src" : "ext/ga.js"} ],
             "params"  : {
                 "account" : "UA-xxx"
             },
             "enabled" : true 
         },
         
-        {   "id" : "comments",
+        {"id" : "comments",
             "object" : "ex_comments",
-            "scripts" : [ { "src" : "ext/comments.js" } ],
+            "scripts" : [ {"src" : "ext/comments.js"} ],
             "enabled" : true 
         },
-        {   "id" : "editor",
+        {"id" : "editor",
             "object" : "ex_editor",
-            "scripts" : [ { "src" : "ext/editor.js" } ],
-            "styles"  : [ { "src" : "ext/editor.css", "media" : "screen, print" } ],
+            "scripts" : [ {"src" : "ext/editor.js"} ],
+            "styles"  : [ {"src" : "ext/editor.css", "media" : "screen, print"} ],
+            "enabled" : true 
+        },
+        {"id" : "slideindex",
+            "object" : "ex_slideindex",
+            "scripts" : [ {"src" : "ext/slideindex.js"} ],
+            "styles"  : [ {"src" : "ext/slideindex.css", "media" : "screen, print"} ],
             "enabled" : true 
         }
         

@@ -36,9 +36,11 @@ var humla = {
             this.slides[i].reset();
     },
     
-    showMessage : function(message, error, update) {
+    showMessage : function(message, error, update, duration) {
         if (!this.msgbox)
             this.msgbox = new MessageBox();
+        if(duration)
+            this.msgbox.duration = duration;
         this.msgbox.addMessage(message ? message.replace("Uncaught", "") : 
             "Message to display was not set!", error, update);
     },
@@ -166,8 +168,12 @@ var humla = {
             loadSlides(humla.root);
                         
             // redirect alert to humla messages
-            window.alert = function(msg) {
-                humla.showMessage("alert: " + msg, false, true);
+            window.alert = function(msg, duration, title) {
+                if(!title){
+                    humla.showMessage("alert: " + msg, false, true, duration);
+                }else{
+                    humla.showMessage(title + msg, false, true, duration);
+                }
             };
 
             // register listener to handle errors 
@@ -256,6 +262,8 @@ var humla = {
                     registerViews(suplConfig.data, suplConfig.baseDir);
                     registerExtensions(mainConfig.data, mainConfig.baseDir);
                     registerExtensions(suplConfig.data, suplConfig.baseDir);
+                    
+                   
                     
                     // load all the scripts and run the controller
                     humla.controler.run();
@@ -461,7 +469,7 @@ var Utils = function(window) {
 var MessageBox = function(message) {
     this.div = null;
     this.timer = null;
-            
+    this.duration = 3500;
     this.addMessage = function(message, error, update) {
         if (this.div && update) {
             humla.utils.documentBody.removeChild(this.div);
@@ -506,7 +514,7 @@ var MessageBox = function(message) {
             this.timer = null;
         }
         if (!clear)
-            this.timer = window.setTimeout(this.dismiss, 3500, this);    
+            this.timer = window.setTimeout(this.dismiss, this.duration, this);    
     };
     
     if (message)
