@@ -1,0 +1,81 @@
+
+
+.comments {
+    position:absolute;
+    /*min-height: 200px;*/
+    min-width: 200px;
+    bottom: 22px;
+    background: rgba(255,255,255,0.6);
+    font-size: 18px;   
+    
+}
+
+.comments > div {
+    background: rgba(230,230,230,0.8);
+    margin: 2px auto;
+}
+.comments .button {    
+    cursor: pointer;
+    background: white;
+    background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ddd));
+    color: #444;
+    float: left;
+    margin: 4px;
+    padding: 2px 5px;
+    border: 1px solid #888;    
+    -webkit-border-radius: 5px;    
+    border-radius: 5px;
+}
+
+.comments .button:active {
+    background: #eee;
+    background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#fff));
+    border: 1px solid #777;       
+}
+
+.comments .input > textarea {    
+    float:left;
+}
+
+
+.comment > .date {
+    font-size: 12px;
+    font-weight: bold;
+    color: #888;
+    
+}
+
+.comment > .user {
+    font-size: 12px;
+    font-weight: bold;
+    color: #666;
+    
+}
+
+
+/* -------- Toolbar ------------*/
+#comments-toolbar{
+    text-align: right;
+    position:absolute;
+    /*top:20px;*/
+    bottom: -3px;
+    right: 90px;
+}
+
+#comments-toolbar img{
+    width:20px;
+    margin: 5px 5px;
+    opacity: 0.3;
+    filter:alpha(opacity=30); /* For IE8 and earlier */
+}
+
+.comments-link:hover{
+    width:20px;
+    opacity:1;
+}
+
+#comments-toolbar img:hover{
+    opacity:1;
+    filter:alpha(opacity=1); /* For IE8 and earlier */
+}
+
