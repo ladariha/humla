@@ -241,6 +241,13 @@ var View = function(config, keys, baseDir) {
     /* handling key input */
     
     this.keydown = function(event) {
+        // disable key handling for textarea and input field
+        var element;
+        if(event.target) element=event.target;
+        else if(event.srcElement) element=event.srcElement;
+        if(element.nodeType==3) element=element.parentNode;
+        if(element.tagName == 'INPUT' || element.tagName == 'TEXTAREA') return;
+        
         // function to check a key is in the array of keys
         var containsKey = function(key, keys) {
             if (keys)
@@ -249,6 +256,8 @@ var View = function(config, keys, baseDir) {
                         return true;
             return false;
         };
+        
+        
         
         // switching view
         for (var i = 0; i < humla.controler.views.length; i++) {

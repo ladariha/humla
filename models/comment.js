@@ -30,6 +30,7 @@ var CommentSchema = new Schema({
         enum: ["draft","published","private"]
     }, //, default: "draft"}
     author: {
+        username: String,
         email: {
             type: String, 
             validate: /^.*$/

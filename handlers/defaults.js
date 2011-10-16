@@ -139,11 +139,6 @@ function loadUser(req, res, next) {
         res.redirect('/sessions/new');
     }
 }
-    
-    
-
-
-
 
 function NotFound(msg){
     this.name = 'NotFound';

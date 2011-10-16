@@ -23,16 +23,14 @@ app.get('/api/:course/:lecture/:slide/comments', function(req, res) {
                 "Content-Type": "application/json",
                 "Content-Encoding" : "utf-8"
             });
-            //res.write(JSON.stringify(com));
-            
-            res.write("ID:"+com.slideID+" --- "+com.body+" com:"+com.toString);
-            
-            
-        
+            //res.write(JSON.stringify(com));            
+            //res.write("ID:"+com[0].slideID+" --- "+com[0].body+" com:"+com[0].toString);
+            res.write(JSON.stringify(com));
+        //console.log(com)
         } else {
             
             res.writeHead(404) ;
-            res.write("Comment not found: "+err+" com:"+com);
+            res.write("Comment not found: "+err+", com:"+com);
         }
         res.end();            
     })
@@ -41,11 +39,24 @@ app.get('/api/:course/:lecture/:slide/comments', function(req, res) {
 
 
 app.post('/api/:course/:lecture/:slide/comments', function(req, res, next){
+    if (!req.rawBody){
+        res.writeHead(400); //BAD_REQUEST
+        res.write("Gimme some text, bro!");
+        res.end();
+    }
     var com = new Comment();
-    com.body = req.body ? req.body : "Placeholder Body";
+    //console.log(req);
+    //console.log(req.rawBody);
+    //console.log(req.body);
+    com.body = req.rawBody ? req.rawBody : "Placeholder Body";
     com.courseID = req.params.course;
     com.lectureID = req.params.lecture;
     com.slideID = req.params.slide;
+    com.date = new Date();
+    com.author = {
+        username:"admin", 
+        email:"franta@novak.cz"
+    }; // TODO: implementovat ověřování
     com.save(function(err) {
         if(err) {
             console.log("ERR");
@@ -57,4 +68,9 @@ app.post('/api/:course/:lecture/:slide/comments', function(req, res, next){
         res.write("k thx bye");
         res.end();
     });
+});
+
+
+app.del('/api/:course/:lecture/:slide/comments', function(req, res, next){ 
+    //TODO: napsat buď jako DELETE, nebo jako PUT
 });
