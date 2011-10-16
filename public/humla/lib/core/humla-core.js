@@ -39,20 +39,22 @@ Slide = function(element, footer, section, number) {
     try {
         //this.name = humla.utils.xpath('header/@text', this.element).stringValue;
         this.title = this.element.getElementsByTagName("hgroup")[0].
-            getElementsByTagName("h1")[0].innerText;
-    } catch(e) { this.title = "n/a"; }
+        getElementsByTagName("h1")[0].innerText;
+    } catch(e) {
+        this.title = "n/a";
+    }
 
     // adds a new class name to the list of slide's classes
     this.addClass = function(classStr) {
         classStr = humla.utils.str2array(classStr);
-	    var cls = " " + this.element.className + " ";
-	    for (var i = 0, len = classStr.length, c; i < len; ++i) {
-		    c = classStr[i];
-		    if (c && cls.indexOf(" " + c + " ") < 0) {
-			    cls += c + " ";
-		    }
-	    }
-	    this.element.className = humla.utils.trim(cls);
+        var cls = " " + this.element.className + " ";
+        for (var i = 0, len = classStr.length, c; i < len; ++i) {
+            c = classStr[i];
+            if (c && cls.indexOf(" " + c + " ") < 0) {
+                cls += c + " ";
+            }
+        }
+        this.element.className = humla.utils.trim(cls);
         
         // we assume that visibility of slide can change so we process the slide here
         this.process();
@@ -60,20 +62,20 @@ Slide = function(element, footer, section, number) {
     
     // removes a class from the list of slide's classes
     this.removeClass = function(classStr) {
-	    var cls;
-	    if (classStr !== undefined) {
-		    classStr = humla.utils.str2array(classStr);
-		    cls = " " + this.element.className + " ";
-		    for (var i = 0, len = classStr.length; i < len; ++i) {
-			    cls = cls.replace(" " + classStr[i] + " ", " ");
-		    }
-		    cls = humla.utils.trim(cls);
-	    } else {
-		    cls = "";
-	    }
-	    if (this.element.className != cls) {
-		    this.element.className = cls;
-	    }
+        var cls;
+        if (classStr !== undefined) {
+            classStr = humla.utils.str2array(classStr);
+            cls = " " + this.element.className + " ";
+            for (var i = 0, len = classStr.length; i < len; ++i) {
+                cls = cls.replace(" " + classStr[i] + " ", " ");
+            }
+            cls = humla.utils.trim(cls);
+        } else {
+            cls = "";
+        }
+        if (this.element.className != cls) {
+            this.element.className = cls;
+        }
     };
             
     this.updateFooter = function() {
@@ -92,18 +94,18 @@ Slide = function(element, footer, section, number) {
         var obj = this;
         if (!this.processed) {
             humla.controler.callExtensionsInterface("processSlide", this,
-             function() { // on success
+                function() { // on success
                     obj.processed = true;
-                 },
-             function(e) { // on error
+                },
+                function(e) { // on error
                     humla.reportError(obj.formatError(e));
-                 });
+                });
         }
     };
     
     this.formatError = function(message) {
         return "<a href=\"" + this.url + "\">Slide " + 
-            this.number + "</a>: " + message;
+        this.number + "</a>: " + message;
     };
     
     this.error = function(message) {
@@ -138,7 +140,9 @@ Section = function(element, parent) {
             this.name = this.element.getElementsByTagName("header")[0].innerText;
         else
             this.name = null;
-    } catch(e) { this.name = "n/a"; }
+    } catch(e) {
+        this.name = "n/a";
+    }
     
     // parent section of this section
     this.parent = parent;
@@ -182,7 +186,7 @@ var View = function(config, keys, baseDir) {
 
     this.executeViewInterface = function(method, params) {
         if (this.objref && this.objref[method])
-                this.objref[method].call(this.objref, params);
+            this.objref[method].call(this.objref, params);
                 
         // try to execute the same method on extensions
         humla.controler.callExtensionsInterface(method, params, null, null);        
@@ -261,7 +265,7 @@ var View = function(config, keys, baseDir) {
 
         // press "spare" key - testing purposes
         if (containsKey(event.keyCode, this.keys.spare))
-          humla.showMessage(window.status, false, true);
+            humla.showMessage(window.status, false, true);
 
         // toggle error messages on/off
         else if (containsKey(event.keyCode, this.keys.terrs))
@@ -274,6 +278,8 @@ var View = function(config, keys, baseDir) {
         else if (containsKey(event.keyCode, this.keys.prev))
             this.gotoPrevious();
         
+        else if (containsKey(event.keyCode, this.keys.index))
+            humla.controler.getExtensionById("slideindex").callExtensionInterface("showIndex",humla.slides[this.currentSlide - 1]);
     };
     
     /* navigation */
@@ -351,7 +357,7 @@ var Extension = function(config, baseDir) {
     
     this.callExtensionInterface = function(method, params) {
         if (this.objref && this.objref[method])
-                this.objref[method].call(this.objref, params);
+            this.objref[method].call(this.objref, params);
     };
     
     

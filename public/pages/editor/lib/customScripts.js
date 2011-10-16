@@ -18,8 +18,12 @@ function sendData(){
     request.setRequestHeader("Connection", "close");
     request.onreadystatechange = function(){
         if (request.readyState==4) {
-            var object = eval('(' + request.responseText + ')');
-            document.getElementById("msg").innerHTML=object.html;
+            if(request.status==200){
+                var object = eval('(' + request.responseText + ')');
+                document.getElementById("msg").innerHTML=object.html;
+            }else{
+                document.getElementById("msg").innerHTML=request.status+": "+request.statusText;    
+            }
             loadSlide();
         }else{
             editor.setValue(request.responseText);
@@ -59,27 +63,32 @@ function loadSlide(){
             request.open("GET", url, true);
             request.onreadystatechange = function(){
                 if (request.readyState==4) {
-                    var object = eval('(' + request.responseText + ')');
+                    if(request.status==200){
+                        
+                        var object = eval('(' + request.responseText + ')');
                             
-                    var textarray = object.html.split("\n");
-                    var finalString = '';
-                    for(var k in textarray){
-                        if(textarray[k].length>0){
-                            finalString = finalString+"\n"+textarray[k].replace(/^\s\s{6}/, ' ') ;
+                        var textarray = object.html.split("\n");
+                        var finalString = '';
+                        for(var k in textarray){
+                            if(textarray[k].length>0){
+                                finalString = finalString+"\n"+textarray[k].replace(/^\s\s{6}/, ' ') ;
+                            }
                         }
-                    }
-                    finalString = finalString.replace(/\&amp;/g,'&');
-                    editor.setValue(finalString);
-                    document.getElementById("append").innerHTML = "Append after";
-                    document.getElementById("slide").innerHTML = slide;
-                    document.getElementById("lecture").innerHTML = lecture;
-                    document.getElementById("course").innerHTML = course;
-                    var v = getParameterByName('v');
-                    if(v.length>0){
-                        document.getElementById("cancelLink").href="http://"+object.url+"/"+v;    
+                        finalString = finalString.replace(/\&amp;/g,'&');
+                        editor.setValue(finalString);
+                        document.getElementById("append").innerHTML = "Append after";
+                        document.getElementById("slide").innerHTML = slide;
+                        document.getElementById("lecture").innerHTML = lecture;
+                        document.getElementById("course").innerHTML = course;
+                        var v = getParameterByName('v');
+                        if(v.length>0){
+                            document.getElementById("cancelLink").href="http://"+object.url+"/"+v;    
+                        }else{
+                            document.getElementById("cancelLink").href="http://"+object.url+"/v1";    
+                        }
                     }else{
-                        document.getElementById("cancelLink").href="http://"+object.url+"/v1";    
-                    }
+                        document.getElementById("msg").innerHTML=request.status+": "+request.statusText;    
+                    }  
                 }
             };
             request.send(null);  
@@ -92,26 +101,31 @@ function loadSlide(){
             request.open("GET", url, true);
             request.onreadystatechange = function(){
                 if (request.readyState==4) {
-                    var object = eval('(' + request.responseText + ')');
+                    if(request.status==200){
+                        var object = eval('(' + request.responseText + ')');
                             
-                    var textarray = object.html.split("\n");
-                    var finalString = '';
-                    for(var k in textarray){
-                        if(textarray[k].length>0){
-                            finalString = finalString+"\n"+textarray[k].replace(/^\s\s{6}/, ' ') ;
+                        var textarray = object.html.split("\n");
+                        var finalString = '';
+                        for(var k in textarray){
+                            if(textarray[k].length>0){
+                                finalString = finalString+"\n"+textarray[k].replace(/^\s\s{6}/, ' ') ;
+                            }
                         }
-                    }
-                    finalString = finalString.replace(/\&amp;/g,'&');
-                    editor.setValue(finalString);
-                    document.getElementById("slide").innerHTML = slide;
-                    document.getElementById("lecture").innerHTML = lecture;
-                    document.getElementById("course").innerHTML = course;
-                    var v = getParameterByName('v');
-                    if(v.length>0){
-                        document.getElementById("cancelLink").href="http://"+object.url+"/"+v;    
+                        finalString = finalString.replace(/\&amp;/g,'&');
+                        editor.setValue(finalString);
+                        document.getElementById("slide").innerHTML = slide;
+                        document.getElementById("lecture").innerHTML = lecture;
+                        document.getElementById("course").innerHTML = course;
+                        var v = getParameterByName('v');
+                        if(v.length>0){
+                            document.getElementById("cancelLink").href="http://"+object.url+"/"+v;    
+                        }else{
+                            document.getElementById("cancelLink").href="http://"+object.url+"/v1";    
+                        } 
                     }else{
-                        document.getElementById("cancelLink").href="http://"+object.url+"/v1";    
+                        document.getElementById("msg").innerHTML=request.status+": "+request.statusText;    
                     }
+                 
                 }else{
                     editor.setValue(request.responseText);
                 }

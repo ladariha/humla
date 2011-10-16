@@ -628,7 +628,7 @@ function parseImagesAndCodeBlocks(slideIndex,$){
 function makeStructureHierarchical(slideIndex){
     var sections = {};
     var newcontent = new Array();
-    var baseURL = slideIndex.host+ RAW_SLIDES_DIRECTORY+"/"+slideIndex.course+"/"+GENERAL_LECTURE_NAME+slideIndex.lecture+".html";
+    var baseURL = slideIndex.host+ RAW_SLIDES_DIRECTORY+"/"+slideIndex.course+"/"+slideIndex.lecture+".html"; //GENERAL_LECTURE_NAME+
     var counter = 1;
     slideIndex.baseURL = baseURL;
     baseURL = baseURL + "#/";
