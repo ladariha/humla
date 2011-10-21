@@ -4,45 +4,59 @@ var ex_slideindex = {
 
 
     showIndex : function(slide){
-        var ext = this;
         var presentationUrl = window.location.href;
-        var fields = presentationUrl.split("/");
-        var firstIndex = presentationUrl.indexOf("slides", 0)+7;
-        presentationUrl = presentationUrl.substr(firstIndex, presentationUrl.length);
-        var course = fields[5];//presentationUrl.substr(0, presentationUrl.indexOf("/"));
-        var lecture= fields[6].substr(0, fields[6].indexOf("."));
-        
-        var request = new XMLHttpRequest;
-        var url = "/api/"+course+"/"+lecture+"/index";
-        request.open("GET", url, true);
-        request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        request.setRequestHeader("Content-length", 200);
-        request.setRequestHeader("Connection", "close");
-        request.onreadystatechange = function(){
-            if (request.readyState==4) {
-                if (request.status == 200){
-                    var index = eval('(' + request.responseText + ')');
-                    ext.designIndex(slide, index);
-                }else{
-                    alert(request.status+": "+request.statusText);
-                }
+        var slideIndexKey = "slideindex_"+presentationUrl;
+        if (humla.utils.window.localStorage && humla.utils.window.localStorage.getItem(slideIndexKey)){
+            console.log("from localStorage");
+            alert(humla.utils.window.localStorage.getItem(slideIndexKey), 20000, "Content ");
+        }else{
             
-            }else{
-                console.log("> "+request.readyState);
-                
-                alert(request.responseText);
-            }
+            var ext = this;
         
-        };
-        request.send(null);
+            var fields = presentationUrl.split("/");
+            var firstIndex = presentationUrl.indexOf("slides", 0)+7;
+            presentationUrl = presentationUrl.substr(firstIndex, presentationUrl.length);
+            var course = fields[5];//presentationUrl.substr(0, presentationUrl.indexOf("/"));
+            var lecture= fields[6].substr(0, fields[6].indexOf("."));
+        
+            var request = new XMLHttpRequest;
+            var url = "/api/"+course+"/"+lecture+"/index";
+            request.open("GET", url, true);
+            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            request.setRequestHeader("Content-length", 200);
+            request.setRequestHeader("Connection", "close");
+            request.onreadystatechange = function(){
+                if (request.readyState==4) {
+                    if (request.status == 200){
+                        var index = eval('(' + request.responseText + ')');
+                        ext.designIndex(slide, index);
+                    }else{
+                        alert(request.status+": "+request.statusText);
+                    }
+            
+                }else{
+                    console.log("> "+request.readyState);
+                
+                    alert(request.responseText);
+                }
+        
+            };
+            request.send(null); 
+        }
     },
     designIndex : function(slide, index){
-        
+        var preffix = "<p>clear storae"; // TODO clear storage call
         var drawings = this.drawingsToHtml(index);
         var github = this.githubToHtml(index);
         var images = this.imagesToHtml(index);
         var codeBlocks = this.codeBlocksToHtml(index);
         var structure = this.structureToHtml(index);
+        var presentationUrl = window.location.href;
+        var slideIndexKey = "slideindex_"+presentationUrl;
+        if (humla.utils.window.localStorage){
+            humla.utils.window.localStorage.removeItem(slideIndexKey);
+            humla.utils.window.localStorage.setItem(slideIndexKey,structure+images+drawings+codeBlocks+github);
+        }
         alert(structure+images+drawings+codeBlocks+github, 20000, "Content ");
     },
     
@@ -175,4 +189,9 @@ function dropdown(img, idOflist){
         img.title = "Show content";
         img.alt="Show content";
     }
+}
+
+function clearIndexFromLocalStorage(presentationUrl){
+    var slideIndexKey = "slideindex_"+presentationUrl;
+    humla.utils.window.localStorage.removeItem(slideIndexKey);
 }
