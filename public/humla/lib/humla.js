@@ -12,7 +12,7 @@ var humla = {
 
     // humla home directory
     home      : "",
-    
+    online    : 1,
     // humla helper functions 
     utils     : null,
     
@@ -180,6 +180,13 @@ var humla = {
             window.addEventListener("error", function(event) {
                 humla.reportError(event.message);
             }, false);
+
+            window.addEventListener("online", function(event){ // not supported on Chrome for Linux (http://codereview.chromium.org/7558012/)
+                humla.online =1;
+            });
+            window.addEventListener("offline", function(event){// not supported on Chrome for Linux (http://codereview.chromium.org/7558012/)
+                humla.online = 0;
+            });
 
             // register keydown listener
             window.addEventListener("keydown", function(event) {
