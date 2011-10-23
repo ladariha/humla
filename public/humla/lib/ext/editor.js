@@ -1,4 +1,4 @@
-var ex_editor = {
+    var ex_editor = {
     
     processSlide : function(slide) {
  
@@ -28,24 +28,24 @@ var ex_editor = {
 function removeSlide(course, lecture, slideNumber){
     var request = new XMLHttpRequest;
     var url = "/api/"+course+"/"+lecture+"/slide"+slideNumber+"/editor";
-    var params = "course="+course+"&lecture="+lecture+"&slide="+slideNumber;
     request.open("DELETE", url, true);
     request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    request.setRequestHeader("Content-length", params.length);
-    request.setRequestHeader("Connection", "close");
     request.onreadystatechange = function(){
         if (request.readyState==4) {
             if(request.status==200){
                 window.location.reload();
-                alert("Slide " +slideNumber+" removed.");
+                console.log("Slide " +slideNumber+" removed.");
             }else{
                 alert(request.status+": "+request.statusText);
+                console.log(request.status+": "+request.statusText);
             }
         }else{
             alert(request.responseText);
+            console.log("ERROR "+request.responseText);
         }
         
     };
-    request.send(params);
-    
+    console.log("posilam "+url);
+    request.send(null);
+    console.log("poslano ");
 }

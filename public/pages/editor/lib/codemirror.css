@@ -66,3 +66,27 @@ span.CodeMirror-selected {
 
 .CodeMirror-matchingbracket {color: #0f0 !important;}
 .CodeMirror-nonmatchingbracket {color: #f22 !important;}
+
+
+#controlPanel{
+    text-align: center;
+}
+
+#controlPanel div{
+     margin: 0 0 10px 0;
+    
+}
+
+#controlPanel img{
+    width: 90px;
+    margin: 0 6px 0 6px;
+    cursor: pointer;
+    opacity: 0.3;
+    filter:alpha(opacity=30); /* For IE8 and earlier */
+    
+}
+
+#controlPanel img:hover{
+    opacity: 1;
+    filter:alpha(opacity=100); /* For IE8 and earlier */
+}

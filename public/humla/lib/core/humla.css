@@ -42,9 +42,9 @@ a:hover {
 
 body {
     background-color: #eee;
-	padding: 0;
-	margin: 0;
-	overflow: hidden;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
     visibility: none;
     font-size: 35px;
     font-family: "Times New Roman";
@@ -55,42 +55,42 @@ body {
    There is a number of other values elsewhere in humla that are consistent with this. 
    If you change these values the presentation may not work correctly. */
 .slide {
-	display: none;
-	position: absolute;
-	overflow: hidden;
-	left: 50%;
-	top: 50%;
-	background-color: #fff;
-	width: 800px;			/* targeted resolution - width */
-	height: 600px;			/* targeted resolution - height */
-	margin-top: -300px; 	/* to center the slide, this must be height/2 */
-	
+    display: none;
+    position: absolute;
+    overflow: hidden;
+    left: 50%;
+    top: 50%;
+    background-color: #fff;
+    width: 800px;			/* targeted resolution - width */
+    height: 600px;			/* targeted resolution - height */
+    margin-top: -300px; 	/* to center the slide, this must be height/2 */
+
     -webkit-box-shadow: rgba(0, 0, 0, 0.1) 0 2px 5px; 
     -moz-box-shadow: rgba(0, 0, 0, 0.1) 0 2px 5px;	
     -o-box-shadow: rgba(0, 0, 0, 0.1) 0 2px 5px;
     box-shadow: rgba(0, 0, 0, 0.1) 0 2px 5px; 
-    
+
 }
 
 .slide > hgroup {
-	margin-top: 0px;
-	font-size: 18px;
-	padding: 10px;
-	width: 100%;
-	height: 50px;
-	background-color: WhiteSmoke; 
-	
-	color: #BC8F8F;
-	
+    margin-top: 0px;
+    font-size: 18px;
+    padding: 10px;
+    width: 100%;
+    height: 50px;
+    background-color: WhiteSmoke; 
+
+    color: #BC8F8F;
+
     -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 5px; 
     -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 5px; 
     -o-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 5px; 
 }
 
 .slide > hgroup h1 {
-	padding-top: 4px;
+    padding-top: 4px;
     width: 770px;
-	margin: 0px 10px 0px 10px;	
+    margin: 0px 10px 0px 10px;	
 }
 
 .intro > hgroup h2 {
@@ -118,20 +118,20 @@ body {
 .slide > ol,
 .slide > ul {
     width: 740px; /* max. width of the top enum element on the 800px slide */
-	margin-left: 10px;
-	margin-top: 2px;
+    margin-left: 10px;
+    margin-top: 2px;
     margin-bottom: 0px;
 }
 
 .slide > ol li,
 .slide > ul li {
     margin-top: 8px;
-	margin-bottom: 8px;
+    margin-bottom: 8px;
 }
 
 .slide > ol ol,
 .slide > ul ul {
-	padding: 0px 0px 0px 25px;
+    padding: 0px 0px 0px 25px;
 }
 
 .slide > ol ol ol,
@@ -141,12 +141,12 @@ body {
 
 .slide > ul ul li:before {
     font-family: "Arial";
-	margin-left: -25px;
-	content: "\2012\a0";  
+    margin-left: -25px;
+    content: "\2012\a0";  
 }
 
 .slide > ul ul ul li:before {
-	content: "\2192\a0";
+    content: "\2192\a0";
     margin-left: -35px;
 }
 
@@ -158,7 +158,7 @@ body {
 .slide ul.no-bullet li:before,
 .slide > ul li.no-bullet:before {
     margin-left: 0px;
-	content: "";
+    content: "";
 }
 
 .slide ul.no-bullet li,
@@ -172,17 +172,17 @@ body {
 }
 
 .slide > ul ol li {
-	font-size: 30px;
-	font-style: italic;
-	margin-top: -7px;
-	margin-left: 15px;
+    font-size: 30px;
+    font-style: italic;
+    margin-top: -7px;
+    margin-left: 15px;
 }
 
 .slide > ul ul li {
     font-size: 30px;
     font-style: italic;
     margin-top: -7px;
-	list-style-type: none;
+    list-style-type: none;
 }
 
 .slide ol.small li,
@@ -236,7 +236,7 @@ body {
 }
 
 .slide > ul.columns-2 li {
-/*    margin-left: 30px;*/
+    /*    margin-left: 30px;*/
 }
 
 .slide .break-before {
@@ -246,31 +246,31 @@ body {
 /* footer */
 
 .slide footer {
-	display: block;
-	border-top: 1px solid LightGrey;
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-	font-family: "Arial";
-	font-size: 11px;
-	color: DarkGray;
-	background-color: Whitesmoke;
-	height: 25px;
+    display: block;
+    border-top: 1px solid LightGrey;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    font-family: "Arial";
+    font-size: 11px;
+    color: DarkGray;
+    background-color: Whitesmoke;
+    height: 25px;
 }
 
 .slide footer p {
-	margin: 5px 5px 5px 5px;
-	text-overflow: ellipsis; 
-	white-space: nowrap; 
-	overflow: hidden;
+    margin: 5px 5px 5px 5px;
+    text-overflow: ellipsis; 
+    white-space: nowrap; 
+    overflow: hidden;
 }
 
 .slide footer p:nth-child(1) {
-	float: left;
+    float: left;
 }
 
 .slide footer p:nth-child(2) {
-	float: right;
+    float: right;
 }
 
 .slide.no-footer footer {
@@ -280,29 +280,29 @@ body {
 /* intro slide */
 
 .intro > hgroup {
-	margin-top: auto;
-	padding-top: 60px;
-	height: 170px;
-	background-color: RosyBrown;
+    margin-top: auto;
+    padding-top: 60px;
+    height: 170px;
+    background-color: RosyBrown;
 
-	color: WhiteSmoke;
-	background: -webkit-gradient(linear, left top, left bottom, from(#353f49), to(#252a2e));
+    color: WhiteSmoke;
+    background: -webkit-gradient(linear, left top, left bottom, from(#353f49), to(#252a2e));
 }
 
 .intro > hgroup h1 {
-	font-size: 45px;
-	margin: 0px;
-	text-align: center;
+    font-size: 45px;
+    margin: 0px;
+    text-align: center;
 }
 
 .intro > hgroup h2 {
-	font-size: 30px;
-	margin-top: 0px;
-	text-align: center;
+    font-size: 30px;
+    margin-top: 0px;
+    text-align: center;
 }
 
 .intro > footer {
-	display: none;
+    display: none;
 }
 
 /* message box */
@@ -318,16 +318,16 @@ body {
     margin-right: auto;
     top: 0px;
     color: #222;
-    
+
     -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 5px; 
     -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 5px; 
     -o-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 5px; 
-    
+
     -moz-border-radius: 0px 0px 5px 5px;
-	-webkit-border-radius: 0px 0px 5px 5px;
+    -webkit-border-radius: 0px 0px 5px 5px;
     -o-border-radius: 0px 0px 5px 5px;
     border-radius: 0px 0px 5px 5px;
-    
+
     opacity: 0.75;
 }
 
@@ -397,41 +397,41 @@ table.xx-small,
 
 table {
     font-size: 18px;
-	font-family: "Arial";
-	width: 600px;
-	border: 3px solid LightSteelBlue;
-	border-radius: 6px 6px;
-	border-spacing: 0px 0px;
-	-webkit-box-shadow: rgba(0, 0, 0, 0.1) 0 2px 5px; 
+    font-family: "Arial";
+    width: 600px;
+    border: 3px solid LightSteelBlue;
+    border-radius: 6px 6px;
+    border-spacing: 0px 0px;
+    -webkit-box-shadow: rgba(0, 0, 0, 0.1) 0 2px 5px; 
 }
 
 table caption {
-	caption-side: bottom;
-	padding: 5px;
-	font-size: 15px;
-	color: #444444;
+    caption-side: bottom;
+    padding: 5px;
+    font-size: 15px;
+    color: #444444;
 }
 
 table thead {
-	font-weight: bold;
-	background-color: LightSteelBlue;
-	color: White;
-	border: 0px;
-	text-align: left;
+    font-weight: bold;
+    background-color: LightSteelBlue;
+    color: White;
+    border: 0px;
+    text-align: left;
 }
 
 table tbody td,
 table thead th {
-	padding: 5px 5px 5px 5px;
-	border-spacing: 10px;
+    padding: 5px 5px 5px 5px;
+    border-spacing: 10px;
 }
 
 table tbody td {
-	color: #444444;
+    color: #444444;
 }
 
 table tbody tr:nth-child(even) {
-	background-color: WhiteSmoke;
+    background-color: WhiteSmoke;
 }
 
 /* humla key style */
@@ -440,7 +440,7 @@ table tbody tr:nth-child(even) {
     background-color: whitesmoke;
     border: 2px solid silver;
     border-radius: 3px 3px 3px 3px;
-	box-shadow: rgba(0, 0, 0, 0.1) 0 2px 5px; 
+    box-shadow: rgba(0, 0, 0, 0.1) 0 2px 5px; 
     margin-left: auto;
     margin-right: auto;
     padding: 10px 10px 10px 15px;
@@ -474,7 +474,7 @@ table tbody tr:nth-child(even) {
 
 .slide.debug > ol ol ol,
 .slide.debug > ul ul ul {
-  border: 1px solid blue; 
+    border: 1px solid blue; 
 }
 
 .slide.debug > ul p,
@@ -482,3 +482,13 @@ table tbody tr:nth-child(even) {
     border: 1px solid orange;
 }
 
+.editor_left_column{
+    float:left;
+    margin: 0 10px 0 0; 
+    width:40%;    
+}
+
+.editor_right_column{
+    float:left;
+    width:40%; 
+}

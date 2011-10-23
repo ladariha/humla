@@ -31,7 +31,18 @@
     <body>
         <h1 id="title"><span id="append">Edit</span> slide  <span id="slide">#number</span> of <span id="course">#course</span>: <span id="lecture">#lecture</span></h1>
         <div id="msg"></div>
-        <div id="controlaPanel"></div>
+        <div id="controlPanel">
+            Select layout:
+            <div>
+                    <img src="./img/intro.png" alt="Layout Title only" onclick="loadLayout(0);" title="Select layout"/>
+                    <img src="./img/title.png" alt="Layout Title only" onclick="loadLayout(1);" title="Select layout"/>
+                    <img src="./img/twocol.png" alt="Layout Title only" onclick="loadLayout(2);" title="Select layout"/>
+                    <img src="./img/footer.png" alt="Layout Title only" onclick="loadLayout(3);" title="Select layout"/>
+            </div>
+            
+            
+            
+        </div>
         <textarea id="code" name="code">
         </textarea>
         <iframe id="preview"></iframe>

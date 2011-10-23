@@ -1,5 +1,6 @@
 var parseURL = require('url').parse;
 var path = require('path');
+var querystring = require('querystring');
 var fs     = require('fs');
 var jsdom = require('jsdom');
 var jquery = fs.readFileSync('./public/lib/jquery-1.6.3.min.js').toString();
@@ -28,17 +29,19 @@ app.all('/api/:lecture/:course/slide:id/editor', function api(req, res) {
 );
 
 function editor(response, request){
+    console.log("heh");
     switch(request.method){
         case 'GET':
             getSlide(response, request);
             break;
         case 'PUT':
-            editSlide(response, request);
+           editSlide(response, request);
             break;
         case 'DELETE':
             deleteSlide(response, request);
             break;
         default:
+            console.log("Spatne");
             response.writeHead(405, {
                 'Content-Type': 'text/plain'
             });
@@ -49,13 +52,16 @@ function editor(response, request){
 
 
 function deleteSlide(response, request){
-    
+    console.log("A");
     var host = request.headers.host;
     var regx =/^\/api\/([A-Za-z0-9-_]+)\/([A-Za-z0-9-_]+)\/slide([0-9]+)\/editor/; 
     request.url.match(regx);
-    var course = request.body.course;
-    var lecture = request.body.lecture;
-    var slide = request.body.slide;  
+    var course = RegExp.$1;
+    var lecture = RegExp.$2;
+    var slide = RegExp.$3;
+    console.log(""+course+"|"+lecture+"|"+slide);
+    
+
     var pathToCourse = '/'+course+'/';
     var htmlfile = SLIDES_DIRECTORY+pathToCourse+lecture+".html";
     fs.readFile(htmlfile, function (err, data) {
@@ -106,14 +112,12 @@ function deleteSlide(response, request){
                             }else{
                                 fs.writeFile(htmlfile, newcontent, function (err) {
                                     if (err) {
-                                        console.error('Error while saving '+err);
                                         response.writeHead(500, {
                                             'Content-Type': 'text/plain'
                                         });
                                         response.write('Problem with saving document: '+err);
                                         response.end();
                                     }else{
-                                        console.log('It\'s saved!');
                                         response.writeHead(200, {
                                             'Content-Type': 'application/json'
                                         });
@@ -126,7 +130,7 @@ function deleteSlide(response, request){
                                 });
                             }
                         }
-                        catch(err){
+                        catch(err){         
                             response.writeHead(500, {
                                 'Content-Type': 'text/plain'
                             });
@@ -223,14 +227,14 @@ function editSlideContentAppend(course, lecture, slide, content, response, host)
                             }else{
                                 fs.writeFile(htmlfile, newcontent, function (err) {
                                     if (err) {
-                                        console.error('Error while saving '+err);
+                                        
                                         response.writeHead(500, {
                                             'Content-Type': 'text/plain'
                                         });
                                         response.write('Problem with saving document: '+err);
                                         response.end();
                                     }else{
-                                        console.log('It\'s saved!');
+                                        
                                         response.writeHead(200, {
                                             'Content-Type': 'application/json'
                                         });
@@ -310,14 +314,14 @@ function editSlideContent(course, lecture, slide, content, response, host){
                             }else{
                                 fs.writeFile(htmlfile, newcontent, function (err) {
                                     if (err) {
-                                        console.error('Error while saving '+err);
+                                        
                                         response.writeHead(500, {
                                             'Content-Type': 'text/plain'
                                         });
                                         response.write('Problem with saving document: '+err);
                                         response.end();
                                     }else{
-                                        console.log('It\'s saved!');
+                                        
                                         response.writeHead(200, {
                                             'Content-Type': 'application/json'
                                         });
@@ -409,8 +413,14 @@ function parseDocument(response, request, htmlfile, slide, resourceURL){
                         slideCounter++;
                     });   
   
-                    if(slideSend === 0 && slide===0){ 
-                        fs.readFile(SLIDE_TEMPLATE+'/emptySlide.html', function (err, data) {
+                    if(slideSend === 0 && slide===0){
+                        var tmpl = querystring.parse(parseURL(request.url).query)['tmpl'];
+                        
+                        tmpl = parseInt(tmpl);
+                        if(isNaN(tmpl))
+                            tmpl=0;
+                        
+                        fs.readFile(SLIDE_TEMPLATE+'/'+tmpl+'.html', function (err, data) {
                             if (err){
                                 response.writeHead(500, {
                                     'Content-Type': 'text/plain'

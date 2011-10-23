@@ -141,3 +141,51 @@ function loadSlide(){
 function loadControlPanel(){
     
 }
+
+function loadLayout(version){
+    
+    var course = getParameterByName('course');
+    var lecture = getParameterByName('lecture');
+    var slide = getParameterByName('slide');
+       
+    var url = "/api/"+course+"/"+lecture+"/"+"slide0"+"/editor?tmpl="+version; 
+            
+    var request = new XMLHttpRequest;
+    request.open("GET", url, true);
+    request.onreadystatechange = function(){
+        if (request.readyState==4) {
+            if(request.status==200){
+                        
+                var object = eval('(' + request.responseText + ')');
+                            
+                var textarray = object.html.split("\n");
+                var finalString = '';
+                for(var k in textarray){
+                    if(textarray[k].length>0){
+                        finalString = finalString+"\n"+textarray[k].replace(/^\s\s{6}/, ' ') ;
+                    }
+                }
+                finalString = finalString.replace(/\&amp;/g,'&');
+                editor.setValue(finalString);
+                document.getElementById("append").innerHTML = "Append after";
+                document.getElementById("slide").innerHTML = slide;
+                document.getElementById("lecture").innerHTML = lecture;
+                document.getElementById("course").innerHTML = course;
+                var v = getParameterByName('v');
+                if(v.length>0){
+                    document.getElementById("cancelLink").href="http://"+object.url+"/"+v;    
+                }else{
+                    document.getElementById("cancelLink").href="http://"+object.url+"/v1";    
+                }
+            }else{
+                document.getElementById("msg").innerHTML=request.status+": "+request.statusText;    
+            }  
+        }
+    };
+    request.send(null);  
+            
+    
+    
+    
+    
+}
