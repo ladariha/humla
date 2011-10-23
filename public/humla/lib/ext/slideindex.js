@@ -4,11 +4,10 @@ var ex_slideindex = {
 
 
     showIndex : function(slide){
-        var presentationUrl = window.location.href;
+        var presentationUrl = window.location.href; 
         var slideIndexKey = "slideindex_"+presentationUrl;
         if (humla.utils.window.localStorage && humla.utils.window.localStorage.getItem(slideIndexKey)){
-            console.log("from localStorage");
-            alert(humla.utils.window.localStorage.getItem(slideIndexKey), 20000, "Content ");
+            alert(humla.utils.window.localStorage.getItem(slideIndexKey), 20000, "Content <img src=\"../../../humla/lib/ext/refresh.png\" class=\"slideindex-clearImg\" onClick=\"clearIndexFromLocalStorage('"+presentationUrl+"');\" title=\"Clear index from cache\" alt=\"Clear index from cache\"/>");
         }else{
             
             var ext = this;
@@ -35,8 +34,6 @@ var ex_slideindex = {
                     }
             
                 }else{
-                    console.log("> "+request.readyState);
-                
                     alert(request.responseText);
                 }
         
@@ -45,19 +42,18 @@ var ex_slideindex = {
         }
     },
     designIndex : function(slide, index){
-        var preffix = "<p>clear storae"; // TODO clear storage call
+        var presentationUrl = window.location.href;
         var drawings = this.drawingsToHtml(index);
         var github = this.githubToHtml(index);
         var images = this.imagesToHtml(index);
         var codeBlocks = this.codeBlocksToHtml(index);
         var structure = this.structureToHtml(index);
-        var presentationUrl = window.location.href;
         var slideIndexKey = "slideindex_"+presentationUrl;
         if (humla.utils.window.localStorage){
             humla.utils.window.localStorage.removeItem(slideIndexKey);
             humla.utils.window.localStorage.setItem(slideIndexKey,structure+images+drawings+codeBlocks+github);
-        }
-        alert(structure+images+drawings+codeBlocks+github, 20000, "Content ");
+  }
+        alert(structure+images+drawings+codeBlocks+github, 20000, "Content <img src=\"../../../humla/lib/ext/refresh.png\" class=\"slideindex-clearImg\" onClick=\"clearIndexFromLocalStorage('"+presentationUrl+"');\" title=\"Clear index from cache\" alt=\"Clear index from cache\"/>");
     },
     
     imagesToHtml : function(index){
@@ -193,5 +189,8 @@ function dropdown(img, idOflist){
 
 function clearIndexFromLocalStorage(presentationUrl){
     var slideIndexKey = "slideindex_"+presentationUrl;
-    humla.utils.window.localStorage.removeItem(slideIndexKey);
+    if (humla.utils.window.localStorage){
+        humla.utils.window.localStorage.removeItem(slideIndexKey);
+    }
+    alert("Cleared, close content window and reload it by pressing \"i\" to view changes",1,""); // not really visible, just to hide original window
 }

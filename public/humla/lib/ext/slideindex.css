@@ -1,6 +1,6 @@
 .slideindex-structure-top{
     font-size: 13px;
-    
+
 }
 .slideindex-ul{
     margin: 0;
@@ -11,14 +11,20 @@
     font-size: 13px;
 }
 .slideindex-hidden{
-      margin: 0;
+    margin: 0;
     display:none;
 }
 .slideindex-visible{
-      margin: 0;
+    margin: 0;
     display:block;
 }
 
 .slideindex-ul  img{
     cursor: pointer;
+}
+
+.slideindex-clearImg{
+    width: 15px;
+    cursor: pointer;
+    margin: 0 0 0 5px;
 }
