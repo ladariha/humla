@@ -11,7 +11,7 @@ var ex_editor = {
             var lecture= fields[6].substr(0, fields[6].indexOf("."));
             var slideNumber = slide.number;
             var baseLink = "../../../pages/editor/";
-            var et = "<div id=\"editor-toolbar\">";
+            var et = "<div class=\"editor-toolbar\">";
             var link = baseLink+"?lecture="+lecture+"&course="+course+"&slide="+slideNumber;
             et += "<a class=\"editor-link\" href=\""+link+"\" title=\"Edit slide\"><img src=\"../../../humla/lib/ext/editor-edit.png\" alt=\"Edit\"/></a>";
             et += "<a class=\"editor-link\" href=\"javascript:removeSlide('"+course+"','"+lecture+"','"+slideNumber+"');\" title=\"Delete slide\"><img src=\"../../../humla/lib/ext/editor-delete.png\" alt=\"Delete\"/></a>";

@@ -136,3 +136,8 @@ function loadSlide(){
      
     }
 }
+
+
+function loadControlPanel(){
+    
+}
