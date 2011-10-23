@@ -1,0 +1,52 @@
+
+
+/* -------- Toolbar ------------*/
+#likes-toolbar{
+    text-align: center;
+    position:absolute;
+    min-width: 90px; 
+    width: 90px;
+    bottom: 0px;
+    right: 100px;
+    opacity: 0.3;    
+    /*background: #005;*/
+    filter:alpha(opacity=30); /* For IE8 and earlier */
+}
+
+
+.likes-link {
+    /*background: yellow;*/
+    background: #444;    
+    height: 26px;    
+    width: 26px;
+    float: left;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.likes-link .red {
+    font-weight: bold;    
+    color: red;
+}
+
+.likes-link .green {
+    font-weight: bold;    
+    color: green;    
+}
+
+.likes-number {
+    width: auto;
+    font-size: 16px;
+    font-weight: bold;
+    /*color: white;*/
+    float: left;
+    padding: 3px 8px;
+}
+
+
+
+#likes-toolbar:hover{    
+    opacity:1;
+}
+
+

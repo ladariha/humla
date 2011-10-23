@@ -137,6 +137,13 @@
             "styles"  : [ {"src" : "ext/comments.css", "media" : "screen, print"} ],
             "enabled" : true 
         },
+        {"id" : "likes",
+            "object" : "ex_likes",
+            "scripts" : [ {"src" : "ext/likes.js"} ],
+            "styles"  : [ {"src" : "ext/likes.css", "media" : "screen, print"} ],
+            "enabled" : true 
+        },
+        
         {"id" : "editor",
             "object" : "ex_editor",
             "scripts" : [ {"src" : "ext/editor.js"} ],

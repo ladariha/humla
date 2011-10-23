@@ -89,7 +89,7 @@ var ex_comments = {
                 document.getElementById("comment-body"+this._slide).value="";
                 //TODO: udělat refresh
                 //refresh page comments
-                showComments(this._slide);
+                showComments(this._slide);                
                 alert("Comment added");                
             }
             
