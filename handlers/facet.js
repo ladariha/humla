@@ -10,7 +10,7 @@ var Lecture = mongoose.model("Lecture");
 /**
  * Returns all courses
  */
-app.get('/api/facet/courses', function(request, response){
+app.get('/api/facet/courses', function(request, response){ // TODO database timeout
     Course.find({
         isActive:true
         
@@ -18,13 +18,13 @@ app.get('/api/facet/courses', function(request, response){
         if(!err && crs.length > 0) {
             var courses = new Array();
             crs.forEach(function(course){
-                console.log(course);
                 var c = {};
-                c.shortName = course.courseID;
+                c.courseID = course.courseID;
                 c.longName = course.longName;
+                c.owner = course.owner;
+                c.isActive = course.isActive;
                 courses.push(c);
             });
-            console.log("found! "+crs);
             response.writeHead(200, {
                 "Content-Type": "application/json"
             });
@@ -51,14 +51,12 @@ app.get('/api/facet/:course/lectures', function(request, response){
         if(!err && lectures.length > 0) {
             var lecs = new Array();
             lectures.forEach(function(lecture){
-                console.log(lecture);
                 var c = {};
                 c.title = lecture.title;
                 c.url = lecture.url;
                 lecs.push(c);
 
             });
-            console.log("found! "+lectures);
             response.writeHead(200, {
                 "Content-Type": "application/json"
             });
@@ -68,7 +66,7 @@ app.get('/api/facet/:course/lectures', function(request, response){
             getLecturesFromFS(request, response, course);
         }             
     });
-})
+});
     
 
 function getCoursesFromFS(request, response){
@@ -96,10 +94,10 @@ function saveCoursesToDB(courses){
     courses.forEach(function(course){
         
         var c = new Course();
-        c.shortName = course;
         c.longName = course; // fallback, this way courses are not supposed to be created => UI needed for it
         c.isActive = true;
         c.courseID = course;
+        c.owner = "";
         c.save(function(err) {
             if(err) {
                 console.log("ERR "+err);
@@ -111,7 +109,6 @@ function saveCoursesToDB(courses){
 }
 
 function saveLecturesToDB(request, lectures, course){
-    console.log("saving");
     lectures.forEach(function(lec){
         var c = new Lecture();
         c.courseID = course;

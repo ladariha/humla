@@ -93,7 +93,7 @@ td, tr, table{
     background-color:#eeeeee;
     display: inline-block;
     height: 30px;
-    margin:0;
+    margin:0 3px;
     padding: 5px 1.5em;
     text-decoration: none;
     -webkit-box-shadow:0px 0px 10px #ccc;
@@ -168,18 +168,6 @@ td, tr, table{
     padding: 10px;
     filter: alpha(opacity=85);
     opacity: .85;
-}
-
-#panelW20{
-    left: 230px;
-}
-
-#panelPAR{
-    left: 315px;
-}
-
-#panelSPI{
-    left: 395px;
 }
 
 .img{
