@@ -6,19 +6,7 @@
         <script type="text/javascript" src="../lib/jquery-1.6.3.min.js"></script> 
         <link rel="shortcut icon" href="/favicon.ico"/>
         <link rel="stylesheet" href="css/intro.css" type="text/css" /> 
-        <script type="text/javascript">
-            $(document).ready(function(){
-                var selected = ""
-                $("#triggers > li").click(function() {
-                    var s = this.id.substring("trigger".length);
-                    if (s!==selected) {
-                        $("nav div").hide();
-                        $("#panel"+s).show("slow"); 
-                        selected = s;
-                    }
-                });
-            });
-        </script>
+        <script type="text/javascript" src="default.js"></script>
 
     </head> 
 
@@ -26,28 +14,17 @@
 
         <header id="banner" class="body"> 
             <h1><a href="#">Humla presentations </a></h1> 
-            <nav>
+            <nav id="nav">
                 <ul id="triggers"> 
-                    <li id="triggerMDW"><a href="#" >MDW</a></li> 
-                    <li id="triggerW20"><a href="#" >W20</a></li> 
-                    <li id="triggerPAR"><a href="#" >PAR</a></li> 
-                    <li id="triggerSPI"><a href="#">SPI</a></li> 
                 </ul>
 
 
-                <div  id="panelMDW">
-                    <ul>
-                        <li>A</li>
-                        <li>B</li>
-                    </ul>
+                <div id="lectures">
                 </div>
-                <div  id="panelW20">list of presentations</div>
-                <div  id="panelPAR">list of presentations</div>
-                <div  id="panelSPI">list of presentations</div>
-
 
             </nav> 
-        </header>	
+        </header>
+        <div id="msg"></div>
         <section id="content" class="body"> 
 
             <a href="#">Some link</a>

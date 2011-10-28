@@ -74,12 +74,12 @@ aside, nav, article, figure {
     width: 1000px;
 }
 
-#banner nav ul {
+#triggers ul {
     list-style: none; 
     padding:0;
     margin: 0 0; 
     width: 1000px;}
-#banner nav li { display: inline; margin: 0; padding:0;}
+#triggers li { display: inline; margin: 0; padding:0;}
 
 td, tr, table{
     padding:0;
@@ -87,7 +87,7 @@ td, tr, table{
     margin:0;
 }
 
-#banner nav a{
+#triggers a{
     color: #000;
     border:1px solid #d2d2d2;
     background-color:#eeeeee;
@@ -112,8 +112,8 @@ td, tr, table{
     -moz-border-radius-bottomright: 2px;
     -webkit-border-bottom-right-radius: 2px;
 }
-#banner nav a:hover, #banner nav a:active,
-#banner nav .active a:link, #banner nav .active a:visited {
+#triggers a:hover, #triggers a:active,
+#triggers .active a:link,#triggers .active a:visited {
     background: #2d7ea9;
     color: #fff;
     border:1px solid #2d7ea9;
@@ -145,7 +145,7 @@ td, tr, table{
 
 #contentinfo {padding-bottom: 2em; text-align: right;}
 
-nav div {
+#lectures div {
     position: absolute;
     top: 195px;
     left: 140px;
