@@ -1,0 +1,63 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+    <head> 
+        <title>Humla</title> 
+        <meta charset="utf-8" /> 
+        <script type="text/javascript" src="../lib/jquery-1.6.3.min.js"></script> 
+        <link rel="shortcut icon" href="/favicon.ico"/>
+        <link rel="stylesheet" href="css/intro.css" type="text/css" /> 
+        <link rel="stylesheet" href="css/form.css" type="text/css" /> 
+        <script type="text/javascript" src="lib/newcourse.js"></script>
+
+    </head> 
+
+    <body id="index" class="home"> 
+
+        <header id="banner" class="body"> 
+            <h1><a href="/">Humla presentations</a></h1> 
+
+        </header>
+      
+        <section id="content" class="body"> 
+            <div id="form-container">
+                <h2>New course</h2> 
+                  <div id="msg"></div>
+                <fieldset><form>
+                        <div class="field">
+                            <label for="course">Course ID (short name):</label>
+                            <input type="text" onkeyup="checkCourseExist(this,'course');" name="course" value="" id="course">
+                            <p id="exist"  class="warning"></p>
+                        </div>
+
+                        <div class="field">
+                            <label for="fullName">Course Full Name:</label>
+                            <input type="text" name="fullName" value="" id="fullName">
+                            <p id="e_fullName"  class="warning"></p>
+                        </div>
+
+                        <div class="field">
+                            <label for="owner">Owner:</label>
+                            <input type="text" name="owner" value="" id="owner">
+                            <p id="e_owner" class="warning"></p>
+                        </div>
+                        <div class="field">
+                            <label for="visible">Visible:</label>
+                            <select name="isActive" id="visible">
+                                <option selected="selected" value="true" >True</option>
+                                <option value="false" >False</option>
+                            </select>
+                        </div>
+                        <input type="button" onclick="submitNewCourseForm();" value="Create" class="submit-button"/>
+                    </form>
+
+                </fieldset>
+            </div>
+
+
+        </section>
+
+        <footer id="contentinfo" class="body"> 
+        </footer>
+
+    </body> 
+</html>
