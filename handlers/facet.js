@@ -21,6 +21,8 @@ app.get('/api/facet/courses', function(request, response){ // TODO database time
                 var c = {};
                 c.courseID = course.courseID;
                 c.longName = course.longName;
+                c.lecturesURLPreffix = course.lecturesURLPreffix;
+                c.url=course.url;
                 c.owner = course.owner;
                 c.isActive = course.isActive;
                 courses.push(c);
@@ -49,18 +51,10 @@ app.get('/api/facet/:course/lectures', function(request, response){
         
     }, function(err,lectures){
         if(!err && lectures.length > 0) {
-            var lecs = new Array();
-            lectures.forEach(function(lecture){
-                var c = {};
-                c.title = lecture.title;
-                c.url = lecture.url;
-                lecs.push(c);
-
-            });
             response.writeHead(200, {
                 "Content-Type": "application/json"
             });
-            response.write(JSON.stringify(lecs, null, 4));
+            response.write(JSON.stringify(lectures, null, 4));
             response.end();  
         } else {
             getLecturesFromFS(request, response, course);
@@ -79,7 +73,7 @@ function getCoursesFromFS(request, response){
             response.write('404 Not found');
             response.end();
         }else{  
-            saveCoursesToDB(list);
+            saveCoursesToDB(request,list);
             response.writeHead(200, {
                 'Content-Type': 'application/json'
             });
@@ -89,13 +83,15 @@ function getCoursesFromFS(request, response){
     });
 }
 
-function saveCoursesToDB(courses){
+function saveCoursesToDB(request,courses){
     console.log("saving");
     courses.forEach(function(course){
         
         var c = new Course();
         c.longName = course; // fallback, this way courses are not supposed to be created => UI needed for it
         c.isActive = true;
+        c.url = '';
+        c.lecturesURLPreffix = request.headers.host+'/data/slides/'+course;
         c.courseID = course;
         c.owner = "";
         c.save(function(err) {
@@ -114,8 +110,9 @@ function saveLecturesToDB(request, lectures, course){
         c.courseID = course;
         c.title = lec;// fallback, this way lectures are not supposed to be created => UI needed for it
         c.lectureID = lec; 
+        c.url = '';
         c.isActive = true;
-        c.url = request.headers.host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lec;
+        c.presentationURL = request.headers.host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lec;
         c.save(function(err) {
             if(err) {
                 console.log("ERR "+err);

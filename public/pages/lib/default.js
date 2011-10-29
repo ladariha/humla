@@ -15,7 +15,8 @@ function loadLectures(course){
                     var container = document.createElement('ul');
                     lectures.forEach(function(c){
                         var new_element = document.createElement('li');
-                        new_element.innerHTML = '<a href=\"http://'+c.url+'\">'+c.title+'</a>';
+                        console.log(c);
+                        new_element.innerHTML = '<a href=\"http://'+c.presentationURL+'\">'+c.title+'</a> | [<a href=\"editlecture.html?course='+course+'&lecture='+c.lectureID+'\">edit</a>]';
                         container.insertBefore(new_element, container.firstChild);                    
                     })
                     panel.insertBefore(container, panel.firstChild);
