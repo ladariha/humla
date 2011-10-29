@@ -8,10 +8,9 @@ function loadLectures(course){
         request.onreadystatechange = function(){
             if (request.readyState==4) {
                 if(request.status==200){
-                    var lectures = eval('(' + request.responseText + ')');
-                    
+                    var lectures = eval('(' + request.responseText + ')');   
                     var p = document.createElement('p');
-                    p.innerHTML = '<a href=\"editcourse.html?course='+course+'\">Edit course<a/>'
+                    p.innerHTML = '<a class=\"a\" href=\"editcourse.html?course='+course+'\">Edit course<a/><br/><a class=\"as\" href=\"newlecture.html?course='+course+'\">New lecture<a/>'
                     panel.insertBefore(p, panel.firstChild);
                     var container = document.createElement('ul');
                     lectures.forEach(function(c){
@@ -21,8 +20,12 @@ function loadLectures(course){
                     })
                     panel.insertBefore(container, panel.firstChild);
                 
+                }else if(request.status==404){
+                    var p = document.createElement('p');
+                    p.innerHTML = '<a class=\"as\" href=\"editcourse.html?course='+course+'\">Edit course<a/><br/><a class=\"as\" href=\"newlecture.html?course='+course+'\">New lecture<a/>'
+                    panel.insertBefore(p, panel.firstChild);    
                 }else{
-                    document.getElementById("msg").innerHTML=request.status+": "+request.statusText;    
+                    document.getElementById("msg").innerHTML=request.status+": "+request.statusText;  
                 }  
             }
         }
@@ -58,15 +61,14 @@ function loadCourses(){
                     $("#triggers > li").click(function() {
                         var s = this.id.substring("trigger".length);
                         if (s!==selected) {
+                            document.getElementById("msg").innerHTML="";
                             $("#lectures div").hide();
                             loadLectures(s);
                             $("#panel"+s).show("slow"); 
                             selected = s;
                         }
                     });
-                });
-                
-                
+                });       
             }else{
                 document.getElementById("msg").innerHTML=request.status+": "+request.statusText;    
             }  

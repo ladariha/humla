@@ -73,10 +73,10 @@ function getCoursesFromFS(request, response){
     fs.readdir(SLIDES_DIRECTORY, function(err, list) {
         
         if(err){
-            response.writeHead(500, {
+            response.writeHead(404, {
                 'Content-Type': 'text/plain'
             });
-            response.write('500 Internal error '+err);
+            response.write('404 Not found');
             response.end();
         }else{  
             saveCoursesToDB(list);
@@ -131,10 +131,10 @@ function getLecturesFromFS(request, response, course){
     fs.readdir(SLIDES_DIRECTORY+'/'+course, function(err, list) {
         
         if(err){
-            response.writeHead(500, {
+            response.writeHead(404, {
                 'Content-Type': 'text/plain'
             });
-            response.write('500 Internal error '+err);
+            response.write('404 Not found ');
             response.end();
         }else{
             
@@ -145,7 +145,7 @@ function getLecturesFromFS(request, response, course){
             });
             saveLecturesToDB(request, files2, course);
             var files = JSON.stringify(files2, null, 4);
-            response.writeHead(405, {
+            response.writeHead(200, {
                 'Content-Type': 'application/json'
             });
             response.write(files);

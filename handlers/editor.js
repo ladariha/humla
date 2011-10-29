@@ -12,7 +12,7 @@ editorAPI.urls = [ // list of available URL that this plugin handles
     ['^/api/[A-Za-z0-9-_]+/[A-Za-z0-9-_]+/slide[0-9]+/editor',  editor],
     ];
 
-app.all('/api/:lecture/:course/slide:id/editor', function api(req, res) {
+app.all('/api/:course/:lecture/slide:id/editor', function api(req, res) { // TODO check changes in url
     var query = require('url').parse(req.url).query;
     var args, path = parseURL(req.url).pathname;
     for (var i=0, n = editorAPI.urls.length; i<n; i++) { // projde vsechna url
@@ -29,7 +29,6 @@ app.all('/api/:lecture/:course/slide:id/editor', function api(req, res) {
 );
 
 function editor(response, request){
-    console.log("heh");
     switch(request.method){
         case 'GET':
             getSlide(response, request);

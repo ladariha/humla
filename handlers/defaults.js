@@ -12,6 +12,15 @@ app.get('/', function(req,res) {
     res.redirect("/pages/index.html");
 });
 
+app.get('/pages/humla', function(req,res) {
+    res.redirect("/pages/humla.html");
+});
+
+app.get('/pages/newcourse', function(req,res) {
+    res.redirect("/pages/newcourse.html");
+});
+
+
 // not found
 app.get('/404', function(req, res){
     throw new NotFound;

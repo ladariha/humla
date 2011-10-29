@@ -147,8 +147,8 @@ td, tr, table{
 
 #lectures div {
     position: absolute;
-    top: 195px;
-    left: 140px;
+    top: 255px;
+    left: 180px;
     display: none;
     background: #B5D7EA;
     -moz-border-radius-topleft: 2px;
@@ -187,3 +187,9 @@ td, tr, table{
     box-shadow:0px 0px 10px #000;
 }
 
+#msg{
+    color:#da4a4a;
+    font-size: 90%;
+    margin: 0 0 0 80px;
+    font-weight: bold;
+}

@@ -1,4 +1,4 @@
-    var ex_editor = {
+var ex_editor = {
     
     processSlide : function(slide) {
  
@@ -26,7 +26,7 @@
 };
 
 function removeSlide(course, lecture, slideNumber){
-    var request = new XMLHttpRequest;
+    var request = new XMLHttpRequest();
     var url = "/api/"+course+"/"+lecture+"/slide"+slideNumber+"/editor";
     request.open("DELETE", url, true);
     request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");

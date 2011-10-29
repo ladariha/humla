@@ -7,7 +7,7 @@
         <link rel="shortcut icon" href="/favicon.ico"/>
         <link rel="stylesheet" href="css/intro.css" type="text/css" /> 
         <link rel="stylesheet" href="css/form.css" type="text/css" /> 
-        <script type="text/javascript" src="lib/editcourse.js"></script>
+        <script type="text/javascript" src="lib/newlecture.js"></script>
 
     </head> 
 
@@ -17,29 +17,38 @@
             <h1><a href="/">Humla presentations</a></h1> 
 
         </header>
-      
+
         <section id="content" class="body"> 
             <div id="form-container">
-                <h2>Edit course</h2> 
-                  <div id="msg"></div>
+                <h2>New Lecture</h2> 
+                <div id="msg"></div>
                 <fieldset><form>
-                        <input type="hidden" id="_id" name="_id">
+                        <div class="field">
+                            <label for="title">Title:</label>
+                            <input type="text" name="title" value="" id="title">
+                            <p id="e_title"  class="warning"></p>
+                        </div>
                         <div class="field">
                             <label for="course">Course ID (short name):</label>
-                            <input type="text" onkeyup="checkCourseExist(this,'course');" name="course" value="" id="course">
-                            <p id="exist" class="warning"></p>
+                            <input type="text" name="course" value="" id="course">
+                            <p id="e_course"  class="warning"></p>
                         </div>
 
                         <div class="field">
-                            <label for="fullName">Course Full Name:</label>
-                            <input type="text" name="fullName" value="" id="fullName">
-                            <p id="e_fullName" class="warning"></p>
+                            <label for="keywords">Keywords (comma separated):</label>
+                            <input type="text" name="keywords" value="" id="keywords">
+                            <p id="e_keywords"  class="warning"></p>
                         </div>
 
                         <div class="field">
-                            <label for="owner">Owner:</label>
-                            <input type="text" name="owner" value="" id="owner">
-                            <p id="e_owner" class="warning"></p>
+                            <label for="author">Author:</label>
+                            <input type="text" name="author" value="" id="author">
+                            <p id="e_author" class="warning"></p>
+                        </div>
+                        <div class="field">
+                            <label for="order">Order (1,2...):</label>
+                            <input type="text" name="order" value="" id="order">
+                            <p id="e_order" class="warning"></p>
                         </div>
                         <div class="field">
                             <label for="visible">Visible:</label>
@@ -48,7 +57,7 @@
                                 <option value="false" >False</option>
                             </select>
                         </div>
-                        <input type="button" onclick="submitEditCourseForm();" value="Edit" class="submit-button"/>
+                        <input type="button" onclick="submitNewCourseForm();" value="Create" class="submit-button"/>
                     </form>
 
                 </fieldset>
