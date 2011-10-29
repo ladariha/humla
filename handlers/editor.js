@@ -28,8 +28,7 @@ app.all('/api/:lecture/:course/slide:id/editor', function api(req, res) {
 }
 );
 
-function editor(response, request){
-    console.log("heh");
+function editor(response, request){    
     switch(request.method){
         case 'GET':
             getSlide(response, request);

@@ -8,7 +8,7 @@ var fs = require("fs");
 var path = require('path');
 
 // API documentation - interaction
-
+/*
 app.get('/api/v1/',function rest(req, res) {
     console.log("REST API CALL" + req.url);   
         
@@ -40,7 +40,7 @@ app.get('/api/v1/',function rest(req, res) {
     res.write(body);
     res.end();
 });
-
+*/
 
 /*
 get('/posts/:id', function(req) {

@@ -43,18 +43,13 @@ exports.run = function run( PORT, WEBROOT) {
     app.configure('development', function(){
         app.use(express.logger({
             format: '\x1b[1m:method\x1b[0m \x1b[33m:url\x1b[0m :response-time ms :status'
-        }))
-        app.use(express.static(WEBROOT));
+        }))        
         app.use(express.errorHandler({
             dumpExceptions: true, 
             showStack: true
         }));
     });
-    app.configure('production', function(){
-        var oneYear = 31557600000;
-        app.use(express.static(WEBROOT, {    //__dirname + '/public', {
-            maxAge: oneYear
-        }));
+    app.configure('production', function(){          
         app.use(express.errorHandler());
     });
     
@@ -73,6 +68,15 @@ exports.run = function run( PORT, WEBROOT) {
     handlers.forEach(function (hand){
         //console.log("X-"+hand)
         require(hand);
+    });
+    
+    
+    // Static route - after our routes to make AJAX Crawling and request on our slides possible
+    app.configure( function() {
+        var oneYear = 31557600000;      
+        app.use(express.static(WEBROOT, {    //__dirname + '/public', {
+            maxAge: oneYear
+        }));
     });
    
     app.listen(PORT);   

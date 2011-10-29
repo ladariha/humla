@@ -26,12 +26,14 @@
 
 .likes-link .red {
     font-weight: bold;    
-    color: red;
+    /*color: red;*/
+    color: white;
 }
 
 .likes-link .green {
     font-weight: bold;    
-    color: green;    
+    /*color: green;    */
+    color: white;
 }
 
 .likes-number {
