@@ -23,6 +23,11 @@ app.get('/500', function(req, res){
 });
 
 
+// redirecting HACK   //: Todo zjistit, která ta routa to začla redirektit a opravit na ní
+app.get('/*//', function(req, res){
+    res.redirect("/404");
+});
+
 // manifest - offline usage
 app.get('/cache.manifest',function manifest(req,res) {
     var body = 'CACHE MANIFEST\n#'+(new Date());

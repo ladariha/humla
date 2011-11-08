@@ -34,7 +34,7 @@ function editor(response, request){
             getSlide(response, request);
             break;
         case 'PUT':
-           editSlide(response, request);
+            editSlide(response, request);
             break;
         case 'DELETE':
             deleteSlide(response, request);

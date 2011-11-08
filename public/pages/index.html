@@ -11,75 +11,99 @@
         <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
         <link rel="stylesheet" href="/pages/css/style.css?v=1"/>
 
+        <script type="text/javascript" src="lib/page-script.js"></script>
         <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
         <!--<script src="js/libs/modernizr-1.6.min.js"></script>-->
 
     </head>
-
-    <!--................. PAGE .........................-->
-
     <body>
-        <div id="wrap" class="shadow">
-
-            <header>                        
-                <span id="header-right">
-                    <a href="/pages/index.html"><h1 id="logo-text">humla<span class="gray">server</span></h1></a>
-                </span>
-            </header>
-
-
-
-            <div id="content-wrap">
-                <section id="main">
-                    <h1>Humla - Server</h1>
-                    <p>
-                        <span>Presentation & lecture hosting environment</span>
-                    </p>
+        <div id="wrap" > <!--class="shadow">-->
+            <header>
+                <h1>Humla Presentations</h1>
+                <nav>                    
                     <ul>
-                        <li><a href="/pages/editcourse.html">Edit Course</a></li>
-                        <li><a href="/pages/humla.html">Humla</a></li>
-                        <li><a href="/pages/newcourse.html">New Course</a></li>
-                        
-                        
-                        <li>
-                            <form method="POST">
-                                <textarea></textarea>
-                                <input type="submit" value="Submit"/>                                                                
-                            </form>
-                            
-                            
-                        </li>
-                    </ul>
-                </section>
-                <nav>
-                    <ul>
-                        <li><a href="/pages/editcourse.html">Edit Course</a></li>
-                        <li><a href="/pages/humla.html">Humla</a></li>
-                        <li><a href="/pages/newcourse.html">New Course</a></li>
+                        <li><a href="index.html" class="active">Presentations</a></li>
+                        <li><a href="editcourse.html">Editor</a></li>
+                        <li><a href="about.html">About</a></li>
                     </ul>
                 </nav>
-            </div> <!-- content-wrap -->
+            </header>
+            <div id="main" role="main">
+                <section>
+                    <div class="colhead"><span class="number">1</span>. Courses</div>
+                    <div id="courses-search" class="search">
+                        <input type="search" placeholder="Search..." />
+                        <input type="button" value="Go!" class="button"/>
+                    </div>
+                    <div class="items">
+                        <ul id="course-items">
+                            <li>MI-MDW</li>
+                            <li>MI-DDW</li>
+                            <li class="selected">MI-SWE</li>
 
-            <footer>            
-                <span id="footer-left">
-                    © 2011 - Licensed under <a href="http://murphy.cz/no-whining-license/">NWL</a> |                    
-                    Valid: <a href="http://validator.w3.org/check?uri=referer">HTML5</a> |
-                    <a href="http://jigsaw.w3.org/css-validator/check/referer">CSS3</a>
-                </span>
-                <span id="footer-right"><a href="index.jsp">Home</a> |
-                    <a href="#">Info</a> |
-                    <a href="#">RSS feed</a>
-                </span>
+                        </ul>
+                    </div>
+
+                </section>
+                <section>
+                    <div class="colhead"><span class="number">2</span>. Lectures</div>
+                    <div id="lectures-search" class="search">
+                        <input type="search" placeholder="Search..."/>
+                        <input type="button" value="Go!" class="button"/>
+                    </div>
+                    <div class="items">
+                        <ul id="lecture-items">
+                            <li>1. Úvod do problematiky</li>
+                            <li>2. APIs</li>
+                            <li class="selected">3. Neco</li>
+
+                        </ul>
+                    </div>
+
+
+                </section>
+                <section>
+                    <div class="colhead"><span class="number">3</span>. Info</div>
+                    <div class="info">
+                        <div id="info-text">
+                            <h2 id="lecturename">MI-MDW: APIs</h2>
+                            <div id="buttons"><a href="" target="_blank"  class="button">Open</a>
+                                <a href="">Edit</a>
+                            </div>
+                            <br/>
+                            <h3>Abstrakt</h3>                        
+                            <p id="abstract">Obsah této přednášky</p>
+                            <h3>Index</h3>
+                            <ol id="index">
+                                <li>Neco</li>
+                                <li>Neco</li>
+                            </ol>
+
+                        </div>
+                    </div>
+
+                </section>
+                <div class="clear"></div>
+            </div>
+            <footer>
+                v0.1 Humla &copy; 2011 
             </footer>
+        </div> <!--! end of #container -->
 
-        </div><!-- wrap -->
 
-        <!--................. SCRIPTS .........................-->
 
-        <!-- Grab Google CDN's jQuery. fall back to local if necessary -->
-        <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
-        <script>!window.jQuery && document.write(unescape('%3Cscript src="js/libs/jquery-1.4.2.js"%3E%3C/script%3E'))</script>
-        -->
+        <div id="debug">
+            <h4>DEBUG</h4>
+
+            <a href="/pages/editcourse.html">Edit Course</a><br/>
+            <a href="/pages/humla.html">Humla</a><br/>
+            <a href="/pages/newcourse.html">New Course</a><br/>
+            <span id="msg">&nbsp;</span>
+
+
+        </div>
 
     </body>
+
+
 </html>
