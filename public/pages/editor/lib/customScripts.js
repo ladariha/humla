@@ -11,7 +11,7 @@ function sendData(){
     }else{
         params = "slide="+data;
     }
-    var request = new XMLHttpRequest;
+    var request = new XMLHttpRequest();
     request.open("PUT", url, true);
     request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     request.setRequestHeader("Content-length", params.length);
@@ -59,7 +59,7 @@ function loadSlide(){
             
             var url = "/api/"+course+"/"+lecture+"/"+"slide0"+"/editor"; 
             
-            var request = new XMLHttpRequest;
+            var request = new XMLHttpRequest();
             request.open("GET", url, true);
             request.onreadystatechange = function(){
                 if (request.readyState==4) {
@@ -97,7 +97,7 @@ function loadSlide(){
         }else{
             
             var url = "/api/"+course+"/"+lecture+"/"+"slide"+slide+"/editor"; 
-            var request = new XMLHttpRequest;
+            var request = new XMLHttpRequest();
             request.open("GET", url, true);
             request.onreadystatechange = function(){
                 if (request.readyState==4) {
@@ -150,7 +150,7 @@ function loadLayout(version){
        
     var url = "/api/"+course+"/"+lecture+"/"+"slide0"+"/editor?tmpl="+version; 
             
-    var request = new XMLHttpRequest;
+    var request = new XMLHttpRequest();
     request.open("GET", url, true);
     request.onreadystatechange = function(){
         if (request.readyState==4) {

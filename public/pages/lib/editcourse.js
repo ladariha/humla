@@ -11,7 +11,7 @@ window.onload = function(){
     protect = course;
     
     var request = new XMLHttpRequest();
-    request.open("GET", "/api/course/"+course, true);
+    request.open("GET", "/api/"+course+"/course", true);
     request.onreadystatechange = function(){
         if (request.readyState==4) {
             if(request.status==200){
@@ -20,7 +20,8 @@ window.onload = function(){
                 document.getElementById('course').value=object.courseID;
                 document.getElementById('fullName').value=object.longName;
                 document.getElementById('owner').value=object.owner;
-                document.getElementById('id').value=object._id;
+                document.getElementById('_id').value=object._id;
+                console.log('> '+object._id+ ' ');
                 document.getElementById('visible').value=object.isActive;
                 
             }else{
@@ -56,7 +57,7 @@ function checkCourseExist(element, id){
             document.getElementById('exist').textContent='';
         }else{
             var request = new XMLHttpRequest();
-            request.open("GET", "/api/course/"+tmp, true);
+            request.open("GET", "/api/"+tmp+"/course", true);
             request.onreadystatechange = function(){
                 if (request.readyState==4) {
                     if(request.status==200){
@@ -84,8 +85,8 @@ function submitEditCourseForm(){
         var fullName = encodeURIComponent(document.getElementById('fullName').value); 
         var owner = encodeURIComponent(document.getElementById('owner').value); 
         var isActive = encodeURIComponent(document.getElementById('visible').value); 
-        var id = encodeURIComponent(document.getElementById('id').value); 
-        var url = '/api/course/'+courseID;
+        var id = encodeURIComponent(document.getElementById('_id').value); 
+        var url = '/api/'+courseID+'/course';
         var params = "courseID="+courseID+'&longName='+fullName+'&owner='+owner+'&isActive='+isActive+'&id='+id;
     
         var request = new XMLHttpRequest();

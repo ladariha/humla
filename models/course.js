@@ -12,6 +12,8 @@ var ObjectId = Schema.ObjectId;
 var CourseSchema = new Schema({
     courseID: {type: String, unique: true}, // mdw
     owner: String,
+    lecturesURLPreffix: String,
+    url: String,
     longName: String, // Full name
     isActive: Boolean // if it should be visible
 });
