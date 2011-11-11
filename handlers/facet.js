@@ -110,7 +110,7 @@ function saveLecturesToDB(request, lectures, course){
         c.courseID = course;
         c.title = lec;// fallback, this way lectures are not supposed to be created => UI needed for it
         c.lectureID = lec; 
-        c.url = '';
+        c.url = ''; 
         c.isActive = true;
         c.presentationURL = request.headers.host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lec;
         c.save(function(err) {
@@ -131,7 +131,7 @@ function getLecturesFromFS(request, response, course){
             response.writeHead(404, {
                 'Content-Type': 'text/plain'
             });
-            response.write('404 Not found ');
+            response.write('404 Not found '+err);
             response.end();
         }else{
             

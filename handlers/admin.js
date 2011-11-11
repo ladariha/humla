@@ -396,23 +396,23 @@ app.put('/api/:course/:lecture', function(request, response){ // TODO database t
                                 }); 
                             }else{
                                 path.exists(SLIDES_DIRECTORY+'/'+c.courseID, function (exists) {
-                                if(exists){ // course dir exists
-                                    editTemplateMove(prev, request, response, c, decodeURIComponent(request.body.order), decodeURIComponent(request.body.keywords));
-                                }else{ // create dir
+                                    if(exists){ // course dir exists
+                                        editTemplateMove(prev, request, response, c, decodeURIComponent(request.body.order), decodeURIComponent(request.body.keywords));
+                                    }else{ // create dir
                                     
-                                    fs.mkdir(SLIDES_DIRECTORY+'/'+c.courseID, 0777, function(e) {
-                                        if(!e){
-                                            response.writeHead(200, {
-                                                "Content-Type": "application/json"
-                                            });
-                                            response.write(JSON.stringify(c, null, 4));
-                                            response.end(); 
+                                        fs.mkdir(SLIDES_DIRECTORY+'/'+c.courseID, 0777, function(e) {
+                                            if(!e){
+                                                response.writeHead(200, {
+                                                    "Content-Type": "application/json"
+                                                });
+                                                response.write(JSON.stringify(c, null, 4));
+                                                response.end(); 
                                    
-                                        }else{ // copy template
-                                            editTemplateMove(prev, request, response, c, decodeURIComponent(request.body.order), decodeURIComponent(request.body.keywords));
-                                        }
-                                    });   
-                                }
+                                            }else{ // copy template
+                                                editTemplateMove(prev, request, response, c, decodeURIComponent(request.body.order), decodeURIComponent(request.body.keywords));
+                                            }
+                                        });   
+                                    }
                                 });
                             }
                         }
@@ -697,7 +697,11 @@ function editTemplateMove(prevFile, request, response, lecture, order,keywords){
     });
 }
 
-app.get('/api/:course/:lecture', function(request, response){
+app.get('/api/:course/:lecture', function(request, response, next){
+    if(request.params.course==="facet") {
+        next(); // TODO: tenhle hack je tu proto, že to místno na facet skákalo sem (stejné url!) TODO: rozlišit url lépe!!
+        return;
+    }
     Lecture.find({
         isActive:true,
         courseID: request.params.course,

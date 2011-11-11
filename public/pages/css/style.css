@@ -59,7 +59,7 @@ a:hover { color: #036; }
     box-shadow: 0px 0px 6px #000;
 }
 
-#wrap {
+#wrap {    
     margin: 0 auto ;
     padding:0;
     text-align: left;
@@ -96,8 +96,16 @@ nav ul {
     list-style: none; 
     padding:0;
     margin: 0 0; 
-    width: 1000px;}
-nav li { display: inline; margin: 0; padding:0;}
+    width: 1000px;    
+}
+nav li { 
+    display: inline-block; padding:0;height:40px;
+    margin:0 0;
+    -webkit-box-shadow:0px 0px 10px #ccc;
+    -moz-box-shadow:0px 0px 10px #ccc;
+    box-shadow:0px 0px 10px #ccc;
+    position:relative;
+}
 
 
 
@@ -109,29 +117,59 @@ nav li > a{
     background-color:#f7f7f7;
     display: inline-block;
     height: 30px;
-    margin:0 3px;
+
     padding: 5px 1.5em;
     text-decoration: none;
-    -webkit-box-shadow:0px 0px 10px #ccc;
-    -moz-box-shadow:0px 0px 10px #ccc;
-    box-shadow:0px 0px 10px #ccc;
     border-top-left-radius: 2px;
     -moz-border-radius-topleft: 2px;
     -webkit-border-top-left-radius: 2px;  
     border-top-right-radius: 2px;
     -moz-border-radius-topright: 2px;
     -webkit-border-top-right-radius: 2px;
-    z-index: 113;
+    position:relative;
+    z-index: 5;
+    opacity: 0.5;
 
 }
-nav li > a:hover, nav li > a:active,
-nav li > .active a:link,nav li > .active a:visited {
-    background: #2d7ea9;
-    color: #fff;
-    border:1px solid #2d7ea9;    
+nav li > a:hover, nav li > a:active {    
+    color: #fff;    
+    -webkit-box-shadow: inset 0px 0px 5px #ccc;
+    -moz-box-shadow: inset 0px 0px 5px #ccc;
+    box-shadow: inset 0px 0px 5px #ccc;
     text-shadow: none !important;
+    opacity: 1;
+}
+
+nav #presentations:hover {
+    background: #E18727;
+    border-left: 1px solid #8C5D26;
+    border-top: 1px solid #8C5D26;
+    border-right: 1px solid #8C5D26;    
 
 }
+nav #editor:hover {
+    background: #3F9DCD;
+    border-left: 1px solid #26698C;
+    border-top: 1px solid #26698C;
+    border-right: 1px solid #26698C;    
+
+}
+nav #about:hover {
+    background: #CE4079;
+    border-left: 1px solid #8C2664;
+    border-top: 1px solid #8C2664;
+    border-right: 1px solid #8C2664;    
+
+}
+
+
+
+
+nav li > a.active {
+    opacity: 1;
+}
+
+
 
 #main {
     clear:both;
@@ -146,7 +184,8 @@ nav li > .active a:link,nav li > .active a:visited {
     border-radius: 2px;
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
-    z-index: 50;
+    position:relative;
+    z-index: 3;
 }
 
 #main > section {
@@ -182,6 +221,17 @@ nav li > .active a:link,nav li > .active a:visited {
 
 }
 
+.search .icon {
+    float: right;
+    margin: 4px;
+    opacity: 0.6;
+}
+
+.search .icon:hover {
+    opacity: 1;
+}
+
+
 .items, .info {
     background: white;
     min-height: 300px;
@@ -206,26 +256,31 @@ nav li > .active a:link,nav li > .active a:visited {
     cursor: pointer;
 }
 
-.items li.selected {    
-    background: #feb;
-    
-}
 .items li:hover {    
     background: #fffadc;
-    
 }
+.items li.selected{ 
+    background: #feb !important;
+}
+
+.items li.hint {    
+    color:#999;
+    text-align: center;
+    font-size: 1.1em
+}
+
 
 #info-text  {
     padding: 5px 10px;    
-    
+
 }
- .button {    
+.button {    
     cursor: pointer;
     background: white;
     background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ddd));
     font-size: 1.1em;
     color: #444;
-    
+
     margin: 4px;
     padding: 2px 5px;
     border: 1px solid #888;    
@@ -240,13 +295,34 @@ nav li > .active a:link,nav li > .active a:visited {
     background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#fff));
     border: 1px solid #777;       
 }
+.button:focus {
+    border: 1px solid #F69600;           
+}
+
 
 #buttons {
     float: left;    
 }
 
- #buttons a{
+#buttons a{
     padding-left: 7px;
+}
+
+/* ------------ ABOUT ------------------ */
+
+.about-text {
+    padding: 25px;
+    width: 100%;
+    height: 100%;
+}
+
+.about-text img {
+    padding: 20px 35px;
+
+}
+.about-text h3, .about-text h2 {
+    color: #896777;
+
 }
 
 

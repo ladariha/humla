@@ -1,0 +1,99 @@
+<!doctype html>  
+<html lang="en" manifest="####cache.manifest">
+    <head>
+        <meta charset="utf-8"/> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+        <title>Humla - Server</title>
+        <meta name="description" content="Application main page"/>
+        <meta name="author" content="Petr Mikota"/>  
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>  
+        <link rel="shortcut icon" href="/favicon.ico"/>
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+        <link rel="stylesheet" href="/pages/css/style.css?v=1"/>
+
+        <script type="text/javascript" src="lib/page-script.js"></script>
+        <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
+        <!--<script src="js/libs/modernizr-1.6.min.js"></script>-->
+
+    </head>
+    <body>
+        <div id="wrap" > <!--class="shadow">-->
+            <header>
+                <h1>Humla Presentations</h1>
+                <nav>                    
+                    <ul>
+                        <li ><a id="presentations" href="index.html">Presentations</a></li>
+                        <li ><a id="editor" href="editcourse.html">Editor</a></li>
+                        <li ><a id="about" href="about.html"  class="active">About</a></li>
+                    </ul>
+                </nav>
+            </header>
+            <div id="main" role="main">
+                <section>
+                    <div class="about-text">
+                        <h2>Humla Presentation Environment</h2>
+                        <p>
+                            Humla is an open source presentation & lecture hosting environment based on
+                            <a href="http://nodejs.org">node.js</a> server. 
+                            As a presentation frontend, or as we call it a 'client', it uses beautiful HTML5 slides ispired by HTML5Rocks,
+                            but with many extra features (Comments, Likes, Tests...).</p><p>
+
+                            Similarly as Beamer exist for Latexers, Humla'a aim is to provide environment for creating slides for presentations in HTML while 
+                            utilizing extensive HTML5 features. Humla is particularly useful for technical presentations and was originally created
+                            as a tool for the Czech Technical University courses Middleware and Web Services and Web 2.0. </p><p>
+
+                            Humla is easy extendable by client and/or server extensions (or plugins if you mind).</p><p>
+
+                            To see Humla in action, see <a href="http://vitvar.com/courses/mdw/slides/lecture1.html">Lecture 1 of 
+                                Web Services and Middleware</a> course.</p><p>
+
+
+                            We are currently working on server API, IDE, semantic analyzers and other stuff.</p><p>
+
+                            Feel free to fork Humla, write plugins and patch it yourself!</p>
+
+                    </div>
+                </section>
+                <section>
+                    <div class="about-text center" >
+                        <img src="img/dirt-flower.jpg" style="" />
+                    </div>
+                </section>
+                <section>
+                    <div class="about-text">
+                        <h3>Links</h3>
+                        <ul>
+                            <li><a href="https://github.com/bubersson/humla">github.com</a></li>
+                        </ul>
+                        <h3>Authors</h3>
+                        <ul>
+                            <li>Petr Mikota</li>
+                            <li>Láďa Říha</li>
+                            <li>Tomáš Vitvar</li>
+                        </ul>
+                    </div>
+                </section>
+                <div class="clear"></div>
+            </div>
+            <footer>
+                v0.1 Humla &copy; 2011 
+            </footer>
+        </div> <!--! end of #container -->
+
+
+
+        <div id="debug">
+            <h4>DEBUG</h4>
+
+            <a href="/pages/editcourse.html">Edit Course</a><br/>
+            <a href="/pages/humla.html">Humla</a><br/>
+            <a href="/pages/newcourse.html">New Course</a><br/>
+            <span id="msg">&nbsp;</span>
+
+
+        </div>
+
+    </body>
+
+
+</html>

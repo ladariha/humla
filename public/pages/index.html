@@ -11,7 +11,6 @@
         <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
         <link rel="stylesheet" href="/pages/css/style.css?v=1"/>
 
-        <script type="text/javascript" src="lib/page-script.js"></script>
         <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
         <!--<script src="js/libs/modernizr-1.6.min.js"></script>-->
 
@@ -22,9 +21,9 @@
                 <h1>Humla Presentations</h1>
                 <nav>                    
                     <ul>
-                        <li><a href="index.html" class="active">Presentations</a></li>
-                        <li><a href="editcourse.html">Editor</a></li>
-                        <li><a href="about.html">About</a></li>
+                        <li ><a id="presentations" href="index.html" class="active">Presentations</a></li>
+                        <li ><a id="editor" href="editcourse.html">Editor</a></li>
+                        <li ><a id="about" href="about.html">About</a></li>
                     </ul>
                 </nav>
             </header>
@@ -32,14 +31,14 @@
                 <section>
                     <div class="colhead"><span class="number">1</span>. Courses</div>
                     <div id="courses-search" class="search">
-                        <input type="search" placeholder="Search..." />
-                        <input type="button" value="Go!" class="button"/>
+                        <input type="search" id="courses-field" placeholder="Search..." tabindex="1" />
+                        <input type="button" id="courses-button" value="Go!" class="button"/>
+                        <a href="newcourse.html"><img id="add-course" class="icon" src="img/ico-add.png" width="24" height="24" /></a>
                     </div>
                     <div class="items">
                         <ul id="course-items">
-                            <li>MI-MDW</li>
-                            <li>MI-DDW</li>
-                            <li class="selected">MI-SWE</li>
+                            <li>&nbsp</li>
+                            <li class="hint"> Loading...</li>
 
                         </ul>
                     </div>
@@ -48,15 +47,14 @@
                 <section>
                     <div class="colhead"><span class="number">2</span>. Lectures</div>
                     <div id="lectures-search" class="search">
-                        <input type="search" placeholder="Search..."/>
-                        <input type="button" value="Go!" class="button"/>
+                        <input type="search" id="lectures-field" placeholder="Search..." tabindex="2"/>
+                        <input type="button" id="lectures-button" value="Go!" class="button"/>
+                        <a href="newlecture.html"><img id="add-lecture" class="icon" src="img/ico-add.png" width="24" height="24" /></a>
                     </div>
                     <div class="items">
                         <ul id="lecture-items">
-                            <li>1. Úvod do problematiky</li>
-                            <li>2. APIs</li>
-                            <li class="selected">3. Neco</li>
-
+                            <li>&nbsp</li>
+                            <li class="hint">&lt;&lt;&lt; Choose course first</li>
                         </ul>
                     </div>
 
@@ -66,18 +64,7 @@
                     <div class="colhead"><span class="number">3</span>. Info</div>
                     <div class="info">
                         <div id="info-text">
-                            <h2 id="lecturename">MI-MDW: APIs</h2>
-                            <div id="buttons"><a href="" target="_blank"  class="button">Open</a>
-                                <a href="">Edit</a>
-                            </div>
-                            <br/>
-                            <h3>Abstrakt</h3>                        
-                            <p id="abstract">Obsah této přednášky</p>
-                            <h3>Index</h3>
-                            <ol id="index">
-                                <li>Neco</li>
-                                <li>Neco</li>
-                            </ol>
+                            <div class="hint">&lt;&lt;&lt; Choose course first</div>
 
                         </div>
                     </div>
@@ -94,14 +81,19 @@
 
         <div id="debug">
             <h4>DEBUG</h4>
-
-            <a href="/pages/editcourse.html">Edit Course</a><br/>
-            <a href="/pages/humla.html">Humla</a><br/>
+            <a href="/pages/editcourse.html">Edit Course</a> | 
+            <a href="/pages/humla.html">Humla</a> |
             <a href="/pages/newcourse.html">New Course</a><br/>
+            <a href="#" onclick="document.getElementById('msg').innerHTML='';">Clear DEBUG</a><br/>
             <span id="msg">&nbsp;</span>
 
 
         </div>
+
+
+        <!-- ~~~~~~ Control Javascripts ~~~~~~~~~~~~ -->
+        <script type="text/javascript" src="../lib/jquery-1.7.min.js"></script>
+        <script type="text/javascript" src="lib/page-script.js"></script>
 
     </body>
 
