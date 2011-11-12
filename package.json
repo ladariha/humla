@@ -1,15 +1,32 @@
 {
-  "name"          : "Humla Server",
-  "description"   : "NodeJS Server for Humla Presentation Environment.",
-  "homepage"      : "https://github.com/tomvit/humla",
-  "keywords"      : ["slides", "html5", "education", "presentation"],
-  "author"        : "Tomas Vitvar <t.vitvar@google.com>",
-  "contributors": [
-                    { "name": "Tomas Vitvar", 
-                      "name": "Petr Mikota",
-                      "name": "Vladimir Riha"}
-                  ],
-  "dependencies"  : {                      
-                    },
-  "version"       : "0.0.1"
+    "version"       : "0.0.2",
+    "name"          : "Humla",
+    "description"   : "Presentation Environment for creating and managing HTML5 slides.",
+    "homepage"      : "https://github.com/tomvit/humla",
+    "keywords"      : ["slides", "html5", "education", "presentation"],
+    "author"        : "Tomas Vitvar <t.vitvar@google.com>",
+    "contributors": [
+    {
+        "name": "Tomas Vitvar"
+    },
+    {
+        "name": "Petr Mikota", 
+        "email": "buberssson@gmail.com"
+    },
+    {
+        "name": "Vladimir Riha"
+    }
+    ],
+    "dependencies"  : {       
+        "express": ">= 2.4.1",
+        "jsdom": ">= 2.0.1"
+    },
+    "engines": {
+        "node": ">= 0.4.1 < 0.7.0"
+    },
+    "repository": "git://github.com/bubersson/humla",
+    "main": "index"
+    
 }
+
+

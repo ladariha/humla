@@ -73,8 +73,9 @@ function DataAccess() {
         
     }
     
-    this.loadInfo = function (url) { //(course_id,lect_id) {        
-            
+    
+    // First fill all available info about slide and then send request to index API
+    this.loadInfo = function (url) { //(course_id,lect_id) {  
         var a = '<h2 id="lecturename">MI-MDW: Data se propsala</h2>';
         a+= '<div id="buttons"><a href="http://'+url+'" target="_blank" class="button" tabindex="3">Open</a>';
         a+= '<a href="">Edit</a>';
@@ -82,12 +83,56 @@ function DataAccess() {
         a+= '<h3>Abstrakt</h3>';
         a+= '<p id="abstract">Obsah této přednášky</p> ';
         a+= '<h3>Index</h3>';
-        a+= '<ol id="index">';
+        a+= '<ul id="index" class="slideindex-ul" >';
         a+= '<li>Nedddco</li>';
         a+= '<li>Neco</li>';
-        a+= '</ol>';
+        a+= '</ul>';
+        infotext_elm.innerHTML = a;
+                
+        // Parse info
+        var fields = url.split("/");            
+        var course = fields[3];//presentationUrl.substr(0, presentationUrl.indexOf("/"));
 
-        /*
+        //TODO: smazat: only for testing purposes
+        //course = "mdw";
+        
+        var lecture= fields[4].substr(0, fields[4].indexOf("."));
+        
+        var $jqXHR = $.getJSON("/api/"+course+"/"+lecture+"/index", function(index) {       
+            var index_ul = document.getElementById("index");
+            var ul = [];
+            
+            for(var item in index.structure.index){
+                var t = index.structure.index[item]; 
+                ul.push('<li class="slideindex-li"><a class="slideindex-structure-top" href="http://'+t.url+'">'+t.title+'</a>');            
+                if(t.chapters && t.chapters.length>0){
+                    ul.push("<img src=\"../../../humla/lib/ext/slideindex-left.png\" onClick=\"pageHandler.dropdown(this, 'slideindex-structure-secondLevel"+item+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-structure-secondLevel"+item+"\" class=\"slideindex-hidden\" >");
+                    for(var chapter in t.chapters){
+                        var ch = t.chapters[chapter];
+                        ul.push("<li class=\"slideindex-li\"><a class=\"slideindex-structure-chapter\" href=\"http://"+ch.url+"\">"+ch.title+"</a>");
+                        if(ch.slides && ch.slides.length>0){
+                            ul.push("<img src=\"../../../humla/lib/ext/slideindex-left.png\" onClick=\"pageHandler.dropdown(this, 'slideindex-structure-thirdLevel"+chapter+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-structure-thirdLevel"+chapter+"\" class=\"slideindex-hidden\" >");
+                            for(var s in ch.slides){
+                                var simpleSlide = ch.slides[s];
+                                ul.push("<li class=\"slideindex-li\"><a class=\"slideindex-structure-slide\" href=\"http://"+simpleSlide.url+"\">"+simpleSlide.title+"</a>");
+                     
+                            }
+                            ul.push("</ul>");
+                        }
+                    }
+                    ul.push("</ul>");
+                }
+                ul.push( "</li>");
+            }            
+            index_ul.innerHTML = ul.join("\n");
+
+        });
+        $jqXHR.error(function(e) {
+            debug_elm.innerHTML=e.status+": "+e.statusText+"<br/>-  "+e.responseText;            
+        });            
+        
+
+    /*
         <div id="info-text">
             <h2 id="lecturename">MI-MDW: APIs</h2>
             <div id="buttons"><a href="" target="_blank"  class="button" tabindex="3">Open</a>
@@ -105,16 +150,6 @@ function DataAccess() {
         </div>        
         **/
 
-        infotext_elm.innerHTML = a;
-        
-    /*        
-        var $jqXHR = $.getJSON("/api/facet/"+id+"/", function(lectures) {            
-            //TODO: call fillInfo(data) 
-            });
-        $jqXHR.error(function(e) {
-            debug_elm.innerHTML=e.status+": "+e.statusText+"<br/>-  "+e.responseText;            
-        })       
-        */
     }
    
     
@@ -208,6 +243,22 @@ function PageHandler(){
     this.fillInfo = function (data) {
         lectureClick(data); // TODO: vytvořit parsování dat
     }
+    
+    this.dropdown = function (img,idOflist) {        
+        if(img.src.indexOf("left")>0){
+            img.src="../../../humla/lib/ext/slideindex-down.png";
+            img.title = "Hide content";
+            img.alt="Hide content";
+            document.getElementById(idOflist).setAttribute("class", 'slideindex-visible');
+        }else{
+            img.src="../../../humla/lib/ext/slideindex-left.png";  
+            document.getElementById(idOflist).setAttribute("class", 'slideindex-hidden');
+            img.title = "Show content";
+            img.alt="Show content";
+        }
+        
+    }
+    
 
 }
 
