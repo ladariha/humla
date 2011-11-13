@@ -162,14 +162,9 @@ nav #about:hover {
 
 }
 
-
-
-
 nav li > a.active {
     opacity: 1;
 }
-
-
 
 #main {
     clear:both;
@@ -266,7 +261,8 @@ nav li > a.active {
     background: #feb !important;
 } 
 
-.items li.hint {    
+.items div.hint {    
+    margin-top:40px;
     color:#999;
     text-align: center;
     font-size: 1.1em

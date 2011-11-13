@@ -1,7 +1,7 @@
 # Humla
 
 Humla is an open source presentation & lecture hosting environment based on [node.js](http://nodejs.org) server. 
-As a presentation frontend, or as we call it a 'client', it uses beautiful HTML5 slides ispired by HTML5Rocks,
+As a presentation frontend, or as we call it a 'client', it uses beautiful HTML5 slides inspired by HTML5Rocks,
 but with many extra features (Comments, Likes, Tests...).
 
 Similarly as Beamer exist for Latexers, Humla'a aim is to provide environment for creating slides for presentations in HTML while 

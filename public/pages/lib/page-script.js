@@ -36,7 +36,7 @@ function DataAccess() {
     this.loadCourses = function() {
         var $jqXHR = $.getJSON("/api/facet/courses", function(courses) {                   
             course_ul.innerHTML = "" ;//lectures_ul.innerHTML = "";
-
+            $("#course-hint").hide();
             for(var i in courses) {
                 var c = courses[i];
                 if (c.courseID) {
@@ -57,6 +57,7 @@ function DataAccess() {
     this.loadLectures = function (id) {
         var $jqXHR = $.getJSON("/api/facet/"+id+"/lectures", function(lectures) {            
             lectures_ul.innerHTML="";
+            $("#lecture-hint").hide();
             for(var lec in lectures) {
                 var c = lectures[lec];
                 var new_element = document.createElement('li');
@@ -190,8 +191,9 @@ function PageHandler(){
                 that.filter('#lecture-items li', $(this).val());                
             }
 
-        });
-        $("#courses-field").bind("click keyup", function(event) {            
+        });        
+        // almost same as above - filter courses // TODO: udělat jako jednu funkci se dvouma parametrama?
+        $("#courses-field").bind("click keyup", function(event) { 
             if(event.keyCode==27||$(this).val()==''){                
                 $(this).val('');                
                 $('#course-items li').show();
@@ -212,12 +214,14 @@ function PageHandler(){
         $("#course-items").on("click", "li", function(e){            
             $("#course-items>li").removeClass("selected"); // TODO: tohle optimalizovat, abych dvakrát neselektoroval
             $(this).addClass("selected");
-            dataAccess.loadLectures(e.srcElement.dataset ? e.srcElement.dataset.link : e.srcElement.title); //hack kvuli IE
+            var targ = (e.srcElement) ? e.srcElement : e.target; // hack kvuli FF
+            dataAccess.loadLectures(targ.dataset ? targ.dataset.link : targ.title); //hack kvuli IE
         });  
         $("#lecture-items").on("click", "li", function(e){
             $("#lecture-items>li").removeClass("selected");
             $(this).addClass("selected");
-            dataAccess.loadInfo(e.srcElement.dataset ? e.srcElement.dataset.link : e.srcElement.title ); //hack kvuli IE
+            var targ = (e.srcElement) ? e.srcElement : e.target; // hack kvuli FF
+            dataAccess.loadInfo(targ.dataset ? targ.dataset.link : targ.title); //hack kvuli IE
         //TODO that.fillInfo(dataAccess.loadInfo());
         //that.fillInfo(e.srcElement.dataset.link);
         });  
