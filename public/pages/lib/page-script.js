@@ -32,6 +32,13 @@ function DataAccess() {
     //save reference (for next generations)
     var that = this; 
     
+    
+    // TODO: Load info from localStorage - if not available return false
+    this.loadLocal = function () {
+        localStorage.get();        
+        return false;
+    }
+    
     // Send GET request for courses JSON
     this.loadCourses = function() {
         var $jqXHR = $.getJSON("/api/facet/courses", function(courses) {                   
@@ -89,13 +96,17 @@ function DataAccess() {
         a+= '<li>Neco</li>';
         a+= '</ul>';
         infotext_elm.innerHTML = a;
-                
+        
+        this.loadIndex(url);
+        
+    }
+   this.loadIndex = function(url) {
         // Parse info
         var fields = url.split("/");            
         var course = fields[3];//presentationUrl.substr(0, presentationUrl.indexOf("/"));
 
         //TODO: smazat: only for testing purposes
-        //course = "mdw";
+        course = "mdw";
         
         var lecture= fields[4].substr(0, fields[4].indexOf("."));
         
@@ -106,7 +117,7 @@ function DataAccess() {
             for(var item in index.structure.index){
                 var t = index.structure.index[item]; 
                 ul.push('<li class="slideindex-li"><a class="slideindex-structure-top" href="http://'+t.url+'">'+t.title+'</a>');            
-                if(t.chapters && t.chapters.length>0){
+                if(t.chapters && t.chapters.length>0){ // TODO: zarovnat všechny podle šipky
                     ul.push("<img src=\"../../../humla/lib/ext/slideindex-left.png\" onClick=\"pageHandler.dropdown(this, 'slideindex-structure-secondLevel"+item+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-structure-secondLevel"+item+"\" class=\"slideindex-hidden\" >");
                     for(var chapter in t.chapters){
                         var ch = t.chapters[chapter];
@@ -133,24 +144,7 @@ function DataAccess() {
         });            
         
 
-    /*
-        <div id="info-text">
-            <h2 id="lecturename">MI-MDW: APIs</h2>
-            <div id="buttons"><a href="" target="_blank"  class="button" tabindex="3">Open</a>
-                <a href="">Edit</a>
-            </div>
-            <br/>
-            <h3>Abstrakt</h3>                        
-            <p id="abstract">Obsah této přednášky</p>
-            <h3>Index</h3>
-            <ol id="index">
-                <li>Neco</li>
-                <li>Neco</li>
-            </ol>
-
-        </div>        
-        **/
-
+   
     }
    
     
@@ -212,13 +206,14 @@ function PageHandler(){
         });*/
         
         $("#course-items").on("click", "li", function(e){            
-            $("#course-items>li").removeClass("selected"); // TODO: tohle optimalizovat, abych dvakrát neselektoroval
+            $(this).siblings().removeClass("selected"); // TODO: tohle optimalizovat, abych dvakrát neselektoroval
             $(this).addClass("selected");
+            
             var targ = (e.srcElement) ? e.srcElement : e.target; // hack kvuli FF
             dataAccess.loadLectures(targ.dataset ? targ.dataset.link : targ.title); //hack kvuli IE
         });  
         $("#lecture-items").on("click", "li", function(e){
-            $("#lecture-items>li").removeClass("selected");
+            $(this).siblings().removeClass("selected");
             $(this).addClass("selected");
             var targ = (e.srcElement) ? e.srcElement : e.target; // hack kvuli FF
             dataAccess.loadInfo(targ.dataset ? targ.dataset.link : targ.title); //hack kvuli IE

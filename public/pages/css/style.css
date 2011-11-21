@@ -334,6 +334,7 @@ nav li > a.active {
 
 .slideindex-li{
     font-size: 13px;
+    list-style: none;
 }
 .slideindex-hidden{
     margin: 0;
@@ -347,6 +348,9 @@ nav li > a.active {
 
 .slideindex-ul  img{
     cursor: pointer;
+    float: left;
+    padding: 2px 5px;
+    margin-left: -20px;
 }
 
 .slideindex-clearImg{
