@@ -100,7 +100,7 @@ function DataAccess() {
         this.loadIndex(url);
         
     }
-   this.loadIndex = function(url) {
+    this.loadIndex = function(url) {
         // Parse info
         var fields = url.split("/");            
         var course = fields[3];//presentationUrl.substr(0, presentationUrl.indexOf("/"));
@@ -206,19 +206,14 @@ function PageHandler(){
         });*/
         
         $("#course-items").on("click", "li", function(e){            
-            $(this).siblings().removeClass("selected"); // TODO: tohle optimalizovat, abych dvakrát neselektoroval
-            $(this).addClass("selected");
-            
+            $(this).toggleClass("selected",true).siblings().removeClass("selected"); 
             var targ = (e.srcElement) ? e.srcElement : e.target; // hack kvuli FF
-            dataAccess.loadLectures(targ.dataset ? targ.dataset.link : targ.title); //hack kvuli IE
+            dataAccess.loadLectures(targ.dataset ? targ.dataset.link : targ.title); //hack kvuli IE (no HTML5 data attr)
         });  
         $("#lecture-items").on("click", "li", function(e){
-            $(this).siblings().removeClass("selected");
-            $(this).addClass("selected");
+            $(this).toggleClass("selected",true).siblings().removeClass("selected");            
             var targ = (e.srcElement) ? e.srcElement : e.target; // hack kvuli FF
-            dataAccess.loadInfo(targ.dataset ? targ.dataset.link : targ.title); //hack kvuli IE
-        //TODO that.fillInfo(dataAccess.loadInfo());
-        //that.fillInfo(e.srcElement.dataset.link);
+            dataAccess.loadInfo(targ.dataset ? targ.dataset.link : targ.title); //hack kvuli IE        
         });  
     };
     
@@ -228,13 +223,19 @@ function PageHandler(){
     this.filter = function filter(selector, query) { // by http://net.tutsplus.com/tutorials/javascript-ajax/using-jquery-to-manipulate-and-filter-data/
         query = $.trim(query); //trim white space
         query = query.replace(/ /gi, '|'); //add OR for regex query ‪‬
+        var regx = new RegExp(query, "i");
+        var cnt = 0;
+        var $elm = null;
         $(selector).each(function() {
-            if ($(this).text().search(new RegExp(query, "i")) < 0)
+            if ($(this).text().search(regx) < 0)
                 $(this).hide();//.removeClass('visible');
-            else
-                $(this).show();//.addClass('visible');
-        });
-
+            else {
+                $elm = $(this).show();//.addClass('visible');
+                cnt++;
+            }
+        });        
+        if(cnt==1) $elm.click(); // if theres only one element left - click on it
+        
     };
     
     
@@ -243,6 +244,7 @@ function PageHandler(){
         lectureClick(data); // TODO: vytvořit parsování dat
     }
     
+    // Make dropdown clicks
     this.dropdown = function (img,idOflist) {        
         if(img.src.indexOf("left")>0){
             img.src="../../../humla/lib/ext/slideindex-down.png";
