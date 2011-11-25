@@ -19,6 +19,7 @@ app.post('/api/:course/course', function(request, response){ // TODO database ti
         request.body.isActive === undefined || request.body.isActive.length<1 || request.body.courseID ===undefined ||
         request.body.courseID.length<1 || request.body.owner === undefined || request.body.owner.length<1
         ){
+                console.log(">");
         response.writeHead(400, {
             'Content-Type': 'text/plain'
         });
@@ -212,8 +213,8 @@ app.get('/api/:course/course', function(request, response){
 });
 
 
-app.post('/api/:course/:lecture', function(request, response){ // TODO database timeout
-   
+app.post('/api/:course/:lecture/lecture', function(request, response){ // TODO database timeout
+   console.log("1");
     if(request.body === undefined || request.body.title === undefined || request.body.title.length<1 || 
         request.body.isActive === undefined || request.body.isActive.length<1 || request.body.courseID ===undefined ||
         request.body.courseID.length<1 || request.body.author === undefined || request.body.author.length<1
@@ -226,6 +227,7 @@ app.post('/api/:course/:lecture', function(request, response){ // TODO database 
         response.write("Missing fields" );
         response.end();   
     }else{
+        console.log("2");
         Lecture.find({
             courseID: request.params.course,
             order: request.body.order
@@ -238,6 +240,7 @@ app.post('/api/:course/:lecture', function(request, response){ // TODO database 
                     response.write("Lecture with given course and order already exists");
                     response.end(); 
                 }else{
+                    console.log("3");
                     var c = new Lecture();
                     c.title = decodeURIComponent(request.body.title);
                     c.courseID = decodeURIComponent(request.body.courseID);
@@ -314,7 +317,7 @@ app.post('/api/:course/:lecture', function(request, response){ // TODO database 
 
 
 
-app.put('/api/:course/:lecture', function(request, response){ // TODO database timeout
+app.put('/api/:course/:lecture/lecture', function(request, response){ // TODO database timeout
    
     if(request.body === undefined){
         response.writeHead(400, {
@@ -697,7 +700,7 @@ function editTemplateMove(prevFile, request, response, lecture, order,keywords){
     });
 }
 
-app.get('/api/:course/:lecture', function(request, response, next){
+app.get('/api/:course/:lecture/lecture', function(request, response, next){
     if(request.params.course==="facet") {
         next(); // TODO: tenhle hack je tu proto, že to místno na facet skákalo sem (stejné url!) TODO: rozlišit url lépe!!
         return;

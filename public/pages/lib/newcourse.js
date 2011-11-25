@@ -17,11 +17,13 @@ function checkCourseExist(element, id){
         document.getElementById('exist').textContent='';
     }else{
         var request = new XMLHttpRequest();
-        request.open("GET", "/api/course/"+tmp, true);
+        console.log(tmp);
+        request.open("GET", "/api/"+tmp+"/course", true);
         request.onreadystatechange = function(){
             if (request.readyState==4) {
                 if(request.status==200){
                     // exist
+                    
                     alreadyCheckedCourses[tmp]=1;
                     document.getElementById(id).setAttribute('style', 'background:#fb9898;');
                     document.getElementById('exist').textContent='This course already exists';
@@ -45,7 +47,7 @@ function submitNewCourseForm(){
         var fullName = encodeURIComponent(document.getElementById('fullName').value); 
         var owner = encodeURIComponent(document.getElementById('owner').value); 
         var isActive = encodeURIComponent(document.getElementById('visible').value); 
-        var url = '/api/course/'+courseID;
+        var url = '/api/'+courseID+'/course';
         var params = "courseID="+courseID+'&longName='+fullName+'&owner='+owner+'&isActive='+isActive;
     
         var request = new XMLHttpRequest();

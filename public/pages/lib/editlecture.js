@@ -7,7 +7,7 @@ var protect = "";
 window.onload = function(){
     
     var request = new XMLHttpRequest();
-    request.open("GET", "/api/"+getParameterByName('course')+"/"+getParameterByName('lecture'), true);
+    request.open("GET", "/api/"+getParameterByName('course')+"/"+getParameterByName('lecture')+"/lecture", true);
     request.onreadystatechange = function(){
         if (request.readyState==4) {
             if(request.status==200){
@@ -55,7 +55,7 @@ function submitEditLectureForm(){
         var order  =encodeURIComponent(document.getElementById('order').value); 
         var id = encodeURIComponent(document.getElementById('_id').value);
         var isActive = encodeURIComponent(document.getElementById('visible').value); 
-        var url = '/api/'+courseID+"/lecture"+order;
+        var url = '/api/'+courseID+"/lecture"+order+"/lecture";
         var params = "id="+id+"&courseID="+courseID+'&title='+title+'&author='+author+'&isActive='+isActive+'&keywords='+keywords+'&order='+order;
     
         var request = new XMLHttpRequest();

@@ -15,7 +15,7 @@ function submitNewLectureForm(){
         var keywords  =encodeURIComponent(document.getElementById('keywords').value); 
         var order  =encodeURIComponent(document.getElementById('order').value); 
         var isActive = encodeURIComponent(document.getElementById('visible').value); 
-        var url = '/api/'+courseID+"/lecture"+order;
+        var url = '/api/'+courseID+"/lecture"+order+"/lecture";
         var params = "courseID="+courseID+'&title='+title+'&author='+author+'&isActive='+isActive+'&keywords='+keywords+'&order='+order;
     
         var request = new XMLHttpRequest();

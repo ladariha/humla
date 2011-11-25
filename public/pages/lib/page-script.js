@@ -49,11 +49,23 @@ function DataAccess() {
                 if (c.courseID) {
                     var new_element = document.createElement('li');
                     new_element.innerHTML = c.courseID +": "+c.longName;
-                    new_element.setAttribute('data-link', c.courseID);                    
+                    new_element.setAttribute('data-link', c.courseID);    
+                    new_element.setAttribute('id', c.courseID);    
                     new_element.setAttribute('title', c.courseID); //Kvuli IE
                     course_ul.insertBefore(new_element, course_ul.firstChild);
                 }
             }
+            
+            $("#course-items li").contextMenu({
+                menu: 'courseMenu'
+            }, function(action, el, pos) {
+                switch(action){
+                    case 'editCourse':
+                        window.location = 'editcourse.html?course='+$(el).attr('id');
+                        break;
+                }
+            });
+            
         });
         $jqXHR.error(function(e) {
             debug_elm.innerHTML=e.status+": "+e.statusText+"<br/>"+e.responseText;            
@@ -69,11 +81,22 @@ function DataAccess() {
                 var c = lectures[lec];
                 var new_element = document.createElement('li');
                 new_element.innerHTML = c.title.slice(0, -5);
-                new_element.setAttribute('data-link', c.presentationURL);                
+                new_element.setAttribute('data-link', c.presentationURL);        
+                new_element.setAttribute('id', c.courseID+';'+c.lectureID);  
                 new_element.setAttribute('title', c.presentationURL); // kvulit IE
                 lectures_ul.insertBefore(new_element, lectures_ul.firstChild);
             }
 
+            $("#lecture-items li").contextMenu({
+                menu: 'lectureMenu'
+            }, function(action, el, pos) {
+                var t = ($(el).attr('id')).split(';');       
+                switch(action){
+                    case 'editLecture':     
+                        window.location = 'editlecture.html?course='+t[0]+'&lecture='+t[1];
+                        break;
+                }
+            });
         });
         $jqXHR.error(function(e) {
             debug_elm.innerHTML=e.status+": "+e.statusText+"<br/>-  "+e.responseText;            
