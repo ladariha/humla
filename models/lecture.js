@@ -15,7 +15,16 @@ var LectureSchema = new Schema({
     url: String, // api
     presentationURL: String, // presentation itself
     author: String,
+    authorEmail: String,
+    authorTwitter: String,
+    authorWeb: String,
+    semester: String,
+    organization: String,
+    organizationFac: String,
+    field: String,
+    web: String,
     title: String,
+    lectureAbstract: String,
     isActive: Boolean,
     lastModified  :  {
         type: Date

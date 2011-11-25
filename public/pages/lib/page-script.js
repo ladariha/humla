@@ -75,12 +75,19 @@ function DataAccess() {
     // send GET request for lectures based on course id
     this.loadLectures = function (id) {
         var $jqXHR = $.getJSON("/api/facet/"+id+"/lectures", function(lectures) {            
+            console.log(id);
             lectures_ul.innerHTML="";
             $("#lecture-hint").hide();
             for(var lec in lectures) {
+                
                 var c = lectures[lec];
                 var new_element = document.createElement('li');
-                new_element.innerHTML = c.title.slice(0, -5);
+                
+                new_element.innerHTML = c.title;
+                if(c.title.length>5){
+                    new_element.innerHTML = c.title.slice(0, -5);
+                }
+                console.log("_"+c.presentationURL);
                 new_element.setAttribute('data-link', c.presentationURL);        
                 new_element.setAttribute('id', c.courseID+';'+c.lectureID);  
                 new_element.setAttribute('title', c.presentationURL); // kvulit IE
@@ -92,7 +99,7 @@ function DataAccess() {
             }, function(action, el, pos) {
                 var t = ($(el).attr('id')).split(';');       
                 switch(action){
-                    case 'editLecture':     
+                    case 'editLecture':
                         window.location = 'editlecture.html?course='+t[0]+'&lecture='+t[1];
                         break;
                 }

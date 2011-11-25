@@ -59,7 +59,7 @@ function submitNewCourseForm(){
             if (request.readyState==4) {
                 if(request.status==200){
                     var object = eval('(' + request.responseText + ')');
-                    document.getElementById('msg').innerHTML='Course'+object.longName+' created';
+                    document.getElementById('msg').innerHTML='Course '+object.longName+' created';
                     console.log('Course'+object.longName+' created');
                     document.getElementById('exist').innerHTML='';
                     document.getElementById('e_fullName').innerHTML='';

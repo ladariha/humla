@@ -19,7 +19,7 @@ app.post('/api/:course/course', function(request, response){ // TODO database ti
         request.body.isActive === undefined || request.body.isActive.length<1 || request.body.courseID ===undefined ||
         request.body.courseID.length<1 || request.body.owner === undefined || request.body.owner.length<1
         ){
-                console.log(">");
+        console.log(">");
         response.writeHead(400, {
             'Content-Type': 'text/plain'
         });
@@ -61,11 +61,22 @@ app.post('/api/:course/course', function(request, response){ // TODO database ti
                         }else{
                             fs.mkdir(SLIDES_DIRECTORY+'/'+c.courseID, 0777, function(e) {
                                 if(!e){
-                                    response.writeHead(200, {
-                                        "Content-Type": "application/json"
+                                    fs.mkdir(SLIDES_DIRECTORY+'/'+c.courseID+'/css', 0777, function(e) {
+                                        if(!e){
+                                            response.writeHead(200, {
+                                                "Content-Type": "application/json"
+                                            });
+                                            response.write(JSON.stringify(c, null, 4));
+                                            response.end(); 
+                                   
+                                        }else{
+                                            response.writeHead(500, {
+                                                "Content-Type": "text/plain"
+                                            });
+                                            response.write("Directory for css for lectures was not created");
+                                            response.end(); 
+                                        }
                                     });
-                                    response.write(JSON.stringify(c, null, 4));
-                                    response.end(); 
                                    
                                 }else{
                                     response.writeHead(500, {
@@ -214,7 +225,6 @@ app.get('/api/:course/course', function(request, response){
 
 
 app.post('/api/:course/:lecture/lecture', function(request, response){ // TODO database timeout
-   console.log("1");
     if(request.body === undefined || request.body.title === undefined || request.body.title.length<1 || 
         request.body.isActive === undefined || request.body.isActive.length<1 || request.body.courseID ===undefined ||
         request.body.courseID.length<1 || request.body.author === undefined || request.body.author.length<1
@@ -227,7 +237,6 @@ app.post('/api/:course/:lecture/lecture', function(request, response){ // TODO d
         response.write("Missing fields" );
         response.end();   
     }else{
-        console.log("2");
         Lecture.find({
             courseID: request.params.course,
             order: request.body.order
@@ -240,14 +249,21 @@ app.post('/api/:course/:lecture/lecture', function(request, response){ // TODO d
                     response.write("Lecture with given course and order already exists");
                     response.end(); 
                 }else{
-                    console.log("3");
                     var c = new Lecture();
                     c.title = decodeURIComponent(request.body.title);
                     c.courseID = decodeURIComponent(request.body.courseID);
                     c.lectureID= 'lecture'+decodeURIComponent(request.body.order);
                     c.url = request.headers.host+'/api/'+c.courseID+'/'+c.lectureID;
                     c.presentationURL = request.headers.host+'/data/slides/'+c.courseID+'/'+c.lectureID+'.html';
-
+                    c.authorEmail = (request.body.authorEmail === undefined) ? '' : decodeURIComponent(request.body.authorEmail);
+                    c.authorTwitter = (request.body.authorTwitter === undefined) ? '' : decodeURIComponent(request.body.authorTwitter);
+                    c.authorWeb = (request.body.authorWeb === undefined) ? '' : decodeURIComponent(request.body.authorWeb);
+                    c.semester = (request.body.semester === undefined) ? '' : decodeURIComponent(request.body.semester);
+                    c.organization = (request.body.org === undefined) ? '' : decodeURIComponent(request.body.org);
+                    c.organizationFac = (request.body.orgfac === undefined) ? '' : decodeURIComponent(request.body.orgfac);
+                    c.field = (request.body.spec === undefined) ? '' : decodeURIComponent(request.body.spec);
+                    c.web = (request.body.web === undefined) ? '' : decodeURIComponent(request.body.web);
+                    c.lectureAbstract = (request.body.abs === undefined) ? '' : decodeURIComponent(request.body.abs);
                     var e = (request.body.isActive).toLowerCase()
                     if(e=='true'){
                         c.isActive = true;
@@ -267,6 +283,7 @@ app.post('/api/:course/:lecture/lecture', function(request, response){ // TODO d
                         
                     });
                     c.keywords = k1;
+                   console.log(c);
                     c.save(function(err) {
                         if(err) {
                             response.writeHead(500, {
@@ -275,15 +292,9 @@ app.post('/api/:course/:lecture/lecture', function(request, response){ // TODO d
                             response.write("Problems with database");
                             response.end();  
                         }else{
-                            
-                            // if adresar neexistuje
-                            // create dir
-                            // copy template
-                            // fill in values
-                            
                             path.exists(SLIDES_DIRECTORY+'/'+c.courseID, function (exists) {
                                 if(exists){ // course dir exists
-                                    copyTemplate(request, response, c, decodeURIComponent(request.body.order), decodeURIComponent(request.body.keywords));
+                                    copyTemplateHTML(request, response, c, decodeURIComponent(request.body.order), decodeURIComponent(request.body.keywords));
                                 }else{ // create dir
                                     
                                     fs.mkdir(SLIDES_DIRECTORY+'/'+c.courseID, 0777, function(e) {
@@ -295,7 +306,7 @@ app.post('/api/:course/:lecture/lecture', function(request, response){ // TODO d
                                             response.end(); 
                                    
                                         }else{ // copy template
-                                            copyTemplate(request, response, c, decodeURIComponent(request.body.order), decodeURIComponent(request.body.keywords));
+                                            copyTemplateHTML(request, response, c, decodeURIComponent(request.body.order), decodeURIComponent(request.body.keywords));
                                         }
                                     });   
                                 } 
@@ -351,7 +362,15 @@ app.put('/api/:course/:lecture/lecture', function(request, response){ // TODO da
                         }
                     }
                     
-                   
+                    c.authorEmail = (request.body.authorEmail === undefined) ? '' : decodeURIComponent(request.body.authorEmail);
+                    c.authorTwitter = (request.body.authorTwitter === undefined) ? '' : decodeURIComponent(request.body.authorTwitter);
+                    c.authorWeb = (request.body.authorWeb === undefined) ? '' : decodeURIComponent(request.body.authorWeb);
+                    c.semester = (request.body.semester === undefined) ? '' : decodeURIComponent(request.body.semester);
+                    c.organization = (request.body.org === undefined) ? '' : decodeURIComponent(request.body.org);
+                    c.organizationFac = (request.body.orgfac === undefined) ? '' : decodeURIComponent(request.body.orgfac);
+                    c.field = (request.body.spec === undefined) ? '' : decodeURIComponent(request.body.spec);
+                    c.web = (request.body.web === undefined) ? '' : decodeURIComponent(request.body.web);
+                    c.lectureAbstract = (request.body.abs === undefined) ? '' : decodeURIComponent(request.body.abs);
                     c.author = (request.body.author === undefined) ? c.author : decodeURIComponent(request.body.author);
                     if(!request.body.keywords === undefined){
                         var k = (decodeURIComponent(request.body.keywords)).split(",");
@@ -380,7 +399,7 @@ app.put('/api/:course/:lecture/lecture', function(request, response){ // TODO da
                             if(prev === c.lectureID){
                                 path.exists(SLIDES_DIRECTORY+'/'+c.courseID, function (exists) {
                                     if(exists){ // course dir exists
-                                        editTemplate(request, response, c, decodeURIComponent(request.body.order), decodeURIComponent(request.body.keywords));
+                                        editTemplateHTML(request, response, c, decodeURIComponent(request.body.order), decodeURIComponent(request.body.keywords));
                                     }else{ // create dir
                                     
                                         fs.mkdir(SLIDES_DIRECTORY+'/'+c.courseID, 0777, function(e) {
@@ -392,7 +411,7 @@ app.put('/api/:course/:lecture/lecture', function(request, response){ // TODO da
                                                 response.end(); 
                                    
                                             }else{ // copy template
-                                                editTemplate(request, response, c, decodeURIComponent(request.body.order), decodeURIComponent(request.body.keywords));
+                                                editTemplateHTML(request, response, c, decodeURIComponent(request.body.order), decodeURIComponent(request.body.keywords));
                                             }
                                         });   
                                     } 
@@ -400,7 +419,7 @@ app.put('/api/:course/:lecture/lecture', function(request, response){ // TODO da
                             }else{
                                 path.exists(SLIDES_DIRECTORY+'/'+c.courseID, function (exists) {
                                     if(exists){ // course dir exists
-                                        editTemplateMove(prev, request, response, c, decodeURIComponent(request.body.order), decodeURIComponent(request.body.keywords));
+                                        editTemplateMoveHTML(prev, request, response, c, decodeURIComponent(request.body.order), decodeURIComponent(request.body.keywords));
                                     }else{ // create dir
                                     
                                         fs.mkdir(SLIDES_DIRECTORY+'/'+c.courseID, 0777, function(e) {
@@ -412,7 +431,7 @@ app.put('/api/:course/:lecture/lecture', function(request, response){ // TODO da
                                                 response.end(); 
                                    
                                             }else{ // copy template
-                                                editTemplateMove(prev, request, response, c, decodeURIComponent(request.body.order), decodeURIComponent(request.body.keywords));
+                                                editTemplateMoveHTML(prev, request, response, c, decodeURIComponent(request.body.order), decodeURIComponent(request.body.keywords));
                                             }
                                         });   
                                     }
@@ -440,9 +459,112 @@ app.put('/api/:course/:lecture/lecture', function(request, response){ // TODO da
 }
 );
 
+function copyTemplateCSS(request, response, lecture, prevFile, longName){
+    
+    fs.readFile(LECTURE_TEMPLATE+'/meta.css', function(err, data) {
+        if(err){
+            response.writeHead(500, {
+                "Content-Type": "text/plain"
+            });
+            response.write("Cannot load presentation css template");
+            response.end();   
+        }else{
+            var content = data.toString();
+            
+            content = content.replace("##author", lecture.author);
+            content = content.replace("##authoremail", lecture.authorEmail);
+            content = content.replace("##authortwitter", lecture.authorTwitter);
+            content = content.replace("##authorweb", lecture.authorWeb);
+            content = content.replace("##semester", lecture.semester);
+            content = content.replace("##org", lecture.organization);
+            content = content.replace("##orgfac", lecture.organizationFac);
+            content = content.replace("##field", lecture.field);
+            content = content.replace("##orgweb", lecture.web);
+            content = content.replace("##coursename", longName);
+            fs.writeFile(SLIDES_DIRECTORY+'/'+lecture.courseID+'/css/meta_'+lecture.lectureID+'.css', content, function (err) {
+                if (err) {   
+                    response.writeHead(500, {
+                        'Content-Type': 'text/plain'
+                    });
+                    response.write('Problem with saving lecture css file: '+err);
+                    response.end();
+                }else{
+                 
+                    response.writeHead(200, {
+                        'Content-Type': 'application/json'
+                    });
+                    response.write(JSON.stringify(lecture, null, 4));
+                    response.end();
+                }
+            });  
+            
+        // ##coursename
+        
+        }
+    });
+}
 
 
-function copyTemplate(request, response, lecture, order,keywords){
+
+function moveTemplateCSS(request, response, lecture, prevFile, longName){
+    
+    fs.readFile(SLIDES_DIRECTORY+'/'+lecture.courseID+'/css/meta_'+prevFile+'.css', function(err, data) {
+        if(err){
+            response.writeHead(500, {
+                "Content-Type": "text/plain"
+            });
+            response.write("Cannot load presentation css template "+SLIDES_DIRECTORY+'/'+lecture.courseID+'/css/meta_'+prevFile+'.css  '+err);
+            response.end();   
+        }else{
+            var content = data.toString();
+            
+            content = content.replace("##author", lecture.author);
+            content = content.replace("##authoremail", lecture.authorEmail);
+            content = content.replace("##authortwitter", lecture.authorTwitter);
+            content = content.replace("##authorweb", lecture.authorWeb);
+            content = content.replace("##semester", lecture.semester);
+            content = content.replace("##org", lecture.organization);
+            content = content.replace("##orgfac", lecture.organizationFac);
+            content = content.replace("##field", lecture.field);
+            content = content.replace("##orgweb", lecture.web);
+            content = content.replace("##coursename", longName);
+            fs.writeFile(SLIDES_DIRECTORY+'/'+lecture.courseID+'/css/meta_'+lecture.lectureID+'.css', content, function (err) {
+                if (err) {   
+                    response.writeHead(500, {
+                        'Content-Type': 'text/plain'
+                    });
+                    response.write('Problem with saving lecture css file: '+err);
+                    response.end();
+                }else{
+                    fs.rename(SLIDES_DIRECTORY+'/'+lecture.courseID+'/css/meta_'+prevFile+'.css', SLIDES_DIRECTORY+'/'+lecture.courseID+'/css/meta_'+lecture.lectureID+'.css', function (err) {
+                        if (err) {
+                                        
+                            response.writeHead(500, {
+                                'Content-Type': 'text/plain'
+                            });
+                            response.write('Problem with saving lecture file: '+err);
+                            response.end();
+                        }else{
+                            response.writeHead(200, {
+                                'Content-Type': 'application/json'
+                            });
+                            response.write(JSON.stringify(lecture, null, 4));
+                            response.end();
+
+                        }                    
+                    });
+                    
+                }
+            });  
+            
+        // ##coursename
+        }
+    });
+}
+
+
+
+function copyTemplateHTML(request, response, lecture, order,keywords){
     fs.readFile(LECTURE_TEMPLATE+'/presentation.html', function(err, data) {
         if(err){
             response.writeHead(500, {
@@ -490,11 +612,9 @@ function copyTemplate(request, response, lecture, order,keywords){
                                             response.end();
                                         }else{
                                             console.log(SLIDES_DIRECTORY+'/'+lecture.courseID+'/'+lecture.lectureID+'.html');
-                                            response.writeHead(200, {
-                                                'Content-Type': 'application/json'
-                                            });
-                                            response.write(JSON.stringify(lecture, null, 4));
-                                            response.end();
+                                            getCourseFullNameAndContinue(response, request, lecture, lecture.courseID, copyTemplateCSS, '');
+                                        //                                            copyTemplateCSS(request, response, lecture);
+
                                         }
                                     });  
                                 }else{
@@ -522,7 +642,7 @@ function copyTemplate(request, response, lecture, order,keywords){
 }
 
 
-function editTemplate(request, response, lecture, order,keywords){
+function editTemplateHTML(request, response, lecture, order,keywords){
     fs.readFile(SLIDES_DIRECTORY+'/'+lecture.courseID+'/'+lecture.lectureID+'.html', function(err, data) {
         if(err){
             response.writeHead(500, {
@@ -570,11 +690,9 @@ function editTemplate(request, response, lecture, order,keywords){
                                             response.end();
                                         }else{
                                             console.log(SLIDES_DIRECTORY+'/'+lecture.courseID+'/'+lecture.lectureID+'.html');
-                                            response.writeHead(200, {
-                                                'Content-Type': 'application/json'
-                                            });
-                                            response.write(JSON.stringify(lecture, null, 4));
-                                            response.end();
+                                            getCourseFullNameAndContinue(response, request, lecture, lecture.courseID, copyTemplateCSS, '');
+                                        //copyTemplateCSS(request, response, lecture);
+
                                         }
                                     });  
                                 }else{
@@ -601,7 +719,7 @@ function editTemplate(request, response, lecture, order,keywords){
     });
 }
 
-function editTemplateMove(prevFile, request, response, lecture, order,keywords){
+function editTemplateMoveHTML(prevFile, request, response, lecture, order,keywords){
     fs.readFile(SLIDES_DIRECTORY+'/'+lecture.courseID+'/'+prevFile+'.html', function(err, data) {
         if(err){
             response.writeHead(500, {
@@ -660,20 +778,12 @@ function editTemplateMove(prevFile, request, response, lecture, order,keywords){
                                                     response.end();
                                                 }else{
                                                     console.log(SLIDES_DIRECTORY+'/'+lecture.courseID+'/'+lecture.lectureID+'.html');
-                                                    response.writeHead(200, {
-                                                        'Content-Type': 'application/json'
-                                                    });
-                                                    response.write(JSON.stringify(lecture, null, 4));
-                                                    response.end();
-                                                
+                                                    getCourseFullNameAndContinue(response, request, lecture, lecture.courseID, moveTemplateCSS, prevFile);
+                                                //                                                    moveTemplateCSS(request, response, lecture);
                                                 }
                                                 
                                                 
                                             });
-                                            
-                                            
-                                            
-                                          
                                         }
                                     });  
                                 }else{
@@ -735,6 +845,31 @@ app.get('/api/:course/:lecture/lecture', function(request, response, next){
     });
 });
 
+function getCourseFullNameAndContinue(response, request, lecture, id, callback, prevFile){
+
+    Course.find({
+        courseID: id
+    }, function(err,crs){   
+        if(!err) {
+            if(crs.length > 0) {
+                callback(request, response, lecture, prevFile, crs[0].longName);
+            }else{
+                response.writeHead(404, {
+                    "Content-Type": "text/plain"
+                });
+                response.write("Lecture not found");
+                response.end(); 
+            }
+            
+        }else{
+            response.writeHead(500, {
+                "Content-Type": "text/plain"
+            });
+            response.write("Problems with database");
+            response.end(); 
+        }
+    });
+}
 
 /**
  * Tests if string ends with given suffix
