@@ -57,6 +57,7 @@ function checkCourseExist(element, id){
             document.getElementById('exist').textContent='';
         }else{
             var request = new XMLHttpRequest();
+            
             request.open("GET", "/api/"+tmp+"/course", true);
             request.onreadystatechange = function(){
                 if (request.readyState==4) {

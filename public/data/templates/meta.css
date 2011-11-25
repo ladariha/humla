@@ -1,0 +1,59 @@
+
+.meta_course:before {
+	content: ##coursename;
+}
+
+.meta_author:before {
+	content: ##author;
+}
+
+.meta_email:before {
+	content: ##authoremail;
+}
+
+.meta_twitter:before {
+	content: ##authortwitter;
+}
+
+.meta_web:before {
+	content: ##authorweb;
+}
+
+.meta_semester:before {
+	content: ##semester;
+}
+
+.meta_org:before {
+	content: ##org;
+}
+
+.meta_orgfac:before {
+	content: ##orgfac;
+}
+
+.meta_field:before {
+	content: ##field;
+}
+
+.meta_orgweb:before {
+	content: ##orgweb;
+}
+
+div.oppa {
+	width: 300px;
+	/*float: left;*/
+	#background: url('oppa.png') left top no-repeat;
+	margin-left: 110px;
+	margin-top: 3px;
+	height: 50px;
+    opacity: 0.7;
+}
+
+.meta_logo {
+	#background-image: url('cvut_logo.png');
+	background-repeat: no-repeat;
+	background-position: center center;
+	height: 188px;
+	margin: 25px auto 25px auto;
+	zoom: 0.8;
+}

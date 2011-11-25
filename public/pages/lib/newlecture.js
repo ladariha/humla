@@ -15,9 +15,17 @@ function submitNewLectureForm(){
         var keywords  =encodeURIComponent(document.getElementById('keywords').value); 
         var order  =encodeURIComponent(document.getElementById('order').value); 
         var isActive = encodeURIComponent(document.getElementById('visible').value); 
-        var url = '/api/'+courseID+"/lecture"+order;
+        var url = '/api/'+courseID+"/lecture"+order+"/lecture";
         var params = "courseID="+courseID+'&title='+title+'&author='+author+'&isActive='+isActive+'&keywords='+keywords+'&order='+order;
-    
+        params = params+"&semester="+encodeURIComponent(document.getElementById('semester').value);
+        params = params+"&authorEmail="+encodeURIComponent(document.getElementById('authorEmail').value);
+        params = params+"&authorTwitter="+encodeURIComponent(document.getElementById('authorTwitter').value);
+        params = params+"&authorWeb="+encodeURIComponent(document.getElementById('authorWeb').value);
+        params = params+"&org="+encodeURIComponent(document.getElementById('org').value);
+        params = params+"&orgfac="+encodeURIComponent(document.getElementById('orgfac').value);
+        params = params+"&spec="+encodeURIComponent(document.getElementById('spec').value);
+        params = params+"&web="+encodeURIComponent(document.getElementById('web').value);
+        params = params+"&abs="+encodeURIComponent(document.getElementById('abs').value);
         var request = new XMLHttpRequest();
         request.open("POST", url, true);
         request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -28,10 +36,6 @@ function submitNewLectureForm(){
                 if(request.status==200){
                     var object = eval('(' + request.responseText + ')');
                     document.getElementById('msg').innerHTML='Lecture '+object.title+' created';
-                    document.getElementById('e_course').innerHTML='';
-                    document.getElementById('e_title').innerHTML='';
-                    document.getElementById('e_author').innerHTML='';
-                    document.getElementById('e_order').innerHTML='';
                 }else{
                     document.getElementById('msg').innerHTML=request.status+": "+request.statusText;    
                 }
