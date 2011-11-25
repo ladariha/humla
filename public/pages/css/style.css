@@ -64,7 +64,9 @@ a:hover { color: #036; }
     padding:0;
     text-align: left;
     background-color:#FFF;
-    width: 1000px;
+    /*width: 1000px;*/
+    max-width: 1000px;
+    min-width: 300px;    
 }
 
 header {
@@ -178,7 +180,8 @@ nav li > a.active {
 #main {
     clear:both;
     margin:0px; padding:0;
-    width: 1000px;
+    max-width: 1000px;
+    min-width: 300px;
     min-height: 500px;
     background: #f7f7f7;
     border: 1px solid #d2d2d2;    
@@ -194,7 +197,7 @@ nav li > a.active {
 }
 
 #main > section {
-    width:33%;
+    width:330px; /* 33%? */
     min-height: 500px;        
     float:left;
     display:block;

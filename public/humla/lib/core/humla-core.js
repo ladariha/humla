@@ -117,7 +117,7 @@ Slide = function(element, footer, section, number) {
     
     // get the url of the slide (hash)
     this.__defineGetter__('url', function() {
-        return "#/" + (this.element.id ? this.element.id : this.number);
+        return "#!/" + (this.element.id ? this.element.id : this.number);
     });    
 
 };

@@ -51,6 +51,39 @@ body {
     color: #444;
 }
 
+
+nav {    
+    position: fixed;
+    z-index: 100;
+    bottom: 0px;    
+    color: #CCC;
+    margin: 0 35%;
+    font-size: small;
+    background: rgba(0, 0, 0, 0.796875) no-repeat 10px 10px;
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    padding: 5px 10px 5px 10px;
+    min-width: 190px;
+    border-top-left-radius: 10px 10px;
+    border-top-right-radius: 10px 10px;
+}
+
+nav>ul {
+    padding-left: 0px;
+    
+}
+
+nav li {
+    display: block;
+    list-style: none;
+    width: 48px;
+    height: 48px;
+    border: 1px solid #666;
+    float: left;
+    margin: 10px;
+    cursor: pointer;
+}
+
 /* The slide has predefined width and height 800 x 600. 
    There is a number of other values elsewhere in humla that are consistent with this. 
    If you change these values the presentation may not work correctly. */

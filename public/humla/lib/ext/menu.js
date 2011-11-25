@@ -1,7 +1,7 @@
 /**
-* Comments Extension
+* Menu Extension
 * ~~~~~~~~~~~~~~~~~~
-* add comments to each slide
+* Show Menu
 *
 */
 var ex_menu = {
@@ -16,15 +16,17 @@ var ex_menu = {
         
 
 
-        var data = JSON.parse(this.responseText);
-        var s = "";
-        for (var i = 0; data.value.items && i < data.value.items.length; i++) {
-            s += "<li class=\"extref\"><a target=\"humla_reference\" class=\"ext-link\" href=\"" + data.value.items[i].link + 
-                "\">" + data.value.items[i].title + "</a>";
-        }
-        this._ul.innerHTML = s;
     
+        
+    },
+    
+    
+    enterView : function(view) {
+        var navs = document.getElementsByName("nav");
+        navs[0].innerHTML += "<div>Ahoj</div>";
+        
         
     }
     
 };
+
