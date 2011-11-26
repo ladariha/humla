@@ -10,7 +10,8 @@ var ex_editor = {
             var course = fields[5];//presentationUrl.substr(0, presentationUrl.indexOf("/"));
             var lecture= fields[6].substr(0, fields[6].indexOf("."));
             var slideNumber = slide.number;
-            var baseLink = "../../../pages/editor/";
+            //var baseLink = "../../../pages/editor/";
+            var baseLink = "../../../pages/editor/index.html"; //TODO: Láďo, je tohle problém? Na Win je to tak potřeba... Tenhle comment smazat
             var et = "<div class=\"editor-toolbar\">";
             var link = baseLink+"?lecture="+lecture+"&course="+course+"&slide="+slideNumber;
             et += "<a class=\"editor-link\" href=\""+link+"\" title=\"Edit slide\"><img src=\"../../../humla/lib/ext/editor-edit.png\" alt=\"Edit\"/></a>";

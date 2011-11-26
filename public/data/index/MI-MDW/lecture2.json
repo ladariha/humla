@@ -1,0 +1,98 @@
+{
+    "title": "HUMLA",
+    "keywords": [
+        "Humla",
+        " HTML5",
+        " presentation"
+    ],
+    "numberOfSlide": 17,
+    "images": [],
+    "codeBlocks": [
+        {
+            "slideURL": "localhost:1338/data/slides/MI-MDW/lecture2.html#/14",
+            "language": "JavaScript"
+        }
+    ],
+    "structure": {
+        "index": [
+            {
+                "title": "Formatting Slide Content",
+                "url": "localhost:1338/data/slides/MI-MDW/lecture2.html#/2",
+                "chapters": [
+                    {
+                        "title": "Advanced Formatting",
+                        "url": "localhost:1338/data/slides/MI-MDW/lecture2.html#/3",
+                        "slides": [
+                            {
+                                "title": "Advanced Text &#8211 normal size",
+                                "url": "localhost:1338/data/slides/MI-MDW/lecture2.html#/4"
+                            },
+                            {
+                                "title": "Advanced Text &#8211 small size",
+                                "url": "localhost:1338/data/slides/MI-MDW/lecture2.html#/5"
+                            },
+                            {
+                                "title": "Advanced Text &#8211 x-small size",
+                                "url": "localhost:1338/data/slides/MI-MDW/lecture2.html#/6"
+                            },
+                            {
+                                "title": "Advanced Text &#8211 xx-small size",
+                                "url": "localhost:1338/data/slides/MI-MDW/lecture2.html#/7"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Additional Formatting",
+                        "url": "localhost:1338/data/slides/MI-MDW/lecture2.html#/8",
+                        "slides": [
+                            {
+                                "title": "Slide with different footer",
+                                "url": "localhost:1338/data/slides/MI-MDW/lecture2.html#/9"
+                            },
+                            {
+                                "title": "Tables",
+                                "url": "localhost:1338/data/slides/MI-MDW/lecture2.html#/10"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "title": "Extensions",
+                "url": "localhost:1338/data/slides/MI-MDW/lecture2.html#/11",
+                "chapters": [
+                    {
+                        "title": "Highlighting Syntax",
+                        "url": "localhost:1338/data/slides/MI-MDW/lecture2.html#/12"
+                    },
+                    {
+                        "title": "Google Drawing",
+                        "url": "localhost:1338/data/slides/MI-MDW/lecture2.html#/13"
+                    },
+                    {
+                        "title": "Github Integration",
+                        "url": "localhost:1338/data/slides/MI-MDW/lecture2.html#/14"
+                    }
+                ]
+            }
+        ]
+    },
+    "drawings": [
+        {
+            "alt": "Load Balancer",
+            "id": "1H_GfN8C1DZObNC_9HcRLa6Nk-EuJUEr0h6-65HhHs0U",
+            "slide": "localhost:1338/data/slides/MI-MDW/lecture2.html#/15",
+            "type": "drawing",
+            "exportURL": "https://docs.google.com/drawings/d/1H_GfN8C1DZObNC_9HcRLa6Nk-EuJUEr0h6-65HhHs0U/export/png?id=1H_GfN8C1DZObNC_9HcRLa6Nk-EuJUEr0h6-65HhHs0U&pageid=p",
+            "filename": "PreconditionandHATEOAS.png"
+        }
+    ],
+    "github": [
+        {
+            "owner": "tomvit",
+            "file": "discovery/category-discovery.js",
+            "project": "mdw-examples",
+            "slide": "localhost:1338/data/slides/MI-MDW/lecture2.html#/16"
+        }
+    ]
+}

@@ -20,6 +20,10 @@ app.get('/pages/newcourse', function(req,res) {
     res.redirect("/pages/newcourse.html");
 });
 
+app.get('/pages/editor/', function(req,res) {
+    res.redirect("/pages/editor/index.html");    
+});
+
 
 // not found
 app.get('/404', function(req, res){
