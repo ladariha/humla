@@ -283,7 +283,6 @@ app.post('/api/:course/:lecture/lecture', function(request, response){ // TODO d
                         
                     });
                     c.keywords = k1;
-                   console.log(c);
                     c.save(function(err) {
                         if(err) {
                             response.writeHead(500, {
@@ -601,7 +600,9 @@ function copyTemplateHTML(request, response, lecture, order,keywords){
                                     $('meta[name="lecture"]').attr('content', 'Lecture '+order);
                                     $('meta[name="keywords"]').attr('content', keywords);
                                     $('title').text(lecture.title);
-                                    var newcontent= $("html").html();                            
+                                    var newcontent= $("html").html();    
+                                    newcontent = newcontent.replace("metaXXX", "meta_"+lecture.lectureID);
+                                    newcontent = newcontent.replace(/\&amp;/g,'&');
                                     fs.writeFile(SLIDES_DIRECTORY+'/'+lecture.courseID+'/'+lecture.lectureID+'.html', newcontent, function (err) {
                                         if (err) {
                                         
@@ -679,7 +680,9 @@ function editTemplateHTML(request, response, lecture, order,keywords){
                                     $('meta[name="lecture"]').attr('content', 'Lecture '+order);
                                     $('meta[name="keywords"]').attr('content', keywords);
                                     $('title').text(lecture.title);
-                                    var newcontent= $("html").html();                            
+                                    var newcontent= $("html").html();     
+                                    newcontent = newcontent.replace("metaXXX", "meta_"+lecture.lectureID);
+                                    newcontent = newcontent.replace(/\&amp;/g,'&');
                                     fs.writeFile(SLIDES_DIRECTORY+'/'+lecture.courseID+'/'+lecture.lectureID+'.html', newcontent, function (err) {
                                         if (err) {
                                         
@@ -755,6 +758,8 @@ function editTemplateMoveHTML(prevFile, request, response, lecture, order,keywor
                                     $('meta[name="author"]').attr('content', lecture.author);
                                     $('meta[name="lecture"]').attr('content', 'Lecture '+order);
                                     $('meta[name="keywords"]').attr('content', keywords);
+                                    newcontent = newcontent.replace("meta_"+prevFile+".css", "meta_"+lecture.lectureID+".css");
+                                    newcontent = newcontent.replace(/\&amp;/g,'&');
                                     $('title').text(lecture.title);
                                     var newcontent= $("html").html();                            
                                     fs.writeFile(SLIDES_DIRECTORY+'/'+lecture.courseID+'/'+prevFile+'.html', newcontent, function (err) {

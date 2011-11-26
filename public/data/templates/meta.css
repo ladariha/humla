@@ -1,59 +1,49 @@
 
 .meta_course:before {
-	content: ##coursename;
+    content: "##coursename";
 }
 
 .meta_author:before {
-	content: ##author;
+    content: "##author";
 }
 
 .meta_email:before {
-	content: ##authoremail;
+    content: "##authoremail";
 }
 
 .meta_twitter:before {
-	content: ##authortwitter;
+    content: "##authortwitter";
 }
 
 .meta_web:before {
-	content: ##authorweb;
+    content: "##authorweb";
 }
 
 .meta_semester:before {
-	content: ##semester;
+    content: "##semester";
 }
 
 .meta_org:before {
-	content: ##org;
+    content: "##org";
 }
 
 .meta_orgfac:before {
-	content: ##orgfac;
+    content: "##orgfac";
 }
 
 .meta_field:before {
-	content: ##field;
+    content: "##field";
 }
 
 .meta_orgweb:before {
-	content: ##orgweb;
-}
-
-div.oppa {
-	width: 300px;
-	/*float: left;*/
-	#background: url('oppa.png') left top no-repeat;
-	margin-left: 110px;
-	margin-top: 3px;
-	height: 50px;
-    opacity: 0.7;
+    content: "##orgweb";
 }
 
 .meta_logo {
-	#background-image: url('cvut_logo.png');
-	background-repeat: no-repeat;
-	background-position: center center;
-	height: 188px;
-	margin: 25px auto 25px auto;
-	zoom: 0.8;
+    background-image: url('cvut_logo.png');
+    background-repeat: no-repeat;
+    background-position: center center;
+    height: 188px;
+    margin: 25px auto 25px auto;
+    zoom: 0.8;
 }
