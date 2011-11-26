@@ -2,7 +2,7 @@ var ex_editor = {
     
     processSlide : function(slide) {
  
-        if(humla.online===1){
+        if(humla.online===1 && (humla.controler.currentView.config.id==1 || humla.controler.currentView.config.id==2)){
             var presentationUrl = window.location.href;
             var fields = presentationUrl.split("/");
             var firstIndex = presentationUrl.indexOf("slides", 0)+7;

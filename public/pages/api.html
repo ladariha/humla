@@ -1,0 +1,352 @@
+<!doctype html>  
+<html lang="en" manifest="####cache.manifest">
+    <head>
+        <meta charset="utf-8"/> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+        <title>Humla - Server</title>
+        <meta name="description" content="Application main page"/>
+        <meta name="author" content="Petr Mikota, Láďa Říha"/>  
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>  
+        <link rel="shortcut icon" href="/favicon.ico"/>
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+        <link rel="stylesheet" href="/pages/css/style.css?v=1"/>
+        <link rel="stylesheet" href="/pages/css/api.css?v=1"/>
+
+        <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
+        <!--<script src="js/libs/modernizr-1.6.min.js"></script>-->
+
+    </head>
+    <body>
+        <div id="wrap" > <!--class="shadow">-->
+            <header>
+                <h1><a href="/">Humla presentations </a></h1>
+                <nav>                    
+                    <ul>
+                        <li ><a id="presentations" href="index.html">Presentations</a></li>
+                        <li ><a id="editor" href="editcourse.html">Editor</a></li>
+                        <li ><a id="about" href="about.html"  class="active">About</a></li>
+                    </ul>
+                </nav>
+            </header>
+            <div id="main" role="main">                
+                <h1>Humla REST API</h1>
+
+                <section id ="api" class="body">
+                    <article>
+                        <h1>Admin</h1>
+
+                        <ul class="endpoints">
+                            <li class="GET">
+                                <div class="heading">
+                                    <h3>
+                                        <span class="method"></span>
+                                        <span class="route">/api/:course/course</span>
+                                        <span class="format">JSON</span>
+                                    </h3>                                    
+                                </div>
+                                <div class="content" style="display:none;">
+                                    <h4>Returns course info</h4>
+                                    <p>Returns course info</p>
+                                    <code>
+                                        curl -X GET http://localhost:1338/api/mi-mdw/lect1/2/comments
+                                    </code>
+                                    <h4>Parameters</h4>
+                                    <table class="parameters">
+                                        <thead><tr><th>Parameter</th><th>Value</th><th>Description</th></tr></thead>
+                                        <tbody>
+                                            <tr><td>course</td><td>mi-mdw</td><td>Course ID</td></tr>
+                                            <tr><td>lecture</td><td>lect1</td><td>Lecture ID</td></tr>
+                                            <tr><td>slide</td><td>1</td><td>Slide ID</td></tr>
+                                        </tbody>
+                                    </table>
+
+
+                                </div>
+                            </li>  
+
+
+                            <li class="POST">
+                                <div class="heading">
+                                    <h3>
+                                        <span class="method"></span>
+                                        <span class="route">/api/:course/course</span>
+                                        <span class="format">JSON</span>
+                                    </h3>                                    
+                                </div>
+                                <div class="content" style="display:none;">
+                                    <h4>Creates new course </h4>
+                                    <p>Creates new course (new entry in db, new folder)</p>
+                                    <code>
+                                        curl -X GET http://localhost:1338/api/mi-mdw/lect1/2/comments
+                                    </code>
+                                    <h4>Parameters</h4>
+                                    <table class="parameters">
+                                        <thead><tr><th>Parameter</th><th>Value</th><th>Description</th></tr></thead>
+                                        <tbody>
+                                            <tr><td>course</td><td>mi-mdw</td><td>Course ID</td></tr>
+                                            <tr><td>lecture</td><td>lect1</td><td>Lecture ID</td></tr>
+                                            <tr><td>slide</td><td>1</td><td>Slide ID</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </li>  
+
+
+
+
+                            <li class="PUT">
+                                <div class="heading">
+                                    <h3>
+                                        <span class="method"></span>
+                                        <span class="route">/api/:course/course</span>
+                                        <span class="format">JSON</span>
+                                    </h3>                                    
+                                </div>
+                                <div class="content" style="display:none;">
+                                    <h4>Edit existing course</h4>
+                                    <p>Fetch all comments from db for selected slide.</p>
+                                    <code>
+                                        curl -X GET http://localhost:1338/api/mi-mdw/lect1/2/comments
+                                    </code>
+                                    <h4>Parameters</h4>
+                                    <table class="parameters">
+                                        <thead><tr><th>Parameter</th><th>Value</th><th>Description</th></tr></thead>
+                                        <tbody>
+                                            <tr><td>course</td><td>mi-mdw</td><td>Course ID</td></tr>
+                                            <tr><td>lecture</td><td>lect1</td><td>Lecture ID</td></tr>
+                                            <tr><td>slide</td><td>1</td><td>Slide ID</td></tr>
+                                        </tbody>
+                                    </table>
+
+
+                                </div>
+                            </li>
+
+
+                            <li class="POST">
+                                <div class="heading">
+                                    <h3>
+                                        <span class="method"></span>
+                                        <span class="route">/api/:course/:lecture/lecture</span>
+                                        <span class="format">JSON</span>
+                                    </h3>                                    
+                                </div>
+                                <div class="content" style="display:none;">
+                                    <h4>Add</h4>
+                                    <p>Fetch all comments from db for selected slide.</p>
+                                    <code>
+                                        curl -X GET http://localhost:1338/api/mi-mdw/lect1/2/comments
+                                    </code>
+                                    <h4>Parameters</h4>
+                                    <table class="parameters">
+                                        <thead><tr><th>Parameter</th><th>Value</th><th>Description</th></tr></thead>
+                                        <tbody>
+                                            <tr><td>course</td><td>mi-mdw</td><td>Course ID</td></tr>
+                                            <tr><td>lecture</td><td>lect1</td><td>Lecture ID</td></tr>
+                                            <tr><td>slide</td><td>1</td><td>Slide ID</td></tr>
+                                        </tbody>
+                                    </table>
+
+
+                                </div>
+                            </li>  
+                            <li class="PUT">
+                                <div class="heading">
+                                    <h3>
+                                        <span class="method"></span>
+                                        <span class="route">/api/:course/:lecture/lecture</span>
+                                        <span class="format">JSON</span>
+                                    </h3>                                    
+                                </div>
+                                <div class="content" style="display:none;">
+                                    <h4>Add</h4>
+                                    <p>Fetch all comments from db for selected slide.</p>
+                                    <code>
+                                        curl -X GET http://localhost:1338/api/mi-mdw/lect1/2/comments
+                                    </code>
+                                    <h4>Parameters</h4>
+                                    <table class="parameters">
+                                        <thead><tr><th>Parameter</th><th>Value</th><th>Description</th></tr></thead>
+                                        <tbody>
+                                            <tr><td>course</td><td>mi-mdw</td><td>Course ID</td></tr>
+                                            <tr><td>lecture</td><td>lect1</td><td>Lecture ID</td></tr>
+                                            <tr><td>slide</td><td>1</td><td>Slide ID</td></tr>
+                                        </tbody>
+                                    </table>
+
+
+                                </div>
+                            </li>  
+
+                        </ul>
+                    </article>
+
+
+
+                    <article>
+                        <h1>Comments</h1>
+                        <ul class="endpoints">
+                            <li class="GET">
+                                <div class="heading">
+                                    <h3>
+                                        <span class="method"></span>
+                                        <span class="route">/api/:course/:lecture/:slide/comments</span>
+                                        <span class="format">JSON</span>
+                                    </h3>                                    
+                                </div>
+                                <div class="content" style="display:none;">
+                                    <h4>Fetch all comments</h4>
+                                    <p>Fetch all comments from db for selected slide.</p>
+                                    <code>
+                                        curl -X GET http://localhost:1338/api/mi-mdw/lect1/2/comments
+                                    </code>
+                                    <h4>Parameters</h4>
+                                    <table class="parameters">
+                                        <thead><tr><th>Parameter</th><th>Value</th><th>Description</th></tr></thead>
+                                        <tbody>
+                                            <tr><td>course</td><td>mi-mdw</td><td>Course ID</td></tr>
+                                            <tr><td>lecture</td><td>lect1</td><td>Lecture ID</td></tr>
+                                            <tr><td>slide</td><td>1</td><td>Slide ID</td></tr>
+                                        </tbody>
+                                    </table>
+
+
+                                </div>
+                            </li>
+                            <li class="POST">
+                                <div class="heading">
+                                    <h3>
+                                        <span class="method"></span>
+                                        <span class="route">/api/:course/:lecture/:slide/comments</span>
+                                        <span class="format">JSON</span>
+                                    </h3>                                    
+                                </div>
+                                <div class="content" style="display:none;">
+                                    <h4>Add New Comment</h4>
+                                    <p>Add & Save new comment to db.</p>
+                                    <code>
+                                        curl -X POST http://localhost:1338/api/mi-mdw/lect1/2/comments
+                                    </code>
+                                    <h4>Parameters</h4>
+                                    <p><em>As seen above.</em></p>
+                                </div>
+                            </li>
+
+                        </ul>
+
+
+                    </article>
+                    <!------------------------------------------------------------------------->
+                    <article>
+                        <h1>Slideindexer</h1>
+
+                        <ul class="endpoints">
+                            <li class="PUT">
+                                <div class="heading">
+                                    <h3>
+                                        <span class="method"></span>
+                                        <span class="route">/api/:course/:lecture/:slide/comments</span>
+                                        <span class="format">JSON XML</span>
+                                    </h3>                                    
+                                </div>
+                                <div class="content" style="display:none;">
+                                    <h4>Fetch all comments</h4>
+                                    <p>Fetch all comments from db for selected slide.</p>
+                                    <code>
+                                        curl -X GET http://localhost:1338/api/mi-mdw/lect1/2/comments
+                                    </code>
+                                    <h4>Parameters</h4>
+                                    <table class="parameters">
+                                        <thead><tr><th>Parameter</th><th>Value</th><th>Description</th></tr></thead>
+                                        <tbody>
+                                            <tr><td>course</td><td>mi-mdw</td><td>Course ID</td></tr>
+                                            <tr><td>lecture</td><td>lect1</td><td>Lecture ID</td></tr>
+                                            <tr><td>slide</td><td>1</td><td>Slide ID</td></tr>
+                                        </tbody>
+                                    </table>
+
+
+                                </div>
+                            </li>           
+                        </ul>
+                    </article>
+                    <!------------------------------------------------------------------------->
+                    <article>
+                        <h1>AJAX Crawling</h1>
+
+                        <ul class="endpoints">
+                            <li class="GET">
+                                <div class="heading">
+                                    <h3>
+                                        <span class="method"></span>
+                                        <span class="route">/data/slides/:course/:lecture?_escaped_fragment_=:slide</span>
+                                        <span class="format">HTML</span>
+                                    </h3>                                    
+                                </div>
+                                <div class="content" style="display:none;">
+                                    <h4>Returns single slide</h4>
+                                    <p>Works as an alias to <tt>/data/slides/:course/:lecture#!/:slide</tt></p>                                    
+                                    <h4>Parameters</h4>
+                                    <p><em>As seen above.</em></p>
+                                </div>
+                            </li>           
+                        </ul>
+                    </article>
+                    <!------------------------------------------------------------------------->
+                    <article>
+                        <h1>Editor</h1>
+
+                        <ul class="endpoints">
+                            <li class="GET">
+                                <div class="heading">
+                                    <h3>
+                                        <span class="method"></span>
+                                        <span class="route">/api/:course/:lecture/slide:id/editor</span>
+                                        <span class="format">JSON</span>
+                                    </h3>                                    
+                                </div>
+                                <div class="content" style="display:none;">
+                                    <h4></h4>
+                                    <p></p>                                    
+                                    <h4>Parameters</h4>
+                                    <table class="parameters">
+                                        <thead><tr><th>Parameter</th><th>Value</th><th>Description</th></tr></thead>
+                                        <tbody>
+                                            <tr><td>course</td><td>mi-mdw</td><td>Course ID</td></tr>                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </li>           
+                        </ul>
+                    </article>
+                    <!------------------------------------------------------------------------->
+
+
+
+
+
+
+                </section>                
+            </div>
+            <footer>
+                v0.1 Humla &copy; 2011 
+            </footer>
+        </div> <!--! end of #container -->
+
+        <script type="text/javascript" src="../lib/jquery-1.7.min.js"></script>
+        <script>
+            // Documentation highly inspired by: http://developer.wordnik.com/docs#!/account/authenticate_post
+            
+            $(document).ready(function() {
+                $(".heading").click(function() {
+                    $(this).siblings().slideToggle(200);
+                    
+                });
+            });
+            
+        </script>
+
+    </body>
+
+
+</html>

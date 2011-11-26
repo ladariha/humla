@@ -42,6 +42,7 @@ function submitNewLectureForm(){
             
             }
         };
+        console.log(">> "+params);
         request.send(params);
     }
 }
