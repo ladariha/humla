@@ -3,6 +3,11 @@
  * - Standard api handler 
  * - backend for main page
  * TODO: loading from FS universal
+ * 
+ * 
+ * TODO: !!!!!!!!!!!!!!!!!! merge with admin.js !!!! return whole structure of courses:lectures:slide(url, abstract)
+ * 
+ * 
  */
 
 var fs = require("fs");

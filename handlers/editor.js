@@ -16,7 +16,7 @@ app.all('/api/:course/:lecture/slide:id/editor', function api(req, res) { // TOD
     var query = require('url').parse(req.url).query;
     var args, path = parseURL(req.url).pathname;
     for (var i=0, n = editorAPI.urls.length; i<n; i++) { // projde vsechna url
-        args = new RegExp(editorAPI.urls[i][0]).exec(path);
+        args = (new RegExp(editorAPI.urls[i][0])).exec(path);
         if (args !== null){ // if shoda 
             args.shift();
             args.unshift(res, req);

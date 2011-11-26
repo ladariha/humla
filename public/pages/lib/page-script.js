@@ -117,7 +117,7 @@ function DataAccess() {
         var a = '<h2 id="lecturename">MI-MDW: Data se propsala</h2>';
         a+= '<div id="buttons"><a href="http://'+url+'" target="_blank" class="button" tabindex="3">Open</a>';
         a+= '<a href="">Edit</a>';
-        a+= '<a href="">Info</a></div><br/>';
+        a+= '</div><br/>';
         a+= '<h3>Abstrakt</h3>';
         a+= '<p id="abstract">Obsah této přednášky</p> ';
         a+= '<h3>Index</h3>';
