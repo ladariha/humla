@@ -15,7 +15,7 @@
         "view3"     : [51],
         "view4"     : [52, 80],
         "view5"     : [53],
-        "view6"     : [],
+        "view6"     : [54],
         "view7"     : [],
         "view8"     : [],
         "view9"     : [],
@@ -47,6 +47,11 @@
             "script" : {"src" : "views/print.js"}, 
             "style"  : {"src" : "views/print.css", "media" : "screen, print"},  
             "keys_disabled" : ["prev", "next", "first", "last", "goto"]             
+        },
+        {"id"     : "5", 
+            "object" : "view_editor",        
+            "script" : {"src" : "views/editor.js"}, 
+            "style"  : {"src" : "views/editor.css", "media" : "screen"}
         }
         
     ],

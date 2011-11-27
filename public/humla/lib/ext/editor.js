@@ -1,8 +1,7 @@
 var ex_editor = {
     
     processSlide : function(slide) {
- 
-        if(humla.online===1 && (humla.controler.currentView.config.id==1 || humla.controler.currentView.config.id==2)){
+        if(humla.online===1){ ///&& (humla.controler.currentView.config.id==1 || humla.controler.currentView.config.id==2)
             var presentationUrl = window.location.href;
             var fields = presentationUrl.split("/");
             var firstIndex = presentationUrl.indexOf("slides", 0)+7;
@@ -20,7 +19,7 @@ var ex_editor = {
             et += "<a class=\"editor-link\" href=\""+link+"\" title=\"Append new slide after this\"><img src=\"../../../humla/lib/ext/editor-add.png\" alt=\"Append\"/></a>";
             et += "</div>";
             slide.element.innerHTML = slide.element.innerHTML+et;
-        }        
+        }     
        
               
     }
@@ -38,7 +37,7 @@ function removeSlide(course, lecture, slideNumber){
                 console.log("Slide " +slideNumber+" removed.");
             }else{
                 alert(request.status+": "+request.statusText);
-                console.log(request.status+": "+request.statusText);
+                console.log("||"+request.status+": "+request.statusText);
             }
         }else{
             alert(request.responseText);

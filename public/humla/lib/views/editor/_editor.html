@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Humla editor</title>
+        <meta charset=utf-8>
+        <script src="./lib/codemirror.js"></script>
+        <script src="./lib/customScripts.js"></script>
+        <script src="./mode/xml/xml.js"></script>
+        <script src="./mode/javascript/javascript.js"></script>
+        <script src="./mode/css/css.js"></script>
+        <script src="./mode/htmlmixed/htmlmixed.js"></script>
+        <link rel=stylesheet type="text/css" href="./lib/codemirror.css">
+        <link type="text/css" rel=stylesheet href="./theme/default.css">
+        <link type="text/css" rel=stylesheet href="./css/docs.css">
+        <style type="text/css">
+            .CodeMirror {
+                float: left;
+                width: 797px;
+                height: 590px;
+                margin: 0 auto;
+                padding:0;
+            }
+            
+        </style>
+    </head>
+    <body>
+        <textarea id="code" name="code">
+        </textarea>
+        <script>
+            var delay;
+            // Initialize CodeMirror editor with a nice html5 canvas demo.
+             codemirror_editor = CodeMirror.fromTextArea(document.getElementById('code'), {
+                mode: 'text/html',
+                lineWrapping: true,
+                lineNumbers: true,
+                tabMode: 'indent'
+            });
+            codemirror_editor.setValue(window.parent.slideEditorContent);
+      
+        </script>
+
+    </body>
+</html>

@@ -52,7 +52,6 @@ function editor(response, request){
 
 
 function deleteSlide(response, request){
-    console.log("A");
     var host = request.headers.host;
     var regx =/^\/api\/([A-Za-z0-9-_]+)\/([A-Za-z0-9-_]+)\/slide([0-9]+)\/editor/; 
     request.url.match(regx);
@@ -175,6 +174,7 @@ function editSlide(response, request){
 
 
 function editSlideContentAppend(course, lecture, slide, content, response, host){
+    console.log("AHOJ");
     var pathToCourse = '/'+course+'/';
     var htmlfile = SLIDES_DIRECTORY+pathToCourse+lecture+".html";
     fs.readFile(htmlfile, function (err, data) {
@@ -210,7 +210,8 @@ function editSlideContentAppend(course, lecture, slide, content, response, host)
                             var toReturn = "";
                             $('body').find('.slide').each(function(){
                                 if(slideCounter === slide){                            
-                                    $(this).after("<div class=\"slide\">"+content+"</div>");
+//                                    $(this).after("<div class=\"slide\">"+content+"</div>");
+                                    $(this).after(content);
                                     slideSend = 1;
                                 }
                                 slideCounter++;
@@ -297,7 +298,8 @@ function editSlideContent(course, lecture, slide, content, response, host){
                             var toReturn = "";
                             $('body').find('.slide').each(function(){
                                 if(slideCounter === slide){                            
-                                    $(this).html(content);
+//                                    $(this).html(content);
+                                    $(this).replaceWith(content);
                                     slideSend = 1;
                                 }
                                 slideCounter++;
@@ -405,7 +407,8 @@ function parseDocument(response, request, htmlfile, slide, resourceURL){
                             });
                             var r = {};
                             r.url = resourceURL;
-                            r.html= $(this).html();
+                            r.html = $("<div />").append($(this).clone()).html();
+//                            r.html= $(this).html();
                             response.write(JSON.stringify(r, null, 4));
                             response.end();
                             slideSend = 1;

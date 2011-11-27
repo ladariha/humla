@@ -5,7 +5,7 @@ var ex_slideindex = {
 
     showIndex : function(slide){
         var presentationUrl = window.location.href; 
-        if(humla.controler.currentView.config.id==1 || humla.controler.currentView.config.id==2){
+//        if(humla.controler.currentView.config.id==1 || humla.controler.currentView.config.id==2){
             
             var slideIndexKey = "slideindex_"+presentationUrl;
             if (humla.utils.window.localStorage && humla.utils.window.localStorage.getItem(slideIndexKey)){
@@ -43,7 +43,7 @@ var ex_slideindex = {
                 request.send(null); 
             }
             
-        }
+//        }
     },
     designIndex : function(slide, index){
         var presentationUrl = window.location.href;

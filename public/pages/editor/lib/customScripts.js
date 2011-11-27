@@ -11,6 +11,7 @@ function sendData(){
     }else{
         params = "slide="+data;
     }
+    console.log("URL  "+url);
     var request = new XMLHttpRequest();
     request.open("PUT", url, true);
     request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
