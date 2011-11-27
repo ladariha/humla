@@ -131,7 +131,8 @@
             "object" : "ex_ga",
             "scripts" : [ {"src" : "ext/ga.js"} ],
             "params"  : {
-                "account" : "UA-xxx"
+                "account" : "UA-27319772-1",
+                "gifPath": "http://wa.vse.cz/listener"
             },
             "enabled" : true 
         },

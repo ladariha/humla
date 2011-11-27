@@ -1,7 +1,8 @@
 var ex_editor = {
-    
-    processSlide : function(slide) {
-        if(humla.online===1){ ///&& (humla.controler.currentView.config.id==1 || humla.controler.currentView.config.id==2)
+    enterSlide: function(slide){
+        //    processSlide : function(slide) {
+        var mode = humla.controler.currentView.config.object+"";
+        if(humla.online===1 && (mode==="view_slideshow" || mode==="view_browser")){ ///&& (humla.controler.currentView.config.id==1 || humla.controler.currentView.config.id==2)
             var presentationUrl = window.location.href;
             var fields = presentationUrl.split("/");
             var firstIndex = presentationUrl.indexOf("slides", 0)+7;
