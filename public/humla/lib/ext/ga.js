@@ -10,8 +10,6 @@ var ex_ga = {
             var course = fields[5];//presentationUrl.substr(0, presentationUrl.indexOf("/"));
             var lecture= fields[6].substr(0, fields[6].indexOf("."));
             lecture = lecture.replace(/[A-Za-z$-]/g, "");
-            console.log("lecture "+lecture);
-            var slideNumber = slide.number;
             this.callGA(course, lecture, slide.number, humla.controler.currentView.config.object);
         }
     },
