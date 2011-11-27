@@ -51,7 +51,7 @@
         {"id"     : "5", 
             "object" : "view_editor",        
             "script" : {"src" : "views/editor.js"}, 
-            "style"  : {"src" : "views/editor.css", "media" : "screen"}
+            "style"  : {"src" : "views/editor_view.css", "media" : "screen"}
         }
         
     ],

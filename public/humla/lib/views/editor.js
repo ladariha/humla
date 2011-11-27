@@ -36,14 +36,20 @@ var view_editor = {
                         }
                     }
                     finalString = finalString.replace(/\&amp;/g,'&');
+                    
+                    var el;
+                    if(!document.getElementById("tmp_editor_container")){
+                        el = document.createElement('div');
+                        el.setAttribute('id', 'tmp_editor_container');
+                        document.body.appendChild(el);
+                    }else{
+                        el = document.getElementById("tmp_editor_container");
+                    }
+                    // TODO remove element on view change   
                     slideEditorContent  =finalString;
-                    var el = document.getElementById("tmp_editor_container");
                     document.getElementById('tmp_editor_container').innerHTML =    '<iframe id=\"editor_frame\"src=\"../../../humla/lib/views/editor/_editor.html" width=\"100%\" height=\"100%\"></iframe>'
                     el.style.visibility = (el.style.visibility == "visible") ? "hidden" : "visible";
-                    console.log('ass');
-
                 }
-                 
             }
         };
         request.send(null);  
@@ -61,7 +67,9 @@ var view_editor = {
         if (inx + 2 < humla.slides.length) humla.slides[inx + 2].removeClass("far-next");
         
         var el = document.getElementById("tmp_editor_container");
-        document.getElementById('tmp_editor_container').innerHTML =    '';
-        el.style.visibility = (el.style.visibility == "visible") ? "hidden" : "visible";
+        if(el){
+            document.getElementById('tmp_editor_container').innerHTML =    '';
+            el.style.visibility = (el.style.visibility == "visible") ? "hidden" : "visible";
+        }
     }          
 };
