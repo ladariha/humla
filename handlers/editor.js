@@ -3,6 +3,7 @@ var path = require('path');
 var querystring = require('querystring');
 var fs     = require('fs');
 var jsdom = require('jsdom');
+var http = require('http');
 var jquery = fs.readFileSync('./public/lib/jquery-1.6.3.min.js').toString();
 var RAW_SLIDES_DIRECTORY = '/data/slides';
 var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../public/data/slides')).toString();
@@ -41,11 +42,7 @@ function editor(res, req){
             deleteSlide(res, req);
             break;
         default:
-            res.writeHead(405, {
-                'Content-Type': 'text/plain'
-            });
-            res.write('405 Method Not Allowed');
-            res.end();
+            returnEditorError(405, "Method not Allowed", res);
     }   
 }
 
@@ -61,12 +58,7 @@ function deleteSlide(res, req){
     var htmlfile = SLIDES_DIRECTORY+pathToCourse+lecture+".html";
     fs.readFile(htmlfile, function (err, data) {
         if (err){
-            res.writeHead(500, {
-                'Content-Type': 'text/plain'
-            });
-        
-            res.write(err.message);
-            res.end();  
+            returnEditorError(500, err.message,res); 
         }else{
             
             slide  = parseInt(slide);
@@ -78,15 +70,11 @@ function deleteSlide(res, req){
                 ],
                 done: function(errors, window) {
                     if(errors){
-                        res.writeHead(500, {
-                            'Content-Type': 'text/plain'
-                        });
-                        res.write('Error while parsing document by jsdom');
-                        res.end();   
+                        returnEditorError(500, "Error while parsing document by jsdom", res);  
                     }else{
                         try{
                             var $ = window.$;
-                            var resourceURL = host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html#/"+slide;
+                            var resourceURL = host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html#!/"+slide;
                             var slideCounter=1;
                             var toReturn = "";
                             $('body').find('.slide').each(function(){
@@ -99,38 +87,26 @@ function deleteSlide(res, req){
 
                             var newcontent= $("html").html();
                             if(slideSend===0){
-                                res.writeHead(404, {
-                                    'Content-Type': 'text/plain'
-                                });
-                                res.write("Slide "+slide+" not found");
-                                res.end();
+                                returnEditorError(404, "Slide "+slide+" not found", res);
                             }else{
                                 fs.writeFile(htmlfile, newcontent, function (err) {
                                     if (err) {
-                                        res.writeHead(500, {
-                                            'Content-Type': 'text/plain'
-                                        });
-                                        res.write('Problem with saving document: '+err);
-                                        res.end();
+                                        returnEditorError(500, 'Problem with saving document: '+err.message, res);
                                     }else{
                                         res.writeHead(200, {
                                             'Content-Type': 'application/json'
                                         });
                                         var t = {};
                                         t.URL = "http://"+resourceURL+"/v1";
-                                        t.html =  "Document updated, <a href=\"http://"+resourceURL+"/v1\">back to presentation</a>";
+                                        t.html =  "Document updated, <a href=\"http://"+resourceURL+"\">back to presentation</a>";
                                         res.write(JSON.stringify(t, null, 4));
                                         res.end();
                                     }
                                 });
                             }
                         }
-                        catch(err){         
-                            res.writeHead(500, {
-                                'Content-Type': 'text/plain'
-                            });
-                            res.write('Error while parsing document: '+err);
-                            res.end();
+                        catch(err){    
+                            returnEditorError(500, 'Error while parsing document: '+err.message, res);
                         }
                     }
                 }
@@ -150,12 +126,7 @@ function editSlide(res, req){
     var lecture = RegExp.$2;
     var slide = RegExp.$3;
     if(req.body === undefined || req.body.slide === undefined){
-        res.writeHead(400, {
-            'Content-Type': 'text/plain'
-        });
-        
-        res.write("Missing field \"slide\"" );
-        res.end();   
+        returnEditorError(400, 'Missing field \"slide\" ', res); 
     }else{
         var content=req.body.slide;
         var append = req.body.append;
@@ -174,15 +145,8 @@ function editSlideContentAppend(course, lecture, slide, content, res, host){
     var htmlfile = SLIDES_DIRECTORY+pathToCourse+lecture+".html";
     fs.readFile(htmlfile, function (err, data) {
         if (err){
-            res.writeHead(500, {
-                'Content-Type': 'text/plain'
-            });
-        
-            res.write(err.message);
-            res.end();  
+            returnEditorError(500, err.message, res);
         }else{
-            
-            
             slide  = parseInt(slide);
             var slideSend=0;
             jsdom.env({
@@ -192,20 +156,16 @@ function editSlideContentAppend(course, lecture, slide, content, res, host){
                 ],
                 done: function(errors, window) {
                     if(errors){
-                        res.writeHead(500, {
-                            'Content-Type': 'text/plain'
-                        });
-                        res.write('Error while parsing document by jsdom');
-                        res.end();   
+                        returnEditorError(500, 'Error while parsing document by jsdom ', res);
                     }else{
                         try{
                             var $ = window.$;
-                            var resourceURL = host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html#/"+(slide+1);
+                            var resourceURL = host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html#!/"+(slide+1);
                             var slideCounter=1;
                             var toReturn = "";
                             $('body').find('.slide').each(function(){
                                 if(slideCounter === slide){                            
-//                                    $(this).after("<div class=\"slide\">"+content+"</div>");
+                                    //                                    $(this).after("<div class=\"slide\">"+content+"</div>");
                                     $(this).after(content);
                                     slideSend = 1;
                                 }
@@ -215,20 +175,11 @@ function editSlideContentAppend(course, lecture, slide, content, res, host){
                             newcontent = newcontent.replace(/\&amp;/g,'&');
                        
                             if(slideSend===0){
-                                res.writeHead(404, {
-                                    'Content-Type': 'text/plain'
-                                });
-                                res.write("Slide "+slide+" not found");
-                                res.end();
+                                returnEditorError(404, "Slide "+slide+" not found", res);
                             }else{
                                 fs.writeFile(htmlfile, newcontent, function (err) {
                                     if (err) {
-                                        
-                                        res.writeHead(500, {
-                                            'Content-Type': 'text/plain'
-                                        });
-                                        res.write('Problem with saving document: '+err);
-                                        res.end();
+                                        returnEditorError(500, 'Problem with saving document: '+err.message, res);
                                     }else{
                                         
                                         res.writeHead(200, {
@@ -236,7 +187,7 @@ function editSlideContentAppend(course, lecture, slide, content, res, host){
                                         });
                                         var t = {};
                                         t.URL = "http://"+resourceURL+"/v1";
-                                        t.html =  "Document updated, <a href=\"http://"+resourceURL+"/v1\">back to presentation</a>";
+                                        t.html =  "Document updated, <a href=\"http://"+resourceURL+"\">back to presentation</a>";
                                         res.write(JSON.stringify(t, null, 4));
                                         res.end();
                                     }
@@ -244,11 +195,7 @@ function editSlideContentAppend(course, lecture, slide, content, res, host){
                             }
                         }
                         catch(err){
-                            res.writeHead(500, {
-                                'Content-Type': 'text/plain'
-                            });
-                            res.write('Error while parsing document: '+err);
-                            res.end();
+                            returnEditorError(500, 'Problem while parsing document: '+err.message, res);
                         }
                     }
                 }
@@ -262,14 +209,8 @@ function editSlideContent(course, lecture, slide, content, res, host){
     var htmlfile = SLIDES_DIRECTORY+pathToCourse+lecture+".html";
     fs.readFile(htmlfile, function (err, data) {
         if (err){
-            res.writeHead(500, {
-                'Content-Type': 'text/plain'
-            });
-        
-            res.write(err.message);
-            res.end();  
+            returnEditorError(500, err.message, res);
         }else{
-            
             
             slide  = parseInt(slide);
             var slideSend=0;
@@ -280,20 +221,15 @@ function editSlideContent(course, lecture, slide, content, res, host){
                 ],
                 done: function(errors, window) {
                     if(errors){
-                        res.writeHead(500, {
-                            'Content-Type': 'text/plain'
-                        });
-                        res.write('Error while parsing document by jsdom');
-                        res.end();   
+                        returnEditorError(500, 'Problem while parsing document by jsdom ', res);
                     }else{
                         try{
                             var $ = window.$;
-                            var resourceURL = host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html#/"+slide;
+                            var resourceURL = host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html#!/"+slide;
                             var slideCounter=1;
                             var toReturn = "";
                             $('body').find('.slide').each(function(){
                                 if(slideCounter === slide){                            
-//                                    $(this).html(content);
                                     $(this).replaceWith(content);
                                     slideSend = 1;
                                 }
@@ -303,20 +239,11 @@ function editSlideContent(course, lecture, slide, content, res, host){
                             var newcontent= $("html").html();                            
                             newcontent = newcontent.replace(/\&amp;/g,'&');
                             if(slideSend===0){
-                                res.writeHead(404, {
-                                    'Content-Type': 'text/plain'
-                                });
-                                res.write("Slide "+slide+" not found");
-                                res.end();
+                                returnEditorError(404, "Slide "+slide+" not found", res);
                             }else{
                                 fs.writeFile(htmlfile, newcontent, function (err) {
                                     if (err) {
-                                        
-                                        res.writeHead(500, {
-                                            'Content-Type': 'text/plain'
-                                        });
-                                        res.write('Problem with saving document: '+err);
-                                        res.end();
+                                        returnEditorError(500, 'Problem with saving document: '+err.message, res);
                                     }else{
                                         
                                         res.writeHead(200, {
@@ -324,7 +251,7 @@ function editSlideContent(course, lecture, slide, content, res, host){
                                         });
                                         var t = {};
                                         t.URL = "http://"+resourceURL+"/v1";
-                                        t.html =  "Document updated, <a href=\"http://"+resourceURL+"/v1\">back to presentation</a>";
+                                        t.html =  "Document updated, <a href=\"http://"+resourceURL+"\">back to presentation</a>";
                                         res.write(JSON.stringify(t, null, 4));
                                         res.end();
                                     }
@@ -332,11 +259,7 @@ function editSlideContent(course, lecture, slide, content, res, host){
                             }
                         }
                         catch(err){
-                            res.writeHead(500, {
-                                'Content-Type': 'text/plain'
-                            });
-                            res.write('Error while parsing document: '+err);
-                            res.end();
+                            returnEditorError(500, 'Problem while parsing document ', res);
                         }
                     }
                 }
@@ -355,18 +278,14 @@ function getSlide(res, req){
     var pathToCourse = '/'+course+'/';
     var htmlfile = SLIDES_DIRECTORY+pathToCourse+lecture+".html";
     var host = req.headers.host;
-    var resourceURL = host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html#/"+slide;
+    var resourceURL = host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html#!/"+slide;
     getDocumentFromFileSystem(res, req, htmlfile, slide,resourceURL)   
 }
 
 function getDocumentFromFileSystem(res, req, htmlfile, slide,resourceURL){
     fs.readFile(htmlfile, function (err, data) {
         if (err){
-            res.writeHead(500, {
-                'Content-Type': 'text/plain'
-            });
-            res.write(err.message);
-            res.end();  
+            returnEditorError(500, err.message, res);
         }else{
             parseDocument(res, req, data, slide, resourceURL);   
         }
@@ -385,11 +304,7 @@ function parseDocument(res, req, htmlfile, slide, resourceURL){
         ],
         done: function(errors, window) {
             if(errors){
-                res.writeHead(500, {
-                    'Content-Type': 'text/plain'
-                });
-                res.write('Error while parsing document by jsdom');
-                res.end();   
+                returnEditorError(500, 'Error while parsing document by jsdom ', res);
             }else{
                 try{
                     var $ = window.$;
@@ -403,7 +318,7 @@ function parseDocument(res, req, htmlfile, slide, resourceURL){
                             var r = {};
                             r.url = resourceURL;
                             r.html = $("<div />").append($(this).clone()).html();
-//                            r.html= $(this).html();
+                            //                            r.html= $(this).html();
                             res.write(JSON.stringify(r, null, 4));
                             res.end();
                             slideSend = 1;
@@ -420,12 +335,7 @@ function parseDocument(res, req, htmlfile, slide, resourceURL){
                         
                         fs.readFile(SLIDE_TEMPLATE+'/'+tmpl+'.html', function (err, data) {
                             if (err){
-                                res.writeHead(500, {
-                                    'Content-Type': 'text/plain'
-                                });
-        
-                                res.write(err.message);
-                                res.end();  
+                                returnEditorError(500, err.message, res);
                             }else{
                                 var r = {};
                                 r.url = resourceURL;
@@ -439,11 +349,7 @@ function parseDocument(res, req, htmlfile, slide, resourceURL){
                     
                     }else{
                         if(slideSend===0){
-                            res.writeHead(404, {
-                                'Content-Type': 'text/plain'
-                            });
-                            res.write("Slide "+slide+" not found");
-                            res.end();
+                            returnEditorError(404, "Slide "+slide+" not found", res);
                         }
                     }
                 }
@@ -457,4 +363,125 @@ function parseDocument(res, req, htmlfile, slide, resourceURL){
             }
         }
     }); 
+}
+
+
+app.put('/api/:course/:lecture/editor', function api(req, res) { // TODO check changes in url
+
+    var course = req.params.course;//RegExp.$1;
+    var lecture = req.params.lecture;
+    var d = decodeURIComponent(req.body.content);
+    var host = req.headers.host;
+    //    console.log(d);
+    var data_slide = eval('(' +d+')');
+    console.log("DATA RECEIVED");
+    console.log(data_slide);
+    
+    var pathToCourse = '/'+course+'/';
+    var htmlfile = SLIDES_DIRECTORY+pathToCourse+lecture+".html";
+    fs.readFile(htmlfile, function (err, data) {
+        if (err){
+            returnEditorError(500, err.message, res);
+        }else{
+
+            var slideSend=0;
+            jsdom.env({
+                html: htmlfile,
+                src: [
+                jquery
+                ],
+                done: function(errors, window) {
+                    if(errors){
+                        returnEditorError(500, 'Error while parsing document by jsdom '+err.message, res);
+                    }else{
+                        try{
+                            var $ = window.$;
+                            var resourceURL = host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html";
+                            var slideCounter=0;
+                            var toReturn = "";
+
+                            $('body').find('.slide').each(function(){
+                                if(data_slide.content[slideCounter]!=null){
+                                    $(this).replaceWith(data_slide.content[slideCounter]);    
+                                }
+                                slideCounter++;
+                            });   
+                            var newcontent= $("html").html();    
+                            newcontent = newcontent.replace(/\&amp;/g,'&');
+                            fs.writeFile(htmlfile, newcontent, function (err) {
+                                if (err) {
+                                    returnEditorError(500, 'Problem with saving document: '+err.message, res);
+                                }else{
+                                        
+                                    res.writeHead(200, {
+                                        'Content-Type': 'application/json'
+                                    });
+                                    var t = {};
+                                    t.URL = "http://"+resourceURL;
+                                    t.html =  "Document updated, <a href=\"http://"+resourceURL+"\">back to presentation</a>";
+                                    res.write(JSON.stringify(t, null, 4));
+                                    res.end();
+                                    
+                                    // TODO FIX for some reasons it throws Error: ENOTFOUND, Domain name not found
+                                    // tried with following URL:
+                                        // http://127.0.0.1:1338/api/MI-MDW/lecture1/index?refresh=true 
+                                        // 127.0.0.1:1338/api/MI-MDW/lecture1/index?refresh=true
+                                    // temporary fallback => it's called in client side :(
+                                 //   refreshIndexFile(course, lecture, host);
+                                    
+                                    
+                                }
+                            });   
+                        }
+                        catch(err){
+                            returnEditorError(500, 'Error while parsing document: '+err.message, res);
+                        }
+                    }
+                }
+            });   
+        }
+    });
+});
+
+
+function refreshIndexFile(course, lecture, host){
+    
+    
+    // refesh JSON
+    var url = "http://"+host+'/api/'+course+'/'+lecture+'/index?refresh=true';
+    console.log("URL JE "+url);
+//    url = url.replace('http://',''); // TODO no support for other than HTTP protocol
+    var stop = url.indexOf('/');
+    var content = '';
+    var options = {
+        host: url.substring(0, stop),
+        port: 80,
+        path: url.substring(stop),
+        method: 'GET'
+    };
+
+    var request = http.request(options, function(res) {});
+    request.end();
+
+    
+    // refresh XML
+    url = url +"&alt=xml";
+    options = {
+        host: url.substring(0, stop),
+        port: 80,
+        path: url.substring(stop),
+        method: 'GET'
+    };
+
+    var request2 = http.request(options, function(res) {});
+    request2.end();
+    
+}
+
+function returnEditorError(code, msg, res){
+    res.writeHead(code, {
+        'Content-Type': 'text/plain'
+    });
+    res.write(msg);
+    res.end();
 }

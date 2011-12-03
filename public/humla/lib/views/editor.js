@@ -9,7 +9,6 @@ var view_editor = {
     
     enterSlide : function(slide) {
         var inx = slide.number - 1;
-        console.log(slide);  
         if (inx - 2 >= 0) humla.slides[inx - 2].addClass("far-previous");
         if (inx - 1 >= 0) humla.slides[inx - 1].addClass("previous");
         humla.slides[inx].addClass("current");
@@ -20,9 +19,6 @@ var view_editor = {
             // get slide info
             var finalString;
             finalString = this.loadSlide(slide); // in case of going to slide that was already opened in editor view in current session
-            var f = this.loadContainer();
-            console.log(">>");
-            console.log(f);
             if(!finalString){
                 var presentationUrl = window.location.href;
                 var fields = presentationUrl.split("/");
@@ -41,7 +37,6 @@ var view_editor = {
                             var object = eval('(' + request.responseText + ')');
                             var textarray = object.html.split("\n");
                             var finalString = '';
-                            console.log('1');
                             for(var k in textarray){
                                 if(textarray[k].length>0){
                                     finalString = finalString+"\n"+textarray[k].replace(/^ +/gm, '') ;
@@ -87,8 +82,6 @@ var view_editor = {
                 document.getElementById('tmp_editor_container').innerHTML =    '<iframe id=\"editor_frame\"src=\"../../../humla/lib/views/editor/_editor.html" width=\"100%\" height=\"100%\"></iframe>'
                 el.style.visibility = (el.style.visibility == "visible") ? "hidden" : "visible";
             }
-            
-          
         }
     },        
 
@@ -99,13 +92,7 @@ var view_editor = {
         if (inx - 1 >= 0) humla.slides[inx - 1].removeClass("previous");
         humla.slides[inx].removeClass("current");
         if (inx + 1 < humla.slides.length) humla.slides[inx + 1].removeClass("next");
-        if (inx + 2 < humla.slides.length) humla.slides[inx + 2].removeClass("far-next");
-//        var el = document.getElementById("tmp_editor_container");
-//        if(el){
-//            document.getElementById('tmp_editor_container').innerHTML =    '';
-//            el.style.visibility = (el.style.visibility == "visible") ? "hidden" : "visible";
-//        }
-        
+        if (inx + 2 < humla.slides.length) humla.slides[inx + 2].removeClass("far-next");       
         this.resetDialog();
     },          
     
@@ -114,16 +101,80 @@ var view_editor = {
             alert("Local storage is not available, editor view is not available")  
         else{
             var cache = new this.Container();
+            cache.content[this.initContentArray()-1]=null;
             this.saveContainer(cache);
         }
     },
     
+    initContentArray: function(){
+        var slides = document.getElementsByTagName("div");
+        var count = 0;
+        for (var i=0;i<slides.length; ++i) {
+            if(/slide/i.test(slides[i].className)){
+                ++count;
+            }
+        }
+        return count;
+    },
+    areAnyChanges: function(data){
+        for(var i=0;i<data.content.length;i++){
+            if(data.content[i]!=null)
+                return true;
+        }
+        return false;
+    },
+    
     leaveView: function(view){
-        console.log("leaving editor view");
         if(humla.utils.window.localStorage){
-            // if apply changes, send request to save
+            var data = this.loadContainer();
+            if(this.areAnyChanges(data)){
+                        
+                var save=confirm("Save changes?");
+                if(save){
+
+                    // if apply changes, send request to save
+                    data.originalSlideContent = "";
+                    var params = "content="+encodeURIComponent(JSON.stringify(data));
+                    var fields = window.location.href.split("/");
+                    var course = fields[5];//presentationUrl.substr(0, presentationUrl.indexOf("/"));
+                    var lecture= fields[6].substr(0, fields[6].indexOf("."));
+                    var request = new XMLHttpRequest();
+                    request.open("PUT", '/api/'+course+'/'+lecture+'/editor', true);
+                    request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    request.setRequestHeader("Content-length", params.length);
+                    request.setRequestHeader("Connection", "close");
             
+                    request.onreadystatechange = function(){
+                        if (request.readyState==4) {
+                            if(request.status==200){
+                                alert("Presentation was succesfully modified, reload page to view changes", 20000, "Info: ");
+                                
+                                // refesh JSON
+                                console.log("REFRESHING");
+                                var request2 = new XMLHttpRequest();
+                                request2.open("GET", '/api/'+course+'/'+lecture+'/index?refresh=true', true);
+                                request2.setRequestHeader("Connection", "close");            
+                                request2.onreadystatechange = function(){};
+                                request2.send(null); 
+    
+                                // refresh XML
+                                var request3 = new XMLHttpRequest();
+                                request3.open("GET", '/api/'+course+'/'+lecture+'/index?refresh=true&alt=xml', true);
+                                request3.setRequestHeader("Connection", "close");            
+                                request3.onreadystatechange = function(){};
+                                request3.send(null); 
+                                
+                                
+                            }else{
+                                alert("Problem while saving presentaion: "+request.status+": "+request.responseText, 20000, "Error: ");
+                            }
+                        }
+                    };
+                    request.send(params); 
+                    
+                }
             // clear local storage
+            }
             this.removeContainer();
         }
     },
@@ -131,7 +182,7 @@ var view_editor = {
     loadSlide : function(slide){
         var container = this.loadContainer();
         if(container)
-            return container.content[slide.number];
+            return container.content[slide.number-1];
         return null;
     },
     
@@ -150,14 +201,9 @@ var view_editor = {
     storeSlide : function(slide){
         var contentFromLeavingSlide = humla.controler.window.frames[0].window.codemirror_editor.getValue();
         if(humla.utils.window.localStorage){
-            
             var cache = this.loadContainer();
-            
             if(contentFromLeavingSlide !== cache.originalSlideContent){
-                // Reset dialog window
-            
-                // store to local storage
-                cache.content[slide.number] = contentFromLeavingSlide;
+                cache.content[slide.number-1] = contentFromLeavingSlide+" "; // extra whitespace so when you delete whole content it won't appear as NULL in enterSlide() variable finalString'
                 this.saveContainer(cache);
             }
         }
@@ -170,4 +216,6 @@ var view_editor = {
             el.style.visibility = (el.style.visibility == "visible") ? "hidden" : "visible";
         }
     }
+    
+    
 };

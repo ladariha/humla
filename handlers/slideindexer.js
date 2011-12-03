@@ -128,7 +128,7 @@ slideindexer.styles["xslt"]="XML";
  *  </div>
  */
 
-app.all('/api/:lecture/:course/index', function api(req, res) {
+app.all('/api/:course/:lecture/index', function api(req, res) {
     //var query = require('url').parse(req.url).query;
     var args, path = parseURL(req.url).pathname;
     for (var i=0, n = slideindexer.urls.length; i<n; i++) { // projde vsechna url

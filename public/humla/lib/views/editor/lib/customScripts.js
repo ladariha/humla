@@ -11,12 +11,4 @@ function getParameterByName(name){
     else
         return decodeURIComponent(results[1].replace(/\+/g, " "));
 }
-            
-window.onload = loadSlide();
-    
-    
-function loadSlide(){ 
-    
-//    editor.setValue('NIC');
-    console.log("seetting");                
-}
+         
