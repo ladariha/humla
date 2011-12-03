@@ -13,88 +13,87 @@ var Lecture = mongoose.model("Lecture");
 /**
  * Creates new course (new entry in db, new folder)
  */
-app.post('/api/:course/course', function(request, response){ // TODO database timeout
+app.post('/api/:course/course', function(req, res){ // TODO database timeout
   
-    if(request.body === undefined || request.body.longName === undefined || request.body.longName.length<1 || 
-        request.body.isActive === undefined || request.body.isActive.length<1 || request.body.courseID ===undefined ||
-        request.body.courseID.length<1 || request.body.owner === undefined || request.body.owner.length<1
+    if(req.body === undefined || req.body.longName === undefined || req.body.longName.length<1 || 
+        req.body.isActive === undefined || req.body.isActive.length<1 || req.body.courseID ===undefined ||
+        req.body.courseID.length<1 || req.body.owner === undefined || req.body.owner.length<1
         ){
-        console.log(">");
-        response.writeHead(400, {
+         res.writeHead(400, {
             'Content-Type': 'text/plain'
         });
         
-        response.write("Missing fields" );
-        response.end();   
+        res.write("Missing fields" );
+        res.end();   
     }else{
         Course.find({
-            courseID: request.params.course
+            courseID: req.params.course
         }, function(err,crs){   
             if(!err) {
                 if(crs.length > 0){
-                    response.writeHead(409, {
+                    res.writeHead(409, {
                         "Content-Type": "text/plain"
                     });
-                    response.write("Course already exists");
-                    response.end(); 
+                    res.write("Course already exists");
+                    res.end(); 
                 }else{
                     var c = new Course();
-                    c.longName = decodeURIComponent(request.body.longName);
-                    var e = (request.body.isActive).toLowerCase()
+                    c.longName = decodeURIComponent(req.body.longName);
+                    var e = (req.body.isActive).toLowerCase()
                     if(e=='true'){
                         c.isActive = true;
                     }
                     else{
                         c.isActive = false;
                     }
-                    c.courseID = decodeURIComponent(request.body.courseID);
-                    c.owner = decodeURIComponent(request.body.owner);
-                    c.lecturesURLPreffix = request.headers.host+'/data/slides/'+c.courseID;
-                    c.url = request.headers.host+'/api/'+c.courseID+'/course';    
+                    c.courseID = decodeURIComponent(req.body.courseID);
+                    c.owner = decodeURIComponent(req.body.owner);
+                    c.lecturesURLPreffix = req.headers.host+'/data/slides/'+c.courseID;
+                    c.url = req.headers.host+'/api/'+c.courseID+'/course';    
                     c.save(function(err) {
                         if(err) {
-                            response.writeHead(500, {
+                            res.writeHead(500, {
                                 "Content-Type": "text/plain"
                             });
-                            response.write("Problems with database");
-                            response.end();  
+                            res.write("Problems with database");
+                            res.end();  
                         }else{
                             fs.mkdir(SLIDES_DIRECTORY+'/'+c.courseID, 0777, function(e) {
                                 if(!e){
                                     fs.mkdir(SLIDES_DIRECTORY+'/'+c.courseID+'/css', 0777, function(e) {
                                         if(!e){
-                                            response.writeHead(200, {
+                                            res.writeHead(200, {
                                                 "Content-Type": "application/json"
                                             });
-                                            response.write(JSON.stringify(c, null, 4));
-                                            response.end(); 
+                                            res.write(JSON.stringify(c, null, 4));
+                                            res.end(); 
                                    
                                         }else{
-                                            response.writeHead(500, {
+                                            res.writeHead(500, {
                                                 "Content-Type": "text/plain"
                                             });
-                                            response.write("Directory for css for lectures was not created");
-                                            response.end(); 
+                                            res.write("Directory for css for lectures was not created");
+                                            res.end(); 
                                         }
                                     });
                                    
                                 }else{
-                                    response.writeHead(500, {
+                                    res.writeHead(500, {
                                         "Content-Type": "text/plain"
                                     });
-                                    response.write("Directory for course was not created");
-                                    response.end(); 
+                                    res.write("Directory for course was not created");
+                                    res.end(); 
                                 }
                             });
                         }
                     });   
                 }         
             } else {
-                response.writeHead(500, {
+                res.writeHead(500, {
                     "Content-Type": "text/plain"
                 });
-                response.write("Problems with database");
-                response.end();   
+                res.write("Problems with database");
+                res.end();   
             }             
         });
     }
@@ -105,24 +104,24 @@ app.post('/api/:course/course', function(request, response){ // TODO database ti
 /**
  * Edit existing course
  */
-app.put('/api/:course/course', function(request, response){
+app.put('/api/:course/course', function(req, res){
  
-    if(request.body === undefined){
-        response.writeHead(400, {
+    if(req.body === undefined){
+        res.writeHead(400, {
             'Content-Type': 'text/plain'
         });
         
-        response.write("Missing fields \"course\"" );
-        response.end();   
+        res.write("Missing fields \"course\"" );
+        res.end();   
     }else{
         Course.find({
-            _id: encodeURIComponent(request.body.id)
+            _id: encodeURIComponent(req.body.id)
         }, function(err,crs){   
             if(!err) {
                 if(crs.length > 0){
                     var course = crs[0];
-                    if(request.body.isActive!==undefined){
-                        var e = (request.body.isActive).toLowerCase()
+                    if(req.body.isActive!==undefined){
+                        var e = (req.body.isActive).toLowerCase()
                         if(e=='true'){
                             course.isActive = true;
                         }
@@ -131,54 +130,54 @@ app.put('/api/:course/course', function(request, response){
                         }
                     }
                     var prev = course.courseID;
-                    course.courseID = (request.body.courseID === undefined) ? course.courseID : decodeURIComponent(request.body.courseID);
-                    course.longName = (request.body.longName === undefined) ? course.longName : decodeURIComponent(request.body.longName);
-                    course.owner = (request.body.owner === undefined) ? course.owner : decodeURIComponent(request.body.owner);
-                    course.lecturesURLPreffix = request.headers.host+'/data/slides/'+course.courseID;
-                    course.url = request.headers.host+'/api/'+course.courseID+'/course';    
+                    course.courseID = (req.body.courseID === undefined) ? course.courseID : decodeURIComponent(req.body.courseID);
+                    course.longName = (req.body.longName === undefined) ? course.longName : decodeURIComponent(req.body.longName);
+                    course.owner = (req.body.owner === undefined) ? course.owner : decodeURIComponent(req.body.owner);
+                    course.lecturesURLPreffix = req.headers.host+'/data/slides/'+course.courseID;
+                    course.url = req.headers.host+'/api/'+course.courseID+'/course';    
                     course.save(function(err) {
                         if (err){
-                            response.writeHead(500, {
+                            res.writeHead(500, {
                                 "Content-Type": "text/plain"
                             });
-                            response.write("Problems with database");
-                            response.end();  
+                            res.write("Problems with database");
+                            res.end();  
                         }else{                    
                             fs.rename(SLIDES_DIRECTORY+'/'+prev, SLIDES_DIRECTORY+'/'+course.courseID, function (err) {
                                 if (!err){
-                                    response.writeHead(200, {
+                                    res.writeHead(200, {
                                         "Content-Type": "application/json"
                                     });
-                                    response.write(JSON.stringify(course, null, 4));
-                                    response.end(); 
+                                    res.write(JSON.stringify(course, null, 4));
+                                    res.end(); 
                                     
                                     
                                 }else{
-                                    response.writeHead(500, {
+                                    res.writeHead(500, {
                                         "Content-Type": "text/plain"
                                     });
-                                    response.write("Directory for course was not renamed");
-                                    response.end();  
+                                    res.write("Directory for course was not renamed");
+                                    res.end();  
                                 }
                                 
                             });
                         }
                     });
                 }else{
-                    response.writeHead(404, {
+                    res.writeHead(404, {
                         "Content-Type": "text/plain"
                     });
-                    response.write("Course not found");
-                    response.end();   
+                    res.write("Course not found");
+                    res.end();   
                 }
               
             } else {
-                console.log(encodeURIComponent(request.body.id)+">>"+err);
-                response.writeHead(500, {
+                console.log(encodeURIComponent(req.body.id)+">>"+err);
+                res.writeHead(500, {
                     "Content-Type": "text/plain"
                 });
-                response.write("Problems with database");
-                response.end();   
+                res.write("Problems with database");
+                res.end();   
             
             }             
         });
@@ -191,80 +190,79 @@ app.put('/api/:course/course', function(request, response){
 /**
  * Returns course info
  */
-app.get('/api/:course/course', function(request, response){
+app.get('/api/:course/course', function(req, res){
     
     Course.find({
-        courseID: request.params.course
+        courseID: req.params.course
     }, function(err,crs){   
         if(!err) {
             if(crs.length > 0){
-                var course = crs[0];
-                response.writeHead(200, {
+                res.writeHead(200, {
                     "Content-Type": "application/json"
                 });
-                response.write(JSON.stringify(course, null, 4));
-                response.end();  
+                res.write(JSON.stringify(crs[0], null, 4));
+                res.end();  
             } else {
-                response.writeHead(404, {
+                res.writeHead(404, {
                     "Content-Type": "text/plain"
                 });
-                response.write("Course not found");
-                response.end();  
+                res.write("Course not found");
+                res.end();  
             
             }   
         }else{
-            response.writeHead(500, {
+            res.writeHead(500, {
                 "Content-Type": "text/plain"
             });
-            response.write("Problems with database");
-            response.end();    
+            res.write("Problems with database");
+            res.end();    
         }
     });
  
 });
 
 
-app.post('/api/:course/:lecture/lecture', function(request, response){ // TODO database timeout
-    if(request.body === undefined || request.body.title === undefined || request.body.title.length<1 || 
-        request.body.isActive === undefined || request.body.isActive.length<1 || request.body.courseID ===undefined ||
-        request.body.courseID.length<1 || request.body.author === undefined || request.body.author.length<1
-        || request.body.order === undefined || request.body.order<1
+app.post('/api/:course/:lecture/lecture', function(req, res){ // TODO database timeout
+    if(req.body === undefined || req.body.title === undefined || req.body.title.length<1 || 
+        req.body.isActive === undefined || req.body.isActive.length<1 || req.body.courseID ===undefined ||
+        req.body.courseID.length<1 || req.body.author === undefined || req.body.author.length<1
+        || req.body.order === undefined || req.body.order<1
         ){
-        response.writeHead(400, {
+        res.writeHead(400, {
             'Content-Type': 'text/plain'
         });
         
-        response.write("Missing fields" );
-        response.end();   
+        res.write("Missing fields" );
+        res.end();   
     }else{
         Lecture.find({
-            courseID: request.params.course,
-            order: request.body.order
+            courseID: req.params.course,
+            order: req.body.order
         }, function(err,crs){   
             if(!err) {
                 if(crs.length > 0){
-                    response.writeHead(409, {
+                    res.writeHead(409, {
                         "Content-Type": "text/plain"
                     });
-                    response.write("Lecture with given course and order already exists");
-                    response.end(); 
+                    res.write("Lecture with given course and order already exists");
+                    res.end(); 
                 }else{
                     var c = new Lecture();
-                    c.title = decodeURIComponent(request.body.title);
-                    c.courseID = decodeURIComponent(request.body.courseID);
-                    c.lectureID= 'lecture'+decodeURIComponent(request.body.order);
-                    c.url = request.headers.host+'/api/'+c.courseID+'/'+c.lectureID;
-                    c.presentationURL = request.headers.host+'/data/slides/'+c.courseID+'/'+c.lectureID+'.html';
-                    c.authorEmail = (request.body.authorEmail === undefined) ? '' : decodeURIComponent(request.body.authorEmail);
-                    c.authorTwitter = (request.body.authorTwitter === undefined) ? '' : decodeURIComponent(request.body.authorTwitter);
-                    c.authorWeb = (request.body.authorWeb === undefined) ? '' : decodeURIComponent(request.body.authorWeb);
-                    c.semester = (request.body.semester === undefined) ? '' : decodeURIComponent(request.body.semester);
-                    c.organization = (request.body.org === undefined) ? '' : decodeURIComponent(request.body.org);
-                    c.organizationFac = (request.body.orgfac === undefined) ? '' : decodeURIComponent(request.body.orgfac);
-                    c.field = (request.body.spec === undefined) ? '' : decodeURIComponent(request.body.spec);
-                    c.web = (request.body.web === undefined) ? '' : decodeURIComponent(request.body.web);
-                    c.lectureAbstract = (request.body.abs === undefined) ? '' : decodeURIComponent(request.body.abs);
-                    var e = (request.body.isActive).toLowerCase()
+                    c.title = decodeURIComponent(req.body.title);
+                    c.courseID = decodeURIComponent(req.body.courseID);
+                    c.lectureID= 'lecture'+decodeURIComponent(req.body.order);
+                    c.url = req.headers.host+'/api/'+c.courseID+'/'+c.lectureID;
+                    c.presentationURL = req.headers.host+'/data/slides/'+c.courseID+'/'+c.lectureID+'.html';
+                    c.authorEmail = (req.body.authorEmail === undefined) ? '' : decodeURIComponent(req.body.authorEmail);
+                    c.authorTwitter = (req.body.authorTwitter === undefined) ? '' : decodeURIComponent(req.body.authorTwitter);
+                    c.authorWeb = (req.body.authorWeb === undefined) ? '' : decodeURIComponent(req.body.authorWeb);
+                    c.semester = (req.body.semester === undefined) ? '' : decodeURIComponent(req.body.semester);
+                    c.organization = (req.body.org === undefined) ? '' : decodeURIComponent(req.body.org);
+                    c.organizationFac = (req.body.orgfac === undefined) ? '' : decodeURIComponent(req.body.orgfac);
+                    c.field = (req.body.spec === undefined) ? '' : decodeURIComponent(req.body.spec);
+                    c.web = (req.body.web === undefined) ? '' : decodeURIComponent(req.body.web);
+                    c.lectureAbstract = (req.body.abs === undefined) ? '' : decodeURIComponent(req.body.abs);
+                    var e = (req.body.isActive).toLowerCase()
                     if(e=='true'){
                         c.isActive = true;
                     }
@@ -272,8 +270,8 @@ app.post('/api/:course/:lecture/lecture', function(request, response){ // TODO d
                         c.isActive = false;
                     }
 
-                    c.author = decodeURIComponent(request.body.author);
-                    var k = (decodeURIComponent(request.body.keywords)).split(",");
+                    c.author = decodeURIComponent(req.body.author);
+                    var k = (decodeURIComponent(req.body.keywords)).split(",");
                     var k1 = new Array();
                     k.forEach(function(i){
                         var i1 = i.replace(/^\s*/, "").replace(/\s*$/, "");
@@ -285,27 +283,27 @@ app.post('/api/:course/:lecture/lecture', function(request, response){ // TODO d
                     c.keywords = k1;
                     c.save(function(err) {
                         if(err) {
-                            response.writeHead(500, {
+                            res.writeHead(500, {
                                 "Content-Type": "text/plain"
                             });
-                            response.write("Problems with database");
-                            response.end();  
+                            res.write("Problems with database");
+                            res.end();  
                         }else{
                             path.exists(SLIDES_DIRECTORY+'/'+c.courseID, function (exists) {
                                 if(exists){ // course dir exists
-                                    copyTemplateHTML(request, response, c, decodeURIComponent(request.body.order), decodeURIComponent(request.body.keywords));
+                                    copyTemplateHTML(req, res, c, decodeURIComponent(req.body.order), decodeURIComponent(req.body.keywords));
                                 }else{ // create dir
                                     
                                     fs.mkdir(SLIDES_DIRECTORY+'/'+c.courseID, 0777, function(e) {
                                         if(!e){
-                                            response.writeHead(200, {
+                                            res.writeHead(200, {
                                                 "Content-Type": "application/json"
                                             });
-                                            response.write(JSON.stringify(c, null, 4));
-                                            response.end(); 
+                                            res.write(JSON.stringify(c, null, 4));
+                                            res.end(); 
                                    
                                         }else{ // copy template
-                                            copyTemplateHTML(request, response, c, decodeURIComponent(request.body.order), decodeURIComponent(request.body.keywords));
+                                            copyTemplateHTML(req, res, c, decodeURIComponent(req.body.order), decodeURIComponent(req.body.keywords));
                                         }
                                     });   
                                 } 
@@ -314,11 +312,11 @@ app.post('/api/:course/:lecture/lecture', function(request, response){ // TODO d
                     });   
                 }         
             } else {
-                response.writeHead(500, {
+                res.writeHead(500, {
                     "Content-Type": "text/plain"
                 });
-                response.write("Problems with database");
-                response.end();   
+                res.write("Problems with database");
+                res.end();   
             }             
         });
     }
@@ -327,32 +325,31 @@ app.post('/api/:course/:lecture/lecture', function(request, response){ // TODO d
 
 
 
-app.put('/api/:course/:lecture/lecture', function(request, response){ // TODO database timeout
+app.put('/api/:course/:lecture/lecture', function(req, res){ // TODO database timeout
    
-    if(request.body === undefined){
-        response.writeHead(400, {
+    if(req.body === undefined){
+        res.writeHead(400, {
             'Content-Type': 'text/plain'
         });
         
-        response.write("Missing fields" );
-        response.end();   
+        res.write("Missing fields" );
+        res.end();   
     }else{
         Lecture.find({
-            _id: encodeURIComponent(request.body.id)
+            _id: encodeURIComponent(req.body.id)
         }, function(err,crs){   
             if(!err) {
                 if(crs.length > 0){
           
                     var c = crs[0];
-                    c.title = (request.body.title === undefined) ? c.title : decodeURIComponent(request.body.title);
-                    console.log(">>>>> "+decodeURIComponent(request.body.order));
+                    c.title = (req.body.title === undefined) ? c.title : decodeURIComponent(req.body.title);
                     var prev = c.lectureID;
-                    c.lectureID = (request.body.order === undefined) ? c.lectureID :  'lecture'+decodeURIComponent(request.body.order);
-                    c.url = request.headers.host+'/api/'+c.courseID+'/'+c.lectureID;
-                    c.presentationURL = request.headers.host+'/data/slides/'+c.courseID+'/'+c.lectureID+'.html';
+                    c.lectureID = (req.body.order === undefined) ? c.lectureID :  'lecture'+decodeURIComponent(req.body.order);
+                    c.url = req.headers.host+'/api/'+c.courseID+'/'+c.lectureID;
+                    c.presentationURL = req.headers.host+'/data/slides/'+c.courseID+'/'+c.lectureID+'.html';
                     
-                    if(request.body.isActive!==undefined){
-                        var e = (request.body.isActive).toLowerCase()
+                    if(req.body.isActive!==undefined){
+                        var e = (req.body.isActive).toLowerCase()
                         if(e=='true'){
                             c.isActive = true;
                         }
@@ -361,18 +358,18 @@ app.put('/api/:course/:lecture/lecture', function(request, response){ // TODO da
                         }
                     }
                     
-                    c.authorEmail = (request.body.authorEmail === undefined) ? '' : decodeURIComponent(request.body.authorEmail);
-                    c.authorTwitter = (request.body.authorTwitter === undefined) ? '' : decodeURIComponent(request.body.authorTwitter);
-                    c.authorWeb = (request.body.authorWeb === undefined) ? '' : decodeURIComponent(request.body.authorWeb);
-                    c.semester = (request.body.semester === undefined) ? '' : decodeURIComponent(request.body.semester);
-                    c.organization = (request.body.org === undefined) ? '' : decodeURIComponent(request.body.org);
-                    c.organizationFac = (request.body.orgfac === undefined) ? '' : decodeURIComponent(request.body.orgfac);
-                    c.field = (request.body.spec === undefined) ? '' : decodeURIComponent(request.body.spec);
-                    c.web = (request.body.web === undefined) ? '' : decodeURIComponent(request.body.web);
-                    c.lectureAbstract = (request.body.abs === undefined) ? '' : decodeURIComponent(request.body.abs);
-                    c.author = (request.body.author === undefined) ? c.author : decodeURIComponent(request.body.author);
-                    if(!request.body.keywords === undefined){
-                        var k = (decodeURIComponent(request.body.keywords)).split(",");
+                    c.authorEmail = (req.body.authorEmail === undefined) ? '' : decodeURIComponent(req.body.authorEmail);
+                    c.authorTwitter = (req.body.authorTwitter === undefined) ? '' : decodeURIComponent(req.body.authorTwitter);
+                    c.authorWeb = (req.body.authorWeb === undefined) ? '' : decodeURIComponent(req.body.authorWeb);
+                    c.semester = (req.body.semester === undefined) ? '' : decodeURIComponent(req.body.semester);
+                    c.organization = (req.body.org === undefined) ? '' : decodeURIComponent(req.body.org);
+                    c.organizationFac = (req.body.orgfac === undefined) ? '' : decodeURIComponent(req.body.orgfac);
+                    c.field = (req.body.spec === undefined) ? '' : decodeURIComponent(req.body.spec);
+                    c.web = (req.body.web === undefined) ? '' : decodeURIComponent(req.body.web);
+                    c.lectureAbstract = (req.body.abs === undefined) ? '' : decodeURIComponent(req.body.abs);
+                    c.author = (req.body.author === undefined) ? c.author : decodeURIComponent(req.body.author);
+                    if(!req.body.keywords === undefined){
+                        var k = (decodeURIComponent(req.body.keywords)).split(",");
                         k.forEach(function(i){
                             var i1 = i.replace(/^\s*/, "").replace(/\s*$/, "");
                             var k1 = new Array();
@@ -389,28 +386,28 @@ app.put('/api/:course/:lecture/lecture', function(request, response){ // TODO da
              
                     c.save(function(err) {
                         if(err) {
-                            response.writeHead(500, {
+                            res.writeHead(500, {
                                 "Content-Type": "text/plain"
                             });
-                            response.write("Problems with database");
-                            response.end();  
+                            res.write("Problems with database");
+                            res.end();  
                         }else{
                             if(prev === c.lectureID){
                                 path.exists(SLIDES_DIRECTORY+'/'+c.courseID, function (exists) {
                                     if(exists){ // course dir exists
-                                        editTemplateHTML(request, response, c, decodeURIComponent(request.body.order), decodeURIComponent(request.body.keywords));
+                                        editTemplateHTML(req, res, c, decodeURIComponent(req.body.order), decodeURIComponent(req.body.keywords));
                                     }else{ // create dir
                                     
                                         fs.mkdir(SLIDES_DIRECTORY+'/'+c.courseID, 0777, function(e) {
                                             if(!e){
-                                                response.writeHead(200, {
+                                                res.writeHead(200, {
                                                     "Content-Type": "application/json"
                                                 });
-                                                response.write(JSON.stringify(c, null, 4));
-                                                response.end(); 
+                                                res.write(JSON.stringify(c, null, 4));
+                                                res.end(); 
                                    
                                             }else{ // copy template
-                                                editTemplateHTML(request, response, c, decodeURIComponent(request.body.order), decodeURIComponent(request.body.keywords));
+                                                editTemplateHTML(req, res, c, decodeURIComponent(req.body.order), decodeURIComponent(req.body.keywords));
                                             }
                                         });   
                                     } 
@@ -418,19 +415,19 @@ app.put('/api/:course/:lecture/lecture', function(request, response){ // TODO da
                             }else{
                                 path.exists(SLIDES_DIRECTORY+'/'+c.courseID, function (exists) {
                                     if(exists){ // course dir exists
-                                        editTemplateMoveHTML(prev, request, response, c, decodeURIComponent(request.body.order), decodeURIComponent(request.body.keywords));
+                                        editTemplateMoveHTML(prev, req, res, c, decodeURIComponent(req.body.order), decodeURIComponent(req.body.keywords));
                                     }else{ // create dir
                                     
                                         fs.mkdir(SLIDES_DIRECTORY+'/'+c.courseID, 0777, function(e) {
                                             if(!e){
-                                                response.writeHead(200, {
+                                                res.writeHead(200, {
                                                     "Content-Type": "application/json"
                                                 });
-                                                response.write(JSON.stringify(c, null, 4));
-                                                response.end(); 
+                                                res.write(JSON.stringify(c, null, 4));
+                                                res.end(); 
                                    
                                             }else{ // copy template
-                                                editTemplateMoveHTML(prev, request, response, c, decodeURIComponent(request.body.order), decodeURIComponent(request.body.keywords));
+                                                editTemplateMoveHTML(prev, req, res, c, decodeURIComponent(req.body.order), decodeURIComponent(req.body.keywords));
                                             }
                                         });   
                                     }
@@ -440,33 +437,33 @@ app.put('/api/:course/:lecture/lecture', function(request, response){ // TODO da
                     });
                 }else{
                     
-                    response.writeHead(409, {
+                    res.writeHead(409, {
                         "Content-Type": "text/plain"
                     });
-                    response.write("Lecture with given course and order doesn't exists");
-                    response.end();    
+                    res.write("Lecture with given course and order doesn't exists");
+                    res.end();    
                 }         
             } else {
-                response.writeHead(500, {
+                res.writeHead(500, {
                     "Content-Type": "text/plain"
                 });
-                response.write("Problems with database");
-                response.end();   
+                res.write("Problems with database");
+                res.end();   
             }             
         });
     }
 }
 );
 
-function copyTemplateCSS(request, response, lecture, prevFile, longName){
+function copyTemplateCSS(req, res, lecture, prevFile, longName){
     
     fs.readFile(LECTURE_TEMPLATE+'/meta.css', function(err, data) {
         if(err){
-            response.writeHead(500, {
+            res.writeHead(500, {
                 "Content-Type": "text/plain"
             });
-            response.write("Cannot load presentation css template");
-            response.end();   
+            res.write("Cannot load presentation css template");
+            res.end();   
         }else{
             var content = data.toString();
             
@@ -482,18 +479,18 @@ function copyTemplateCSS(request, response, lecture, prevFile, longName){
             content = content.replace("##coursename", longName);
             fs.writeFile(SLIDES_DIRECTORY+'/'+lecture.courseID+'/css/meta_'+lecture.lectureID+'.css', content, function (err) {
                 if (err) {   
-                    response.writeHead(500, {
+                    res.writeHead(500, {
                         'Content-Type': 'text/plain'
                     });
-                    response.write('Problem with saving lecture css file: '+err);
-                    response.end();
+                    res.write('Problem with saving lecture css file: '+err);
+                    res.end();
                 }else{
                  
-                    response.writeHead(200, {
+                    res.writeHead(200, {
                         'Content-Type': 'application/json'
                     });
-                    response.write(JSON.stringify(lecture, null, 4));
-                    response.end();
+                    res.write(JSON.stringify(lecture, null, 4));
+                    res.end();
                 }
             });  
             
@@ -505,15 +502,15 @@ function copyTemplateCSS(request, response, lecture, prevFile, longName){
 
 
 
-function moveTemplateCSS(request, response, lecture, prevFile, longName){
+function moveTemplateCSS(req, res, lecture, prevFile, longName){
     
     fs.readFile(SLIDES_DIRECTORY+'/'+lecture.courseID+'/css/meta_'+prevFile+'.css', function(err, data) {
         if(err){
-            response.writeHead(500, {
+            res.writeHead(500, {
                 "Content-Type": "text/plain"
             });
-            response.write("Cannot load presentation css template "+SLIDES_DIRECTORY+'/'+lecture.courseID+'/css/meta_'+prevFile+'.css  '+err);
-            response.end();   
+            res.write("Cannot load presentation css template "+SLIDES_DIRECTORY+'/'+lecture.courseID+'/css/meta_'+prevFile+'.css  '+err);
+            res.end();   
         }else{
             var content = data.toString();
             
@@ -529,26 +526,26 @@ function moveTemplateCSS(request, response, lecture, prevFile, longName){
             content = content.replace("##coursename", longName);
             fs.writeFile(SLIDES_DIRECTORY+'/'+lecture.courseID+'/css/meta_'+lecture.lectureID+'.css', content, function (err) {
                 if (err) {   
-                    response.writeHead(500, {
+                    res.writeHead(500, {
                         'Content-Type': 'text/plain'
                     });
-                    response.write('Problem with saving lecture css file: '+err);
-                    response.end();
+                    res.write('Problem with saving lecture css file: '+err);
+                    res.end();
                 }else{
                     fs.rename(SLIDES_DIRECTORY+'/'+lecture.courseID+'/css/meta_'+prevFile+'.css', SLIDES_DIRECTORY+'/'+lecture.courseID+'/css/meta_'+lecture.lectureID+'.css', function (err) {
                         if (err) {
                                         
-                            response.writeHead(500, {
+                            res.writeHead(500, {
                                 'Content-Type': 'text/plain'
                             });
-                            response.write('Problem with saving lecture file: '+err);
-                            response.end();
+                            res.write('Problem with saving lecture file: '+err);
+                            res.end();
                         }else{
-                            response.writeHead(200, {
+                            res.writeHead(200, {
                                 'Content-Type': 'application/json'
                             });
-                            response.write(JSON.stringify(lecture, null, 4));
-                            response.end();
+                            res.write(JSON.stringify(lecture, null, 4));
+                            res.end();
 
                         }                    
                     });
@@ -563,14 +560,14 @@ function moveTemplateCSS(request, response, lecture, prevFile, longName){
 
 
 
-function copyTemplateHTML(request, response, lecture, order,keywords){
+function copyTemplateHTML(req, res, lecture, order,keywords){
     fs.readFile(LECTURE_TEMPLATE+'/presentation.html', function(err, data) {
         if(err){
-            response.writeHead(500, {
+            res.writeHead(500, {
                 "Content-Type": "text/plain"
             });
-            response.write("Cannot load presentation template");
-            response.end();   
+            res.write("Cannot load presentation template");
+            res.end();   
         }else{
             var content = data.toString();
             jsdom.env({
@@ -580,11 +577,11 @@ function copyTemplateHTML(request, response, lecture, order,keywords){
                 ],
                 done: function(errors, window) {
                     if(errors){
-                        response.writeHead(500, {
+                        res.writeHead(500, {
                             'Content-Type': 'text/plain'
                         });
-                        response.write('Error while parsing document by jsdom');
-                        response.end();   
+                        res.write('Error while parsing document by jsdom');
+                        res.end();   
                     }else{
                         try{
                             var $ = window.$;
@@ -606,34 +603,33 @@ function copyTemplateHTML(request, response, lecture, order,keywords){
                                     fs.writeFile(SLIDES_DIRECTORY+'/'+lecture.courseID+'/'+lecture.lectureID+'.html', newcontent, function (err) {
                                         if (err) {
                                         
-                                            response.writeHead(500, {
+                                            res.writeHead(500, {
                                                 'Content-Type': 'text/plain'
                                             });
-                                            response.write('Problem with saving lecture file: '+err);
-                                            response.end();
+                                            res.write('Problem with saving lecture file: '+err);
+                                            res.end();
                                         }else{
-                                            console.log(SLIDES_DIRECTORY+'/'+lecture.courseID+'/'+lecture.lectureID+'.html');
-                                            getCourseFullNameAndContinue(response, request, lecture, lecture.courseID, copyTemplateCSS, '');
+                                            getCourseFullNameAndContinue(res, req, lecture, lecture.courseID, copyTemplateCSS, '');
                                         //                                            copyTemplateCSS(request, response, lecture);
 
                                         }
                                     });  
                                 }else{
-                                    response.writeHead(500, {
+                                    res.writeHead(500, {
                                         'Content-Type': 'text/plain'
                                     });
-                                    response.write('Problem with saving lecture file - error during retrieving course info: '+err);
-                                    response.end();
+                                    res.write('Problem with saving lecture file - error during retrieving course info: '+err);
+                                    res.end();
                                 }
                         
                             });   
                         }
                         catch(err){
-                            response.writeHead(500, {
+                            res.writeHead(500, {
                                 'Content-Type': 'text/plain'
                             });
-                            response.write('Error while parsing document: '+err);
-                            response.end();
+                            res.write('Error while parsing document: '+err);
+                            res.end();
                         }
                     }
                 }
@@ -643,14 +639,14 @@ function copyTemplateHTML(request, response, lecture, order,keywords){
 }
 
 
-function editTemplateHTML(request, response, lecture, order,keywords){
+function editTemplateHTML(req, res, lecture, order,keywords){
     fs.readFile(SLIDES_DIRECTORY+'/'+lecture.courseID+'/'+lecture.lectureID+'.html', function(err, data) {
         if(err){
-            response.writeHead(500, {
+            res.writeHead(500, {
                 "Content-Type": "text/plain"
             });
-            response.write("Cannot load presentation template");
-            response.end();   
+            res.write("Cannot load presentation template");
+            res.end();   
         }else{
             var content = data.toString();
             jsdom.env({
@@ -660,11 +656,11 @@ function editTemplateHTML(request, response, lecture, order,keywords){
                 ],
                 done: function(errors, window) {
                     if(errors){
-                        response.writeHead(500, {
+                        res.writeHead(500, {
                             'Content-Type': 'text/plain'
                         });
-                        response.write('Error while parsing document by jsdom');
-                        response.end();   
+                        res.write('Error while parsing document by jsdom');
+                        res.end();   
                     }else{
                         try{
                             var $ = window.$;
@@ -686,34 +682,31 @@ function editTemplateHTML(request, response, lecture, order,keywords){
                                     fs.writeFile(SLIDES_DIRECTORY+'/'+lecture.courseID+'/'+lecture.lectureID+'.html', newcontent, function (err) {
                                         if (err) {
                                         
-                                            response.writeHead(500, {
+                                            res.writeHead(500, {
                                                 'Content-Type': 'text/plain'
                                             });
-                                            response.write('Problem with saving lecture file: '+err);
-                                            response.end();
+                                            res.write('Problem with saving lecture file: '+err);
+                                            res.end();
                                         }else{
-                                            console.log(SLIDES_DIRECTORY+'/'+lecture.courseID+'/'+lecture.lectureID+'.html');
-                                            getCourseFullNameAndContinue(response, request, lecture, lecture.courseID, copyTemplateCSS, '');
-                                        //copyTemplateCSS(request, response, lecture);
-
+                                            getCourseFullNameAndContinue(res, req, lecture, lecture.courseID, copyTemplateCSS, '');
                                         }
                                     });  
                                 }else{
-                                    response.writeHead(500, {
+                                    res.writeHead(500, {
                                         'Content-Type': 'text/plain'
                                     });
-                                    response.write('Problem with saving lecture file - error during retrieving course info: '+err);
-                                    response.end();
+                                    res.write('Problem with saving lecture file - error during retrieving course info: '+err);
+                                    res.end();
                                 }
                         
                             });   
                         }
                         catch(err){
-                            response.writeHead(500, {
+                            res.writeHead(500, {
                                 'Content-Type': 'text/plain'
                             });
-                            response.write('Error while parsing document: '+err);
-                            response.end();
+                            res.write('Error while parsing document: '+err);
+                            res.end();
                         }
                     }
                 }
@@ -722,14 +715,14 @@ function editTemplateHTML(request, response, lecture, order,keywords){
     });
 }
 
-function editTemplateMoveHTML(prevFile, request, response, lecture, order,keywords){
+function editTemplateMoveHTML(prevFile, req, res, lecture, order,keywords){
     fs.readFile(SLIDES_DIRECTORY+'/'+lecture.courseID+'/'+prevFile+'.html', function(err, data) {
         if(err){
-            response.writeHead(500, {
+            res.writeHead(500, {
                 "Content-Type": "text/plain"
             });
-            response.write("Cannot load presentation template");
-            response.end();   
+            res.write("Cannot load presentation template");
+            res.end();   
         }else{
             var content = data.toString();
             jsdom.env({
@@ -739,11 +732,11 @@ function editTemplateMoveHTML(prevFile, request, response, lecture, order,keywor
                 ],
                 done: function(errors, window) {
                     if(errors){
-                        response.writeHead(500, {
+                        res.writeHead(500, {
                             'Content-Type': 'text/plain'
                         });
-                        response.write('Error while parsing document by jsdom');
-                        response.end();   
+                        res.write('Error while parsing document by jsdom');
+                        res.end();   
                     }else{
                         try{
                             var $ = window.$;
@@ -765,26 +758,24 @@ function editTemplateMoveHTML(prevFile, request, response, lecture, order,keywor
                                     fs.writeFile(SLIDES_DIRECTORY+'/'+lecture.courseID+'/'+prevFile+'.html', newcontent, function (err) {
                                         if (err) {
                                         
-                                            response.writeHead(500, {
+                                            res.writeHead(500, {
                                                 'Content-Type': 'text/plain'
                                             });
-                                            response.write('Problem with saving lecture file: '+err);
-                                            response.end();
+                                            res.write('Problem with saving lecture file: '+err);
+                                            res.end();
                                         }else{
                                             
                                             
                                             fs.rename(SLIDES_DIRECTORY+'/'+lecture.courseID+'/'+prevFile+'.html', SLIDES_DIRECTORY+'/'+lecture.courseID+'/'+lecture.lectureID+'.html', function (err) {
                                                 if (err) {
                                         
-                                                    response.writeHead(500, {
+                                                    res.writeHead(500, {
                                                         'Content-Type': 'text/plain'
                                                     });
-                                                    response.write('Problem with saving lecture file: '+err);
-                                                    response.end();
+                                                    res.write('Problem with saving lecture file: '+err);
+                                                    res.end();
                                                 }else{
-                                                    console.log(SLIDES_DIRECTORY+'/'+lecture.courseID+'/'+lecture.lectureID+'.html');
-                                                    getCourseFullNameAndContinue(response, request, lecture, lecture.courseID, moveTemplateCSS, prevFile);
-                                                //                                                    moveTemplateCSS(request, response, lecture);
+                                                    getCourseFullNameAndContinue(res, req, lecture, lecture.courseID, moveTemplateCSS, prevFile);
                                                 }
                                                 
                                                 
@@ -792,21 +783,21 @@ function editTemplateMoveHTML(prevFile, request, response, lecture, order,keywor
                                         }
                                     });  
                                 }else{
-                                    response.writeHead(500, {
+                                    res.writeHead(500, {
                                         'Content-Type': 'text/plain'
                                     });
-                                    response.write('Problem with saving lecture file - error during retrieving course info: '+err);
-                                    response.end();
+                                    res.write('Problem with saving lecture file - error during retrieving course info: '+err);
+                                    res.end();
                                 }
                         
                             });   
                         }
                         catch(err){
-                            response.writeHead(500, {
+                            res.writeHead(500, {
                                 'Content-Type': 'text/plain'
                             });
-                            response.write('Error while parsing document: '+err);
-                            response.end();
+                            res.write('Error while parsing document: '+err);
+                            res.end();
                         }
                     }
                 }
@@ -815,63 +806,63 @@ function editTemplateMoveHTML(prevFile, request, response, lecture, order,keywor
     });
 }
 
-app.get('/api/:course/:lecture/lecture', function(request, response, next){
-    if(request.params.course==="facet") {
+app.get('/api/:course/:lecture/lecture', function(req, res, next){
+    if(req.params.course==="facet") {
         next(); // TODO: tenhle hack je tu proto, že to místno na facet skákalo sem (stejné url!) TODO: rozlišit url lépe!!
         return;
     }
     Lecture.find({
         isActive:true,
-        courseID: request.params.course,
-        lectureID:request.params.lecture
+        courseID: req.params.course,
+        lectureID:req.params.lecture
         
     }, function(err,lectures){
         if(!err){
             if(lectures.length > 0) {
-                response.writeHead(200, {
+                res.writeHead(200, {
                     "Content-Type": "application/json"
                 });
-                response.write(JSON.stringify(lectures[0], null, 4));
-                response.end();  
+                res.write(JSON.stringify(lectures[0], null, 4));
+                res.end();  
             } else {
-                response.writeHead(404, {
+                res.writeHead(404, {
                     "Content-Type": "text/plain"
                 });
-                response.write("Lecture not found");
-                response.end(); 
+                res.write("Lecture not found");
+                res.end(); 
             }    
         }else{
-            response.writeHead(500, {
+            res.writeHead(500, {
                 "Content-Type": "text/plain"
             });
-            response.write("Problems with database");
-            response.end();   
+            res.write("Problems with database");
+            res.end();   
         }
     });
 });
 
-function getCourseFullNameAndContinue(response, request, lecture, id, callback, prevFile){
+function getCourseFullNameAndContinue(res, req, lecture, id, callback, prevFile){
 
     Course.find({
         courseID: id
     }, function(err,crs){   
         if(!err) {
             if(crs.length > 0) {
-                callback(request, response, lecture, prevFile, crs[0].longName);
+                callback(req, res, lecture, prevFile, crs[0].longName);
             }else{
-                response.writeHead(404, {
+                res.writeHead(404, {
                     "Content-Type": "text/plain"
                 });
-                response.write("Lecture not found");
-                response.end(); 
+                res.write("Lecture not found");
+                res.end(); 
             }
             
         }else{
-            response.writeHead(500, {
+            res.writeHead(500, {
                 "Content-Type": "text/plain"
             });
-            response.write("Problems with database");
-            response.end(); 
+            res.write("Problems with database");
+            res.end(); 
         }
     });
 }

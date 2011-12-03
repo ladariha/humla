@@ -35,18 +35,14 @@ function removeSlide(course, lecture, slideNumber){
         if (request.readyState==4) {
             if(request.status==200){
                 window.location.reload();
-                console.log("Slide " +slideNumber+" removed.");
             }else{
                 alert(request.status+": "+request.statusText);
-                console.log("||"+request.status+": "+request.statusText);
             }
         }else{
             alert(request.responseText);
-            console.log("ERROR "+request.responseText);
         }
         
     };
-    console.log("posilam "+url);
     request.send(null);
-    console.log("poslano ");
+
 }

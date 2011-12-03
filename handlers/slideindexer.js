@@ -149,45 +149,45 @@ app.all('/api/:lecture/:course/index', function api(req, res) {
  * api/slideindexer/index
  * 
  */
-function index(response, request){
-    switch(request.method){
+function index(res, req){
+    switch(req.method){
         case 'GET':
-            //            getDocumentFromUrl(response, request)
-            getIndex(response, request);
+            //            getDocumentFromUrl(res, request)
+            getIndex(res, req);
             break;
         default:
-            response.writeHead(405, {
+            res.writeHead(405, {
                 'Content-Type': 'text/plain'
             });
-            response.write('405 Method Not Allowed');
-            response.end();
+            res.write('405 Method Not Allowed');
+            res.end();
     }   
 }
 
 /**
  * Returns slide's index given by URL or course name and lecture<br/> 
  */
-function getIndex(response, request){
+function getIndex(res, req){
     
     var regx =/^\/api\/([A-Za-z0-9-_]+)\/([A-Za-z0-9-_]+)\/index/; 
-    request.url.match(regx);
+    req.url.match(regx);
     var course = RegExp.$1;
     var lecture = RegExp.$2;
-    var url = querystring.parse(require('url').parse(request.url).query)['url'];
-    var alt = querystring.parse(require('url').parse(request.url).query)['alt'];
+    var url = querystring.parse(require('url').parse(req.url).query)['url'];
+    var alt = querystring.parse(require('url').parse(req.url).query)['alt'];
     if(alt == undefined){
         alt = "json"; // set json as default
     }else{
         if(alt!=="json" && alt!=="xml"){
             // incorrect format requested
-            response.writeHead(400, { // TODO fix status code
+            res.writeHead(400, { // TODO fix status code
                 'Content-Type': 'text/plain'
             });
-            response.write("Incorrect value of optional alt attribute. Allowed values are xml or json.");
-            response.end();
+            res.write("Incorrect value of optional alt attribute. Allowed values are xml or json.");
+            res.end();
         }
     }
-    var refresh = querystring.parse(require('url').parse(request.url).query)['refresh'];
+    var refresh = querystring.parse(require('url').parse(req.url).query)['refresh'];
     var pathToCourse = '/'+course+'/';
     var filename = lecture;
     var indexfile = JSON_DIRECTORY+pathToCourse+filename+"."+alt;
@@ -198,26 +198,27 @@ function getIndex(response, request){
                     if(err){
                         console.error("ERROR reading "+alt+" file "+indexfile);
                         console.error("   => parsing source html file instead");
+                        getDocumentFromFileSystem(res, req, pathToCourse,filename, lecture, course, alt);
                     }else{
                         if(alt==="json"){
-                            response.writeHead(200, {
+                            res.writeHead(200, {
                                 'Content-Type': 'application/json'
                             });
                         }else{
-                            response.writeHead(200, {
+                            res.writeHead(200, {
                                 'Content-Type': 'application/xml'
                             });
                         }
                         var textindex = data.toString();
-                        response.write(textindex);
-                        response.end();    
+                        res.write(textindex);
+                        res.end();    
                     }
                 });
             }else{
                 if(url === undefined){
-                    getDocumentFromFileSystem(response, request, pathToCourse,filename, lecture, course, alt);
+                    getDocumentFromFileSystem(res, req, pathToCourse,filename, lecture, course, alt);
                 }else{
-                    getDocumentFromUrl(response, request, url, pathToCourse, filename, lecture, course, alt);    
+                    getDocumentFromUrl(res, req, url, pathToCourse, filename, lecture, course, alt);    
                 }      
                     
             } 
@@ -225,16 +226,16 @@ function getIndex(response, request){
     }else{ // parse the document again and update JSON index file
         if(refresh==="true"){
             if(url === undefined){
-                getDocumentFromFileSystem(response, request, pathToCourse,filename, lecture, course, alt);
+                getDocumentFromFileSystem(res, req, pathToCourse,filename, lecture, course, alt);
             }else{
-                getDocumentFromUrl(response, request, url, pathToCourse, filename,lecture, course, alt);    
+                getDocumentFromUrl(res, req, url, pathToCourse, filename,lecture, course, alt);    
             }            
         }else{
-            response.writeHead(400, {
+            res.writeHead(400, {
                 'Content-Type': 'text/plain'
             });
-            response.write("Invalid value or parameter \"refresh\"");
-            response.end();  
+            res.write("Invalid value or parameter \"refresh\"");
+            res.end();  
         }
     }
 }
@@ -253,8 +254,8 @@ function getIndex(response, request){
  * is again what will be returned. This calling will notify SlideIndexer that 
  * you have finished. After all extension called sendResponse(), HTTP response
  * will be send to client
- * @param response http response to be returned
- * @param request http request
+ * @param res http response to be returned
+ * @param req http request
  * @param body html source code to be parsed
  * @param pathToCourse name of folder for courses's slides and indices, for example "/mdw/"
  * @param filename file name (without preffix) based on lecture order, for example "lecture1"
@@ -263,7 +264,7 @@ function getIndex(response, request){
  * @param alt - output format, either json or xml (case sensitive)
  *
  */
-function parseDocument(response, request, body, pathToCourse, filename, lecture, course, alt){
+function parseDocument(res, req, body, pathToCourse, filename, lecture, course, alt){
     jsdom.env({
         html: body,
         src: [
@@ -271,18 +272,18 @@ function parseDocument(response, request, body, pathToCourse, filename, lecture,
         ],
         done: function(errors, window) {
             if(errors){
-                response.writeHead(500, {
+                res.writeHead(500, {
                     'Content-Type': 'text/plain'
                 });
-                response.write('Error while parsing document by jsdom');
-                response.end();   
+                res.write('Error while parsing document by jsdom');
+                res.end();   
             }else{
                 try{
                     var $ = window.$;
                     var slideIndex = {
                         pathToCourse : pathToCourse,
                         format : alt,
-                        host : request.headers.host,
+                        host : req.headers.host,
                         filename : filename,
                         course : course,
                         lecture: lecture,
@@ -358,7 +359,7 @@ function parseDocument(response, request, body, pathToCourse, filename, lecture,
                            
                         }  
                     };
-                    slideIndex.response = response;
+                    slideIndex.response = res;
                     parseTitles(slideIndex, $);
                     slideIndex.content.structure = makeStructureHierarchical(slideIndex);
                     parseImagesAndCodeBlocks(slideIndex,$);
@@ -382,12 +383,11 @@ function parseDocument(response, request, body, pathToCourse, filename, lecture,
 
                 }
                 catch(err){
-                    console.log(">>>"+err);
-                    response.writeHead(500, {
+                    res.writeHead(500, {
                         'Content-Type': 'text/plain'
                     });
-                    response.write('Error while parsing document: '+err);
-                    response.end();
+                    res.write('Error while parsing document: '+err);
+                    res.end();
                 }
             }
         }
@@ -398,7 +398,7 @@ function parseDocument(response, request, body, pathToCourse, filename, lecture,
  * Returns html document from remote URL
  */
  
-function getDocumentFromUrl(response, request, url, pathToCourse, filename, lecture, course, alt){
+function getDocumentFromUrl(res, req, url, pathToCourse, filename, lecture, course, alt){
     url = decodeURI(url);
     url = url.replace('http://',''); // TODO no support for other than HTTP protocol
     var stop = url.indexOf('/');
@@ -410,7 +410,7 @@ function getDocumentFromUrl(response, request, url, pathToCourse, filename, lect
         method: 'GET'
     };
 
-    var req = http.request(options, function(res) {
+    var request = http.request(options, function(res) {
         res.setEncoding('utf8'); 
         statusCode = res.statusCode;
         res.on('data', function (chunk) {
@@ -419,25 +419,25 @@ function getDocumentFromUrl(response, request, url, pathToCourse, filename, lect
 
         res.on('end', function () {
             if(res.statusCode === 200){
-                parseDocument(response, request, content, pathToCourse, filename,lecture, course, alt);
+                parseDocument(res, req, content, pathToCourse, filename,lecture, course, alt);
             }else{
-                response.writeHead(res.statusCode, {
+                res.writeHead(res.statusCode, {
                     'Content-Type': 'text/plain'
                 });
-                response.write(content);
-                response.end(); 
+                res.write(content);
+                res.end(); 
 
             }   
         }); 
     });
-    req.end();
-    req.on('error', function(e) {
-        response.writeHead(500, {
+    request.end();
+    request.on('error', function(e) {
+        res.writeHead(500, {
             'Content-Type': 'text/plain'
         });
         
-        response.write(e.message);
-        response.end();  
+        res.write(e.message);
+        res.end();  
     });
 }
 
@@ -446,17 +446,17 @@ function getDocumentFromUrl(response, request, url, pathToCourse, filename, lect
  * Returns html document from file system
  */
  
-function getDocumentFromFileSystem(response, request, pathToCourse, filename, lecture, course, alt){
+function getDocumentFromFileSystem(res, req, pathToCourse, filename, lecture, course, alt){
     fs.readFile(SLIDES_DIRECTORY+pathToCourse+filename+".html", function (err, data) {
         if (err){
-            response.writeHead(500, {
+            res.writeHead(500, {
                 'Content-Type': 'text/plain'
             });
         
-            response.write(err.message);
-            response.end();  
+            res.write(err.message);
+            res.end();  
         }else{
-            parseDocument(response, request, data, pathToCourse, filename,lecture, course, alt);   
+            parseDocument(res, req, data, pathToCourse, filename,lecture, course, alt);   
         }
     });
 }
