@@ -23,9 +23,13 @@ var jsdom = require('jsdom');
 
 /** Make slides AJAX Crawable
  *  -  get one slide HTML
+ *
+ *
+ * TODO: přidávat do slajdů i linky na obrázky, zdrojáky a další věci z pluginů
+ * TODO: Doplnit ty vlastnosti o přednáškách  - ty meta tagy
  **/
 app.get('/data/slides/:course/:lecture', function(req, res, next) {                
-    if(req.query.hasOwnProperty('_escaped_fragment_')) {        
+    if(req.query.hasOwnProperty('_escaped_fragment_')) {  //TODO: odchytávat ten escaped fragment rovnou v parametru getu?
         //vstup: #!/1/v1
         var fragment = req.query['_escaped_fragment_'].split("/",2)[1]; // first thing between "/"
         var p = req.params;             

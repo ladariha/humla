@@ -26,7 +26,14 @@
                         <li ><a id="about" href="about.html">About</a></li>
                     </ul>
                 </nav>
+                <div id="login">
+                    <a id="login-register" href="#register">register</a>
+                    <a id="login-user" href="#user" style="display:none"></a><span>or</span>
+                    <a id="login-login" href="#login">login</a>            
+                    <a id="login-logout" href="#login" style="display:none;">logout</a>                    
+                </div>
             </header>
+
             <div id="main" role="main">
                 <section>
                     <div class="colhead"><span class="number">1</span>. Courses</div>
@@ -74,6 +81,34 @@
             </footer>
         </div> <!--! end of #container -->
 
+        <div id="login-form-overlay">
+            <a href="#login" id="form-close-btn" rel="javascript" style="cursor: pointer;" title="close">close</a>
+
+            <form id="login-form">
+                <div>
+                    <label for="username">Username</label>
+                    <input type="text" id="username" autofocus="autofocus" autocomplete="on"  />
+                </div>
+                <div class="register-field">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email"   />
+                </div>
+                <div>
+                    <label for="password">Password</label>
+                    <input type="password" id="password"   />
+                </div>
+                <div class="register-field">
+                    <label for="password_again">Password (Again)</label>
+                    <input type="password" id="password_again"   />
+                </div>
+                
+                <div class="controls">
+                    <a id="reg-switch" href="#registrace" title="Registration">Registration</a>
+                    <a id="login-button" href="#registrace" title="Login" class="button">Login</a>
+                    <a href="#registrace" title="Login" class="button register-field">Register</a>
+                </div>
+            </form>
+        </div>
 
 
         <div id="debug">

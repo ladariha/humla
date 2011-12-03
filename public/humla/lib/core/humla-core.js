@@ -287,6 +287,9 @@ var View = function(config, keys, baseDir) {
         else if (containsKey(event.keyCode, this.keys.prev))
             this.gotoPrevious();
         
+        else if (containsKey(event.keyCode, this.keys.menu))
+            humla.menubar.toggle();
+        
         else if (containsKey(event.keyCode, this.keys.index))
             humla.controler.getExtensionById("slideindex").callExtensionInterface("showIndex",humla.slides[this.currentSlide - 1]);
     };

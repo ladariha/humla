@@ -43,11 +43,9 @@ app.post('/api/:course/:lecture/:slide/comments', function(req, res, next){
         res.writeHead(400); //BAD_REQUEST
         res.write("Gimme some text, bro!");
         res.end();
+        return;
     }
-    var com = new Comment();
-    //console.log(req);
-    //console.log(req.rawBody);
-    //console.log(req.body);
+    var com = new Comment();    
     com.body = req.rawBody ? req.rawBody : "Placeholder Body";
     com.courseID = req.params.course;
     com.lectureID = req.params.lecture;

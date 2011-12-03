@@ -25,6 +25,9 @@ var humla = {
     // message box
     msgbox    : null,
     
+    // menu bar
+    menubar   : null,
+    
     // all slides in the presentation
     slides    : [],
     
@@ -67,6 +70,9 @@ var humla = {
     
         // create utils object
         humla.utils = new Utils(window);
+        
+        // create MenuBar object
+        humla.menubar = new MenuBar();
     
         // get the base url of the humla directory
         var scripts = humla.utils.documentHead.getElementsByTagName("script");
@@ -80,7 +86,8 @@ var humla = {
     
         // activate main style sheet and load the main scripts
         //humla.utils.activateStyle(this.home + "core/humla.css", "screen, print");
-        var footer = null;   
+        var footer = null;           
+        
         
         var loadSlides = function(section) {
             // get all direct descendant elements underneath this section element
@@ -527,6 +534,62 @@ var MessageBox = function(message) {
     if (message)
         this.addMessage(message);
 };
+
+
+/* MENU BAR */
+
+var MenuBar = function(message) {
+    this.nav = null;    
+    this.hidden = true;
+    
+    // Menu bude mít buď zobrazený poloprůhledný klikadlo, nebo celý menu, nebo menu i s nabídkou
+    
+    this.showMenu = function(update) {
+        if (this.nav && update) {
+            humla.utils.documentBody.removeChild(this.nav);
+            this.nav = null;
+        }
+        
+        if (!this.div) {
+            this.nav = humla.utils.document.createElement("nav");           
+            
+            //Generate menu Icons with texts TODO
+            this.nav.innerHTML = "<ul id='menu'><li>Plugins</li><li>Views</li><li>Settings</li></ul>";            
+            
+            humla.utils.documentBody.insertBefore(this.nav, humla.utils.documentBody.childNodes[0]);
+        }        
+    }    
+    
+    this.hideMenu = function() {        
+        if (this.nav) {
+            this.nav.innerHTML = "<div class='toggle'></div>";        
+        } else {            
+            this.nav = humla.utils.document.createElement("nav");
+            this.nav.innerHTML = "<div class='toggle'></div>";
+            humla.utils.documentBody.insertBefore(this.nav, humla.utils.documentBody.childNodes[0]);
+        }
+        this.nav.className = "lower";
+        this.nav.addEventListener("mouseup", function() {
+            humla.menubar.showMenu(true);
+            humla.menubar.hidden = false;
+        });
+    }
+    
+    this.toggle = function() {
+        if(this.hidden) {
+            this.showMenu(true);
+        } else {
+            this.hideMenu();
+        }
+        this.hidden = !this.hidden;
+    }
+    
+    
+    
+};
+
+
+
 
 /* LOAD HUMLA */
 

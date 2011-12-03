@@ -40,6 +40,21 @@
                                 <div class="heading">
                                     <h3>
                                         <span class="method"></span>
+                                        <span class="route">/api/list</span>
+                                        <span class="format">JSON</span>
+                                    </h3>                                    
+                                </div>
+                                <div class="content" style="display:none;">
+                                    <h4>Returns List of all courses with all lectures</h4>
+                                    <p>Returns course info</p>                                    
+                                </div>
+                            </li>  
+
+
+                            <li class="GET">
+                                <div class="heading">
+                                    <h3>
+                                        <span class="method"></span>
                                         <span class="route">/api/:course/course</span>
                                         <span class="format">JSON</span>
                                     </h3>                                    
@@ -122,6 +137,20 @@
                                 </div>
                             </li>
 
+                            
+                            <li class="GET">
+                                <div class="heading">
+                                    <h3>
+                                        <span class="method"></span>
+                                        <span class="route">/api/:course/:lecture/lecture</span>
+                                        <span class="format">JSON</span>
+                                    </h3>                                    
+                                </div>
+                                <div class="content" style="display:none;">
+                                    <h4>Get</h4>
+                                    <p>Fetch all comments from db for selected slide.</p>
+                                </div>
+                            </li>  
 
                             <li class="POST">
                                 <div class="heading">
@@ -241,11 +270,26 @@
                         <h1>Slideindexer</h1>
 
                         <ul class="endpoints">
-                            <li class="PUT">
+                            <li class="GET">
                                 <div class="heading">
                                     <h3>
                                         <span class="method"></span>
-                                        <span class="route">/api/:course/:lecture/:slide/comments</span>
+                                        <span class="route">/api/:lecture/:course/index</span>
+                                        <span class="format">JSON XML</span>
+                                    </h3>                                    
+                                </div>
+                                <div class="content" style="display:none;">
+                                    <h4>Returns List of all courses with all lectures</h4>
+                                    <p>Returns course info</p>                                    
+                                </div>
+                            </li>  
+
+
+                            <li class="POST">
+                                <div class="heading">
+                                    <h3>
+                                        <span class="method"></span>
+                                        <span class="route">/api/:lecture/:course/index</span>
                                         <span class="format">JSON XML</span>
                                     </h3>                                    
                                 </div>

@@ -72,14 +72,15 @@ a:hover { color: #036; }
 header {
     position: relative;
     clear:left;
-    width: 1000px;    
+    max-width: 1000px;    
+    min-width: 300px;    
     margin: 0; padding: 0;
 
 }
 header h1{    
     margin: 0; padding: 15px 0 25px 0;
     font: bolder 2.8em 'Trebuchet MS', Arial, Sans-serif;
-    
+
     top: 6px; right: 15px;
 }
 
@@ -100,14 +101,15 @@ nav {
     line-height: 30px;
     margin: 0;
     padding: 0;
-    width: 1000px;
+    /*width: 1000px;*/
+    float:left;
 }
 
 nav ul {
     list-style: none; 
     padding:0;
     margin: 0 0; 
-    width: 1000px;    
+    /*width: 1000px;    */
 }
 nav li { 
     display: inline-block; padding:0;height:40px;
@@ -177,6 +179,105 @@ nav li > a.active {
     opacity: 1;
 }
 
+header div#login {    
+    float:right;
+    margin-top: 18px;
+    margin-right: 4px;
+}
+header div#login a {
+    cursor:pointer;
+    text-decoration: none;    
+    border-bottom: 1px dotted #bbb;    
+}
+header div#login a:hover {
+    cursor:pointer;
+    border-bottom: 1px solid #bbb;    
+}
+
+/* OVERLAY LOGIN FORM */
+
+#login-form-overlay{
+    width:300px;
+    line-height:30px;
+    position:fixed;
+    left:50%;
+    top:50%;
+    margin-top:-180px;
+    margin-left:-150px;
+    z-index:999;
+    position:absolute;	
+    border: 1px solid #D2D2D2;
+    display: none;    			
+    -webkit-box-shadow: 0px 0px 10px #ccc;
+    -moz-box-shadow: 0px 0px 10px #ccc;
+    box-shadow: 0px 0px 10px #ccc;    
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+}
+
+#login-form-overlay form#login-form{
+    color: #666;
+    padding: 10px;	
+    background: #F7F7F7; /*rgba(200,200,200,0.8);    */
+}
+
+#login-form-overlay form#login-form div{
+    height: 50px;
+    width: 100%;
+}
+
+#login-form-overlay form#login-form input{
+    background: white;
+    border: solid 1px #E5E5E5;
+    font-weight: bold;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    height: 30px;
+    float:  right;
+    margin-top: 11px;
+    padding: 0px 0px;
+    width: auto;
+}
+
+#login-form-overlay form#login-form label{
+    width: auto;
+    padding: 9px 5px;    
+}
+
+
+#login-form-overlay form#login-form div.controls{
+     border-top: 1px solid #fff;
+     margin-top: 10px;
+     margin-bottom: 0px;
+     padding-top: 5px;
+     height: 35px;
+}
+#login-form-overlay form#login-form a.button{ 
+    float:right;
+    padding: 0px 10px;
+}
+
+#login-form-overlay a#form-close-btn{
+    background: url(../img/close_btn.png) no-repeat center center;
+    width: 26px;
+    height: 25px;
+    text-indent: -9999px;
+    display: block;
+    position: absolute;
+    top: -15px;
+    right: -10px;
+}
+
+#login-form-overlay form#login-form .register-field {
+    display:none;
+    
+}
+
+/* ------------------------ MAIN --------------------------------*/
+
+
 #main {
     clear:both;
     margin:0px; padding:0;
@@ -212,7 +313,7 @@ nav li > a.active {
     font-weight: bold;
     padding: 10px;
     text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
-    
+
 }
 #main div.colhead .number{ 
     font-size: 1.2em;
@@ -482,6 +583,17 @@ input[type=text]:focus, textarea:focus { background:#f1f6f9; padding:8px 5px; bo
 .orange {color: #F69600;}
 .bold {font-weight: bold;}
 .clear{clear:both;}
+.floar-left {float:left;}
+.round-corners{
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+.shadow{
+    -webkit-box-shadow: 0px 0px 10px 0px #000;
+    -moz-box-shadow: 0px 0px 10px 0px #000;
+    box-shadow: 0px 0px 10px 0px #000;
+}
 
 
 

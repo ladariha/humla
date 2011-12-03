@@ -245,6 +245,28 @@ function PageHandler(){
             var targ = (e.srcElement) ? e.srcElement : e.target; // hack kvuli FF
             dataAccess.loadInfo(targ.dataset ? targ.dataset.link : targ.title); //hack kvuli IE        
         });  
+        
+        // login/registration button // TODO: odprasit... moc selektorů
+        $('#login > a#login-login').click(function(){
+            $(".register-field").hide();
+            $("#login-button").show();
+            $('div#login-form-overlay').toggle('fast');
+        })
+        $('#login > a#login-register,  a#form-close-btn').click(function(){
+            $(".register-field").show();            
+            $("#login-button").hide();
+            $('div#login-form-overlay').toggle('fast');
+        })
+        $("#reg-switch").click(function() {            
+            $(".register-field").toggle("fast");
+            if(this.innerHTML == "Registration") {
+                $("#login-button").show();
+                this.innerHTML = "Login";
+            } else {
+                $("#login-button").hide();
+                this.innerHTML = "Registration";
+            }            
+        })
     };
     
     ///////////////////////////////////////////////////////////////////////// well commented line
