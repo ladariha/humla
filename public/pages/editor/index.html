@@ -34,14 +34,19 @@
         <div id="controlPanel">
             Select layout:
             <div>
-                    <img src="./img/intro.png" alt="Layout Title only" onclick="loadLayout(0);" title="Select layout"/>
-                    <img src="./img/title.png" alt="Layout Title only" onclick="loadLayout(1);" title="Select layout"/>
-                    <img src="./img/twocol.png" alt="Layout Title only" onclick="loadLayout(2);" title="Select layout"/>
-                    <img src="./img/footer.png" alt="Layout Title only" onclick="loadLayout(3);" title="Select layout"/>
+
+                <img class="editor-icon-full" src="img/undo.png" onclick="editor.undo();" alt="Undo" title="Undo"  />
+                <img class="editor-icon" src="img/slide32.png" onclick="loadLayout(4);" alt="Insert Intro Slide" title="Insert Intro Slide"  />
+                <img class="editor-icon" src="img/slide32outline.png" onclick="loadLayout(5);" alt="Insert Outline Slide" title="Insert Outline Slide"  />
+                <img class="editor-icon" src="img/twocol.png" onclick="loadLayout(2);" alt="Insert Outline Slide" title="Insert Two Columns  Slide"  />
+                <img class="editor-icon" src="img/title.png" onclick="loadLayout(1);" alt="Insert Outline Slide" title="Insert Title Slide"  />
+                <img class="editor-icon" src="img/footer.png" onclick="loadLayout(3);" alt="Insert Outline Slide" title="Insert Footer Slide"  />
+                <img class="editor-icon-full" src="img/redo.png" onclick="editor.redo();" alt="Redo" title="Redo"  />
+                <img class="editor-icon-full" src="img/restore.png" onclick="restoreContent();" alt="Restore Original Content" title="Restore Original Content"  />
             </div>
-            
-            
-            
+
+
+
         </div>
         <textarea id="code" name="code">
         </textarea>
@@ -70,6 +75,9 @@
         <div>
             <button type="button" onClick="sendData();">Save</button>
             <a href="" id="cancelLink"><button type="button">Cancel</button> </a>
+        </div>
+        <div class="restore-info">
+        * Restoring original content works only if local storage is supported by the browser
         </div>
     </body>
 </html>

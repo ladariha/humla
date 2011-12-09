@@ -76,6 +76,7 @@ function loadSlide(){
                         }
                         finalString = finalString.replace(/\&amp;/g,'&');
                         editor.setValue(finalString);
+                        localStorage.setItem("editor-original-content", finalString);
                         document.getElementById("append").innerHTML = "Append after";
                         document.getElementById("slide").innerHTML = slide;
                         document.getElementById("lecture").innerHTML = lecture;
@@ -112,6 +113,7 @@ function loadSlide(){
                             }
                         }
                         finalString = finalString.replace(/\&amp;/g,'&');
+                        localStorage.setItem("editor-original-content", finalString);
                         editor.setValue(finalString);
                         document.getElementById("slide").innerHTML = slide;
                         document.getElementById("lecture").innerHTML = lecture;
@@ -138,8 +140,8 @@ function loadSlide(){
 }
 
 
-function loadControlPanel(){
-    
+function restoreContent(){
+    editor.setValue(localStorage.getItem("editor-original-content"));
 }
 
 function loadLayout(version){
@@ -147,9 +149,7 @@ function loadLayout(version){
     var course = getParameterByName('course');
     var lecture = getParameterByName('lecture');
     var slide = getParameterByName('slide');
-       
-    var url = "/api/"+course+"/"+lecture+"/"+"slide0"+"/editor?tmpl="+version; 
-            
+    var url = "/api/template/"+version+"/editor";
     var request = new XMLHttpRequest();
     request.open("GET", url, true);
     request.onreadystatechange = function(){

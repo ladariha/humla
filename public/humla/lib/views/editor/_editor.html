@@ -16,20 +16,29 @@
             .CodeMirror {
                 float: left;
                 width: 797px;
-                height: 590px;
+                height: 560px;
                 margin: 0 auto;
                 padding:0;
             }
-            
+
         </style>
     </head>
     <body>
         <textarea id="code" name="code">
         </textarea>
+        <div class="editor-toolbar">
+            <img class="editor-icon-full" src="icons/undo.png" onclick="codemirror_editor.undo();" alt="Undo" title="Undo"  />
+        <img class="editor-icon" src="icons/slide32.png" onclick="loadLayout(4);" alt="Insert Intro Slide" title="Insert Intro Slide"  />
+        <img class="editor-icon" src="icons/slide32outline.png" onclick="loadLayout(5);" alt="Insert Outline Slide" title="Insert Outline Slide"  />
+        <img class="editor-icon" src="icons/twocol.png" onclick="loadLayout(2);" alt="Insert Outline Slide" title="Insert Two Columns  Slide"  />
+        <img class="editor-icon" src="icons/title.png" onclick="loadLayout(1);" alt="Insert Outline Slide" title="Insert Title Slide"  />
+        <img class="editor-icon" src="icons/footer.png" onclick="loadLayout(3);" alt="Insert Outline Slide" title="Insert Footer Slide"  />
+        <img class="editor-icon-full" src="icons/redo.png" onclick="codemirror_editor.redo();" alt="Redo" title="Redo"  />
+        </div>
         <script>
             var delay;
             // Initialize CodeMirror editor with a nice html5 canvas demo.
-             codemirror_editor = CodeMirror.fromTextArea(document.getElementById('code'), {
+            codemirror_editor = CodeMirror.fromTextArea(document.getElementById('code'), {
                 mode: 'text/html',
                 lineWrapping: true,
                 lineNumbers: true,

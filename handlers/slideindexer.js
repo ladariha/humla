@@ -8,7 +8,7 @@ var fs     = require('fs');
 var jquery = fs.readFileSync('./public/lib/jquery-1.6.3.min.js').toString();
 var path = require('path');
 var RAW_SLIDES_DIRECTORY = '/data/slides';
-var JSON_DIRECTORY = (path.join(path.dirname(__filename), '../public/data/index')).toString();
+var JSON_DIRECTORY = (path.join(path.dirname(__filename), '../cache/index')).toString();
 var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../public/data/slides')).toString();
 var EXTENSIONS_DIRECTORY = (path.join(path.dirname(__filename), './ext')).toString();
 var GENERAL_LECTURE_NAME = 'lecture';
@@ -341,7 +341,6 @@ function parseDocument(res, req, body, pathToCourse, filename, lecture, course, 
                                             }
                                         });
                                     }else{
-                
                                         fs.mkdir(JSON_DIRECTORY+pathToCourse, 0777, function(e) {
                                             if(!e){
                                                 fs.writeFile(JSON_DIRECTORY+pathToCourse+file+"."+slideIndex.format, textindex, function (err) {
