@@ -46,7 +46,7 @@ function getParameterByName(name){
 }
             
 window.onload = loadSlide();
-    
+       
     
 function loadSlide(){ 
     // http://127.0.0.1:1338/pages/editor/?course=mdw&lecture=lecture1&slide=2
@@ -166,7 +166,7 @@ function loadLayout(version){
                     }
                 }
                 finalString = finalString.replace(/\&amp;/g,'&');
-                editor.setValue(finalString);
+               editor.replaceRange(finalString,editor.getCursor());
                 document.getElementById("append").innerHTML = "Append after";
                 document.getElementById("slide").innerHTML = slide;
                 document.getElementById("lecture").innerHTML = lecture;

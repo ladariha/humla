@@ -18,7 +18,7 @@ function loadLayout(version){
                     }
                 }
                 finalString = finalString.replace(/\&amp;/g,'&');
-                codemirror_editor.setValue(codemirror_editor.getValue()+finalString);
+                codemirror_editor.replaceRange(finalString,codemirror_editor.getCursor());
             }else{
                 alert(request.status+": "+request.statusText);    
             }  

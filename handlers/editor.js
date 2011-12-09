@@ -86,6 +86,7 @@ function deleteSlide(res, req){
                             });   
 
                             var newcontent= $("html").html();
+                             newcontent = "<!DOCTYPE html><html>"+newcontent.replace(/\&amp;/g,'&')+"</html>";
                             if(slideSend===0){
                                 returnEditorError(404, "Slide "+slide+" not found", res);
                             }else{
@@ -172,8 +173,8 @@ function editSlideContentAppend(course, lecture, slide, content, res, host){
                                 slideCounter++;
                             });   
                             var newcontent= $("html").html();
-                            newcontent = newcontent.replace(/\&amp;/g,'&');
-                       
+//                            newcontent = newcontent.replace(/\&amp;/g,'&');
+                       newcontent = "<!DOCTYPE html><html>"+newcontent.replace(/\&amp;/g,'&')+"</html>";
                             if(slideSend===0){
                                 returnEditorError(404, "Slide "+slide+" not found", res);
                             }else{
@@ -237,7 +238,8 @@ function editSlideContent(course, lecture, slide, content, res, host){
                             });   
 
                             var newcontent= $("html").html();                            
-                            newcontent = newcontent.replace(/\&amp;/g,'&');
+                            //newcontent = newcontent.replace(/\&amp;/g,'&');
+                            newcontent = "<!DOCTYPE html><html>"+newcontent.replace(/\&amp;/g,'&')+"</html>";
                             if(slideSend===0){
                                 returnEditorError(404, "Slide "+slide+" not found", res);
                             }else{
@@ -382,6 +384,31 @@ app.get('/api/template/:templateID/editor', function api(req, res) {
 });
 
 
+app.get('/api/:course/:lecture/editor', function api(req, res) { // TODO check changes in url
+
+    var course = req.params.course;//RegExp.$1;
+    var lecture = req.params.lecture;
+    var htmlfile = SLIDES_DIRECTORY+ '/'+course+'/'+lecture+".html";
+    fs.readFile(htmlfile, function (err, data) {
+        if (err){
+            returnEditorError(500, err.message, res);
+        }else{
+        
+            res.writeHead(200, {
+                'Content-Type': 'text/plain'
+            });
+            res.write(data);
+            res.end();
+
+        }
+    
+    });
+    
+    
+});
+
+
+
 app.put('/api/:course/:lecture/editor', function api(req, res) { // TODO check changes in url
 
     var course = req.params.course;//RegExp.$1;
@@ -423,7 +450,7 @@ app.put('/api/:course/:lecture/editor', function api(req, res) { // TODO check c
                                 slideCounter++;
                             });   
                             var newcontent= $("html").html();    
-                            newcontent = newcontent.replace(/\&amp;/g,'&');
+                            newcontent = "<!DOCTYPE html><html>"+newcontent.replace(/\&amp;/g,'&')+"</html>";
                             fs.writeFile(htmlfile, newcontent, function (err) {
                                 if (err) {
                                     returnEditorError(500, 'Problem with saving document: '+err.message, res);
