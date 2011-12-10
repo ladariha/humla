@@ -86,7 +86,7 @@ function deleteSlide(res, req){
                             });   
 
                             var newcontent= $("html").html();
-                             newcontent = "<!DOCTYPE html><html>"+newcontent.replace(/\&amp;/g,'&')+"</html>";
+                            newcontent = "<!DOCTYPE html><html>"+newcontent.replace(/\&amp;/g,'&')+"</html>";
                             if(slideSend===0){
                                 returnEditorError(404, "Slide "+slide+" not found", res);
                             }else{
@@ -173,8 +173,8 @@ function editSlideContentAppend(course, lecture, slide, content, res, host){
                                 slideCounter++;
                             });   
                             var newcontent= $("html").html();
-//                            newcontent = newcontent.replace(/\&amp;/g,'&');
-                       newcontent = "<!DOCTYPE html><html>"+newcontent.replace(/\&amp;/g,'&')+"</html>";
+                            //                            newcontent = newcontent.replace(/\&amp;/g,'&');
+                            newcontent = "<!DOCTYPE html><html>"+newcontent.replace(/\&amp;/g,'&')+"</html>";
                             if(slideSend===0){
                                 returnEditorError(404, "Slide "+slide+" not found", res);
                             }else{
@@ -407,7 +407,28 @@ app.get('/api/:course/:lecture/editor', function api(req, res) { // TODO check c
     
 });
 
-
+app.put('/api/:course/:lecture/raw/editor', function api(req, res) {
+    var course = req.params.course;//RegExp.$1;
+    var lecture = req.params.lecture;
+    var htmlfile = SLIDES_DIRECTORY+ '/'+course+'/'+lecture+".html";
+    var resourceURL = req.headers.host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html";
+    fs.writeFile(htmlfile, decodeURIComponent(req.body.content), function (err) {
+        if (err) {
+            returnEditorError(500, 'Problem with saving document: '+err.message, res);
+        }else{
+                                        
+            res.writeHead(200, {
+                'Content-Type': 'application/json'
+            });
+            var t = {};
+            t.URL = "http://"+resourceURL;
+            t.html =  "Document updated, <a href=\"http://"+resourceURL+"\">back to presentation</a>";
+            res.write(JSON.stringify(t, null, 4));
+            res.end();                                    
+        }
+    });   
+    
+});
 
 app.put('/api/:course/:lecture/editor', function api(req, res) { // TODO check changes in url
 

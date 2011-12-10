@@ -24,7 +24,7 @@ function loadPresentation(){
                     document.getElementById("course").innerHTML = course;
                    
                 }else{
-                    document.getElementById("msg").innerHTML=request.status+": "+request.statusText;    
+                document.getElementById("msg").innerHTML=request.status+": "+request.statusText+" - "+request.responseText;    
                 }  
             }
         };
@@ -48,10 +48,7 @@ function restoreContent(){
 }
 
 function loadLayout(version){
-    
-    var course = getParameterByName('course');
-    var lecture = getParameterByName('lecture');
-    var slide = getParameterByName('slide');
+
     var url = "/api/template/"+version+"/editor";
     var request = new XMLHttpRequest();
     request.open("GET", url, true);
@@ -70,12 +67,37 @@ function loadLayout(version){
                 }
                 finalString = finalString.replace(/\&amp;/g,'&');
                 editor.replaceRange(finalString,editor.getCursor());
-                document.getElementById("lecture").innerHTML = lecture;
-                document.getElementById("course").innerHTML = course;
             }else{
-                document.getElementById("msg").innerHTML=request.status+": "+request.statusText;    
+                document.getElementById("msg").innerHTML=request.status+": "+request.statusText+" - "+request.responseText;    
             }  
         }
     };
     request.send(null);  
+}
+
+
+function sendData(){
+    
+    
+    var url = "/api/"+document.getElementById("course").innerHTML+"/"+document.getElementById("lecture").innerHTML+"/raw/editor";
+    var params = "content="+encodeURIComponent(editor.getValue());
+
+    var request = new XMLHttpRequest();
+    request.open("PUT", url, true);
+    request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    request.setRequestHeader("Content-length", params.length);
+    request.setRequestHeader("Connection", "close");
+    request.onreadystatechange = function(){
+        if (request.readyState==4) {
+            if(request.status==200){
+                var object = eval('(' + request.responseText + ')');
+                document.getElementById("msg").innerHTML=object.html;
+            }else{
+                document.getElementById("msg").innerHTML=request.status+": "+request.statusText;    
+            }
+            loadSlide();
+        }
+    };
+    request.send(params);
+
 }
