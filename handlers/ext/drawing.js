@@ -10,7 +10,7 @@ exports.parse =function parse($,slideIndex){
             var image = {};
             image.alt = $(this).attr('alt'); // prop() doesn't work here
             image.id = $(this).prop('id');
-            image.slide = slideIndex.baseURL+'#/'+slide; // this corresponds to number in slide's URL, so first slide has number 1
+            image.slide = slideIndex.baseURL+'#!/'+slide; // this corresponds to number in slide's URL, so first slide has number 1
             image.type = 'drawing';
             temporary.drawings.push(image);
         });

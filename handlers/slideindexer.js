@@ -599,14 +599,14 @@ function parseImagesAndCodeBlocks(slideIndex,$){
             image.alt = $(this).prop('alt');
             image.url = $(this).prop('src'); // TODO FIX RELATIVE URL
             image.filename = image.url.substring(image.url.lastIndexOf('/')+1);
-            image.slideURL = slideIndex.baseURL+"#/"+slide; // this corresponds to number in slide's URL, so first slide has number 1
+            image.slideURL = slideIndex.baseURL+"#!/"+slide; // this corresponds to number in slide's URL, so first slide has number 1
             image.type = 'picture';
             slideIndex.content.images.push(image);
         });
         
         $(this).find('pre').each(function(){
             code = {};
-            code.slideURL = slideIndex.baseURL+"#/"+slide;
+            code.slideURL = slideIndex.baseURL+"#!/"+slide;
             code.title= slideIndex.content.slides.titles[slide-1];
             var classAtr = $(this).prop('class');
             var i = classAtr.indexOf("brush:")+6;
@@ -630,7 +630,7 @@ function makeStructureHierarchical(slideIndex){
     var baseURL = slideIndex.host+ RAW_SLIDES_DIRECTORY+"/"+slideIndex.course+"/"+slideIndex.lecture+".html"; //GENERAL_LECTURE_NAME+
     var counter = 1;
     slideIndex.baseURL = baseURL;
-    baseURL = baseURL + "#/";
+    baseURL = baseURL + "#!/";
     for(var section in slideIndex.content.slides.sectionSlide){
         counter++;
         var tmp = {};
