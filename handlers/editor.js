@@ -86,6 +86,7 @@ function deleteSlide(res, req){
                             });   
 
                             var newcontent= $("html").html();
+                            newcontent = "<!DOCTYPE html><html>"+newcontent.replace(/\&amp;/g,'&')+"</html>";
                             if(slideSend===0){
                                 returnEditorError(404, "Slide "+slide+" not found", res);
                             }else{
@@ -172,8 +173,8 @@ function editSlideContentAppend(course, lecture, slide, content, res, host){
                                 slideCounter++;
                             });   
                             var newcontent= $("html").html();
-                            newcontent = newcontent.replace(/\&amp;/g,'&');
-                       
+                            //                            newcontent = newcontent.replace(/\&amp;/g,'&');
+                            newcontent = "<!DOCTYPE html><html>"+newcontent.replace(/\&amp;/g,'&')+"</html>";
                             if(slideSend===0){
                                 returnEditorError(404, "Slide "+slide+" not found", res);
                             }else{
@@ -237,7 +238,8 @@ function editSlideContent(course, lecture, slide, content, res, host){
                             });   
 
                             var newcontent= $("html").html();                            
-                            newcontent = newcontent.replace(/\&amp;/g,'&');
+                            //newcontent = newcontent.replace(/\&amp;/g,'&');
+                            newcontent = "<!DOCTYPE html><html>"+newcontent.replace(/\&amp;/g,'&')+"</html>";
                             if(slideSend===0){
                                 returnEditorError(404, "Slide "+slide+" not found", res);
                             }else{
@@ -366,6 +368,71 @@ function parseDocument(res, req, htmlfile, slide, resourceURL){
 }
 
 
+
+app.get('/api/template/:templateID/editor', function api(req, res) {
+    var template = req.params.templateID;
+    fs.readFile(SLIDE_TEMPLATE+'/'+template+'.html', function (err, data) {
+        if (err){
+            returnEditorError(500, err.message, res);
+        }else{
+            var r = {};
+            r.html= data.toString();
+            res.write(JSON.stringify(r, null, 4));
+            res.end();
+        }
+    });
+});
+
+
+app.get('/api/:course/:lecture/editor', function api(req, res) { // TODO check changes in url
+
+    var course = req.params.course;//RegExp.$1;
+    var lecture = req.params.lecture;
+    var htmlfile = SLIDES_DIRECTORY+ '/'+course+'/'+lecture+".html";
+    if(endsWith(lecture, ".html")){
+        htmlfile = SLIDES_DIRECTORY+ '/'+course+'/'+lecture;
+    }
+    fs.readFile(htmlfile, function (err, data) {
+        if (err){
+            returnEditorError(500, err.message, res);
+        }else{
+        
+            res.writeHead(200, {
+                'Content-Type': 'text/plain'
+            });
+            res.write(data);
+            res.end();
+
+        }
+    
+    });
+    
+    
+});
+
+app.put('/api/:course/:lecture/raw/editor', function api(req, res) {
+    var course = req.params.course;//RegExp.$1;
+    var lecture = req.params.lecture;
+    var htmlfile = SLIDES_DIRECTORY+ '/'+course+'/'+lecture+".html";
+    var resourceURL = req.headers.host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html";
+    fs.writeFile(htmlfile, decodeURIComponent(req.body.content), function (err) {
+        if (err) {
+            returnEditorError(500, 'Problem with saving document: '+err.message, res);
+        }else{
+                                        
+            res.writeHead(200, {
+                'Content-Type': 'application/json'
+            });
+            var t = {};
+            t.URL = "http://"+resourceURL;
+            t.html =  "Document updated, <a href=\"http://"+resourceURL+"\">back to presentation</a>";
+            res.write(JSON.stringify(t, null, 4));
+            res.end();                                    
+        }
+    });   
+    
+});
+
 app.put('/api/:course/:lecture/editor', function api(req, res) { // TODO check changes in url
 
     var course = req.params.course;//RegExp.$1;
@@ -375,7 +442,7 @@ app.put('/api/:course/:lecture/editor', function api(req, res) { // TODO check c
     //    console.log(d);
     var data_slide = eval('(' +d+')');
     console.log("DATA RECEIVED");
-    console.log(data_slide);
+ 
     
     var pathToCourse = '/'+course+'/';
     var htmlfile = SLIDES_DIRECTORY+pathToCourse+lecture+".html";
@@ -407,7 +474,7 @@ app.put('/api/:course/:lecture/editor', function api(req, res) { // TODO check c
                                 slideCounter++;
                             });   
                             var newcontent= $("html").html();    
-                            newcontent = newcontent.replace(/\&amp;/g,'&');
+                            newcontent = "<!DOCTYPE html><html>"+newcontent.replace(/\&amp;/g,'&')+"</html>";
                             fs.writeFile(htmlfile, newcontent, function (err) {
                                 if (err) {
                                     returnEditorError(500, 'Problem with saving document: '+err.message, res);
@@ -422,12 +489,12 @@ app.put('/api/:course/:lecture/editor', function api(req, res) { // TODO check c
                                     res.write(JSON.stringify(t, null, 4));
                                     res.end();
                                     
-                                    // TODO FIX for some reasons it throws Error: ENOTFOUND, Domain name not found
-                                    // tried with following URL:
-                                        // http://127.0.0.1:1338/api/MI-MDW/lecture1/index?refresh=true 
-                                        // 127.0.0.1:1338/api/MI-MDW/lecture1/index?refresh=true
-                                    // temporary fallback => it's called in client side :(
-                                 //   refreshIndexFile(course, lecture, host);
+                                // TODO FIX for some reasons it throws Error: ENOTFOUND, Domain name not found
+                                // tried with following URL:
+                                // http://127.0.0.1:1338/api/MI-MDW/lecture1/index?refresh=true 
+                                // 127.0.0.1:1338/api/MI-MDW/lecture1/index?refresh=true
+                                // temporary fallback => it's called in client side :(
+                                //   refreshIndexFile(course, lecture, host);
                                     
                                     
                                 }
@@ -450,7 +517,7 @@ function refreshIndexFile(course, lecture, host){
     // refesh JSON
     var url = "http://"+host+'/api/'+course+'/'+lecture+'/index?refresh=true';
     console.log("URL JE "+url);
-//    url = url.replace('http://',''); // TODO no support for other than HTTP protocol
+    //    url = url.replace('http://',''); // TODO no support for other than HTTP protocol
     var stop = url.indexOf('/');
     var content = '';
     var options = {
@@ -484,4 +551,8 @@ function returnEditorError(code, msg, res){
     });
     res.write(msg);
     res.end();
+}
+
+function endsWith(string, suffix) {
+    return string.indexOf(suffix, string.length - suffix.length) !== -1;
 }

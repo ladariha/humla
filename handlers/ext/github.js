@@ -15,7 +15,7 @@ exports.parse =function parse($,slideIndex){
                 }
             }
             code.title= slideIndex.content.slides.titles[slide-1];
-            code.slide = slideIndex.baseURL+'#/'+slide; // this corresponds to number in slide's URL, so first slide has number 1
+            code.slide = slideIndex.baseURL+'#!/'+slide; // this corresponds to number in slide's URL, so first slide has number 1
             slideIndex.content.github.push(code);
         });
         slide++;

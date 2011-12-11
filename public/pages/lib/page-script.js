@@ -102,6 +102,9 @@ function DataAccess() {
                     case 'editLecture':
                         window.location = 'editlecture.html?course='+t[0]+'&lecture='+t[1];
                         break;
+                    case 'editLectureHtml':
+                        window.location = 'editor/raw_editor.html?&course='+t[0]+'&lecture='+t[1]; 
+                        break;
                 }
             });
         });
