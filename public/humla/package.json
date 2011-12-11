@@ -7,7 +7,8 @@
   "contributors": [
                     { "name": "Tomas Vitvar", 
                       "name": "Petr Mikota",
-                      "name": "Vladimir Riha"}
+                      "name": "Vladimir Riha",
+                      "name": "Vojtech Smrcek"}
                   ],
   "dependencies"  : {                      
                     },
