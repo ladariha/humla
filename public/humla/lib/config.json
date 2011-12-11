@@ -53,6 +53,11 @@
             "object" : "view_editor",        
             "script" : {"src" : "views/editor.js"}, 
             "style"  : {"src" : "views/editor_view.css", "media" : "screen"}
+        },
+        {"id"     : "6", 
+            "object" : "view_example",        
+            "script" : {"src" : "views/example.js"}, 
+            "style"  : {"src" : "views/example.css", "media" : "screen"}
         }
         
     ],

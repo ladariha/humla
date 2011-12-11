@@ -15,6 +15,10 @@
     },
     {
         "name": "Vladimir Riha"
+    },
+    {
+        "name": "Vojtech Smrcek",
+        "email": "vojta.smrcek@gmail.com"
     }
     ],
     "dependencies"  : {       
