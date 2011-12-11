@@ -8,54 +8,34 @@
         " requirements",
         " resources"
     ],
-    "numberOfSlide": 39,
+    "numberOfSlide": 40,
     "images": [
         {
             "alt": "Amazon EC2 Free Usage Tier",
             "url": "img/ec2-free-tier.png",
             "filename": "ec2-free-tier.png",
-            "slideURL": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/24",
+            "slideURL": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/23",
             "type": "picture"
         },
         {
             "alt": "Cloud9 IDE",
             "url": "img/c9-ide-screenshot.png",
             "filename": "c9-ide-screenshot.png",
-            "slideURL": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/34",
+            "slideURL": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/35",
             "type": "picture"
         }
     ],
     "codeBlocks": [
         {
-            "slideURL": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/32",
-            "title": "Code Examples",
-            "language": "Java"
-        },
-        {
-            "slideURL": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/32",
-            "title": "Code Examples",
-            "language": "JavaScript"
-        },
-        {
-            "slideURL": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/32",
-            "title": "Code Examples",
-            "language": "XML"
-        },
-        {
-            "slideURL": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/32",
-            "title": "Code Examples",
-            "language": "Bash/shell"
-        },
-        {
-            "slideURL": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/34",
-            "title": "Use and Alter the Code",
+            "slideURL": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/35",
+            "title": "Tasks from Lectures",
             "language": "Bash/shell"
         }
     ],
     "structure": {
         "index": [
             {
-                "title": "Hellos",
+                "title": " Outline neni 4",
                 "url": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/2"
             },
             {
@@ -63,7 +43,7 @@
                 "url": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/3",
                 "chapters": [
                     {
-                        "title": "Web Engineering Curricula",
+                        "title": "Web Engineering Curricula NoEdit",
                         "url": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/4"
                     },
                     {
@@ -171,31 +151,31 @@
                     {
                         "title": "Final Marks",
                         "url": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/28"
+                    },
+                    {
+                        "title": "Heading",
+                        "url": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/29"
                     }
                 ]
             },
             {
                 "title": "Communication and Resources",
-                "url": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/29",
+                "url": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/30",
                 "chapters": [
                     {
                         "title": "Communication",
-                        "url": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/30"
-                    },
-                    {
-                        "title": "Overview of Resources",
                         "url": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/31"
                     },
                     {
-                        "title": "About Slides",
+                        "title": "Overview of Resources",
                         "url": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/32"
                     },
                     {
-                        "title": "Code Examples",
+                        "title": "About Slides",
                         "url": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/33"
                     },
                     {
-                        "title": "Github Repo",
+                        "title": "Heading",
                         "url": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/34"
                     },
                     {
@@ -228,7 +208,7 @@
         {
             "alt": "Representational State Transfer",
             "id": "1dOevmc1cKlJNHz6h416ybvOmYSTQD_cqPbgXjpjOY-0",
-            "slide": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/10",
+            "slide": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/9",
             "type": "drawing",
             "exportURL": "https://docs.google.com/drawings/d/1dOevmc1cKlJNHz6h416ybvOmYSTQD_cqPbgXjpjOY-0/export/png?id=1dOevmc1cKlJNHz6h416ybvOmYSTQD_cqPbgXjpjOY-0&pageid=p",
             "filename": "RESTArchitecture.png"
@@ -236,7 +216,7 @@
         {
             "alt": "Spaghetti Integration",
             "id": "123tDQFo3Zq0LEzzhquKp1xJX4YZ6YiWC0GDNGGK1UA0",
-            "slide": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/8",
+            "slide": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/7",
             "type": "drawing",
             "exportURL": "https://docs.google.com/drawings/d/123tDQFo3Zq0LEzzhquKp1xJX4YZ6YiWC0GDNGGK1UA0/export/png?id=123tDQFo3Zq0LEzzhquKp1xJX4YZ6YiWC0GDNGGK1UA0&pageid=p",
             "filename": "OnetoOneSpaghettiIntegration.png"
@@ -244,7 +224,7 @@
         {
             "alt": "Traditional Hardware Model",
             "id": "17jEYye-th5U5T-N-iE1gR7f_k5Bwrk9P7z9yYC4EZlw",
-            "slide": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/11",
+            "slide": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/10",
             "type": "drawing",
             "exportURL": "https://docs.google.com/drawings/d/17jEYye-th5U5T-N-iE1gR7f_k5Bwrk9P7z9yYC4EZlw/export/png?id=17jEYye-th5U5T-N-iE1gR7f_k5Bwrk9P7z9yYC4EZlw&pageid=p",
             "filename": "traditional-hardware.png"
@@ -252,10 +232,18 @@
         {
             "alt": "SOA Integration",
             "id": "1-uHnuWoYea9KZgEBRkGmdpbKDT5THls9dn56XolZ1Lg",
-            "slide": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/9",
+            "slide": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/8",
             "type": "drawing",
             "exportURL": "https://docs.google.com/drawings/d/1-uHnuWoYea9KZgEBRkGmdpbKDT5THls9dn56XolZ1Lg/export/png?id=1-uHnuWoYea9KZgEBRkGmdpbKDT5THls9dn56XolZ1Lg&pageid=p",
             "filename": "soa-integration.png"
+        },
+        {
+            "alt": "Cloud Computing Solution",
+            "id": "1yeHPc2AqDeXanOV0Zi8MirHApMjf1Sa_2UCOt_9Avds",
+            "slide": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/11",
+            "type": "drawing",
+            "exportURL": "https://docs.google.com/drawings/d/1yeHPc2AqDeXanOV0Zi8MirHApMjf1Sa_2UCOt_9Avds/export/png?id=1yeHPc2AqDeXanOV0Zi8MirHApMjf1Sa_2UCOt_9Avds&pageid=p",
+            "filename": "scalable-cloud-model.png"
         },
         {
             "alt": "Web Engineering Overview",
@@ -268,34 +256,19 @@
         {
             "alt": "MDW Big Picture",
             "id": "1i5681Erf2sYIeXg8p1lhiNvJqAAifdFs8o4DAshx2C4",
-            "slide": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/14",
+            "slide": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/13",
             "type": "drawing",
             "exportURL": "https://docs.google.com/drawings/d/1i5681Erf2sYIeXg8p1lhiNvJqAAifdFs8o4DAshx2C4/export/png?id=1i5681Erf2sYIeXg8p1lhiNvJqAAifdFs8o4DAshx2C4&pageid=p",
             "filename": "mdw-big-picture.png"
         },
         {
-            "alt": "Cloud Computing Solution",
-            "id": "1yeHPc2AqDeXanOV0Zi8MirHApMjf1Sa_2UCOt_9Avds",
-            "slide": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/12",
-            "type": "drawing",
-            "exportURL": "https://docs.google.com/drawings/d/1yeHPc2AqDeXanOV0Zi8MirHApMjf1Sa_2UCOt_9Avds/export/png?id=1yeHPc2AqDeXanOV0Zi8MirHApMjf1Sa_2UCOt_9Avds&pageid=p",
-            "filename": "scalable-cloud-model.png"
-        },
-        {
             "alt": "",
             "id": "1wb1OFJYZ1ukRLlKOXE7JWkhFGCeLvhIO6bveWUVpiBI",
-            "slide": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/19",
+            "slide": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/18",
             "type": "drawing",
             "exportURL": "https://docs.google.com/drawings/d/1wb1OFJYZ1ukRLlKOXE7JWkhFGCeLvhIO6bveWUVpiBI/export/png?id=1wb1OFJYZ1ukRLlKOXE7JWkhFGCeLvhIO6bveWUVpiBI&pageid=p",
             "filename": "Labs-architecture.png"
         }
     ],
-    "github": [
-        {
-            "owner": "",
-            "file": "discovery/category-discovery.js",
-            "title": "Github Repo",
-            "slide": "127.0.0.1:1338/data/slides/MI-MDW/lecture1.html#/33"
-        }
-    ]
+    "github": []
 }

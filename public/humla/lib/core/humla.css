@@ -573,13 +573,15 @@ table tbody tr:nth-child(even) {
     border: 1px solid orange;
 }
 
-.editor_left_column{
-    float:left;
-    margin: 0 10px 0 0; 
-    width:40%;    
+.editor_columns{
+    -webkit-column-count: 2;
+    -webkit-column-rule: 0px;
+    -moz-column-count: 2;
+    -moz-column-rule: 0px;   
 }
 
-.editor_right_column{
-    float:left;
-    width:40%; 
+.editor_footer{
+    margin: 300px 0;
+    text-align: center;
 }
+

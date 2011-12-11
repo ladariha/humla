@@ -8,7 +8,7 @@ var fs     = require('fs');
 var jquery = fs.readFileSync('./public/lib/jquery-1.6.3.min.js').toString();
 var path = require('path');
 var RAW_SLIDES_DIRECTORY = '/data/slides';
-var JSON_DIRECTORY = (path.join(path.dirname(__filename), '../public/data/index')).toString();
+var JSON_DIRECTORY = (path.join(path.dirname(__filename), '../cache/index')).toString();
 var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../public/data/slides')).toString();
 var EXTENSIONS_DIRECTORY = (path.join(path.dirname(__filename), './ext')).toString();
 var GENERAL_LECTURE_NAME = 'lecture';
@@ -341,7 +341,6 @@ function parseDocument(res, req, body, pathToCourse, filename, lecture, course, 
                                             }
                                         });
                                     }else{
-                
                                         fs.mkdir(JSON_DIRECTORY+pathToCourse, 0777, function(e) {
                                             if(!e){
                                                 fs.writeFile(JSON_DIRECTORY+pathToCourse+file+"."+slideIndex.format, textindex, function (err) {
@@ -600,14 +599,14 @@ function parseImagesAndCodeBlocks(slideIndex,$){
             image.alt = $(this).prop('alt');
             image.url = $(this).prop('src'); // TODO FIX RELATIVE URL
             image.filename = image.url.substring(image.url.lastIndexOf('/')+1);
-            image.slideURL = slideIndex.baseURL+"#/"+slide; // this corresponds to number in slide's URL, so first slide has number 1
+            image.slideURL = slideIndex.baseURL+"#!/"+slide; // this corresponds to number in slide's URL, so first slide has number 1
             image.type = 'picture';
             slideIndex.content.images.push(image);
         });
         
         $(this).find('pre').each(function(){
             code = {};
-            code.slideURL = slideIndex.baseURL+"#/"+slide;
+            code.slideURL = slideIndex.baseURL+"#!/"+slide;
             code.title= slideIndex.content.slides.titles[slide-1];
             var classAtr = $(this).prop('class');
             var i = classAtr.indexOf("brush:")+6;
@@ -631,7 +630,7 @@ function makeStructureHierarchical(slideIndex){
     var baseURL = slideIndex.host+ RAW_SLIDES_DIRECTORY+"/"+slideIndex.course+"/"+slideIndex.lecture+".html"; //GENERAL_LECTURE_NAME+
     var counter = 1;
     slideIndex.baseURL = baseURL;
-    baseURL = baseURL + "#/";
+    baseURL = baseURL + "#!/";
     for(var section in slideIndex.content.slides.sectionSlide){
         counter++;
         var tmp = {};

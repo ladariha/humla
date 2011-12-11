@@ -53,11 +53,13 @@ var ex_slideindex = {
         var codeBlocks = this.codeBlocksToHtml(index);
         var structure = this.structureToHtml(index);
         var slideIndexKey = "slideindex_"+presentationUrl;
+        var finalContent = structure+images+drawings+codeBlocks+github;
+        
         if (humla.utils.window.localStorage){
             humla.utils.window.localStorage.removeItem(slideIndexKey);
-            humla.utils.window.localStorage.setItem(slideIndexKey,structure+images+drawings+codeBlocks+github);
+            humla.utils.window.localStorage.setItem(slideIndexKey,finalContent);
         }
-        alert(structure+images+drawings+codeBlocks+github, 20000, "Content <img src=\"../../../humla/lib/ext/refresh.png\" class=\"slideindex-clearImg\" onClick=\"clearIndexFromLocalStorage('"+presentationUrl+"');\" title=\"Clear index from cache\" alt=\"Clear index from cache\"/>");
+        alert(finalContent, 20000, "Content <img src=\"../../../humla/lib/ext/refresh.png\" class=\"slideindex-clearImg\" onClick=\"clearIndexFromLocalStorage('"+presentationUrl+"');\" title=\"Clear index from cache\" alt=\"Clear index from cache\"/>");
     },
     
     imagesToHtml : function(index){
