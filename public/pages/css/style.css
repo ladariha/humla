@@ -39,7 +39,7 @@ button {  width: auto; overflow: visible; }
 
 body, select, input, textarea {
     color: #111;  
-    font-family: 'Trebuchet MS', Trebuchet, 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;  
+    font-family: 'Trebuchet MS', Trebuchet, 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Calibri, Arial, sans-serif;  
 }
 h1, h2, h3, h4, h5, h6 { font-weight: bold; }
 h2 {font-size: 1.571em}	
@@ -364,6 +364,7 @@ header div#login a:hover {
 }
 .items li {
     font-size: 1.4em;    
+    font-family: Calibri;
     margin: 0; 
     padding: 5px 10px;
     list-style:none;

@@ -62,17 +62,23 @@ nav {
     background-position: 10px 10px;
     background-repeat: no-repeat;
     padding: 5px 10px 5px 10px;
-    min-width: 190px;
+    min-width: 285px;
+    min-height: 15px;
     border-top-left-radius: 10px 10px;
     border-top-right-radius: 10px 10px;
     left: 50%;
-    margin-left: -105px;
+    margin-left: -150px;
     margin-bottom: 0px;
     margin-top: 0px;
 }
 
 nav.lower {
     opacity: 0.3;
+}
+
+nav.lower:hover {
+    opacity: 0.9;
+    
 }
 
 nav>ul {
@@ -89,7 +95,52 @@ nav li {
     float: left;
     margin: 10px;
     cursor: pointer;
+    background: black;
 }
+
+.menu-layer {    
+    position: fixed;
+    z-index: 100;
+    margin: 137px;
+    min-width: 400px;
+    min-height: 400px;
+    color: #CCC;
+    font-size: small;
+    background:  rgba(0, 0, 0, 0.796875) no-repeat 10px 10px;
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    padding: 5px 10px 5px 10px;
+    /*border: 10px solid white;*/
+    border-radius: 10px 10px;
+    top: 50%;
+    left: 50%;
+    margin-top: -200px;
+    margin-left: -200px;
+}
+
+.menu-layer .button {
+    width:64px;
+    height: 64px;
+    border: 1px solid #555;
+    cursor: pointer;
+    margin: 10px;
+    background: black;
+    text-indent: 80px;
+    font-size: 150%;    
+}
+.menu-close-button {
+    position: relative;
+    right: 0px;
+    background: black;
+    display: block;
+    padding: 2px 5px;
+    float: right;
+    cursor: pointer;
+    border-radius: 20px;
+
+}
+
+
 
 /* The slide has predefined width and height 800 x 600. 
    There is a number of other values elsewhere in humla that are consistent with this. 

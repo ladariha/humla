@@ -1,0 +1,313 @@
+{
+    "title": "Motivation and Course Overview",
+    "course": "Middleware and Web Services",
+    "lecture": "Lecture 1",
+    "keywords": [
+        "motivation",
+        " scope",
+        " requirements",
+        " resources"
+    ],
+    "numberOfSlide": 41,
+    "images": [
+        {
+            "alt": "Amazon EC2 Free Usage Tier",
+            "url": "img/ec2-free-tier.png",
+            "filename": "ec2-free-tier.png",
+            "slideURL": "localhost:1338/data/slides/BI-PA1/pa1.html#/26",
+            "type": "picture"
+        },
+        {
+            "alt": "Cloud9 IDE",
+            "url": "img/c9-ide-screenshot.png",
+            "filename": "c9-ide-screenshot.png",
+            "slideURL": "localhost:1338/data/slides/BI-PA1/pa1.html#/36",
+            "type": "picture"
+        }
+    ],
+    "codeBlocks": [
+        {
+            "slideURL": "localhost:1338/data/slides/BI-PA1/pa1.html#/34",
+            "title": "About Slides",
+            "language": "Java"
+        },
+        {
+            "slideURL": "localhost:1338/data/slides/BI-PA1/pa1.html#/34",
+            "title": "About Slides",
+            "language": "JavaScript"
+        },
+        {
+            "slideURL": "localhost:1338/data/slides/BI-PA1/pa1.html#/34",
+            "title": "About Slides",
+            "language": "XML"
+        },
+        {
+            "slideURL": "localhost:1338/data/slides/BI-PA1/pa1.html#/34",
+            "title": "About Slides",
+            "language": "Bash/shell"
+        },
+        {
+            "slideURL": "localhost:1338/data/slides/BI-PA1/pa1.html#/36",
+            "title": "Github Repo",
+            "language": "Bash/shell"
+        }
+    ],
+    "structure": {
+        "index": [
+            {
+                "title": "Aloha",
+                "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/2"
+            },
+            {
+                "title": "Web Engineering Curriculla",
+                "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/3",
+                "chapters": [
+                    {
+                        "title": "Web Engineering Curricula",
+                        "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/4"
+                    },
+                    {
+                        "title": "Web Engineering Curricula",
+                        "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/5"
+                    },
+                    {
+                        "title": "Headsdsding",
+                        "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/6"
+                    },
+                    {
+                        "title": "Heading",
+                        "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/7"
+                    },
+                    {
+                        "title": "Bird's View",
+                        "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/8"
+                    }
+                ]
+            },
+            {
+                "title": "Course at a Glance",
+                "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/9",
+                "chapters": [
+                    {
+                        "title": "Motivation and Scope",
+                        "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/10",
+                        "slides": [
+                            {
+                                "title": "Motivation in Brief",
+                                "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/11"
+                            },
+                            {
+                                "title": "Spaghetti Architecture",
+                                "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/12"
+                            },
+                            {
+                                "title": "SOA Architecture",
+                                "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/13"
+                            },
+                            {
+                                "title": "REST Architecture",
+                                "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/14"
+                            },
+                            {
+                                "title": "Good Performance  Traditional Solution",
+                                "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/15"
+                            },
+                            {
+                                "title": "Good Performance  Cloud Solution",
+                                "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/16"
+                            },
+                            {
+                                "title": "Scope",
+                                "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/17"
+                            },
+                            {
+                                "title": "Big Picture",
+                                "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/18"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Requirements and Organization",
+                        "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/19",
+                        "slides": [
+                            {
+                                "title": "General Requirements",
+                                "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/20"
+                            },
+                            {
+                                "title": "Organization of Lectures",
+                                "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/21"
+                            },
+                            {
+                                "title": "Organization of Labs",
+                                "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/22"
+                            },
+                            {
+                                "title": "Solution Architecture",
+                                "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/23"
+                            },
+                            {
+                                "title": "Methodology for Lab Work",
+                                "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/24"
+                            },
+                            {
+                                "title": "Methodology for Lab Work (cont.)",
+                                "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/25"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Technologies/Development Platform",
+                        "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/26",
+                        "slides": [
+                            {
+                                "title": "Development Platforms",
+                                "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/27"
+                            },
+                            {
+                                "title": "Amazon EC2 Free Usage Tier",
+                                "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/28"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "title": "Assessment",
+                "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/29",
+                "chapters": [
+                    {
+                        "title": "Assessment",
+                        "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/30"
+                    },
+                    {
+                        "title": "Final Marks",
+                        "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/31"
+                    }
+                ]
+            },
+            {
+                "title": "Communication and Resources",
+                "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/32",
+                "chapters": [
+                    {
+                        "title": "Communication",
+                        "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/33"
+                    },
+                    {
+                        "title": "Overview of Resources",
+                        "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/34"
+                    },
+                    {
+                        "title": "About Slides",
+                        "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/35"
+                    },
+                    {
+                        "title": "Code Examples",
+                        "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/36"
+                    },
+                    {
+                        "title": "Github Repo",
+                        "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/37"
+                    },
+                    {
+                        "title": "Use and Alter the Code",
+                        "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/38"
+                    },
+                    {
+                        "title": "Tasks from Lectures",
+                        "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/39"
+                    }
+                ]
+            },
+            {
+                "title": "FAQ",
+                "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/40",
+                "chapters": [
+                    {
+                        "title": "Frequently Asked Questions",
+                        "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/41"
+                    },
+                    {
+                        "title": "Frequently Asked Questions (cont.)",
+                        "url": "localhost:1338/data/slides/BI-PA1/pa1.html#/42"
+                    }
+                ]
+            }
+        ]
+    },
+    "drawings": [
+        {
+            "alt": "Representational State Transfer",
+            "id": "1dOevmc1cKlJNHz6h416ybvOmYSTQD_cqPbgXjpjOY-0",
+            "slide": "localhost:1338/data/slides/BI-PA1/pa1.html#/12",
+            "type": "drawing",
+            "exportURL": "https://docs.google.com/drawings/d/1dOevmc1cKlJNHz6h416ybvOmYSTQD_cqPbgXjpjOY-0/export/png?id=1dOevmc1cKlJNHz6h416ybvOmYSTQD_cqPbgXjpjOY-0&pageid=p",
+            "filename": "RESTArchitecture.png"
+        },
+        {
+            "alt": "Spaghetti Integration",
+            "id": "123tDQFo3Zq0LEzzhquKp1xJX4YZ6YiWC0GDNGGK1UA0",
+            "slide": "localhost:1338/data/slides/BI-PA1/pa1.html#/10",
+            "type": "drawing",
+            "exportURL": "https://docs.google.com/drawings/d/123tDQFo3Zq0LEzzhquKp1xJX4YZ6YiWC0GDNGGK1UA0/export/png?id=123tDQFo3Zq0LEzzhquKp1xJX4YZ6YiWC0GDNGGK1UA0&pageid=p",
+            "filename": "OnetoOneSpaghettiIntegration.png"
+        },
+        {
+            "alt": "Traditional Hardware Model",
+            "id": "17jEYye-th5U5T-N-iE1gR7f_k5Bwrk9P7z9yYC4EZlw",
+            "slide": "localhost:1338/data/slides/BI-PA1/pa1.html#/13",
+            "type": "drawing",
+            "exportURL": "https://docs.google.com/drawings/d/17jEYye-th5U5T-N-iE1gR7f_k5Bwrk9P7z9yYC4EZlw/export/png?id=17jEYye-th5U5T-N-iE1gR7f_k5Bwrk9P7z9yYC4EZlw&pageid=p",
+            "filename": "traditional-hardware.png"
+        },
+        {
+            "alt": "SOA Integration",
+            "id": "1-uHnuWoYea9KZgEBRkGmdpbKDT5THls9dn56XolZ1Lg",
+            "slide": "localhost:1338/data/slides/BI-PA1/pa1.html#/11",
+            "type": "drawing",
+            "exportURL": "https://docs.google.com/drawings/d/1-uHnuWoYea9KZgEBRkGmdpbKDT5THls9dn56XolZ1Lg/export/png?id=1-uHnuWoYea9KZgEBRkGmdpbKDT5THls9dn56XolZ1Lg&pageid=p",
+            "filename": "soa-integration.png"
+        },
+        {
+            "alt": "Web Engineering Overview",
+            "id": "1oyGz6GdF-K_hln9g_l3Cp1eNK843S4NKE4tO8HMUYGw",
+            "slide": "localhost:1338/data/slides/BI-PA1/pa1.html#/7",
+            "type": "drawing",
+            "exportURL": "https://docs.google.com/drawings/d/1oyGz6GdF-K_hln9g_l3Cp1eNK843S4NKE4tO8HMUYGw/export/png?id=1oyGz6GdF-K_hln9g_l3Cp1eNK843S4NKE4tO8HMUYGw&pageid=p",
+            "filename": "web-20-context.png"
+        },
+        {
+            "alt": "Cloud Computing Solution",
+            "id": "1yeHPc2AqDeXanOV0Zi8MirHApMjf1Sa_2UCOt_9Avds",
+            "slide": "localhost:1338/data/slides/BI-PA1/pa1.html#/14",
+            "type": "drawing",
+            "exportURL": "https://docs.google.com/drawings/d/1yeHPc2AqDeXanOV0Zi8MirHApMjf1Sa_2UCOt_9Avds/export/png?id=1yeHPc2AqDeXanOV0Zi8MirHApMjf1Sa_2UCOt_9Avds&pageid=p",
+            "filename": "scalable-cloud-model.png"
+        },
+        {
+            "alt": "",
+            "id": "1wb1OFJYZ1ukRLlKOXE7JWkhFGCeLvhIO6bveWUVpiBI",
+            "slide": "localhost:1338/data/slides/BI-PA1/pa1.html#/21",
+            "type": "drawing",
+            "exportURL": "https://docs.google.com/drawings/d/1wb1OFJYZ1ukRLlKOXE7JWkhFGCeLvhIO6bveWUVpiBI/export/png?id=1wb1OFJYZ1ukRLlKOXE7JWkhFGCeLvhIO6bveWUVpiBI&pageid=p",
+            "filename": "Labs-architecture.png"
+        },
+        {
+            "alt": "MDW Big Picture",
+            "id": "1i5681Erf2sYIeXg8p1lhiNvJqAAifdFs8o4DAshx2C4",
+            "slide": "localhost:1338/data/slides/BI-PA1/pa1.html#/16",
+            "type": "drawing",
+            "exportURL": "https://docs.google.com/drawings/d/1i5681Erf2sYIeXg8p1lhiNvJqAAifdFs8o4DAshx2C4/export/png?id=1i5681Erf2sYIeXg8p1lhiNvJqAAifdFs8o4DAshx2C4&pageid=p",
+            "filename": "mdw-big-picture.png"
+        }
+    ],
+    "github": [
+        {
+            "owner": "",
+            "file": "discovery/category-discovery.js",
+            "title": "Code Examples",
+            "slide": "localhost:1338/data/slides/BI-PA1/pa1.html#/35"
+        }
+    ]
+}
