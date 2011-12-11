@@ -389,6 +389,9 @@ app.get('/api/:course/:lecture/editor', function api(req, res) { // TODO check c
     var course = req.params.course;//RegExp.$1;
     var lecture = req.params.lecture;
     var htmlfile = SLIDES_DIRECTORY+ '/'+course+'/'+lecture+".html";
+    if(endsWith(lecture, ".html")){
+        htmlfile = SLIDES_DIRECTORY+ '/'+course+'/'+lecture;
+    }
     fs.readFile(htmlfile, function (err, data) {
         if (err){
             returnEditorError(500, err.message, res);
@@ -548,4 +551,8 @@ function returnEditorError(code, msg, res){
     });
     res.write(msg);
     res.end();
+}
+
+function endsWith(string, suffix) {
+    return string.indexOf(suffix, string.length - suffix.length) !== -1;
 }
