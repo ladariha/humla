@@ -751,10 +751,11 @@ function editTemplateMoveHTML(prevFile, req, res, lecture, order,keywords){
                                     $('meta[name="author"]').attr('content', lecture.author);
                                     $('meta[name="lecture"]').attr('content', 'Lecture '+order);
                                     $('meta[name="keywords"]').attr('content', keywords);
+                                    $('title').text(lecture.title);
+                                    var newcontent= $("html").html(); 
                                     newcontent = newcontent.replace("meta_"+prevFile+".css", "meta_"+lecture.lectureID+".css");
                                     newcontent = newcontent.replace(/\&amp;/g,'&');
-                                    $('title').text(lecture.title);
-                                    var newcontent= $("html").html();                            
+                                    
                                     fs.writeFile(SLIDES_DIRECTORY+'/'+lecture.courseID+'/'+prevFile+'.html', newcontent, function (err) {
                                         if (err) {
                                         
