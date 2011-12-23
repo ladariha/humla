@@ -91,12 +91,29 @@ nav li {
     list-style: none;
     width: 48px;
     height: 48px;
-    border: 1px solid #666;
+    border: 1px solid #222;
     float: left;
     margin: 10px;
     cursor: pointer;
     background: black;
+    border-radius: 5px;
+    text-indent: -9999px;
+    
 }
+
+nav #menu-item-views {
+    background-image: url("../../icons/m-views.png");
+}
+nav #menu-item-comments {
+    background-image: url("../../icons/m-comments.png");
+}
+nav #menu-item-rating {
+    background-image: url("../../icons/m-rating.png");
+}
+nav #menu-item-editor {
+    background-image: url("../../icons/m-settings.png");
+}
+
 
 .menu-layer {    
     position: fixed;

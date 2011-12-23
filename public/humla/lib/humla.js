@@ -548,38 +548,41 @@ var MenuBar = function(message) {
     this.showMenu = function(update) {
         if (this.nav && update) {
             humla.utils.documentBody.removeChild(this.nav);
-            //humla.utils.documentBody.removeChild(this.layer);
+            if ( this.layer) humla.utils.documentBody.removeChild(this.layer);
             this.nav = null;
         }
         
         if (!this.nav) {
             this.nav = humla.utils.document.createElement("nav");           
-            //this.layer = humla.utils.document.createElement("div");                      
-            this.layer = humla.utils.document.getElementById("menu-layer");                      
+            this.layer = humla.utils.document.createElement("div");                      
+            
+            //this.layer = humla.utils.document.getElementById("menu-layer");                      
             
             
             //Generate menu Icons with texts TODO
             this.nav.innerHTML = "<div style='width:100%;text-align:center; color:white;' class='toggle' onclick='humla.menubar.hideMenu()'>Menu"
             +"<span class='menu-close-button'>X</span></div>"
             +"<ul id='menu'>"
-            +"<li onclick='humla.menubar.showLayer(\"menu-views\");'>Views</li>"
-            +"<li onclick='humla.menubar.showLayer(\"menu-comments\");'>Comments</li>"
-            +"<li onclick='humla.menubar.showLayer(\"menu-editor\");'>Editor</li>"
-            +"<li onclick='humla.menubar.showLayer(\"menu-rating\");'>Rating</li></ul>";            /*
+            +"<li id='menu-item-views' onclick='humla.menubar.showLayer(\"menu-views\");'>Views</li>"
+            +"<li id='menu-item-comments' onclick='humla.menubar.showLayer(\"menu-comments\");'>Comments</li>"
+            +"<li id='menu-item-editor' onclick='humla.menubar.showLayer(\"menu-editor\");'>Editor</li>"
+            +"<li id='menu-item-rating' onclick='humla.menubar.showLayer(\"menu-rating\");'>Rating</li></ul>";            
             this.layer.innerHTML = "<div id='menu-views' class='menu-layer' style='display:none;'>"
+            +"<span class='menu-close-button' onclick='humla.menubar.showLayer(\"menu-views\",true);'>X</span>"
             +"<h1>Views</h1>"
-            +"<div onclick='humla.controler.activateView(0);humla.menubar.showLayer(\"menu-views\",true);'>Slideshow</div>"
-            +"<div onclick='humla.controler.activateView(1);humla.menubar.showLayer(\"menu-views\",true);'>Presentation</div>"
-            +"<div onclick='humla.controler.activateView(2);humla.menubar.showLayer(\"menu-views\",true);'>Overview</div>"
-            +"<div onclick='humla.controler.activateView(3);humla.menubar.showLayer(\"menu-views\",true);'>Print</div></div>";
+            +"<div class='button' onclick='humla.controler.activateView(0);humla.menubar.showLayer(\"menu-views\",true);'>Slideshow</div>"
+            +"<div class='button' onclick='humla.controler.activateView(1);humla.menubar.showLayer(\"menu-views\",true);'>Presentation</div>"
+            +"<div class='button' onclick='humla.controler.activateView(2);humla.menubar.showLayer(\"menu-views\",true);'>Overview</div>"
+            +"<div class='button' onclick='humla.controler.activateView(3);humla.menubar.showLayer(\"menu-views\",true);'>Print</div></div>";
             this.layer.innerHTML += "<div id='menu-comments' class='menu-layer' style='display:none;'>"
-            +"<h2>Views</h2>"
-            +"<div onclick='humla.controler.activateView(0);humla.menubar.showLayer(\"menu-views\",true);'>View 1</div>"            
-            +"<div onclick='humla.controler.activateView(3);humla.menubar.showLayer(\"menu-views\",true);'>View 4</div></div>";
+            +"<span class='menu-close-button' onclick='humla.menubar.showLayer(\"menu-comments\",true);'>X</span>"
+            +"<h2>Comments</h2>"            
+            +"</div>";
             this.layer.innerHTML += "<div id='menu-rating' class='menu-layer' style='display:none;'>"
+            +"<span class='menu-close-button' onclick='humla.menubar.showLayer(\"menu-rating\",true);'>X</span>"
             +"<h2>Settings</h2>"            
-            +"<div onclick='humla.controler.activateView(3);humla.menubar.showLayer(\"menu-views\",true);'>View 4</div></div>";
-        */
+            +"<div class='button' onclick='humla.controler.activateView(3);humla.menubar.showLayer(\"menu-rating\",true);'>View 4</div></div>";
+        
             this.nav.addEventListener("mousefocus", function() {
                 
                 humla.menubar.nav.className="";
@@ -588,7 +591,7 @@ var MenuBar = function(message) {
         
             
             humla.utils.documentBody.insertBefore(this.nav, humla.utils.documentBody.childNodes[0]);
-            //humla.utils.documentBody.insertBefore(this.layer, humla.utils.documentBody.childNodes[0]);
+            humla.utils.documentBody.insertBefore(this.layer, humla.utils.documentBody.childNodes[0]);
         }        
     }    
     
@@ -601,7 +604,7 @@ var MenuBar = function(message) {
             this.layer = humla.utils.document.getElementById("menu-layer");                      
             this.nav.innerHTML = "<div style='width:100%;text-align:center;  color:white;' class='toggle'>Menu</div>";
             humla.utils.documentBody.insertBefore(this.nav, humla.utils.documentBody.childNodes[0]);
-            //humla.utils.documentBody.insertBefore(this.layer, humla.utils.documentBody.childNodes[0]);
+        //humla.utils.documentBody.insertBefore(this.layer, humla.utils.documentBody.childNodes[0]);
         }
         this.nav.className = "lower";
         this.nav.addEventListener("mouseup", function() {
@@ -620,9 +623,13 @@ var MenuBar = function(message) {
     }
     
     this.showLayer= function(id, hide) {
+        console.log(id);
         var elm = humla.utils.document.getElementById(id);
-        hide = elm.style.display == "block";
-        elm.style.display = hide? "none": "block";
+        console.log(elm);
+        if (elm) {
+            hide = elm.style.display == "block";
+            elm.style.display = hide? "none": "block";
+        }
     }
     
     this.hideMenu();

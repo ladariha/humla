@@ -117,12 +117,12 @@ function DataAccess() {
     
     // First fill all available info about slide and then send request to index API
     this.loadInfo = function (url) { //(course_id,lect_id) {  
-        var a = '<h2 id="lecturename">MI-MDW: Data se propsala</h2>';
+        var a = '<h2 id="lecturename">MI-MDW: Web Engineering</h2>';
         a+= '<div id="buttons"><a href="http://'+url+'" target="_blank" class="button" tabindex="3">Open</a>';
         a+= '<a href="">Edit</a>';
         a+= '</div><br/>';
         a+= '<h3>Abstrakt</h3>';
-        a+= '<p id="abstract">Obsah této přednášky</p> ';
+        a+= '<p id="abstract">V této přednášce se dozvíte, co vás čeká v kurzu MI-MDW.</p> ';
         a+= '<h3>Index</h3>';
         a+= '<ul id="index" class="slideindex-ul" >';
         a+= '<li>Nedddco</li>';
