@@ -143,6 +143,13 @@
             "enabled" : true 
         },
         
+         {"id" : "gbooks",
+            "object" : "ex_gbooks",
+            "scripts" : [ {"src" : "ext/gbooks.js"} ],
+             "styles"  : [ {"src" : "ext/gbooks.css", "media" : "screen, print"} ],
+            "enabled" : true 
+        },
+        
         {"id" : "comments",
             "object" : "ex_comments",
             "scripts" : [ {"src" : "ext/comments.js"} ],
@@ -174,6 +181,7 @@
             "styles"  : [ {"src" : "ext/slideindex.css", "media" : "screen, print"} ],
             "enabled" : true 
         }
+        
         
         
     ]

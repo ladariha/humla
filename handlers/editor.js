@@ -413,10 +413,12 @@ app.get('/api/:course/:lecture/editor', function api(req, res) { // TODO check c
 app.put('/api/:course/:lecture/raw/editor', function api(req, res) {
     var course = req.params.course;//RegExp.$1;
     var lecture = req.params.lecture;
-    var htmlfile = SLIDES_DIRECTORY+ '/'+course+'/'+lecture+".html";
-    var resourceURL = req.headers.host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html";
-    fs.writeFile(htmlfile, decodeURIComponent(req.body.content), function (err) {
+    var htmlfile = SLIDES_DIRECTORY+ '/'+course+'/'+lecture;
+    var resourceURL = req.headers.host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture;
+    fs.writeFile(htmlfile, (req.body.content), function (err) { // no need for decodeURIComponent. seems to be already decoded...
         if (err) {
+            console.log(err);
+            
             returnEditorError(500, 'Problem with saving document: '+err.message, res);
         }else{
                                         
@@ -441,7 +443,6 @@ app.put('/api/:course/:lecture/editor', function api(req, res) { // TODO check c
     var host = req.headers.host;
     //    console.log(d);
     var data_slide = eval('(' +d+')');
-    console.log("DATA RECEIVED");
  
     
     var pathToCourse = '/'+course+'/';

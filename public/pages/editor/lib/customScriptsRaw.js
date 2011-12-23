@@ -77,11 +77,9 @@ function loadLayout(version){
 
 
 function sendData(){
-    
-    
+
     var url = "/api/"+document.getElementById("course").innerHTML+"/"+document.getElementById("lecture").innerHTML+"/raw/editor";
     var params = "content="+encodeURIComponent(editor.getValue());
-
     var request = new XMLHttpRequest();
     request.open("PUT", url, true);
     request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -95,7 +93,7 @@ function sendData(){
             }else{
                 document.getElementById("msg").innerHTML=request.status+": "+request.statusText;    
             }
-            loadSlide();
+            loadPresentation();
         }
     };
     request.send(params);

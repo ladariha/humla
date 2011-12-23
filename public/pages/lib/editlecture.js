@@ -88,7 +88,7 @@ function submitEditLectureForm(){
             if (request.readyState==4) {
                 if(request.status==200){
                     var object = eval('(' + request.responseText + ')');
-                    document.getElementById('msg').innerHTML='Lecture'+object.title+' updated';
+                    document.getElementById('msg').innerHTML='Lecture '+object.title+' updated';
                 }else{
                     document.getElementById('msg').innerHTML=request.status+": "+request.statusText + ' - '+request.responseText;    
                 }
