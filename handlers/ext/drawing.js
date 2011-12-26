@@ -74,6 +74,7 @@ function parseSingleDrawing(drawing,slideIndex){
     req.on('error', function(e) {
         drawing.filename = 'Error while requesting from Google Docs '+e.message;
         slideIndex.content.drawings.push(drawing);
+        slideIndex.drawingsCount--;
         if(slideIndex.drawingsCount === 0){
             slideIndex.sendResponse(); 
             return slideIndex;

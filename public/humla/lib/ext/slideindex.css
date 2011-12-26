@@ -19,7 +19,7 @@
     display:block;
 }
 
-.slideindex-ul  img{
+.slideindex-ul  img, .slideindex-img-pointer{
     cursor: pointer;
 }
 
