@@ -221,7 +221,9 @@ app.get('/api/:course/course', function(req, res){
  
 });
 
-
+/*
+* Creates lecture
+ */
 app.post('/api/:course/:lecture/lecture', function(req, res){ // TODO database timeout
     if(req.body === undefined || req.body.title === undefined || req.body.title.length<1 || 
         req.body.isActive === undefined || req.body.isActive.length<1 || req.body.courseID ===undefined ||
@@ -324,7 +326,9 @@ app.post('/api/:course/:lecture/lecture', function(req, res){ // TODO database t
 );
 
 
-
+/*
+ * Edit lecture
+ */
 app.put('/api/:course/:lecture/lecture', function(req, res){ // TODO database timeout
    
     if(req.body === undefined){
@@ -807,6 +811,9 @@ function editTemplateMoveHTML(prevFile, req, res, lecture, order,keywords){
     });
 }
 
+/*
+ * Returns lecture info
+ */
 app.get('/api/:course/:lecture/lecture', function(req, res, next){
     if(req.params.course==="facet") {
         next(); // TODO: tenhle hack je tu proto, že to místno na facet skákalo sem (stejné url!) TODO: rozlišit url lépe!!

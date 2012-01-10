@@ -4,6 +4,7 @@ var RAW_SLIDES_DIRECTORY = '/data/slides';
 var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../public/data/slides')).toString();
 var SLIDE_TEMPLATE = (path.join(path.dirname(__filename),'../public/data/templates')).toString();
 var facet_use_fs = 1;
+var rss = require((path.join(path.dirname(__filename), './rss')).toString()+"/rss_module")
 var mongoose = require("mongoose"); 
 var Course = mongoose.model("Course");
 var Lecture = mongoose.model("Lecture");
@@ -11,6 +12,7 @@ var Lecture = mongoose.model("Lecture");
  * Returns all courses
  */
 app.get('/api/facet/courses', function(req, res){ // TODO database timeout
+//    rss.updateAllFeed();
     Course.find({
         isActive:true
         
@@ -41,7 +43,7 @@ app.get('/api/facet/courses', function(req, res){ // TODO database timeout
     
     
 /**
- * Returns all presentations for given course
+ * Returns all lectures for given course
  */
 app.get('/api/facet/:course/lectures', function(req, res){
     var course = req.params.course;
