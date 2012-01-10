@@ -531,6 +531,9 @@ footer {
     width:700px;
 }
 
+.red{
+    color: red;
+}
 #form-container h2 { font-size:18px; color:#333; padding:0px; margin:0px 0px 10px 0px; }
 
 fieldset, form { padding:0px; margin:0px; border:none }

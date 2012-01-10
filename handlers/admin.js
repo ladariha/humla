@@ -1,6 +1,7 @@
 var fs = require("fs");
 var path = require("path");
-var jquery = fs.readFileSync('./public/lib/jquery-1.6.3.min.js').toString();
+//var jquery = fs.readFileSync('./public/lib/jquery-1.6.3.min.js').toString();
+var jquery = fs.readFileSync('./public/lib/jquery-1.7.min.js').toString();
 var jsdom = require('jsdom');
 var RAW_SLIDES_DIRECTORY = '/data/slides';
 var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../public/data/slides')).toString();
@@ -133,7 +134,7 @@ app.put('/api/:course/course', function(req, res){
                     var prev = course.courseID;
                     course.courseID = (req.body.courseID === undefined) ? course.courseID : decodeURIComponent(req.body.courseID);
                     course.longName = (req.body.longName === undefined) ? course.longName : decodeURIComponent(req.body.longName);
-                    course.owner = (req.body.owner === undefined) ? course.owner : decodeURIComponent(req.body.owner);
+                    course.owner = (req.body.owner === undefined) ? '': decodeURIComponent(req.body.owner);
                     course.lecturesURLPreffix = req.headers.host+'/data/slides/'+course.courseID;
                     course.url = req.headers.host+'/api/'+course.courseID+'/course';    
                     course.save(function(err) {

@@ -42,7 +42,6 @@ function submitNewLectureForm(){
             
             }
         };
-        console.log(">> "+params);
         request.send(params);
     }
 }
@@ -50,7 +49,6 @@ function submitNewLectureForm(){
 function formIsValid(){
     var courseID = document.getElementById('course').value;
     var title = document.getElementById('title').value;
-    console.log(courseID);
     var author = document.getElementById('author').value; 
     var order = document.getElementById('order').value;
     var err = 0;

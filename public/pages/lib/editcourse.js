@@ -16,14 +16,11 @@ window.onload = function(){
         if (request.readyState==4) {
             if(request.status==200){
                 var object = eval('(' + request.responseText + ')');
-                console.log(object._id);
                 document.getElementById('course').value=object.courseID;
                 document.getElementById('fullName').value=object.longName;
                 document.getElementById('owner').value=object.owner;
                 document.getElementById('_id').value=object._id;
-                console.log('> '+object._id+ ' ');
                 document.getElementById('visible').value=object.isActive;
-                
             }else{
                 document.getElementById('msg').innerHTML='Cannot load '+course;
             }  
@@ -116,7 +113,6 @@ function submitEditCourseForm(){
 
 function formIsValid(){
     var courseID = document.getElementById('course').value;
-    console.log(courseID);
     var fullName = document.getElementById('fullName').value; 
     var owner = document.getElementById('owner').value;
     var err = 0;
