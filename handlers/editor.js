@@ -378,6 +378,9 @@ app.get('/api/template/:templateID/editor', function api(req, res) {
         }else{
             var r = {};
             r.html= data.toString();
+            res.writeHead(200, {
+                'Content-Type': 'application/json'
+            });
             res.write(JSON.stringify(r, null, 4));
             res.end();
         }
@@ -399,16 +402,12 @@ app.get('/api/:course/:lecture/editor', function api(req, res) { // TODO check c
         }else{
         
             res.writeHead(200, {
-                'Content-Type': 'text/plain'
+                'Content-Type': 'text/html'
             });
             res.write(data);
             res.end();
-
         }
-    
     });
-    
-    
 });
 
 app.put('/api/:course/:lecture/raw/editor', function api(req, res) {

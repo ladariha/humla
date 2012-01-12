@@ -101,7 +101,7 @@ function generateGbooksSmallThumbnail(data, req, res){
     content = content.replace("##AUTHOR", temp);
             
     res.writeHead(200, {
-        'Content-Type': 'text/plain'
+        'Content-Type': 'text/html'
     }); 
     res.write(content);
     res.end(); 
@@ -141,7 +141,7 @@ function generateGbooksSimpleList(data, req, res){
     content = content.replace("##AUTHOR", temp);
             
     res.writeHead(200, {
-        'Content-Type': 'text/plain'
+        'Content-Type': 'text/html'
     }); 
     res.write(content);
     res.end();  
@@ -191,7 +191,7 @@ function generateGbooksBigThumbnail(data, req, res){
     content = content.replace("##AUTHOR", temp);
             
     res.writeHead(200, {
-        'Content-Type': 'text/plain'
+        'Content-Type': 'text/html'
     }); 
     res.write(content);
     res.end();  
