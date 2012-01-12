@@ -33,6 +33,7 @@ Feel free to fork Humla, write plugins and patch it yourself!
   * Comments under each slide
   * Like button under each slide
   * Share presentation on facebook, google+, etc.
+  * RSS channels for all courses or per course
 
 
 # Browser Support
@@ -72,6 +73,7 @@ Use the following keys to navigate in the presentation:
   * `2` switches to the slideshow view
   * `3` switches to the grid view
   * `4` or `p` switches to the print view
+  * `5` switches to the editor view
   * `left`, `right` goes to the previous and next slide respectively
   * `e` shows the last error if any
   * `d` toggles the debug mode
