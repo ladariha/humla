@@ -413,8 +413,8 @@ app.get('/api/:course/:lecture/editor', function api(req, res) { // TODO check c
 app.put('/api/:course/:lecture/raw/editor', function api(req, res) {
     var course = req.params.course;//RegExp.$1;
     var lecture = req.params.lecture;
-    var htmlfile = SLIDES_DIRECTORY+ '/'+course+'/'+lecture;
-    var resourceURL = req.headers.host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture;
+    var htmlfile = SLIDES_DIRECTORY+ '/'+course+'/'+lecture+".html";
+    var resourceURL = req.headers.host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html";
     fs.writeFile(htmlfile, (req.body.content), function (err) { // no need for decodeURIComponent. seems to be already decoded...
         if (err) {
             console.log(err);
@@ -466,7 +466,6 @@ app.put('/api/:course/:lecture/editor', function api(req, res) { // TODO check c
                             var $ = window.$;
                             var resourceURL = host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html";
                             var slideCounter=0;
-                            var toReturn = "";
 
                             $('body').find('.slide').each(function(){
                                 if(data_slide.content[slideCounter]!=null){
