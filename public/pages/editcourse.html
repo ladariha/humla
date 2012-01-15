@@ -25,6 +25,7 @@
                         <li ><a id="presentations" href="index.html">Presentations</a></li>
                         <li ><a id="editor" href="editcourse.html" class="active">Editor</a></li>
                         <li ><a id="about" href="about.html"  >About</a></li>
+                        <li id="rssitem" ><a id="rss" href="rss.html" > <img  id="rssicon" src="img/rss.png" alt="RSS" title="RSS channels"/></a></li>
                     </ul>
                 </nav>
             </header>
@@ -59,19 +60,19 @@
                         <fieldset><form>
                                 <input type="hidden" id="_id" name="_id">
                                 <div class="field">
-                                    <label for="course">Course ID (short name):</label>
+                                    <label for="course">Course ID (short name):<span class="red">*</span></label>
                                     <input type="text" onkeyup="checkCourseExist(this,'course');" name="course" value="" id="course">
                                     <p id="exist" class="warning"></p>
                                 </div>
 
                                 <div class="field">
-                                    <label for="fullName">Course Full Name:</label>
+                                    <label for="fullName">Course Full Name:<span class="red">*</span></label>
                                     <input type="text" name="fullName" value="" id="fullName">
                                     <p id="e_fullName" class="warning"></p>
                                 </div>
 
                                 <div class="field">
-                                    <label for="owner">Owner:</label>
+                                    <label for="owner">Owner:<span class="red">*</span></label>
                                     <input type="text" name="owner" value="" id="owner">
                                     <p id="e_owner" class="warning"></p>
                                 </div>

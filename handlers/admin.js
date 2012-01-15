@@ -1,6 +1,7 @@
 var fs = require("fs");
 var path = require("path");
-var jquery = fs.readFileSync('./public/lib/jquery-1.6.3.min.js').toString();
+//var jquery = fs.readFileSync('./public/lib/jquery-1.6.3.min.js').toString();
+var jquery = fs.readFileSync('./public/lib/jquery-1.7.min.js').toString();
 var jsdom = require('jsdom');
 var RAW_SLIDES_DIRECTORY = '/data/slides';
 var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../public/data/slides')).toString();
@@ -9,6 +10,7 @@ var facet_use_fs = 1;
 var mongoose = require("mongoose"); 
 var Course = mongoose.model("Course");
 var Lecture = mongoose.model("Lecture");
+var rss = require((path.join(path.dirname(__filename), './rss')).toString()+"/rss_module");
 
 /**
  * Creates new course (new entry in db, new folder)
@@ -132,7 +134,7 @@ app.put('/api/:course/course', function(req, res){
                     var prev = course.courseID;
                     course.courseID = (req.body.courseID === undefined) ? course.courseID : decodeURIComponent(req.body.courseID);
                     course.longName = (req.body.longName === undefined) ? course.longName : decodeURIComponent(req.body.longName);
-                    course.owner = (req.body.owner === undefined) ? course.owner : decodeURIComponent(req.body.owner);
+                    course.owner = (req.body.owner === undefined) ? '': decodeURIComponent(req.body.owner);
                     course.lecturesURLPreffix = req.headers.host+'/data/slides/'+course.courseID;
                     course.url = req.headers.host+'/api/'+course.courseID+'/course';    
                     course.save(function(err) {
@@ -221,7 +223,9 @@ app.get('/api/:course/course', function(req, res){
  
 });
 
-
+/*
+* Creates lecture
+ */
 app.post('/api/:course/:lecture/lecture', function(req, res){ // TODO database timeout
     if(req.body === undefined || req.body.title === undefined || req.body.title.length<1 || 
         req.body.isActive === undefined || req.body.isActive.length<1 || req.body.courseID ===undefined ||
@@ -235,6 +239,7 @@ app.post('/api/:course/:lecture/lecture', function(req, res){ // TODO database t
         res.write("Missing fields" );
         res.end();   
     }else{
+        var host =req.headers.host;
         Lecture.find({
             courseID: req.params.course,
             order: req.body.order
@@ -261,6 +266,7 @@ app.post('/api/:course/:lecture/lecture', function(req, res){ // TODO database t
                     c.organizationFac = (req.body.orgfac === undefined) ? '' : decodeURIComponent(req.body.orgfac);
                     c.field = (req.body.spec === undefined) ? '' : decodeURIComponent(req.body.spec);
                     c.web = (req.body.web === undefined) ? '' : decodeURIComponent(req.body.web);
+                    c.lastModified = new Date();
                     c.lectureAbstract = (req.body.abs === undefined) ? '' : decodeURIComponent(req.body.abs);
                     var e = (req.body.isActive).toLowerCase()
                     if(e=='true'){
@@ -301,7 +307,7 @@ app.post('/api/:course/:lecture/lecture', function(req, res){ // TODO database t
                                             });
                                             res.write(JSON.stringify(c, null, 4));
                                             res.end(); 
-                                   
+                                            rss.updateAllFeed(host,c.courseID);
                                         }else{ // copy template
                                             copyTemplateHTML(req, res, c, decodeURIComponent(req.body.order), decodeURIComponent(req.body.keywords));
                                         }
@@ -324,7 +330,9 @@ app.post('/api/:course/:lecture/lecture', function(req, res){ // TODO database t
 );
 
 
-
+/*
+ * Edit lecture
+ */
 app.put('/api/:course/:lecture/lecture', function(req, res){ // TODO database timeout
    
     if(req.body === undefined){
@@ -335,6 +343,7 @@ app.put('/api/:course/:lecture/lecture', function(req, res){ // TODO database ti
         res.write("Missing fields" );
         res.end();   
     }else{
+        var host = req.headers.host;
         Lecture.find({
             _id: encodeURIComponent(req.body.id)
         }, function(err,crs){   
@@ -367,6 +376,7 @@ app.put('/api/:course/:lecture/lecture', function(req, res){ // TODO database ti
                     c.field = (req.body.spec === undefined) ? '' : decodeURIComponent(req.body.spec);
                     c.web = (req.body.web === undefined) ? '' : decodeURIComponent(req.body.web);
                     c.lectureAbstract = (req.body.abs === undefined) ? '' : decodeURIComponent(req.body.abs);
+                    c.lastModified = new Date();
                     c.author = (req.body.author === undefined) ? c.author : decodeURIComponent(req.body.author);
                     if(!req.body.keywords === undefined){
                         var k = (decodeURIComponent(req.body.keywords)).split(",");
@@ -405,7 +415,7 @@ app.put('/api/:course/:lecture/lecture', function(req, res){ // TODO database ti
                                                 });
                                                 res.write(JSON.stringify(c, null, 4));
                                                 res.end(); 
-                                   
+                                                rss.updateAllFeed(host,c.courseID);
                                             }else{ // copy template
                                                 editTemplateHTML(req, res, c, decodeURIComponent(req.body.order), decodeURIComponent(req.body.keywords));
                                             }
@@ -425,7 +435,7 @@ app.put('/api/:course/:lecture/lecture', function(req, res){ // TODO database ti
                                                 });
                                                 res.write(JSON.stringify(c, null, 4));
                                                 res.end(); 
-                                   
+                                                rss.updateAllFeed(host,c.courseID);
                                             }else{ // copy template
                                                 editTemplateMoveHTML(prev, req, res, c, decodeURIComponent(req.body.order), decodeURIComponent(req.body.keywords));
                                             }
@@ -466,7 +476,7 @@ function copyTemplateCSS(req, res, lecture, prevFile, longName){
             res.end();   
         }else{
             var content = data.toString();
-            
+            var host = req.headers.host;
             content = content.replace("##author", lecture.author);
             content = content.replace("##authoremail", lecture.authorEmail);
             content = content.replace("##authortwitter", lecture.authorTwitter);
@@ -491,6 +501,7 @@ function copyTemplateCSS(req, res, lecture, prevFile, longName){
                     });
                     res.write(JSON.stringify(lecture, null, 4));
                     res.end();
+                    rss.updateAllFeed(host,lecture.courseID);
                 }
             });  
             
@@ -513,7 +524,7 @@ function moveTemplateCSS(req, res, lecture, prevFile, longName){
             res.end();   
         }else{
             var content = data.toString();
-            
+            var host=req.headers.host;
             content = content.replace("##author", lecture.author);
             content = content.replace("##authoremail", lecture.authorEmail);
             content = content.replace("##authortwitter", lecture.authorTwitter);
@@ -546,7 +557,7 @@ function moveTemplateCSS(req, res, lecture, prevFile, longName){
                             });
                             res.write(JSON.stringify(lecture, null, 4));
                             res.end();
-
+                            rss.updateAllFeed(host,lecture.courseID);
                         }                    
                     });
                     
@@ -807,6 +818,9 @@ function editTemplateMoveHTML(prevFile, req, res, lecture, order,keywords){
     });
 }
 
+/*
+ * Returns lecture info
+ */
 app.get('/api/:course/:lecture/lecture', function(req, res, next){
     if(req.params.course==="facet") {
         next(); // TODO: tenhle hack je tu proto, že to místno na facet skákalo sem (stejné url!) TODO: rozlišit url lépe!!

@@ -25,6 +25,7 @@
                         <li ><a id="presentations" href="index.html">Presentations</a></li>
                         <li ><a id="editor" href="editcourse.html" class="active">Editor</a></li>
                         <li ><a id="about" href="about.html"  >About</a></li>
+                        <li id="rssitem" ><a id="rss" href="rss.html" > <img  id="rssicon" src="img/rss.png" alt="RSS" title="RSS channels"/></a></li>
                     </ul>
                 </nav>
             </header>
@@ -57,12 +58,12 @@
                         <fieldset><form>
                                 <input type="hidden" id="_id" name="_id">
                                 <div class="field">
-                                    <label for="title">Title:</label>
+                                    <label for="title">Title:<span class="red">*</span></label>
                                     <input type="text" name="title" value="" id="title">
                                     <p id="e_title"  class="warning"></p>
                                 </div>
                                 <div class="field">
-                                    <label for="course">Course ID (short name):</label>
+                                    <label for="course">Course ID (short name):<span class="red">*</span></label>
                                     <input type="text" disabled="true" name="course" value="" id="course">
                                     <p id="e_course"  class="warning"></p>
                                 </div>
@@ -75,52 +76,44 @@
                                 <div class="field">
                                     <label for="semester">Semester (Term):</label>
                                     <input type="text" name="semester" value="" id="semester">
-                                    <p id="e_order" class="warning"></p>
                                 </div>
                                 <div class="field">
-                                    <label for="author">Author:</label>
+                                    <label for="author">Author:<span class="red">*</span></label>
                                     <input type="text" name="author" value="" id="author">
                                     <p id="e_author" class="warning"></p>
                                 </div>
                                 <div class="field">
                                     <label for="authorEmail">Author's Email Address:</label>
                                     <input type="text" name="authorEmail" value="" id="authorEmail">
-                                    <p id="e_order" class="warning"></p>
                                 </div>
                                 <div class="field">
                                     <label for="authorTwitter">Author's Twitter Username:</label>
                                     <input type="text" name="authorTwitter" value="" id="authorTwitter">
-                                    <p id="e_order" class="warning"></p>
                                 </div>
                                 <div class="field">
                                     <label for="authorWeb">Author's Web:</label>
                                     <input type="text" name="authorWeb" value="" id="authorWeb">
-                                    <p id="e_order" class="warning"></p>
                                 </div>
                                 <div class="field">
-                                    <label for="order">Order (1,2...):</label>
+                                    <label for="order">Order (1,2...):<span class="red">*</span></label>
                                     <input type="text" name="order" value="" id="order">
                                     <p id="e_order" class="warning"></p>
                                 </div>
                                 <div class="field">
                                     <label for="org">Ogranization:</label>
                                     <input type="text" name="org" value="" id="org">
-                                    <p id="e_order" class="warning"></p>
                                 </div>
                                 <div class="field">
-                                    <label for="orgfac">Faculty</label>
+                                    <label for="orgfac">Faculty: </label>
                                     <input type="text" name="orgfac" value="" id="orgfac">
-                                    <p id="e_order" class="warning"></p>
                                 </div>
                                 <div class="field">
                                     <label for="web">Course Web Address</label>
                                     <input type="text" name="web" value="" id="web">
-                                    <p id="e_order" class="warning"></p>
                                 </div>
                                 <div class="field">
                                     <label for="spec">Field:</label>
                                     <input type="text" name="spec" value="" id="spec">
-                                    <p id="e_order" class="warning"></p>
                                 </div>
                                 <div class="field">
                                     <label for="visible">Visible:</label>
@@ -131,8 +124,7 @@
                                 </div>
                                 <div class="abs">
                                     <label for="abs">Abstract:</label>
-                                    <textarea name="abs" value="" id="abs"></textarea>
-                                    <p id="e_order" class="warning"></p>
+                                    <textarea name="abs"  id="abs"></textarea>
                                 </div>
                                 <input type="button" onclick="submitEditLectureForm();" value="Edit" class="submit-button"/>
                             </form>

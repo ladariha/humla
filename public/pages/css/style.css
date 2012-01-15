@@ -153,6 +153,42 @@ nav li > a:hover, nav li > a:active {
     opacity: 1;
 }
 
+#rssitem{
+    display: inline-block; padding:0 ;height:40px;
+    position:relative;
+    -webkit-box-shadow:none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+#rssicon{
+    margin:0;
+     display: inline-block;
+    position: relative;
+    display: inline-block; 
+    height: 21px;
+    padding: 0 0 0 5px;
+}
+#rssitem > a, #rssitem > a:active, #rssitem > a:hover  {
+    padding: 5px 0.1em 0 0.1em;
+    margin: 0;
+    border:none;
+    height: 40px;
+    background: transparent;
+    -webkit-box-shadow:none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    position:relative;
+    z-index: 5;
+}
+
+#rssitem > a{
+    opacity: 0.7;
+}
+
+#rssitem >a:active,#rssitem > a:hover{
+    opacity:1;
+}
+
 nav #presentations:hover {
     background: #E18727;
     border-left: 1px solid #8C5D26;
@@ -248,11 +284,11 @@ header div#login a:hover {
 
 
 #login-form-overlay form#login-form div.controls{
-     border-top: 1px solid #fff;
-     margin-top: 10px;
-     margin-bottom: 0px;
-     padding-top: 5px;
-     height: 35px;
+    border-top: 1px solid #fff;
+    margin-top: 10px;
+    margin-bottom: 0px;
+    padding-top: 5px;
+    height: 35px;
 }
 #login-form-overlay form#login-form a.button{ 
     float:right;
@@ -272,7 +308,7 @@ header div#login a:hover {
 
 #login-form-overlay form#login-form .register-field {
     display:none;
-    
+
 }
 
 /* ------------------------ MAIN --------------------------------*/
@@ -531,6 +567,9 @@ footer {
     width:700px;
 }
 
+.red{
+    color: red;
+}
 #form-container h2 { font-size:18px; color:#333; padding:0px; margin:0px 0px 10px 0px; }
 
 fieldset, form { padding:0px; margin:0px; border:none }
