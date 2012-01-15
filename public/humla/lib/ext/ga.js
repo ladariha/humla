@@ -1,9 +1,13 @@
 
-var script = false; 
-var firstSlide = true;
-var previousSlide = -1;
-var actualMode = "";
+//var script = false; 
+//var firstSlide = true;
+//var previousSlide = -1;
+//var actualMode = "";
 var ex_ga = {
+    script : false,
+    firstSlide : true,
+    previousSlide : -1,
+    actualMode : "",    
     enterSlide : function(slide) {
         // GA code here
         //slide.error="enter ";  
@@ -21,11 +25,11 @@ var ex_ga = {
         }
     },
     processSlide : function(slide){
-        if (!script){
+        if (!this.script){
             (function() {
-                console.log("Pridavam skript");
+                //console.log("Pridavam skript");
 
-                script = true;
+                this.script = true;
                 var ga = document.createElement('script');
                 ga.type = 'text/javascript';
                 ga.async = true;
@@ -42,30 +46,30 @@ var ex_ga = {
         _gaq.push(['_setLocalGifPath',this.config.params['gifPath']]);
         //_gaq.push(['_setLocalRemoteServerMode']);
         _gaq.push(['_setLocalServerMode']);
-        if (firstSlide){
-            actualMode = viewMode;
-            previousSlide = slide;
+        if (this.firstSlide){
+            this.actualMode = viewMode;
+            this.previousSlide = slide;
             _gaq.push(['_trackEvent', course+' - lecture '+lecture, viewMode, slide]);
             //console.log("Posilam: "+course+' - lecture '+lecture+" - "+ viewMode+" - "+slide);
             _gaq.push(['_trackEvent', course+' - lecture '+lecture, 'presentation start', slide]);
             //console.log("Posilam: "+course+' - lecture '+lecture+" - presentation start - "+slide);
             //_gaq.push(['_trackEvent', 'MI-MDW ', 'lecture 1', 'slide left', 2]);
             //_gaq.push(['_trackEvent', 'MI-MDW ', 'lecture 1', 'mode change', 1]);
-            firstSlide = false;
+            this.firstSlide = false;
         } else {
-            if (viewMode != actualMode) {
+            if (viewMode != this.actualMode) {
                 _gaq.push(['_trackEvent', course+' - lecture '+lecture, viewMode, slide]);
                 //console.log("Posilam: "+course+' - lecture '+lecture+" - "+ viewMode+" - "+slide);
-                actualMode = viewMode;
+                this.actualMode = viewMode;
             }
-            if (slide > previousSlide){
+            if (slide > this.previousSlide){
                 _gaq.push(['_trackEvent', course+' - lecture '+lecture, "slide right", slide]);
                 //console.log("Posilam: "+course+' - lecture '+lecture+" - slide right - "+slide);
-                previousSlide = slide;
-            } else if (slide < previousSlide){
+                this.previousSlide = slide;
+            } else if (slide < this.previousSlide){
                 _gaq.push(['_trackEvent', course+' - lecture '+lecture, "slide left", slide]);
                 //console.log("Posilam: "+course+' - lecture '+lecture+" - slide left - "+slide);
-                previousSlide = slide;
+                this.previousSlide = slide;
         } 
         }
         //_gaq.push(['_trackEvent', course+' - lecture '+lecture, viewMode, slide]);

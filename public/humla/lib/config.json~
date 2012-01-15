@@ -53,11 +53,6 @@
             "object" : "view_editor",        
             "script" : {"src" : "views/editor.js"}, 
             "style"  : {"src" : "views/editor_view.css", "media" : "screen"}
-        },
-        {"id"     : "6", 
-            "object" : "view_items",        
-            "script" : {"src" : "views/items.js"}, 
-            "style"  : {"src" : "views/items.css", "media" : "screen"}
         }
         
     ],
@@ -140,19 +135,7 @@
                 "account" : "UA-27319772-1",
                 "gifPath": "http://wa.vse.cz/listener"
             },
-            "enabled" : true 
-        },
-        
-         {"id" : "gbooks",
-            "object" : "ex_gbooks",
-            "scripts" : [ {"src" : "ext/gbooks.js"} ],
-             "styles"  : [ {"src" : "ext/gbooks.css", "media" : "screen, print"} ],
-            "enabled" : true 
-        },
-         {"id" : "ex_items",
-            "object" : "ex_items",
-            "scripts" : [ {"src" : "ext/ex_items.js"} ],
-            "enabled" : true 
+            "enabled" : false 
         },
         
         {"id" : "comments",
@@ -176,7 +159,7 @@
         },
         {"id" : "menu",
             "object" : "ex_menu",
-            "scripts" : [ {"src" : "ext/menu.js"} ],      
+            "scripts" : [ {"src" : "ext/menu.js"} ],            
             "enabled" : true 
         },
         
@@ -186,7 +169,6 @@
             "styles"  : [ {"src" : "ext/slideindex.css", "media" : "screen, print"} ],
             "enabled" : true 
         }
-        
         
         
     ]

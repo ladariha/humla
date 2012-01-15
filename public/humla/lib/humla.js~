@@ -25,9 +25,6 @@ var humla = {
     // message box
     msgbox    : null,
     
-    // menu bar
-    menubar   : null,
-    
     // all slides in the presentation
     slides    : [],
     
@@ -70,9 +67,6 @@ var humla = {
     
         // create utils object
         humla.utils = new Utils(window);
-        
-        // create MenuBar object
-        humla.menubar = new MenuBar();        
     
         // get the base url of the humla directory
         var scripts = humla.utils.documentHead.getElementsByTagName("script");
@@ -86,8 +80,7 @@ var humla = {
     
         // activate main style sheet and load the main scripts
         //humla.utils.activateStyle(this.home + "core/humla.css", "screen, print");
-        var footer = null;           
-        
+        var footer = null;   
         
         var loadSlides = function(section) {
             // get all direct descendant elements underneath this section element
@@ -368,9 +361,8 @@ var Utils = function(window) {
         // style has not been found - add it
         if (this.firstUserStyle == "")
             this.documentHead.appendChild(this.createStyleElement(style, media));
-        else{
-            this.documentHead.appendChild(this.createStyleElement(style, media));            
-            }
+        else
+            this.documentHead.insertBefore(this.createStyleElement(style, media), this.firstUserStyle);            
     };
 
     // deactivate the style on the document
@@ -536,119 +528,15 @@ var MessageBox = function(message) {
         this.addMessage(message);
 };
 
-
-/* MENU BAR */
-
-var MenuBar = function(message) {
-    this.nav = null;    
-    this.hidden = true;
-    this.layer = null;
-    
-    // Menu bude mít buď zobrazený poloprůhledný klikadlo, nebo celý menu, nebo menu i s nabídkou
-    
-    this.showMenu = function(update) {
-        if (this.nav && update) {
-            humla.utils.documentBody.removeChild(this.nav);
-            if ( this.layer) humla.utils.documentBody.removeChild(this.layer);
-            this.nav = null;
-        }
-        
-        if (!this.nav) {
-            this.nav = humla.utils.document.createElement("nav");           
-            this.layer = humla.utils.document.createElement("div");                      
-            
-            //this.layer = humla.utils.document.getElementById("menu-layer");                      
-            
-            
-            //Generate menu Icons with texts TODO
-            this.nav.innerHTML = "<div style='width:100%;text-align:center; color:white;' class='toggle' onclick='humla.menubar.hideMenu()'>Menu"
-            +"<span class='menu-close-button'>X</span></div>"
-            +"<ul id='menu'>"
-            +"<li id='menu-item-views' onclick='humla.menubar.showLayer(\"menu-views\");'>Views</li>"
-            +"<li id='menu-item-comments' onclick='humla.menubar.showLayer(\"menu-comments\");'>Comments</li>"
-            +"<li id='menu-item-editor' onclick='humla.menubar.showLayer(\"menu-editor\");'>Editor</li>"
-            +"<li id='menu-item-rating' onclick='humla.menubar.showLayer(\"menu-rating\");'>Rating</li></ul>";            
-            this.layer.innerHTML = "<div id='menu-views' class='menu-layer' style='display:none;'>"
-            +"<span class='menu-close-button' onclick='humla.menubar.showLayer(\"menu-views\",true);'>X</span>"
-            +"<h1>Views</h1>"
-            +"<div class='button' onclick='humla.controler.activateView(0);humla.menubar.showLayer(\"menu-views\",true);'>Slideshow</div>"
-            +"<div class='button' onclick='humla.controler.activateView(1);humla.menubar.showLayer(\"menu-views\",true);'>Presentation</div>"
-            +"<div class='button' onclick='humla.controler.activateView(2);humla.menubar.showLayer(\"menu-views\",true);'>Overview</div>"
-            +"<div class='button' onclick='humla.controler.activateView(3);humla.menubar.showLayer(\"menu-views\",true);'>Print</div></div>";
-            this.layer.innerHTML += "<div id='menu-comments' class='menu-layer' style='display:none;'>"
-            +"<span class='menu-close-button' onclick='humla.menubar.showLayer(\"menu-comments\",true);'>X</span>"
-            +"<h2>Comments</h2>"            
-            +"</div>";
-            this.layer.innerHTML += "<div id='menu-rating' class='menu-layer' style='display:none;'>"
-            +"<span class='menu-close-button' onclick='humla.menubar.showLayer(\"menu-rating\",true);'>X</span>"
-            +"<h2>Settings</h2>"            
-            +"<div class='button' onclick='humla.controler.activateView(3);humla.menubar.showLayer(\"menu-rating\",true);'>View 4</div></div>";
-        
-            this.nav.addEventListener("mousefocus", function() {
-                
-                humla.menubar.nav.className="";
-               
-            });
-        
-            
-            humla.utils.documentBody.insertBefore(this.nav, humla.utils.documentBody.childNodes[0]);
-            humla.utils.documentBody.insertBefore(this.layer, humla.utils.documentBody.childNodes[0]);
-        }        
-    }    
-    
-    this.hideMenu = function() {        
-        if (this.nav) {
-            this.nav.innerHTML = "<div style='width:100%;text-align:center; color:white;' class='toggle'>Menu</div>";        
-        } else {            
-            this.nav = humla.utils.document.createElement("nav");
-            //this.layer = humla.utils.document.createElement("div");                      
-            this.layer = humla.utils.document.getElementById("menu-layer");                      
-            this.nav.innerHTML = "<div style='width:100%;text-align:center;  color:white;' class='toggle'>Menu</div>";
-            humla.utils.documentBody.insertBefore(this.nav, humla.utils.documentBody.childNodes[0]);
-        //humla.utils.documentBody.insertBefore(this.layer, humla.utils.documentBody.childNodes[0]);
-        }
-        this.nav.className = "lower";
-        this.nav.addEventListener("mouseup", function() {
-            humla.menubar.showMenu(true);
-            humla.menubar.hidden = false;
-        });
-    }
-    
-    this.toggle = function() {
-        if(this.hidden) {
-            this.showMenu(true);
-        } else {
-            this.hideMenu();
-        }
-        this.hidden = !this.hidden;
-    }
-    
-    this.showLayer= function(id, hide) {
-        console.log(id);
-        var elm = humla.utils.document.getElementById(id);
-        console.log(elm);
-        if (elm) {
-            hide = elm.style.display == "block";
-            elm.style.display = hide? "none": "block";
-        }
-    }
-    
-    this.hideMenu();
-};
-
-
-
-
 /* LOAD HUMLA */
 
 document.addEventListener("DOMContentLoaded", function() {
     // check the browser version
-    if (navigator.userAgent == "no-ga-tv" ||
+    if ((navigator.userAgent == "no-ga-tv" ||
         (browser.browser == "Chrome" && browser.version >= 13) ||
-        (browser.browser == "Firefox" && browser.version >= 4) ||
         (browser.browser == "Safari" && browser.version >= 5.1) || 
         (browser.browser == "Opera") || 
-        browser.browser == "wkhtmltopdf") {
+        browser.browser == "wkhtmltopdf")) {
         document.getElementsByTagName("body")[0].style.visibility = "hidden";
         
         humla.load();

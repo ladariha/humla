@@ -1,0 +1,60 @@
+/* Browser presentation styles */
+
+.slide {
+    -webkit-transform: scale(0.8) translateZ(0);
+    -moz-transform: scale(0.8);
+    -o-transform: scale(0.8);
+    -webkit-transition-property: margin, -webkit-transform, opacity;
+    -webkit-transition-duration: 0.3s, 0.3s, 0.3s;
+    -webkit-transition-timing-function: ease-in-out;   
+    opacity: 0.4;
+}
+.hide{
+    opacity: 0.1;
+    /* Firefox */
+    -moz-transition: opacity 2s ease 1s;
+    /* WebKit */
+    -webkit-transition: opacity 2s ease 1s;
+    /* Opera */
+    -o-transition: opacity 2s ease 1s;
+    /* Standard */
+    transition: opacity 2s ease 1s;
+}
+.display{
+    opacity: 0.1;
+    -moz-transition: opacity 0.5s ease-in;
+    /* WebKit */
+    -webkit-transition: opacity 0.5s ease-in;
+    /* Opera */
+    -o-transition: opacity 0.5s ease-in;
+    /* Standard */
+    transition: opacity 0.5s ease-in;
+
+}
+.slide.far-previous {
+    display: block;
+    margin-left: -2100px;
+}
+
+.slide.previous {
+    display: block;
+    margin-left: -1150px;
+}
+
+.slide.current {
+    display: block;
+    margin-left: -400px;
+    -webkit-transform: scale(1.0) translateZ(0);
+    opacity: 1;
+}
+
+.slide.next {
+    display: block;
+    margin-left: 350px;
+}
+
+.slide.far-next {
+    display: block;
+    margin-left: 1300px;
+}
+

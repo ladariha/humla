@@ -23,8 +23,6 @@ window.onload = function(){
                 document.getElementById('keywords').value=k;
                 document.getElementById('_id').value=object._id;
                 document.getElementById('visible').value=object.isActive;
-                
-                
                 document.getElementById('semester').value = object.semester;
                 document.getElementById('authorEmail').value = object.authorEmail;
                 document.getElementById('authorWeb').value = object.authorWeb;
@@ -34,9 +32,6 @@ window.onload = function(){
                 document.getElementById('spec').value = object.field;
                 document.getElementById('abs').value = object.lectureAbstract;
                 document.getElementById('web').value = object.web;
-                
-                
-                
             }else{
                 document.getElementById('msg').innerHTML='Cannot load '+getParameterByName('course') + ' & '+getParameterByName('lecture');
             }  

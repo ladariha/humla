@@ -41,7 +41,7 @@ app.get('/api/facet/courses', function(req, res){ // TODO database timeout
     
     
 /**
- * Returns all presentations for given course
+ * Returns all lectures for given course
  */
 app.get('/api/facet/:course/lectures', function(req, res){
     var course = req.params.course;

@@ -1,12 +1,31 @@
-/* 
-    Document   : gbooks
-    Created on : Dec 21, 2011, 6:17:14 PM
-    Author     : lada
-    Description:
-        Purpose of the stylesheet follows.
-*/
-
-root { 
-    display: block;
+.gbooksTitle{
+    font-style: italic;
 }
 
+.gbooksListSecret{
+    font-size: 25px;
+    list-style-type: none;
+}
+
+.gbooksDesc{
+    font-size: 18px;
+}
+
+.gbooksRight .gbooksDesc{
+    font-style: italic;
+}
+
+.gbooksColumns2 table{
+ border:none;   
+ -webkit-box-shadow: none;
+ -moz-box-shadow: none;
+ width: 100%;
+}
+
+.gbooksBig{
+    padding: 20px;
+}
+
+.gbooksSmall{
+    font-size: 28px;
+}

@@ -26,6 +26,9 @@ var LectureSchema = new Schema({
     title: String,
     lectureAbstract: String,
     isActive: Boolean,
+    created: {
+        type: Date
+    },
     lastModified  :  {
         type: Date
     },
