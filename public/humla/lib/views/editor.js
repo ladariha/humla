@@ -134,23 +134,18 @@ var view_editor = {
 
                     // if apply changes, send request to save
                     data.originalSlideContent = "";
-                    var params = "content="+encodeURIComponent(JSON.stringify(data));
                     var fields = window.location.href.split("/");
                     var course = fields[5];//presentationUrl.substr(0, presentationUrl.indexOf("/"));
                     var lecture= fields[6].substr(0, fields[6].indexOf("."));
                     var request = new XMLHttpRequest();
                     request.open("PUT", '/api/'+course+'/'+lecture+'/editor', true);
-                    request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                    request.setRequestHeader("Content-length", params.length);
-                    request.setRequestHeader("Connection", "close");
-            
+                    request.setRequestHeader("Content-type", "application/json");
                     request.onreadystatechange = function(){
                         if (request.readyState==4) {
                             if(request.status==200){
                                 alert("Presentation was succesfully modified, reload page to view changes", 20000, "Info: ");
                                 
                                 // refesh JSON
-                                console.log("REFRESHING");
                                 var request2 = new XMLHttpRequest();
                                 request2.open("GET", '/api/'+course+'/'+lecture+'/index?refresh=true', true);
                                 request2.setRequestHeader("Connection", "close");            
@@ -170,8 +165,7 @@ var view_editor = {
                             }
                         }
                     };
-                    request.send(params); 
-                    
+                    request.send((JSON.stringify(data))); 
                 }
             // clear local storage
             }

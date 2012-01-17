@@ -1,21 +1,18 @@
 
 function sendData(){
-    var data = editor.getValue();
-    data = encodeURIComponent(data);
     var url = "/api/"+document.getElementById("course").innerHTML+"/"+document.getElementById("lecture").innerHTML+"/slide"+document.getElementById("slide").innerHTML+"/editor";
-    
     var append = getParameterByName('append');
-    var params;
-    if(append.length > 0 && append==="true"){
-        params = "slide="+data+"&append=true";
+    var params={
+        slide: editor.getValue()
+    };
+    if(append.length > 0 && append==="true"){   
+        params.append="true";
     }else{
-        params = "slide="+data;
+        params.append="false";
     }
     var request = new XMLHttpRequest();
     request.open("PUT", url, true);
-    request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    request.setRequestHeader("Content-length", params.length);
-    request.setRequestHeader("Connection", "close");
+    request.setRequestHeader("Content-type", "application/json");
     request.onreadystatechange = function(){
         if (request.readyState==4) {
             if(request.status==200){
@@ -30,7 +27,7 @@ function sendData(){
         }
         
     };
-    request.send(params);
+    request.send(JSON.stringify(params));
 
 }
             
@@ -166,7 +163,7 @@ function loadLayout(version){
                     }
                 }
                 finalString = finalString.replace(/\&amp;/g,'&');
-               editor.replaceRange(finalString,editor.getCursor());
+                editor.replaceRange(finalString,editor.getCursor());
                 document.getElementById("append").innerHTML = "Append after";
                 document.getElementById("slide").innerHTML = slide;
                 document.getElementById("lecture").innerHTML = lecture;

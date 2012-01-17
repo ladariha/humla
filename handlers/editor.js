@@ -127,12 +127,11 @@ function editSlide(res, req){
     var course = RegExp.$1;
     var lecture = RegExp.$2;
     var slide = RegExp.$3;
-    if(req.body === undefined || req.body.slide === undefined){
+    if(req.body == undefined || req.body.slide == undefined){
         returnEditorError(400, 'Missing field \"slide\" ', res); 
     }else{
         var content=req.body.slide;
         var append = req.body.append;
-        content = decodeURIComponent(content);
         if(append==="true"){
             editSlideContentAppend(course, lecture, slide, content, res, host);
         }else{
@@ -238,7 +237,7 @@ function editSlideContent(course, lecture, slide, content, res, host){
                                 slideCounter++;
                             });   
 
-                            var newcontent= $("html").html();                            
+                            var newcontent= $("html").html();                
                             //newcontent = newcontent.replace(/\&amp;/g,'&');
                             newcontent = "<!DOCTYPE html><html>"+newcontent.replace(/\&amp;/g,'&')+"</html>";
                             if(slideSend===0){
@@ -312,7 +311,7 @@ function parseDocument(res, req, htmlfile, slide, resourceURL){
                 try{
                     var $ = window.$;
                     var slideCounter=1;
-                    
+
                     $('body').find('.slide').each(function(){
                         if(slideCounter === slide){                            
                             res.writeHead(200, {
@@ -417,11 +416,8 @@ app.put('/api/:course/:lecture/raw/editor', function api(req, res) {
     var resourceURL = req.headers.host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html";
     fs.writeFile(htmlfile, (req.body.content), function (err) { // no need for decodeURIComponent. seems to be already decoded...
         if (err) {
-            console.log(err);
-            
             returnEditorError(500, 'Problem with saving document: '+err.message, res);
         }else{
-                                        
             res.writeHead(200, {
                 'Content-Type': 'application/json'
             });
@@ -439,12 +435,8 @@ app.put('/api/:course/:lecture/editor', function api(req, res) { // TODO check c
 
     var course = req.params.course;//RegExp.$1;
     var lecture = req.params.lecture;
-    var d = decodeURIComponent(req.body.content);
-    var host = req.headers.host;
-    //    console.log(d);
-    var data_slide = eval('(' +d+')');
- 
-    
+    var data_slide = req.body;
+    var host = req.headers.host;   
     var pathToCourse = '/'+course+'/';
     var htmlfile = SLIDES_DIRECTORY+pathToCourse+lecture+".html";
     fs.readFile(htmlfile, function (err, data) {
@@ -516,7 +508,6 @@ function refreshIndexFile(course, lecture, host){
     
     // refesh JSON
     var url = "http://"+host+'/api/'+course+'/'+lecture+'/index?refresh=true';
-    console.log("URL JE "+url);
     //    url = url.replace('http://',''); // TODO no support for other than HTTP protocol
     var stop = url.indexOf('/');
     var content = '';

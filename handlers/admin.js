@@ -16,10 +16,10 @@ var rss = require((path.join(path.dirname(__filename), './rss')).toString()+"/rs
  * Creates new course (new entry in db, new folder)
  */
 app.post('/api/:course/course', function(req, res){ // TODO database timeout
-  
-    if(req.body === undefined || req.body.longName === undefined || req.body.longName.length<1 || 
-        req.body.isActive === undefined || req.body.isActive.length<1 || req.body.courseID ===undefined ||
-        req.body.courseID.length<1 || req.body.owner === undefined || req.body.owner.length<1
+
+    if(req.body == undefined || req.body.longName == undefined || req.body.longName.length<1 || 
+        req.body.isActive == undefined || req.body.isActive.length<1 || req.body.courseID ==undefined ||
+        req.body.courseID.length<1 || req.body.owner == undefined || req.body.owner.length<1
         ){
          res.writeHead(400, {
             'Content-Type': 'text/plain'

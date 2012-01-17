@@ -24,7 +24,7 @@ function loadPresentation(){
                     document.getElementById("course").innerHTML = course;
                    
                 }else{
-                document.getElementById("msg").innerHTML=request.status+": "+request.statusText+" - "+request.responseText;    
+                    document.getElementById("msg").innerHTML=request.status+": "+request.statusText+" - "+request.responseText;    
                 }  
             }
         };
@@ -79,12 +79,12 @@ function loadLayout(version){
 function sendData(){
 
     var url = "/api/"+document.getElementById("course").innerHTML+"/"+document.getElementById("lecture").innerHTML+"/raw/editor";
-    var params = "content="+encodeURIComponent(editor.getValue());
+    var c = {
+        content:editor.getValue()
+    }
     var request = new XMLHttpRequest();
     request.open("PUT", url, true);
-    request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    request.setRequestHeader("Content-length", params.length);
-    request.setRequestHeader("Connection", "close");
+    request.setRequestHeader("Content-type", "application/json");
     request.onreadystatechange = function(){
         if (request.readyState==4) {
             if(request.status==200){
@@ -96,6 +96,6 @@ function sendData(){
             loadPresentation();
         }
     };
-    request.send(params);
+    request.send(JSON.stringify(c));
 
 }

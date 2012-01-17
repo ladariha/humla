@@ -9,28 +9,26 @@
 function submitNewLectureForm(){
     
     if(formIsValid()){
-        var courseID = encodeURIComponent(document.getElementById('course').value);
-        var title = encodeURIComponent(document.getElementById('title').value); 
-        var author = encodeURIComponent(document.getElementById('author').value); 
-        var keywords  =encodeURIComponent(document.getElementById('keywords').value); 
-        var order  =encodeURIComponent(document.getElementById('order').value); 
-        var isActive = encodeURIComponent(document.getElementById('visible').value); 
-        var url = '/api/'+courseID+"/lecture"+order+"/lecture";
-        var params = "courseID="+courseID+'&title='+title+'&author='+author+'&isActive='+isActive+'&keywords='+keywords+'&order='+order;
-        params = params+"&semester="+encodeURIComponent(document.getElementById('semester').value);
-        params = params+"&authorEmail="+encodeURIComponent(document.getElementById('authorEmail').value);
-        params = params+"&authorTwitter="+encodeURIComponent(document.getElementById('authorTwitter').value);
-        params = params+"&authorWeb="+encodeURIComponent(document.getElementById('authorWeb').value);
-        params = params+"&org="+encodeURIComponent(document.getElementById('org').value);
-        params = params+"&orgfac="+encodeURIComponent(document.getElementById('orgfac').value);
-        params = params+"&spec="+encodeURIComponent(document.getElementById('spec').value);
-        params = params+"&web="+encodeURIComponent(document.getElementById('web').value);
-        params = params+"&abs="+encodeURIComponent(document.getElementById('abs').value);
+        var lecture = {};
+        lecture.courseID = encodeURIComponent(document.getElementById('course').value);
+        lecture.title = encodeURIComponent(document.getElementById('title').value); 
+        lecture.author = encodeURIComponent(document.getElementById('author').value); 
+        lecture.keywords  =encodeURIComponent(document.getElementById('keywords').value); 
+        lecture.order  =encodeURIComponent(document.getElementById('order').value); 
+        lecture.isActive = encodeURIComponent(document.getElementById('visible').value); 
+        var url = '/api/'+lecture.courseID+"/lecture"+lecture.order+"/lecture";
+        lecture.semester=encodeURIComponent(document.getElementById('semester').value);
+        lecture.authorEmail=encodeURIComponent(document.getElementById('authorEmail').value);
+        lecture.authorTwitter=encodeURIComponent(document.getElementById('authorTwitter').value);
+        lecture.authorWeb=encodeURIComponent(document.getElementById('authorWeb').value);
+        lecture.org=encodeURIComponent(document.getElementById('org').value);
+        lecture.orgfac=encodeURIComponent(document.getElementById('orgfac').value);
+        lecture.spec=encodeURIComponent(document.getElementById('spec').value);
+        lecture.abs=encodeURIComponent(document.getElementById('abs').value);
+        lecture.web=encodeURIComponent(document.getElementById('web').value);
         var request = new XMLHttpRequest();
         request.open("POST", url, true);
-        request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        request.setRequestHeader("Content-length", params.length);
-        request.setRequestHeader("Connection", "close");
+        request.setRequestHeader("Content-type", "application/json");
         request.onreadystatechange = function(){
             if (request.readyState==4) {
                 if(request.status==200){
@@ -39,10 +37,9 @@ function submitNewLectureForm(){
                 }else{
                     document.getElementById('msg').innerHTML=request.status+": "+request.statusText;    
                 }
-            
             }
         };
-        request.send(params);
+        request.send(JSON.stringify(lecture));
     }
 }
 
