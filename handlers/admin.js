@@ -10,7 +10,6 @@ var facet_use_fs = 1;
 var mongoose = require("mongoose"); 
 var Course = mongoose.model("Course");
 var Lecture = mongoose.model("Lecture");
-var rss = require((path.join(path.dirname(__filename), './rss')).toString()+"/rss_module");
 
 /**
  * Creates new course (new entry in db, new folder)
@@ -307,7 +306,6 @@ app.post('/api/:course/:lecture/lecture', function(req, res){ // TODO database t
                                             });
                                             res.write(JSON.stringify(c, null, 4));
                                             res.end(); 
-                                            rss.updateAllFeed(host,c.courseID);
                                         }else{ // copy template
                                             copyTemplateHTML(req, res, c, decodeURIComponent(req.body.order), decodeURIComponent(req.body.keywords));
                                         }
@@ -415,7 +413,6 @@ app.put('/api/:course/:lecture/lecture', function(req, res){ // TODO database ti
                                                 });
                                                 res.write(JSON.stringify(c, null, 4));
                                                 res.end(); 
-                                                rss.updateAllFeed(host,c.courseID);
                                             }else{ // copy template
                                                 editTemplateHTML(req, res, c, decodeURIComponent(req.body.order), decodeURIComponent(req.body.keywords));
                                             }
@@ -435,7 +432,6 @@ app.put('/api/:course/:lecture/lecture', function(req, res){ // TODO database ti
                                                 });
                                                 res.write(JSON.stringify(c, null, 4));
                                                 res.end(); 
-                                                rss.updateAllFeed(host,c.courseID);
                                             }else{ // copy template
                                                 editTemplateMoveHTML(prev, req, res, c, decodeURIComponent(req.body.order), decodeURIComponent(req.body.keywords));
                                             }
@@ -501,7 +497,6 @@ function copyTemplateCSS(req, res, lecture, prevFile, longName){
                     });
                     res.write(JSON.stringify(lecture, null, 4));
                     res.end();
-                    rss.updateAllFeed(host,lecture.courseID);
                 }
             });  
             
@@ -557,7 +552,6 @@ function moveTemplateCSS(req, res, lecture, prevFile, longName){
                             });
                             res.write(JSON.stringify(lecture, null, 4));
                             res.end();
-                            rss.updateAllFeed(host,lecture.courseID);
                         }                    
                     });
                     

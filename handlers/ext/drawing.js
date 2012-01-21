@@ -16,11 +16,10 @@ exports.parse =function parse($,slideIndex){
         });
         slide++;    
     });    
-    for(i in temporary.drawings){
+    for(var i in temporary.drawings){
         parseSingleDrawing(temporary.drawings[i],slideIndex);
     }
-
-}
+};
 
 
 /**
@@ -36,7 +35,6 @@ function parseSingleDrawing(drawing,slideIndex){
     //function parseSingleDrawing(drawing,slideIndex,response, _pathToCourse, _filename){
     
     var https = require('https');
-
     
     var id = drawing.id;
     var options = {
@@ -80,4 +78,21 @@ function parseSingleDrawing(drawing,slideIndex){
             return slideIndex;
         }
     });   
-}
+};
+
+exports.createFeedList = function(index){
+    var ul = "<p>Google Drawings </p><ul >";
+    for(var i in index.drawings){
+        var d = index.drawings[i];
+        ul+="<li>";
+        if(d.alt.length>0){
+            ul+="<a href=\""+d.slide+"\">"+d.alt+"</a>";
+        }else{
+            ul+="<a href=\""+d.slide+"\">"+d.filename+"</a>";
+        }
+        ul+="</li>"
+    }
+        
+    ul+="</ul>"
+    return ul;          
+};

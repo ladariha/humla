@@ -20,7 +20,7 @@ var ex_slideindex = {
             var course = fields[5];//presentationUrl.substr(0, presentationUrl.indexOf("/"));
             var lecture= fields[6].substr(0, fields[6].indexOf("."));
         
-            var request = new XMLHttpRequest;
+            var request = new XMLHttpRequest();
             var url = "/api/"+course+"/"+lecture+"/index";
             request.open("GET", url, true);
             request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -30,7 +30,6 @@ var ex_slideindex = {
                 if (request.readyState==4) {
                     if (request.status == 200){
                         var index = eval('(' + request.responseText + ')');
-                        console.log(index);
                         ext.designIndex(slide, index);
                     }else{
                         alert(request.status+": "+request.statusText);
