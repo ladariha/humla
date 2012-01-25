@@ -58,6 +58,7 @@ After Humla has been downloaded, go to the humla directory and update submodules
   - Express framework 
   - MongoDB DB
   - JSDOM module
+  - Cron module (https://github.com/ncb000gt/node-cron)
 
 
 # Usage

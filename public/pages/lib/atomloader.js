@@ -1,12 +1,12 @@
 
-var rssLoader = new RSSLoader();
+var atomLoader = new AtomLoader();
 
 $(document).ready(function() {
-   rssLoader.loadCourses();
+   atomLoader.loadCourses();
 });
 
 
-function RSSLoader(){
+function AtomLoader(){
    this.loadCourses = function() {
         var $jqXHR = $.getJSON("/api/facet/courses", function(courses) {                   
             var list = document.getElementById("rsscourses");
@@ -15,7 +15,7 @@ function RSSLoader(){
                 var c = courses[i];
                 if (c.courseID) {
                     var new_element = document.createElement('li');
-                    new_element.innerHTML = "<a href=\"/data/slides/"+c.courseID+"/rss.xml\">"+c.courseID +": "+c.longName+"</a>";
+                    new_element.innerHTML = "<a href=\"/data/slides/"+c.courseID+"/atom.xml\">"+c.courseID +": "+c.longName+"</a>";
                     list.insertBefore(new_element, list.firstChild);
                 }
             }

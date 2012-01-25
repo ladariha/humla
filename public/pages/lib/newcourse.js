@@ -42,15 +42,17 @@ function submitNewCourseForm(){
     
     if(formIsValid()){
         var courseID = encodeURIComponent(document.getElementById('course').value);
-        var fullName = encodeURIComponent(document.getElementById('fullName').value); 
-        var owner = encodeURIComponent(document.getElementById('owner').value); 
-        var isActive = encodeURIComponent(document.getElementById('visible').value); 
         var url = '/api/'+courseID+'/course';
-        var params = "courseID="+courseID+'&longName='+fullName+'&owner='+owner+'&isActive='+isActive;
+        var course={
+            courseID: courseID,
+            longName: encodeURIComponent(document.getElementById('fullName').value),
+            owner: encodeURIComponent(document.getElementById('owner').value),
+            isActive: encodeURIComponent(document.getElementById('visible').value)
+        };
     
         var request = new XMLHttpRequest();
         request.open("POST", url, true);
-        request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        request.setRequestHeader("Content-type", "application/json");
         request.onreadystatechange = function(){
             if (request.readyState==4) {
                 if(request.status==200){
@@ -64,10 +66,9 @@ function submitNewCourseForm(){
                 }else{
                     document.getElementById('msg').innerHTML=request.status+": "+request.statusText;    
                 }
-            
             }
         };
-        request.send(params);
+        request.send(JSON.stringify(course));
     }
 }
 

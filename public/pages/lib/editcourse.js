@@ -80,18 +80,19 @@ function submitEditCourseForm(){
     
     if(formIsValid()){
         var courseID = encodeURIComponent(document.getElementById('course').value);
-        var fullName = encodeURIComponent(document.getElementById('fullName').value); 
-        var owner = encodeURIComponent(document.getElementById('owner').value); 
-        var isActive = encodeURIComponent(document.getElementById('visible').value); 
-        var id = encodeURIComponent(document.getElementById('_id').value); 
+        var course={
+            courseID: courseID,
+            longName: encodeURIComponent(document.getElementById('fullName').value),
+            owner: encodeURIComponent(document.getElementById('owner').value),
+            isActive: encodeURIComponent(document.getElementById('visible').value),
+            id: encodeURIComponent(document.getElementById('_id').value)
+        };
+        
         var url = '/api/'+courseID+'/course';
-        var params = "courseID="+courseID+'&longName='+fullName+'&owner='+owner+'&isActive='+isActive+'&id='+id;
     
         var request = new XMLHttpRequest();
         request.open("PUT", url, true);
-        request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        request.setRequestHeader("Content-length", params.length);
-        request.setRequestHeader("Connection", "close");
+        request.setRequestHeader("Content-type", "application/json");
         request.onreadystatechange = function(){
             if (request.readyState==4) {
                 if(request.status==200){
@@ -104,10 +105,9 @@ function submitEditCourseForm(){
                 }else{
                     document.getElementById('msg').innerHTML=request.status+": "+request.statusText;    
                 }
-            
             }
         };
-        request.send(params);
+        request.send(JSON.stringify(course));
     }
 }
 
