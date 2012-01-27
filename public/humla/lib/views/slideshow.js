@@ -2,8 +2,11 @@
 var view_slideshow = {
     enterView : function() {
         humla.controler.fullscreen = true;
+        humla.controler.toBuild = true;
     },            
-
+    leaveView : function(){
+      humla.controler.toBuild = false;  
+    },
     enterSlide : function(slide) {
         var inx = slide.number - 1;        
         if (inx - 1 >= 0) humla.slides[inx - 1].addClass("previous");

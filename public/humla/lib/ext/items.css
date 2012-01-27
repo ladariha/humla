@@ -1,25 +1,6 @@
-/* slideshow presentation styles */
+/* Browser presentation styles */
 
-.slide.previous {
-    display: none;
-	margin-left: -1210px;
-}
-
-.slide.current {
-	display: block;
-	margin-left: 0px;
-	margin-top: 0px;
-	left: 0px;
-	top: 0px;
-	width: 100%;
-	height: 100%;
-}
-
-.slide.next {
-	display: none;
-	margin-left: 410px;
-}
-.hide{
+.hide2{
     opacity: 0.1;
     /* Firefox */
     -moz-transition: opacity 2s ease 1s;
@@ -30,7 +11,7 @@
     /* Standard */
     transition: opacity 2s ease 1s;
 }
-.display{
+.display2{
     opacity: 0.1;
     -moz-transition: opacity 0.5s ease-in;
     /* WebKit */
@@ -41,3 +22,5 @@
     transition: opacity 0.5s ease-in;
 
 }
+
+

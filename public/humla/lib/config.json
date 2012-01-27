@@ -149,9 +149,10 @@
              "styles"  : [ {"src" : "ext/gbooks.css", "media" : "screen, print"} ],
             "enabled" : true 
         },
-         {"id" : "ex_items",
-            "object" : "ex_items",
-            "scripts" : [ {"src" : "ext/ex_items.js"} ],
+         {"id" : "items",
+            "object" : "items",
+            "scripts" : [ {"src" : "ext/items.js"} ],
+             "styles"  : [ {"src" : "ext/items.css", "media" : "screen"} ],
             "enabled" : true 
         },
         
