@@ -14,14 +14,12 @@ var fs = require("fs");
 var path = require('path')
 var HANDLERS_DIRECTORY = (path.join(path.dirname(__filename), './handlers/')).toString();
 var MODELS_DIRECTORY = (path.join(path.dirname(__filename), './models/')).toString();
-
 var handlers = loadFiles(HANDLERS_DIRECTORY);
 var models = loadFiles(MODELS_DIRECTORY);
 
 app = null; // je to schválně bez var - aby to bylo v module contextu
 
 exports.run = function run( PORT, WEBROOT) {    
-
     app = express.createServer();
     
     // Configuration
