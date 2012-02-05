@@ -164,4 +164,13 @@ function NotFound(msg){
     Error.captureStackTrace(this, arguments.callee);
 }
 
+
+exports.returnError = function(code, msg, res){
+    res.writeHead(code, {
+        'Content-Type': 'text/plain'
+    });
+    res.write(msg);
+    res.end();
+}
+
 NotFound.prototype.__proto__ = Error.prototype;

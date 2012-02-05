@@ -396,8 +396,16 @@ function parseDocument(res, req, body, pathToCourse, filename, lecture, course, 
 
 /**
  * Returns html document from remote URL
+ * @deprecated
+ * @param res http response to be returned
+ * @param req http request
+ * @param url URL address from which the document should be downloaded
+ * @param pathToCourse name of folder for courses's slides and indices, for example "/mdw/"
+ * @param filename file name (without preffix) based on lecture order, for example "lecture1"
+ * @param lecture
+ * @param course
+ * @param alt - output format, either json or xml (case sensitive)
  */
- 
 function getDocumentFromUrl(res, req, url, pathToCourse, filename, lecture, course, alt){
     url = decodeURI(url);
     url = url.replace('http://',''); // TODO no support for other than HTTP protocol
@@ -444,8 +452,14 @@ function getDocumentFromUrl(res, req, url, pathToCourse, filename, lecture, cour
 
 /**
  * Returns html document from file system
+ * @param res http response to be returned
+ * @param req http request
+ * @param pathToCourse name of folder for courses's slides and indices, for example "/mdw/"
+ * @param filename file name (without preffix) based on lecture order, for example "lecture1"
+ * @param lecture
+ * @param course
+ * @param alt - output format, either json or xml (case sensitive)
  */
- 
 function getDocumentFromFileSystem(res, req, pathToCourse, filename, lecture, course, alt){
     fs.readFile(SLIDES_DIRECTORY+pathToCourse+filename+".html", function (err, data) {
         if (err){
@@ -463,6 +477,8 @@ function getDocumentFromFileSystem(res, req, pathToCourse, filename, lecture, co
 
 /**
  * Parses titles from document
+ * @param slideIndex data container
+ * @param $ jQuery object
  */
 function parseTitles(slideIndex,$){
 
@@ -581,6 +597,8 @@ function parseTitles(slideIndex,$){
 
 /**
  * Parses "img" and "pre" tags from document
+ * @param slideIndex data container
+ * @param $ jQuery object
  */
 function parseImagesAndCodeBlocks(slideIndex,$){
     var image={};
@@ -624,7 +642,11 @@ function parseImagesAndCodeBlocks(slideIndex,$){
     });   
 }
 
-
+/**
+ * Process information about titles/chapters/sections and make them hierarchical
+ *@param slideIndex data container
+ *@return hiararchical structure
+ */
 function makeStructureHierarchical(slideIndex){
     var sections = {};
     var newcontent = new Array();
@@ -668,6 +690,11 @@ function makeStructureHierarchical(slideIndex){
     return sections;
 }
 
+/**
+ * Transforms javascript representation of slideIndexer to a XML format
+ *@param slideIndexer data container
+ *@return xml representation of slideIndexer
+ */
 function createXMLIndex(slideIndexer){
     return parseObjectToXML(slideIndexer.content, 0);
 }
