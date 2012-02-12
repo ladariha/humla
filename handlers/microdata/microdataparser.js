@@ -5,7 +5,7 @@ exports.items = function(html, callback){
     jsdom.jQueryify(window, "../../public/lib/jquery-1.7.min.js", function() {
         window.jQuery('html').append(html);
         var  $ = window.jQuery;
-        var baseUrl;
+        var baseUrl='';
         $('html').find('base').each(function(){
             if($(this).attr('href').length)
                 baseUrl=($(this).attr('href'));
