@@ -19,7 +19,7 @@
                 height: 400px;
                 border: 1px solid black;
             }
-     
+
         </style>
     </head>
     <body>
@@ -43,24 +43,45 @@
 
 
         </div>
-        <textarea id="code" name="code">
-        </textarea>
-        <script>
-            var delay;
-            // Initialize CodeMirror editor with a nice html5 canvas demo.
-            var editor = CodeMirror.fromTextArea(document.getElementById('code'), {
-                mode: 'text/html',
-                tabMode: 'indent'
-            });
+        <div class="annotation_panel">
+            Annotations:
+            <ul class="annotation_list">
+                <li class="ann_button">Presentation    </li>
+                <li class="ann_button">Slide  </li>
+                <li class="ann_button">Code     </li>
+                <li class="ann_button">Algorithm     </li>
+                <li class="ann_button">FAQ  </li>
+                <li class="ann_button">Task     </li>
+                <li class="ann_button">Definition     </li>
+            </ul>
+        </div>
+        <div class="editor_right">
+
+            <textarea id="code" name="code">
+            </textarea>
+
+            <script>
+                var delay;
+                // Initialize CodeMirror editor with a nice html5 canvas demo.
+                var editor = CodeMirror.fromTextArea(document.getElementById('code'), {
+                    mode: 'text/html',
+                    tabMode: 'indent'
+                });
     
-        </script>
+            </script>
+
+        </div>
+
         <div style="clear:both"></div>
-        <div>
-            <button type="button" onClick="sendData();">Save</button>
+        <div style="float: right; margin: 5px 0;">
             <a href="" id="cancelLink"><button type="button">Cancel</button> </a>
+            <button type="button" onClick="sendData();">Save</button>
+            
         </div>
+           <div style="clear:both"></div>
         <div class="restore-info">
-        * Restoring original content works only if local storage is supported by the browser
+            * Restoring original content works only if local storage is supported by the browser
         </div>
+
     </body>
 </html>
