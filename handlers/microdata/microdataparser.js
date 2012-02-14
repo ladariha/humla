@@ -112,7 +112,12 @@ function splitTokens(s) {
 function getItems(types, $, _selector) {
     var items = [];
     $('*[itemscope]').each(function(){ // because this returns EVERYTHING in jsdom :(
-        if($(this).attr('itemscope').length && !$(this).attr('itemprop').length)
+        // FIXME if element has itemscope="" then it is not found!!! There is no workaround right now
+        // because $(this).attr('itemscope') returns string of length 0 in both situations:
+        // - if element has attr itemscope=""
+        // - and if element doesn't have attr itemscope
+        // => no way to find difference...'
+        if($(this).attr('itemscope').length && !$(this).attr('itemprop').length) 
         {        
             var item = {};
             item.type = $(this).attr('itemtype');
