@@ -13,7 +13,12 @@ var editorAPI={};
 editorAPI.urls = [ // list of available URL that this plugin handles
     ['^/api/[A-Za-z0-9-_]+/[A-Za-z0-9-_]+/slide[0-9]+/editor',  editor],
     ];
-
+var mongoose = require("mongoose");
+var Slideid = mongoose.model("Slideid");
+var defaults = require('./defaults');
+/**
+ * General router for editor API
+ */
 app.all('/api/:course/:lecture/slide:id/editor', function api(req, res) { // TODO check changes in url
     var query = require('url').parse(req.url).query;
     var args, path = parseURL(req.url).pathname;
@@ -30,8 +35,10 @@ app.all('/api/:course/:lecture/slide:id/editor', function api(req, res) { // TOD
 }
 );
 
+/**
+ * Routes requests based on HTTP method
+ */
 function editor(res, req){    
-
     switch(req.method){
         case 'GET':
             getSlide(res, req);
@@ -43,11 +50,13 @@ function editor(res, req){
             deleteSlide(res, req);
             break;
         default:
-            returnEditorError(405, "Method not Allowed", res);
+            defaults.returnError(405, "Method not Allowed", res);
     }   
 }
 
-
+/**
+ * Removes given slide from presentation and update slide ids
+ */
 function deleteSlide(res, req){
     var host = req.headers.host;
     var regx =/^\/api\/([A-Za-z0-9-_]+)\/([A-Za-z0-9-_]+)\/slide([0-9]+)\/editor/; 
@@ -59,7 +68,7 @@ function deleteSlide(res, req){
     var htmlfile = SLIDES_DIRECTORY+pathToCourse+lecture+".html";
     fs.readFile(htmlfile, function (err, data) {
         if (err){
-            returnEditorError(500, err.message,res); 
+            defaults.returnError(500, err.message,res); 
         }else{
             
             slide  = parseInt(slide);
@@ -71,13 +80,12 @@ function deleteSlide(res, req){
                 ],
                 done: function(errors, window) {
                     if(errors){
-                        returnEditorError(500, "Error while parsing document by jsdom", res);  
+                        defaults.returnError(500, "Error while parsing document by jsdom", res);  
                     }else{
                         try{
                             var $ = window.$;
                             var resourceURL = host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html#!/"+slide;
                             var slideCounter=1;
-                            var toReturn = "";
                             $('body').find('.slide').each(function(){
                                 if(slideCounter === slide){                            
                                     $(this).remove();
@@ -87,28 +95,14 @@ function deleteSlide(res, req){
                             });   
 
                             var newcontent= $("html").html();
-                            newcontent = "<!DOCTYPE html><html>"+newcontent.replace(/\&amp;/g,'&')+"</html>";
                             if(slideSend===0){
-                                returnEditorError(404, "Slide "+slide+" not found", res);
+                                defaults.returnError(404, "Slide "+slide+" not found", res);
                             }else{
-                                fs.writeFile(htmlfile, newcontent, function (err) {
-                                    if (err) {
-                                        returnEditorError(500, 'Problem with saving document: '+err.message, res);
-                                    }else{
-                                        res.writeHead(200, {
-                                            'Content-Type': 'application/json'
-                                        });
-                                        var t = {};
-                                        t.URL = "http://"+resourceURL+"/v1";
-                                        t.html =  "Document updated, <a href=\"http://"+resourceURL+"\">back to presentation</a>";
-                                        res.write(JSON.stringify(t, null, 4));
-                                        res.end();
-                                    }
-                                });
+                                addIDsToSlidesAndWriteToFile(newcontent, course, lecture, res, resourceURL, htmlfile);
                             }
                         }
                         catch(err){    
-                            returnEditorError(500, 'Error while parsing document: '+err.message, res);
+                            defaults.returnError(500, 'Error while parsing document: '+err.message, res);
                         }
                     }
                 }
@@ -119,7 +113,9 @@ function deleteSlide(res, req){
     
 }
 
-
+/**
+ * Calls methods for editing slides. If append in URL is set to true then new slide is appended to presentation
+ */
 function editSlide(res, req){
     var host = req.headers.host;
     var regx =/^\/api\/([A-Za-z0-9-_]+)\/([A-Za-z0-9-_]+)\/slide([0-9]+)\/editor/; 
@@ -128,7 +124,7 @@ function editSlide(res, req){
     var lecture = RegExp.$2;
     var slide = RegExp.$3;
     if(req.body == undefined || req.body.slide == undefined){
-        returnEditorError(400, 'Missing field \"slide\" ', res); 
+        defaults.returnError(400, 'Missing field \"slide\" ', res); 
     }else{
         var content=req.body.slide;
         var append = req.body.append;
@@ -140,13 +136,21 @@ function editSlide(res, req){
     }
 }
 
-
+/**
+ * Performs the actual appending
+ * @param course course ID (like "mdw")
+ * @param lecture lecture ID (like "lecture1")
+ * @param slide number of slide after which new content will be appended
+ * @param content content to be appended
+ * @param res HTTP response object
+ * @param host hostname (domain)
+ */
 function editSlideContentAppend(course, lecture, slide, content, res, host){
     var pathToCourse = '/'+course+'/';
     var htmlfile = SLIDES_DIRECTORY+pathToCourse+lecture+".html";
     fs.readFile(htmlfile, function (err, data) {
         if (err){
-            returnEditorError(500, err.message, res);
+            defaults.returnError(500, err.message, res);
         }else{
             slide  = parseInt(slide);
             var slideSend=0;
@@ -157,13 +161,12 @@ function editSlideContentAppend(course, lecture, slide, content, res, host){
                 ],
                 done: function(errors, window) {
                     if(errors){
-                        returnEditorError(500, 'Error while parsing document by jsdom ', res);
+                        defaults.returnError(500, 'Error while parsing document by jsdom ', res);
                     }else{
                         try{
                             var $ = window.$;
                             var resourceURL = host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html#!/"+(slide+1);
                             var slideCounter=1;
-                            var toReturn = "";
                             $('body').find('.slide').each(function(){
                                 if(slideCounter === slide){                            
                                     //                                    $(this).after("<div class=\"slide\">"+content+"</div>");
@@ -173,30 +176,14 @@ function editSlideContentAppend(course, lecture, slide, content, res, host){
                                 slideCounter++;
                             });   
                             var newcontent= $("html").html();
-                            //                            newcontent = newcontent.replace(/\&amp;/g,'&');
-                            newcontent = "<!DOCTYPE html><html>"+newcontent.replace(/\&amp;/g,'&')+"</html>";
                             if(slideSend===0){
-                                returnEditorError(404, "Slide "+slide+" not found", res);
+                                defaults.returnError(404, "Slide "+slide+" not found", res);
                             }else{
-                                fs.writeFile(htmlfile, newcontent, function (err) {
-                                    if (err) {
-                                        returnEditorError(500, 'Problem with saving document: '+err.message, res);
-                                    }else{
-                                        
-                                        res.writeHead(200, {
-                                            'Content-Type': 'application/json'
-                                        });
-                                        var t = {};
-                                        t.URL = "http://"+resourceURL+"/v1";
-                                        t.html =  "Document updated, <a href=\"http://"+resourceURL+"\">back to presentation</a>";
-                                        res.write(JSON.stringify(t, null, 4));
-                                        res.end();
-                                    }
-                                });
+                                addIDsToSlidesAndWriteToFile(newcontent, course, lecture, res, resourceURL, htmlfile);
                             }
                         }
                         catch(err){
-                            returnEditorError(500, 'Problem while parsing document: '+err.message, res);
+                            defaults.returnError(500, 'Problem while parsing document: '+err.message, res);
                         }
                     }
                 }
@@ -205,12 +192,21 @@ function editSlideContentAppend(course, lecture, slide, content, res, host){
     });
 }
 
+/**
+ * Performs the actual editing
+ * @param course course ID (like "mdw")
+ * @param lecture lecture ID (like "lecture1")
+ * @param slide number of slide to be edited
+ * @param content new content of the edited slide
+ * @param res HTTP response object
+ * @param host hostname (domain)
+ */
 function editSlideContent(course, lecture, slide, content, res, host){
     var pathToCourse = '/'+course+'/';
     var htmlfile = SLIDES_DIRECTORY+pathToCourse+lecture+".html";
     fs.readFile(htmlfile, function (err, data) {
         if (err){
-            returnEditorError(500, err.message, res);
+            defaults.returnError(500, err.message, res);
         }else{
             
             slide  = parseInt(slide);
@@ -222,13 +218,12 @@ function editSlideContent(course, lecture, slide, content, res, host){
                 ],
                 done: function(errors, window) {
                     if(errors){
-                        returnEditorError(500, 'Problem while parsing document by jsdom ', res);
+                        defaults.returnError(500, 'Problem while parsing document by jsdom ', res);
                     }else{
                         try{
                             var $ = window.$;
                             var resourceURL = host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html#!/"+slide;
                             var slideCounter=1;
-                            var toReturn = "";
                             $('body').find('.slide').each(function(){
                                 if(slideCounter === slide){                            
                                     $(this).replaceWith(content);
@@ -238,30 +233,14 @@ function editSlideContent(course, lecture, slide, content, res, host){
                             });   
 
                             var newcontent= $("html").html();                
-                            //newcontent = newcontent.replace(/\&amp;/g,'&');
-                            newcontent = "<!DOCTYPE html><html>"+newcontent.replace(/\&amp;/g,'&')+"</html>";
                             if(slideSend===0){
-                                returnEditorError(404, "Slide "+slide+" not found", res);
+                                defaults.returnError(404, "Slide "+slide+" not found", res);
                             }else{
-                                fs.writeFile(htmlfile, newcontent, function (err) {
-                                    if (err) {
-                                        returnEditorError(500, 'Problem with saving document: '+err.message, res);
-                                    }else{
-                                        
-                                        res.writeHead(200, {
-                                            'Content-Type': 'application/json'
-                                        });
-                                        var t = {};
-                                        t.URL = "http://"+resourceURL+"/v1";
-                                        t.html =  "Document updated, <a href=\"http://"+resourceURL+"\">back to presentation</a>";
-                                        res.write(JSON.stringify(t, null, 4));
-                                        res.end();
-                                    }
-                                });
+                                addIDsToSlidesAndWriteToFile(newcontent, course, lecture, res, resourceURL, htmlfile);
                             }
                         }
                         catch(err){
-                            returnEditorError(500, 'Problem while parsing document ', res);
+                            defaults.returnError(500, 'Problem while parsing document ', res);
                         }
                     }
                 }
@@ -270,6 +249,9 @@ function editSlideContent(course, lecture, slide, content, res, host){
     });
 }
 
+/**
+ * Returns slide given by URL
+ */
 function getSlide(res, req){
     
     var regx =/^\/api\/([A-Za-z0-9-_]+)\/([A-Za-z0-9-_]+)\/slide([0-9]+)\/editor/; 
@@ -284,10 +266,18 @@ function getSlide(res, req){
     getDocumentFromFileSystem(res, req, htmlfile, slide,resourceURL)   
 }
 
+/**
+ * Reads presentation file if possible
+ * @param res HTTP response
+ * @param req HTTP request
+ * @param htmlfile actual presentation file to be read from
+ * @param slide number of slide to be find
+ * @param resourceURL URL of the presentation
+ */
 function getDocumentFromFileSystem(res, req, htmlfile, slide,resourceURL){
     fs.readFile(htmlfile, function (err, data) {
         if (err){
-            returnEditorError(500, err.message, res);
+            defaults.returnError(500, err.message, res);
         }else{
             parseDocument(res, req, data, slide, resourceURL);   
         }
@@ -295,18 +285,25 @@ function getDocumentFromFileSystem(res, req, htmlfile, slide,resourceURL){
 }
 
 
-
-function parseDocument(res, req, htmlfile, slide, resourceURL){
+/**
+ * Returns concrete slide given by slide parameter
+ * @param res HTTP response
+ * @param req HTTP request
+ * @param html HTML source code of the presentation
+ * @param slide number of slide to be processed
+ * @param resourceURL URL of the presentation
+ */
+function parseDocument(res, req, html, slide, resourceURL){
     slide  = parseInt(slide);
     var slideSend=0;
     jsdom.env({
-        html: htmlfile,
+        html: html,
         src: [
         jquery
         ],
         done: function(errors, window) {
             if(errors){
-                returnEditorError(500, 'Error while parsing document by jsdom ', res);
+                defaults.returnError(500, 'Error while parsing document by jsdom ', res);
             }else{
                 try{
                     var $ = window.$;
@@ -337,7 +334,7 @@ function parseDocument(res, req, htmlfile, slide, resourceURL){
                         
                         fs.readFile(SLIDE_TEMPLATE+'/'+tmpl+'.html', function (err, data) {
                             if (err){
-                                returnEditorError(500, err.message, res);
+                                defaults.returnError(500, err.message, res);
                             }else{
                                 var r = {};
                                 r.url = resourceURL;
@@ -351,7 +348,7 @@ function parseDocument(res, req, htmlfile, slide, resourceURL){
                     
                     }else{
                         if(slideSend===0){
-                            returnEditorError(404, "Slide "+slide+" not found", res);
+                            defaults.returnError(404, "Slide "+slide+" not found", res);
                         }
                     }
                 }
@@ -368,12 +365,14 @@ function parseDocument(res, req, htmlfile, slide, resourceURL){
 }
 
 
-
+/**
+ * Returns HTML source code for slide template given by <code>templateID</code>
+ */
 app.get('/api/template/:templateID/editor', function api(req, res) {
     var template = req.params.templateID;
     fs.readFile(SLIDE_TEMPLATE+'/'+template+'.html', function (err, data) {
         if (err){
-            returnEditorError(500, err.message, res);
+            defaults.returnError(500, err.message, res);
         }else{
             var r = {};
             r.html= data.toString();
@@ -386,7 +385,9 @@ app.get('/api/template/:templateID/editor', function api(req, res) {
     });
 });
 
-
+/**
+ * Returns HTML source code of entire presentation
+ */
 app.get('/api/:course/:lecture/editor', function api(req, res) { // TODO check changes in url
 
     var course = req.params.course;//RegExp.$1;
@@ -397,7 +398,7 @@ app.get('/api/:course/:lecture/editor', function api(req, res) { // TODO check c
     }
     fs.readFile(htmlfile, function (err, data) {
         if (err){
-            returnEditorError(500, err.message, res);
+            defaults.returnError(500, err.message, res);
         }else{
         
             res.writeHead(200, {
@@ -409,28 +410,20 @@ app.get('/api/:course/:lecture/editor', function api(req, res) { // TODO check c
     });
 });
 
+/**
+ * Replaces HTML source code of entire presentation with given data (for raw editor)
+ */
 app.put('/api/:course/:lecture/raw/editor', function api(req, res) {
     var course = req.params.course;//RegExp.$1;
     var lecture = req.params.lecture;
     var htmlfile = SLIDES_DIRECTORY+ '/'+course+'/'+lecture+".html";
     var resourceURL = req.headers.host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html";
-    fs.writeFile(htmlfile, (req.body.content), function (err) { // no need for decodeURIComponent. seems to be already decoded...
-        if (err) {
-            returnEditorError(500, 'Problem with saving document: '+err.message, res);
-        }else{
-            res.writeHead(200, {
-                'Content-Type': 'application/json'
-            });
-            var t = {};
-            t.URL = "http://"+resourceURL;
-            t.html =  "Document updated, <a href=\"http://"+resourceURL+"\">back to presentation</a>";
-            res.write(JSON.stringify(t, null, 4));
-            res.end();                                    
-        }
-    });   
-    
+    addIDsToSlidesAndWriteToFile(req.body.content, course, lecture, res, resourceURL, htmlfile);
 });
 
+/**
+ * Replaces HTML source code of entire presentation with given data (for edit view mode)
+ */
 app.put('/api/:course/:lecture/editor', function api(req, res) { // TODO check changes in url
 
     var course = req.params.course;//RegExp.$1;
@@ -441,10 +434,8 @@ app.put('/api/:course/:lecture/editor', function api(req, res) { // TODO check c
     var htmlfile = SLIDES_DIRECTORY+pathToCourse+lecture+".html";
     fs.readFile(htmlfile, function (err, data) {
         if (err){
-            returnEditorError(500, err.message, res);
+            defaults.returnError(500, err.message, res);
         }else{
-
-            var slideSend=0;
             jsdom.env({
                 html: htmlfile,
                 src: [
@@ -452,7 +443,7 @@ app.put('/api/:course/:lecture/editor', function api(req, res) { // TODO check c
                 ],
                 done: function(errors, window) {
                     if(errors){
-                        returnEditorError(500, 'Error while parsing document by jsdom '+err.message, res);
+                        defaults.returnError(500, 'Error while parsing document by jsdom '+err.message, res);
                     }else{
                         try{
                             var $ = window.$;
@@ -466,34 +457,10 @@ app.put('/api/:course/:lecture/editor', function api(req, res) { // TODO check c
                                 slideCounter++;
                             });   
                             var newcontent= $("html").html();    
-                            newcontent = "<!DOCTYPE html><html>"+newcontent.replace(/\&amp;/g,'&')+"</html>";
-                            fs.writeFile(htmlfile, newcontent, function (err) {
-                                if (err) {
-                                    returnEditorError(500, 'Problem with saving document: '+err.message, res);
-                                }else{
-                                        
-                                    res.writeHead(200, {
-                                        'Content-Type': 'application/json'
-                                    });
-                                    var t = {};
-                                    t.URL = "http://"+resourceURL;
-                                    t.html =  "Document updated, <a href=\"http://"+resourceURL+"\">back to presentation</a>";
-                                    res.write(JSON.stringify(t, null, 4));
-                                    res.end();
-                                    
-                                // TODO FIX for some reasons it throws Error: ENOTFOUND, Domain name not found
-                                // tried with following URL:
-                                // http://127.0.0.1:1338/api/MI-MDW/lecture1/index?refresh=true 
-                                // 127.0.0.1:1338/api/MI-MDW/lecture1/index?refresh=true
-                                // temporary fallback => it's called in client side :(
-                                //   refreshIndexFile(course, lecture, host);
-                                    
-                                    
-                                }
-                            });   
+                            addIDsToSlidesAndWriteToFile(newcontent, course, lecture, res, resourceURL, htmlfile);
                         }
                         catch(err){
-                            returnEditorError(500, 'Error while parsing document: '+err.message, res);
+                            defaults.returnError(500, 'Error while parsing document: '+err.message, res);
                         }
                     }
                 }
@@ -502,15 +469,17 @@ app.put('/api/:course/:lecture/editor', function api(req, res) { // TODO check c
     });
 });
 
-
+/**
+ * Refreshes index files for given presentation. It should be called every time some edits are made
+ * @param course course ID ("mdw")
+ * @param lecture lecture ID ("lecture1")
+ * @param host hostname (domain)
+ */
 function refreshIndexFile(course, lecture, host){
     
-    
-    // refesh JSON
     var url = "http://"+host+'/api/'+course+'/'+lecture+'/index?refresh=true';
     //    url = url.replace('http://',''); // TODO no support for other than HTTP protocol
     var stop = url.indexOf('/');
-    var content = '';
     var options = {
         host: url.substring(0, stop),
         port: 80,
@@ -520,7 +489,6 @@ function refreshIndexFile(course, lecture, host){
 
     var request = http.request(options, function(res) {});
     request.end();
-
     
     // refresh XML
     url = url +"&alt=xml";
@@ -536,13 +504,125 @@ function refreshIndexFile(course, lecture, host){
     
 }
 
-function returnEditorError(code, msg, res){
-    res.writeHead(code, {
-        'Content-Type': 'text/plain'
+/**
+ * Adds, updates and removes IDs of slides. First of all, all slideids are loaded from db,  then ids for new 
+ * slides are created, existing ids altered (i.e. after inserting/removing slides) and all deleted ids from 
+ * HTML source are deleted from db as well.
+ * @param content HTML source code of presentation
+ * @param courseID course ID ("mdw")
+ * @param lecture lecture ID ("lecture1")
+ * @param res HTTP response
+ * @param lectureURL URL address of presentation
+ * @param file file where the presentation should be stored in
+ */
+function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureURL, file){
+    var prefix =new RegExp("^"+courseID+"_"+lecture+"_");
+    Slideid.find({
+        slideid: prefix
+    }, function(err,crs){   
+        if(!err) {
+            var slidesToDelete = new Array();
+            for(var i=0;i<crs.length;i++){
+                slidesToDelete[crs[i].slideid]=1;
+            }
+
+            jsdom.env({
+                html:content,
+                src: [
+                jquery
+                ],
+                done : function(errors, window) {
+                    if(!errors){
+                        var $ = window.$;
+                        var d = new Date().getTime();
+                        var updatedid = [];
+                        var newids = new Array();
+                        var it = 0;
+                        var counter = 0;
+            
+                        $('body').find('.slide').each(function(){
+                            counter++;
+                            if (!$(this).attr('data-slideid')) { // slide doesn't have ID => all following slideids have to be update
+                                var n = courseID+"_"+lecture+"_"+counter+"_"+(d+it);
+                                $(this).attr('data-slideid', n);
+                                newids.push(n);
+                                it++;
+                            }else{
+                                delete slidesToDelete[$(this).attr('data-slideid')]; // this slideid is used, no need to delete it from db
+                                if($(this).attr('data-slideid').indexOf( courseID+"_"+lecture+"_"+counter+"_", 0)<0){ // slide number is changed => update slideid
+                                    var parts = ($(this).attr('data-slideid')).split("_");
+                                    updatedid[$(this).attr('data-slideid')] = parts[0]+"_"+parts[1]+"_"+counter+"_"+parts[3];    // counter is a new slide number
+                                    $(this).attr('data-slideid', parts[0]+"_"+parts[1]+"_"+counter+"_"+parts[3]);
+                                }            
+                            } 
+                        });
+                        var newcontent= $("html").html();    
+                        newcontent = "<!DOCTYPE html><html>"+newcontent+"</html>";
+                        // delete slidesToDelete
+                        for(var key in slidesToDelete){
+                            for(var k = 0;k<crs.length;k++){
+                                if(crs[k].slideid===key){
+                                    crs[k].remove(function (err){
+                                        console.error("Error removing slideid");
+                                    });
+                                }
+                            }
+                        }
+                    
+                        // update existingids (slideid is unique!)
+                        for(var key2 in updatedid){
+                            for(var h = 0;h<crs.length;h++){
+                                if(crs[h].slideid===key2){
+                                    crs[h].slideid=updatedid[key2];
+                                    crs[h].save(function(err) {
+                                        if(err) {
+                                            console.error("Error updating slideid");
+                                        }
+                                    });   
+                                }
+                            }
+                        }
+                        // insert new ids
+                        for(var key3 in newids){
+                            var sid = new Slideid();
+                            sid.slideid = newids[key3];
+                            sid.save(function(err) {
+                                if(err) {
+                                    console.error("Error saving new slideid");
+                                }
+                            });   
+                        }
+                        //write to file
+                        writeToFile(res, file, lectureURL, newcontent);
+                    }else{
+                        console.error(errors);
+                    } 
+                }
+            });
+    } else {
+        defaults.returnError(500, "Problems with database", res); 
+    }             
     });
-    res.write(msg);
-    res.end();
 }
+
+function writeToFile(res, file, lectureUrl, content){
+    fs.writeFile(file, content, function (err) {
+        if (err) {
+            defaults.returnError(500, 'Problem with saving document: '+err.message, res);
+        }else{
+                                        
+            res.writeHead(200, {
+                'Content-Type': 'application/json'
+            });
+            var t = {};
+            t.URL = "http://"+lectureUrl;
+            t.html =  "Document updated, <a href=\"http://"+lectureUrl+"\">back to presentation</a>";
+            res.write(JSON.stringify(t, null, 4));
+            res.end();                                    
+        }
+    });   
+}
+
 
 function endsWith(string, suffix) {
     return string.indexOf(suffix, string.length - suffix.length) !== -1;
