@@ -16,6 +16,8 @@ exports.parse =function parse($,slideIndex){
         });
         slide++;    
     });    
+        if(temporary.drawings.length===0)
+           slideIndex.sendResponse(slideIndex); 
     for(var i in temporary.drawings){
         parseSingleDrawing(temporary.drawings[i],slideIndex);
     }

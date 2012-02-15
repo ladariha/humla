@@ -1,6 +1,7 @@
 var parseURL = require('url').parse;
 var path = require('path');
 var fs     = require('fs');
+var querystring = require('querystring');
 var RAW_SLIDES_DIRECTORY = '/data/slides';
 var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../public/data/slides')).toString();
 var SLIDE_TEMPLATE = (path.join(path.dirname(__filename),'../public/data/templates')).toString();
@@ -10,7 +11,47 @@ var microdataParser = require('./microdata/microdataparser');
 app.get('/api/:course/:lecture/microdata', function api(req, res) {
     var course = req.params.course;//RegExp.$1;
     var lecture = req.params.lecture;
-    
+    var accept = req.headers.accept;
+    var callback;
+    var alt = querystring.parse(require('url').parse(req.url).query)['alt'];
+  
+    if(typeof alt!="undefined" && alt.toLowerCase() ==="json" ){
+        callback = JSON.stringify;
+        accept = "application/json";
+    }else if(typeof alt!="undefined" && alt.toLowerCase() ==="xml" ){
+        callback = defaults.objectToXML;
+        accept = "application/xml";
+    }else{
+        switch(req.headers.accept){
+            case "application/json":
+                callback = JSON.stringify;
+                break;
+            case "application/xml":
+                callback = defaults.objectToXML;
+                break;
+            case "text/xml":
+                callback = defaults.objectToXML;
+                break;
+            case "*/*":
+                callback = JSON.stringify;
+                break;
+            default:
+                if(accept.indexOf("application/json")>-1 || accept.indexOf("*/*")>-1){
+                    callback = JSON.stringify;
+                    accept = "application/json";
+                }else{
+                    if(accept.indexOf("application/xml")>-1 || accept.indexOf("text/xml")>-1 ){
+                        accept = "application/xml";
+                        callback = defaults.objectToXML;
+                    }else{
+                        defaults.returnError(406, "Not Acceptable format: Try application/json or application/xml or text/xml or  */*", res);
+                        return;
+                    }
+                }
+                break;
+        }
+    }
+
     fs.readFile(SLIDES_DIRECTORY+ '/'+course+'/'+lecture+".html", function (err, data) {
         if (err){
             defaults.returnError(404, err.message, res);
@@ -51,9 +92,9 @@ app.get('/api/:course/:lecture/microdata', function api(req, res) {
                 }
                 
                 res.writeHead(200, {
-                    'Content-Type': 'application/json'
+                    'Content-Type': accept
                 });
-                res.write(JSON.stringify(container, undefined, 2));
+                res.write(callback(container, undefined,2));
                 res.end();
             });
         }
@@ -67,6 +108,48 @@ app.get('/api/:course/:lecture/microdata/:itemtype', function api(req, res) {
     var itemtype=decodeURIComponent(req.params.itemtype);
     var course = req.params.course;//RegExp.$1;
     var lecture = req.params.lecture;
+    
+    var accept = req.headers.accept;
+    var callback;
+    var alt = querystring.parse(require('url').parse(req.url).query)['alt'];
+  
+    if(typeof  alt!="undefined" && alt.toLowerCase() ==="json" ){
+        callback = JSON.stringify;
+        accept = "application/json";
+    }else if(typeof alt!="undefined" && alt.toLowerCase() ==="xml" ){
+        callback = defaults.objectToXML;
+        accept = "application/xml";
+    }else{
+        switch(req.headers.accept){
+            case "application/json":
+                callback = JSON.stringify;
+                break;
+            case "application/xml":
+                callback = defaults.objectToXML;
+                break;
+            case "text/xml":
+                callback = defaults.objectToXML;
+                break;
+            case "*/*":
+                callback = JSON.stringify;
+                break;
+            default:
+                if(accept.indexOf("application/json")>-1 || accept.indexOf("*/*")>-1){
+                    callback = JSON.stringify;
+                    accept = "application/json";
+                }else{
+                    if(accept.indexOf("application/xml")>-1 || accept.indexOf("text/xml")>-1 ){
+                        accept = "application/xml";
+                        callback = defaults.objectToXML;
+                    }else{
+                        defaults.returnError(406, "Not Acceptable format: Try application/json or application/xml or text/xml or  */*", res);
+                        return;
+                    }
+                }
+                break;
+        }
+    }
+
     
     fs.readFile(SLIDES_DIRECTORY+ '/'+course+'/'+lecture+".html", function (err, data) {
         if (err){
@@ -106,9 +189,9 @@ app.get('/api/:course/:lecture/microdata/:itemtype', function api(req, res) {
                 }
                
                 res.writeHead(200, {
-                    'Content-Type': 'application/json'
+                    'Content-Type': accept
                 });
-                res.write(JSON.stringify(container, undefined, 2));
+                res.write(callback(container, undefined, 2));
                 res.end();
             });
         }

@@ -18,9 +18,9 @@ var defaults = require('./defaults');
  */
 app.post('/api/:course/course', function(req, res){ // TODO database timeout
 
-    if(req.body == undefined || req.body.longName == undefined || req.body.longName.length<1 || 
-        req.body.isActive == undefined || req.body.isActive.length<1 || req.body.courseID ==undefined ||
-        req.body.courseID.length<1 || req.body.owner == undefined || req.body.owner.length<1
+    if(typeof req.body == "undefined" || typeof req.body.longName == "undefined" || req.body.longName.length<1 || 
+        typeof req.body.isActive == "undefined" || req.body.isActive.length<1 || typeof req.body.courseID =="undefined"||
+        req.body.courseID.length<1 || typeof req.body.owner == "undefined" || req.body.owner.length<1
         ){
         defaults.returnError(400,"Missing fields", res);
     }else{
@@ -82,7 +82,7 @@ app.post('/api/:course/course', function(req, res){ // TODO database timeout
  */
 app.put('/api/:course/course', function(req, res){
  
-    if(req.body === undefined){
+    if(typeof req.body == "undefined"){
         defaults.returnError(400,"Missing fields \"course\"", res);
     }else{
         Course.find({
@@ -91,7 +91,7 @@ app.put('/api/:course/course', function(req, res){
             if(!err) {
                 if(crs.length > 0){
                     var course = crs[0];
-                    if(req.body.isActive!==undefined){
+                    if(typeof req.body.isActive!="undefined"){
                         var e = (req.body.isActive).toLowerCase()
                         if(e=='true'){
                             course.isActive = true;
@@ -101,9 +101,9 @@ app.put('/api/:course/course', function(req, res){
                         }
                     }
                     var prev = course.courseID;
-                    course.courseID = (req.body.courseID === undefined) ? course.courseID : decodeURIComponent(req.body.courseID);
-                    course.longName = (req.body.longName === undefined) ? course.longName : decodeURIComponent(req.body.longName);
-                    course.owner = (req.body.owner === undefined) ? '': decodeURIComponent(req.body.owner);
+                    course.courseID = ( typeof req.body.courseID == "undefined") ? course.courseID : decodeURIComponent(req.body.courseID);
+                    course.longName = (typeof req.body.longName == "undefined") ? course.longName : decodeURIComponent(req.body.longName);
+                    course.owner = (typeof req.body.owner == "undefined") ? '': decodeURIComponent(req.body.owner);
                     course.lecturesURLPreffix = req.headers.host+'/data/slides/'+course.courseID;
                     course.url = req.headers.host+'/api/'+course.courseID+'/course';    
                     course.save(function(err) {
@@ -163,10 +163,10 @@ app.get('/api/:course/course', function(req, res){
 * Creates lecture
  */
 app.post('/api/:course/:lecture/lecture', function(req, res){ // TODO database timeout
-    if(req.body === undefined || req.body.title === undefined || req.body.title.length<1 || 
-        req.body.isActive === undefined || req.body.isActive.length<1 || req.body.courseID ===undefined ||
-        req.body.courseID.length<1 || req.body.author === undefined || req.body.author.length<1
-        || req.body.order === undefined || req.body.order<1
+    if(typeof req.body == "undefined"|| typeof req.body.title == "undefined" || req.body.title.length<1 || 
+        typeof req.body.isActive == "undefined" || req.body.isActive.length<1 || typeof req.body.courseID =="undefined" ||
+        req.body.courseID.length<1 || typeof req.body.author == "undefined" || req.body.author.length<1
+        || typeof req.body.order == "undefined" || req.body.order<1
         ){
         defaults.returnError(400,"Missing fields", res);
     }else{
@@ -185,16 +185,16 @@ app.post('/api/:course/:lecture/lecture', function(req, res){ // TODO database t
                     c.lectureID= 'lecture'+decodeURIComponent(req.body.order);
                     c.url = req.headers.host+'/api/'+c.courseID+'/'+c.lectureID;
                     c.presentationURL = req.headers.host+'/data/slides/'+c.courseID+'/'+c.lectureID+'.html';
-                    c.authorEmail = (req.body.authorEmail === undefined) ? '' : decodeURIComponent(req.body.authorEmail);
-                    c.authorTwitter = (req.body.authorTwitter === undefined) ? '' : decodeURIComponent(req.body.authorTwitter);
-                    c.authorWeb = (req.body.authorWeb === undefined) ? '' : decodeURIComponent(req.body.authorWeb);
-                    c.semester = (req.body.semester === undefined) ? '' : decodeURIComponent(req.body.semester);
-                    c.organization = (req.body.org === undefined) ? '' : decodeURIComponent(req.body.org);
-                    c.organizationFac = (req.body.orgfac === undefined) ? '' : decodeURIComponent(req.body.orgfac);
-                    c.field = (req.body.spec === undefined) ? '' : decodeURIComponent(req.body.spec);
-                    c.web = (req.body.web === undefined) ? '' : decodeURIComponent(req.body.web);
+                    c.authorEmail = (typeof req.body.authorEmail == "undefined") ? '' : decodeURIComponent(req.body.authorEmail);
+                    c.authorTwitter = (typeof req.body.authorTwitter == "undefined") ? '' : decodeURIComponent(req.body.authorTwitter);
+                    c.authorWeb = (typeof req.body.authorWeb == "undefined") ? '' : decodeURIComponent(req.body.authorWeb);
+                    c.semester = (typeof req.body.semester == "undefined") ? '' : decodeURIComponent(req.body.semester);
+                    c.organization = (typeof req.body.org =="undefined") ? '' : decodeURIComponent(req.body.org);
+                    c.organizationFac = (typeof req.body.orgfac =="undefined") ? '' : decodeURIComponent(req.body.orgfac);
+                    c.field = (typeof req.body.spec =="undefined") ? '' : decodeURIComponent(req.body.spec);
+                    c.web = (typeof req.body.web == "undefined") ? '' : decodeURIComponent(req.body.web);
                     c.lastModified = new Date();
-                    c.lectureAbstract = (req.body.abs === undefined) ? '' : decodeURIComponent(req.body.abs);
+                    c.lectureAbstract = (typeof req.body.abs == "undefined") ? '' : decodeURIComponent(req.body.abs);
                     var e = (req.body.isActive).toLowerCase()
                     if(e=='true'){
                         c.isActive = true;
@@ -253,7 +253,7 @@ app.post('/api/:course/:lecture/lecture', function(req, res){ // TODO database t
  */
 app.put('/api/:course/:lecture/lecture', function(req, res){ // TODO database timeout
    
-    if(req.body === undefined){
+    if(typeof req.body == "undefined"){
         defaults.returnError(400,"Missing fields", res);
     }else{
         var host = req.headers.host;
@@ -264,13 +264,13 @@ app.put('/api/:course/:lecture/lecture', function(req, res){ // TODO database ti
                 if(crs.length > 0){
           
                     var c = crs[0];
-                    c.title = (req.body.title === undefined) ? c.title : decodeURIComponent(req.body.title);
+                    c.title = (typeof req.body.title == "undefined") ? c.title : decodeURIComponent(req.body.title);
                     var prev = c.lectureID;
-                    c.lectureID = (req.body.order === undefined) ? c.lectureID :  'lecture'+decodeURIComponent(req.body.order);
+                    c.lectureID = (typeof req.body.order == "undefined") ? c.lectureID :  'lecture'+decodeURIComponent(req.body.order);
                     c.url = req.headers.host+'/api/'+c.courseID+'/'+c.lectureID;
                     c.presentationURL = req.headers.host+'/data/slides/'+c.courseID+'/'+c.lectureID+'.html';
                     
-                    if(req.body.isActive!==undefined){
+                    if(typeof req.body.isActive!="undefined"){
                         var e = (req.body.isActive).toLowerCase()
                         if(e=='true'){
                             c.isActive = true;
@@ -280,18 +280,18 @@ app.put('/api/:course/:lecture/lecture', function(req, res){ // TODO database ti
                         }
                     }
                     
-                    c.authorEmail = (req.body.authorEmail === undefined) ? '' : decodeURIComponent(req.body.authorEmail);
-                    c.authorTwitter = (req.body.authorTwitter === undefined) ? '' : decodeURIComponent(req.body.authorTwitter);
-                    c.authorWeb = (req.body.authorWeb === undefined) ? '' : decodeURIComponent(req.body.authorWeb);
-                    c.semester = (req.body.semester === undefined) ? '' : decodeURIComponent(req.body.semester);
-                    c.organization = (req.body.org === undefined) ? '' : decodeURIComponent(req.body.org);
-                    c.organizationFac = (req.body.orgfac === undefined) ? '' : decodeURIComponent(req.body.orgfac);
-                    c.field = (req.body.spec === undefined) ? '' : decodeURIComponent(req.body.spec);
-                    c.web = (req.body.web === undefined) ? '' : decodeURIComponent(req.body.web);
-                    c.lectureAbstract = (req.body.abs === undefined) ? '' : decodeURIComponent(req.body.abs);
+                    c.authorEmail = (typeof req.body.authorEmail == "undefined") ? '' : decodeURIComponent(req.body.authorEmail);
+                    c.authorTwitter = (typeof req.body.authorTwitter == "undefined") ? '' : decodeURIComponent(req.body.authorTwitter);
+                    c.authorWeb = (typeof req.body.authorWeb == "undefined") ? '' : decodeURIComponent(req.body.authorWeb);
+                    c.semester = (typeof req.body.semester == "undefined") ? '' : decodeURIComponent(req.body.semester);
+                    c.organization = (typeof req.body.org =="undefined") ? '' : decodeURIComponent(req.body.org);
+                    c.organizationFac = (typeof req.body.orgfac == "undefined") ? '' : decodeURIComponent(req.body.orgfac);
+                    c.field = (typeof req.body.spec == "undefined") ? '' : decodeURIComponent(req.body.spec);
+                    c.web = (typeof req.body.web =="undefined") ? '' : decodeURIComponent(req.body.web);
+                    c.lectureAbstract = (typeof req.body.abs =="undefined") ? '' : decodeURIComponent(req.body.abs);
                     c.lastModified = new Date();
-                    c.author = (req.body.author === undefined) ? c.author : decodeURIComponent(req.body.author);
-                    if(!req.body.keywords === undefined){
+                    c.author = (typeof req.body.author =="undefined") ? c.author : decodeURIComponent(req.body.author);
+                    if(req.body.keywords.length>0){
                         var k = (decodeURIComponent(req.body.keywords)).split(",");
                         k.forEach(function(i){
                             var i1 = i.replace(/^\s*/, "").replace(/\s*$/, "");

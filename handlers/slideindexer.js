@@ -14,6 +14,7 @@ var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../public/data/slid
 var EXTENSIONS_DIRECTORY = (path.join(path.dirname(__filename), './ext')).toString();
 var GENERAL_LECTURE_NAME = 'lecture';
 var extensions = new Array();
+var defaults = require('./defaults');
 
 fs.readdir( EXTENSIONS_DIRECTORY, function( err, files ) { // require() all js files in humla extensions directory
     files.forEach(function(file) {
@@ -176,15 +177,43 @@ function getIndex(res, req){
     var lecture = RegExp.$2;
     var url = querystring.parse(require('url').parse(req.url).query)['url'];
     var alt = querystring.parse(require('url').parse(req.url).query)['alt'];
-    if(alt == undefined){
-        alt = "json"; // set json as default
+        var accept = req.headers.accept;
+    
+     if(typeof alt == "undefined"){
+        switch(req.headers.accept){
+            case "application/json":
+                alt = "json";
+                break;
+            case "application/xml":
+                alt = "xml";
+                break;
+            case "text/xml":
+                alt = "xml";
+                break;
+            case "*/*":
+                alt = "json";
+                break;
+            default:
+                if(accept.indexOf("application/json")>-1 || accept.indexOf("*/*")>-1){
+                    alt = "json";
+                }else{
+                    if(accept.indexOf("application/xml")>-1 || accept.indexOf("text/xml")>-1 ){
+                       alt = "xml";
+                    }else{
+                        defaults.returnError(406, "Not Acceptable format: Try application/json or application/xml or text/xml or  */*", res);
+                        return;
+                    }
+                }
+                break;
+        }
+    
     }else{
         if(alt!=="json" && alt!=="xml"){
             // incorrect format requested
-            res.writeHead(400, { // TODO fix status code
+            res.writeHead(406, { // TODO fix status code
                 'Content-Type': 'text/plain'
             });
-            res.write("Incorrect value of optional alt attribute. Allowed values are xml or json.");
+            res.write("Not Acceptable. Allowed values are xml or json.");
             res.end();
         }
     }
@@ -216,7 +245,7 @@ function getIndex(res, req){
                     }
                 });
             }else{
-                if(url === undefined){
+                if(typeof url == "undefined"){
                     getDocumentFromFileSystem(res, req, pathToCourse,filename, lecture, course, alt);
                 }else{
                     getDocumentFromUrl(res, req, url, pathToCourse, filename, lecture, course, alt);    
@@ -226,7 +255,7 @@ function getIndex(res, req){
         });
     }else{ // parse the document again and update JSON index file
         if(refresh==="true"){
-            if(url === undefined){
+            if(typeof  url == "undefined"){
                 getDocumentFromFileSystem(res, req, pathToCourse,filename, lecture, course, alt);
             }else{
                 getDocumentFromUrl(res, req, url, pathToCourse, filename,lecture, course, alt);    
@@ -363,7 +392,6 @@ function parseDocument(res, req, body, pathToCourse, filename, lecture, course, 
                     parseTitles(slideIndex, $);
                     slideIndex.content.structure = makeStructureHierarchical(slideIndex);
                     parseImagesAndCodeBlocks(slideIndex,$);
-                    
                     
                     extensions.forEach(function (ext){
                         if(ext.parse !== null && typeof ext.parse== 'function'){
@@ -662,7 +690,7 @@ function makeStructureHierarchical(slideIndex){
         tmp.url = baseURL+counter;
         for(var ch in slideIndex.content.slides.chapterSlide){
             if(slideIndex.content.slides.chapterSlide[ch].parentSection == section){
-                if(tmp.chapters==undefined){
+                if(typeof tmp.chapters=="undefined"){
                     tmp.chapters = new Array();
                 }
                 counter++;    
@@ -671,7 +699,7 @@ function makeStructureHierarchical(slideIndex){
                 chapter.url = baseURL+counter;
                 for(var s in slideIndex.content.slides.simpleSlide){
                     if(slideIndex.content.slides.simpleSlide[s].parentChapter == ch){
-                        if(chapter.slides==undefined){
+                        if(typeof chapter.slides=="undefined"){
                             chapter.slides = new Array();
                         }
                         counter++;
@@ -696,58 +724,8 @@ function makeStructureHierarchical(slideIndex){
  *@return xml representation of slideIndexer
  */
 function createXMLIndex(slideIndexer){
-    return parseObjectToXML(slideIndexer.content, 0);
+    return defaults.objectToXML(slideIndexer.content);
 }
-
-function parseObjectToXML(object, ind){
-    var indentation = "";
-    var toReturn = '';
-    for (var i = 0;  i < ind*3;  i++) {
-        indentation = indentation+" ";
-    }
-    for (var key in object) {
-        if (object.hasOwnProperty(key)) {
-            toReturn = toReturn + indentation+'<'+encodeURIComponent(key)+'>'+"\n";
-            if(typeof(object[key])=='object'){
-                var t_ind = ind+1;
-                if(object[key].length){
-                    toReturn = toReturn+parseArrayToXML(object[key], t_ind ,key);
-                }else{
-                    toReturn = toReturn+parseObjectToXML(object[key], t_ind);    
-                }
-                
-            }else{
-                toReturn = toReturn+indentation+encodeURIComponent(object[key])+"\n";
-            }
-            toReturn = toReturn + indentation+'</'+encodeURIComponent(key)+'>'+"\n";
-        }
-    }
-    return toReturn;   
-}
-
-function parseArrayToXML(array, ind, string){
-    var indentation = "";
-    var toReturn = '';
-    for (var i = 0;  i < ind*3;  i++) {
-        indentation = indentation+" ";
-    }
-    var t_ind = ind+1;
-    for(var object in array){
-        toReturn = toReturn+indentation+'<'+encodeURIComponent(string)+'_'+object+'>'+"\n";
-        if(typeof(array[object])=='object'){
-            if(array[object].length){
-                toReturn = toReturn+parseArrayToXML(array[object], t_ind, string);
-            }else{
-                toReturn = toReturn+parseObjectToXML(array[object], t_ind);
-            }
-        }else{
-            toReturn = toReturn+indentation+encodeURIComponent(array[object])+"\n";
-        }
-        toReturn = toReturn + indentation+'</'+encodeURIComponent(string)+'_'+object+'>'+"\n";
-    }
-    return toReturn;
-}
-
 
 /**
  * Tests if string ends with given suffix

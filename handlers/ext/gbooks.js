@@ -14,7 +14,11 @@ exports.parse =function parse($,slideIndex){
             temporary.gbooks.push(gbook);
         });
         slide++;    
-    });    
+    });   
+    
+    if(temporary.gbooks.length===0)
+           slideIndex.sendResponse(slideIndex); 
+    
     for(var i in temporary.gbooks){
         parseSingleGbook(temporary.gbooks[i],slideIndex);
     }
@@ -43,10 +47,10 @@ function parseSingleGbook(gbook,slideIndex){
         res2.on('end', function () {
             if(res2.statusCode === 200){
                 var data = eval('(' + content + ')');
-                if(data.volumeInfo.industryIdentifiers[1] !== undefined){
+                if(typeof data.volumeInfo.industryIdentifiers[1] != "undefined"){
                     gbook.isbn=data.volumeInfo.industryIdentifiers[1].identifier;
                 }else{
-                    if(content.volumeInfo.industryIdentifiers[0]!== undefined){
+                    if(typeof content.volumeInfo.industryIdentifiers[0]!= "undefined"){
                         gbook.isbn = data.volumeInfo.industryIdentifiers[0].identifier;    
                     }else{
                         gbook.isbn = "-1";
