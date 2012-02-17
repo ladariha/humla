@@ -353,7 +353,7 @@ function parseDocument(res, req, body, pathToCourse, filename, lecture, course, 
                                     this.response.writeHead(200, {
                                         'Content-Type': 'application/xml'
                                     });
-                                    textindex ="<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<index url='"+encodeURIComponent(this.baseURL)+"'>\n"+createXMLIndex(this)+"\n</index>";
+                                    textindex =createXMLIndex(this, 'index', encodeURIComponent(this.baseURL));
                                 }
                                 this.response.write(textindex);
                                 this.response.end();
@@ -723,8 +723,8 @@ function makeStructureHierarchical(slideIndex){
  *@param slideIndexer data container
  *@return xml representation of slideIndexer
  */
-function createXMLIndex(slideIndexer){
-    return defaults.objectToXML(slideIndexer.content);
+function createXMLIndex(slideIndexer, root, url){
+    return defaults.objectToXML(slideIndexer.content, root, url);
 }
 
 /**

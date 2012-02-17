@@ -1,6 +1,70 @@
 var jsdom = require('jsdom');
+/**
+ * Finds all microdata items (or only type restricted by <code>type</code> parameter) and after
+ * finding them call function specified by callback parameter
+* @param presentationURL URL address of explored presentation
+* @param html html source code of the presentation
+* @param type (optional) of which itemtype items should be returned
+* @param callback callback function that is called after all items are found
+ */
+exports.items = function(presentationURL, html, type, callback){
+    var    window = jsdom.jsdom().createWindow();
+    jsdom.jQueryify(window, "../../public/lib/jquery-1.7.min.js", function() {
+        window.jQuery('html').append(html);
+        var  $ = window.jQuery;
+        var baseUrl='';
+        $('html').find('base').each(function(){
+            if($(this).attr('href').length)
+                baseUrl=($(this).attr('href'));
+        });
+        var microdataParser = microdata('html',  $, baseUrl);
+        
+        if(typeof type!="undefined"){
+            var microdataTyped = {};
+            microdataTyped.items = [];
+        
+            for(var i=0;i<microdataParser.items.length;i++){
+                finalize(microdataParser.items[i]);
+            }
+                
+            function finalize(microitem){
+                if(microitem.properties){ // if item contains other items
+                    for(var key in microitem.properties){
+                        for(var j=0; j< microitem.properties[key].length; j++){
+                            finalize(microitem.properties[key][j]);        
+                        }
+                    }
+                }
 
-exports.items = function(html, callback){
+                if(microitem.type){
+                    for(var j=0; j<microitem.type.length;j++){ // iterate all itemtypes
+                        if(microitem.type[j] && microitem.type[j].toLowerCase() === type.toLowerCase()){
+                            microdataTyped.items.push(microitem);
+                            j = microitem.type.length+1;
+                        }
+                    }
+                }
+            }
+            callback(microdataTyped);
+        }else{
+            callback(microdataParser);    
+        }
+        
+        
+        
+    });   
+}
+
+
+/**
+ * Finds all microdata items of type <code>http://microformats.org/profile/hcard</code> parameter) and after
+ * finding them call function specified by callback parameter
+* @param presentationURL URL address of explored presentation
+* @param html html source code of the presentation
+* @param type (optional) of which itemtype items should be returned
+* @param callback callback function that is called after all items are found
+ */
+exports.vcards = function(presentationURL, html, type,callback){
     var    window = jsdom.jsdom().createWindow();
     jsdom.jQueryify(window, "../../public/lib/jquery-1.7.min.js", function() {
         window.jQuery('html').append(html);
@@ -11,8 +75,30 @@ exports.items = function(html, callback){
                 baseUrl=($(this).attr('href'));
             
         });
-        var microdataParser = microdata('html',  $, baseUrl);
-        callback(microdataParser);
+        var microdataParser = microdata('html',  $, baseUrl, true);
+        var microdataTyped = {};
+        microdataTyped.items = [];
+        
+        for(var i=0;i<microdataParser.items.length;i++){
+            finalize(microdataParser.items[i]);
+        }
+                
+        function finalize(microitem){
+            if(microitem.type){
+                for(var j=0; j<microitem.type.length;j++){ // iterate all itemtypes
+                    if(microitem.type[j] && microitem.type[j].toLowerCase() === "http://microformats.org/profile/hcard"){
+                        microdataTyped.items.push(microitem);
+                        j = microitem.type.length+1;
+                    }
+                }
+            }
+        }
+        var toReturn = "";
+        
+        for(var i=0;i<microdataTyped.items.length;i++) // each item
+            toReturn+=(vcard(microdataTyped.items[i], $, presentationURL));
+        
+        callback(toReturn);
     });   
 }
 
@@ -269,20 +355,23 @@ function itemRef($, selector){
 }
 
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/microdata.html#json
-function microdata(selector, $, baseUrl) {
+function microdata(selector, $, baseUrl, extraTagName) {
 
 
     function getObject(item, memory) {
 
         var result = {};
+        
         var types = tokenList('itemtype',$, item);
         if (types.length)
             result.type = $(types).toArray();
         if (itemId($, item, baseUrl))
             result.id = itemId($, item, baseUrl);
         result.properties = {};
+        if(typeof extraTagName!="undefined")
+            result.propertiesTagNames = {};
         properties($, item).each(function(i, elem) {
-  
+            
             var value;
             if (itemScope($, elem)) {
                 if ($.inArray(elem, memory) != -1) {
@@ -299,6 +388,12 @@ function microdata(selector, $, baseUrl) {
                 if (!result.properties[prop])
                     result.properties[prop] = [];
                 result.properties[prop].push(value);
+                if(typeof extraTagName!="undefined"){
+                    if(!result.propertiesTagNames[prop]){
+                        result.propertiesTagNames[prop] = [];
+                    }
+                    result.propertiesTagNames[prop].push($(elem).prop('tagName'));
+                }
             });
         });
         return result;
@@ -315,3 +410,161 @@ function microdata(selector, $, baseUrl) {
 
     return result;
 };
+
+// http://www.whatwg.org/specs/web-apps/current-work/multipage/microdata.html#conversion-to-vcard
+function vcard(vcardItem, $, baseUrl) {
+    
+    function extract($vcard, memory) {
+        
+        var output = '';
+        // http://www.whatwg.org/specs/web-apps/current-work/multipage/microdata.html#add-a-vcard-line
+        function addLine(type, params, value) {
+            var line = '';
+            line += type.toUpperCase();
+            for (var i=0; i<params.length; i++) {
+                line += ';';
+                line += params[i].name;
+                line += '=';
+                line += params[i].value;
+            }
+            line += ':';
+            line += value;
+            var maxLen = 75;
+            while (line.length > maxLen) {
+                output += line.substr(0, maxLen);
+                line = line.substr(maxLen);
+                output += '\r\n ';
+                maxLen = 74;
+            }
+            output += line;
+            output += '\r\n';
+        }
+        // http://www.whatwg.org/specs/web-apps/current-work/multipage/microdata.html#escaping-the-vcard-text-string
+        function escapeString(value, chars) {
+            var re = new RegExp('(['+(chars||'\\\\,;')+'])', 'g');
+            return value.replace(re, '\\$1').replace(/\r\n|\r|\n/g, '\\n');
+        }
+        addLine('BEGIN', [], 'VCARD');
+        addLine('PROFILE', [], 'VCARD');
+        addLine('VERSION', [], '3.0');
+        addLine('SOURCE', [], baseUrl);
+//        addLine('NAME', [], escapeString(baseUrl));
+        
+        if ($vcard.id)
+            addLine('UID', [], escapeString($vcard.id));
+
+        for (var key in $vcard.properties) { // all properties for given microdata item
+            if ($vcard.properties.hasOwnProperty(key)) {
+                var $prop = $vcard.properties[key];
+
+                for (var key2 in $prop) {
+                    // key2 = 0 $prop[key2]=Jack Bauer, key is fn
+                    var name = key;
+                    var params = [];
+                    var value;
+                    
+                    function addParam(n, v) {
+                        params.push({
+                            name:n,
+                            value:v
+                        });
+                    }
+                    function addTypeParam(val) {
+                        if(typeof val!="undefined" && typeof val!="object" 
+                            && /^[0-9A-Za-z]*$/.test(val)){
+                            addParam('TYPE',val);
+                        }
+                    }
+                    
+                    function escapeProps(values) {
+                        if(typeof values!="undefined"){
+                            var a =[];
+                            for(var b=0;b<values.length;b++){
+                                if(typeof values[b]!="object"){
+                                    a.push(escapeString(values[b]));
+                                }
+                            }
+                            return a.join(',');
+                        }
+                        return "";
+                    }
+                    
+                    function escapeFirstProp(value) {
+                        return (typeof value!="undefined" && value.length > 0 && typeof value!="object") ? escapeString(value) : '';
+                    }
+
+                    if (typeof $prop[key2]=="object") {
+                        if (name == 'n') {
+                            value = escapeFirstProp($prop[key2].properties['family-name'][0])+';'+
+                            escapeFirstProp($prop[key2].properties['given-name'][0])+';'+
+                            escapeFirstProp($prop[key2].properties['additional-name'][0])+';'+
+                            escapeFirstProp($prop[key2].properties['honorific-prefix'][0])+';'+
+                            escapeFirstProp($prop[key2].properties['honorific-suffix'][0]);
+                        } else if (name == 'adr') {
+                            
+                            value = escapeProps($prop[key2].properties['post-office-box'])+';'+
+                            escapeProps($prop[key2].properties['extended-address'])+';'+
+                            escapeProps($prop[key2].properties['street-address'])+';'+
+                            escapeFirstProp($prop[key2].properties['locality'][0])+';'+
+                            escapeFirstProp($prop[key2].properties['region'][0])+';'+
+                            escapeFirstProp($prop[key2].properties['postal-code'][0])+';'+
+                            escapeFirstProp($prop[key2].properties['country-name'][0]);
+                        
+                            if(typeof $prop[key2].properties['type']!="undefined" && $prop[key2].properties['type'].length>0)
+                                addTypeParam($prop[key2].properties['type'][0]);
+                            
+                        } else if (name == 'org') {
+                            value = escapeFirstProp($prop[key2].properties['organization-name'][0]);
+                            for(var unit in $prop[key2].properties) {
+                                var val = $prop[key2].properties[unit];
+                                if(unit === "organization-unit"){
+                                    for(var k=0;k<val.length;k++){
+                                        if(typeof val[k]!="object")
+                                            value+=';'+escapeString(val[k]);
+                                    }       
+                                }
+                            }   
+               
+                        } else if (name == 'agent' && $prop[key2].type.length && $prop[key2].type.indexOf('http://microformats.org/profile/hcard')>-1 ) {// && $subitem.itemType().contains(vcardURI)
+                            if(memory.indexOf($prop[key2])!=-1){
+                                value = 'ERROR';
+                            }else{
+                                memory.push($vcard);
+                                value = escapeString(extract($prop[key2], memory));
+                                memory.pop();
+                                
+                            }
+                            addParam('VALUE', 'VCARD');
+                        } else {
+                            // the property's value is an item and name is none of the above
+                            value = escapeFirstProp($prop[key2].properties['value'][0]);
+                            if(typeof $prop[key2].properties['type']!="undefined" && $prop[key2].properties['type'].length>0)
+                                addTypeParam($prop[key2].properties['type'][0]);
+                        }
+                    } else {
+                        // the property's value is not an item
+                        value = $prop[key2];
+                        var tag =$vcard.propertiesTagNames[key][0];// $prop.get(0).tagName.toUpperCase();
+                        // http://www.whatwg.org/specs/web-apps/current-work/multipage/microdata.html#url-property-elements
+                        if (/^A|AREA|AUDIO|EMBED|IFRAME|IMG|LINK|OBJECT|SOURCE|TRACK|VIDEO$/.test(tag)) {
+                            addParam('VALUE', 'URI');
+                        } else if (tag == 'TIME') {
+                            if (isValidDateString(value)) {
+                                addParam('VALUE', 'DATE');
+                            } else if (isValidGlobalDateAndTimeString(value)) {
+                                addParam('VALUE', 'DATE-TIME');
+                            }   
+                        }
+                        value = escapeString(value, name=='geo'?'\\\\,':'\\\\,;');
+                    }
+                    addLine(key, params, value);
+                }
+            }
+        }
+  
+        addLine('END', [], 'VCARD');
+        return output;
+    }
+
+    return extract(vcardItem, []);
+}

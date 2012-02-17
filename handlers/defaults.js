@@ -173,8 +173,12 @@ exports.returnError = function(code, msg, res){
     res.end();
 }
 
-exports.objectToXML = function(object){
-    return parseObjectToXML(object, 0)
+exports.objectToXML = function(object,root, url){
+    if(typeof root!="undefined"){
+    return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<"+root+" url=\""+url+" \">"+parseObjectToXML(object, 0)+"</"+root+">";
+    }else{
+    return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<data>"+parseObjectToXML(object, 0)+"</data>";    
+    }
 }
 
 function parseObjectToXML(object, ind){
@@ -185,7 +189,7 @@ function parseObjectToXML(object, ind){
     }
     for (var key in object) {
         if (object.hasOwnProperty(key)) {
-            toReturn = toReturn + indentation+'<'+encodeURIComponent(key)+'>'+"\n";
+            toReturn = toReturn + indentation+'<'+escapeToXML(key)+'>'+"\n";
             if(typeof(object[key])=='object'){
                 var t_ind = ind+1;
                 if(object[key].length){
@@ -195,9 +199,9 @@ function parseObjectToXML(object, ind){
                 }
                 
             }else{
-                toReturn = toReturn+indentation+encodeURIComponent(object[key])+"\n";
+                toReturn = toReturn+indentation+escapeToXML(object[key])+"\n";
             }
-            toReturn = toReturn + indentation+'</'+encodeURIComponent(key)+'>'+"\n";
+            toReturn = toReturn + indentation+'</'+escapeToXML(key)+'>'+"\n";
         }
     }
     return toReturn;   
@@ -211,7 +215,7 @@ function parseArrayToXML(array, ind, string){
     }
     var t_ind = ind+1;
     for(var object in array){
-        toReturn = toReturn+indentation+'<'+encodeURIComponent(string)+'_'+object+'>'+"\n";
+        toReturn = toReturn+indentation+'<'+escapeToXML(string)+'_'+object+'>'+"\n";
         if(typeof(array[object])=='object'){
             if(array[object].length){
                 toReturn = toReturn+parseArrayToXML(array[object], t_ind, string);
@@ -219,15 +223,18 @@ function parseArrayToXML(array, ind, string){
                 toReturn = toReturn+parseObjectToXML(array[object], t_ind);
             }
         }else{
-            toReturn = toReturn+indentation+encodeURIComponent(array[object])+"\n";
+            toReturn = toReturn+indentation+escapeToXML(array[object])+"\n";
         }
-        toReturn = toReturn + indentation+'</'+encodeURIComponent(string)+'_'+object+'>'+"\n";
+        toReturn = toReturn + indentation+'</'+escapeToXML(string)+'_'+object+'>'+"\n";
     }
     return toReturn;
 }
 
 
-
+function escapeToXML(string){
+    string = encodeURIComponent(string);
+    return string;
+}
 
 
 NotFound.prototype.__proto__ = Error.prototype;
