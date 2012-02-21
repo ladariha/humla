@@ -6,7 +6,7 @@ var RAW_SLIDES_DIRECTORY = '/data/slides';
 var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../public/data/slides')).toString();
 var SLIDE_TEMPLATE = (path.join(path.dirname(__filename),'../public/data/templates')).toString();
 var defaults = require('./defaults');
-var microdataParser = require('./microdata/microdataparser');
+var microdataParser = require('../server_ext/microdata/microdataparser_ext');
 
 /**
  * This associative array contains instances of ContentNegotiation (see below). Array keys are all possible formats 
@@ -57,6 +57,15 @@ app.get('/api/:course/:lecture/microdata', function api(req, res) {
     }
 });
 
+app.get("/api/fuj", function(req, res){
+    
+    var slideIndexer = require('./slideindexer');
+    slideIndexer.index("mdw22", "lecture1", "raw", undefined, function(data){
+        console.log(data);
+    });
+    
+    
+});
 /**
  * Returns all microdata items of type given by :itemtype in presentation specified by :course and :lecture
  */

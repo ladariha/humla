@@ -1,7 +1,7 @@
 var jsdom = require('jsdom');
 /**
  * Finds all microdata items (or only type restricted by <code>type</code> parameter) and after
- * finding them call function specified by callback parameter
+ * finding them calls function specified by callback parameter
 * @param presentationURL URL address of explored presentation
 * @param html html source code of the presentation
 * @param type (optional) of which itemtype items should be returned
