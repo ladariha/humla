@@ -20,6 +20,6 @@ server.run(PORT, WEBROOT);
 
 // ATOM UPDATE EVERY 2 HOURS
 cronJob('0 0 */2 * * *',  function(){ 
-    var atom = require((path.join(path.dirname(__filename), './handlers/feeds')).toString()+"/atom_module");    
+    var atom = require((path.join(path.dirname(__filename), './server_ext/atom')).toString()+"/atom_module_ext");    
     atom.updateAllFeed(DOMAIN+":"+PORT); // TODO 
 }); 

@@ -14,7 +14,11 @@ exports.parse =function parse($,slideIndex){
             temporary.gbooks.push(gbook);
         });
         slide++;    
-    });    
+    });   
+    
+    if(temporary.gbooks.length===0)
+           slideIndex.sendResponse(slideIndex); 
+    
     for(var i in temporary.gbooks){
         parseSingleGbook(temporary.gbooks[i],slideIndex);
     }
@@ -43,10 +47,10 @@ function parseSingleGbook(gbook,slideIndex){
         res2.on('end', function () {
             if(res2.statusCode === 200){
                 var data = eval('(' + content + ')');
-                if(data.volumeInfo.industryIdentifiers[1] !== undefined){
+                if(typeof data.volumeInfo.industryIdentifiers[1] != "undefined"){
                     gbook.isbn=data.volumeInfo.industryIdentifiers[1].identifier;
                 }else{
-                    if(content.volumeInfo.industryIdentifiers[0]!== undefined){
+                    if(typeof content.volumeInfo.industryIdentifiers[0]!= "undefined"){
                         gbook.isbn = data.volumeInfo.industryIdentifiers[0].identifier;    
                     }else{
                         gbook.isbn = "-1";
@@ -91,22 +95,4 @@ function parseSingleGbook(gbook,slideIndex){
             return slideIndex;
         }
     });
-};
-
-
-exports.createFeedList = function(index){
-    
-    var ul = "<p>Google Books</p><ul >";
-    for(var i in index.gbooks){
-        var d = index.gbooks[i];
-        var t = "";
-        for(var j in d.author){
-            t +=d.author[j]+",";
-        }
-        ul+="<li><a href=\""+d.slide+"\">"+t+":"+d.title+"</a></li>";
-    }
-        
-    ul+="</ul>"
-    return ul;  
-    
 };

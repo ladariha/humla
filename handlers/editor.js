@@ -123,7 +123,7 @@ function editSlide(res, req){
     var course = RegExp.$1;
     var lecture = RegExp.$2;
     var slide = RegExp.$3;
-    if(req.body == undefined || req.body.slide == undefined){
+    if(typeof  req.body == "undefined" || typeof  req.body.slide == "undefined"){
         defaults.returnError(400, 'Missing field \"slide\" ', res); 
     }else{
         var content=req.body.slide;
