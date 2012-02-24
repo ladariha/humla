@@ -8,51 +8,52 @@ var jsdom = require('jsdom');
 * @param callback callback function that is called after all items are found
  */
 exports.items = function(presentationURL, html, type, callback){
-    var    window = jsdom.jsdom().createWindow();
-    jsdom.jQueryify(window, "../../public/lib/jquery-1.7.min.js", function() {
-        window.jQuery('html').append(html);
-        var  $ = window.jQuery;
-        var baseUrl='';
-        $('html').find('base').each(function(){
-            if($(this).attr('href').length)
-                baseUrl=($(this).attr('href'));
-        });
-        var microdataParser = microdata($, baseUrl);
+    try{
+        var    window = jsdom.jsdom().createWindow();
+        jsdom.jQueryify(window, "../../public/lib/jquery-1.7.min.js", function() {
+            window.jQuery('html').append(html);
+            var  $ = window.jQuery;
+            var baseUrl='';
+            $('html').find('base').each(function(){
+                if($(this).attr('href').length)
+                    baseUrl=($(this).attr('href'));
+            });
+            var microdataParser = microdata($, baseUrl);
         
-        if(typeof type!="undefined"){
-            var microdataTyped = {};
-            microdataTyped.items = [];
+            if(typeof type!="undefined"){
+                var microdataTyped = {};
+                microdataTyped.items = [];
         
-            for(var i=0;i<microdataParser.items.length;i++){
-                finalize(microdataParser.items[i]);
-            }
+                for(var i=0;i<microdataParser.items.length;i++){
+                    finalize(microdataParser.items[i]);
+                }
                 
-            function finalize(microitem){
-                if(microitem.properties){ // if item contains other items
-                    for(var key in microitem.properties){
-                        for(var j=0; j< microitem.properties[key].length; j++){
-                            finalize(microitem.properties[key][j]);        
+                function finalize(microitem){
+                    if(microitem.properties){ // if item contains other items
+                        for(var key in microitem.properties){
+                            for(var j=0; j< microitem.properties[key].length; j++){
+                                finalize(microitem.properties[key][j]);        
+                            }
                         }
                     }
-                }
 
-                if(microitem.type){
-                    for(var j=0; j<microitem.type.length;j++){ // iterate all itemtypes
-                        if(microitem.type[j] && microitem.type[j].toLowerCase() === type.toLowerCase()){
-                            microdataTyped.items.push(microitem);
-                            j = microitem.type.length+1;
+                    if(microitem.type){
+                        for(var j=0; j<microitem.type.length;j++){ // iterate all itemtypes
+                            if(microitem.type[j] && microitem.type[j].toLowerCase() === type.toLowerCase()){
+                                microdataTyped.items.push(microitem);
+                                j = microitem.type.length+1;
+                            }
                         }
                     }
                 }
+                callback(null, microdataTyped);
+            }else{
+                callback(null, microdataParser);    
             }
-            callback(microdataTyped);
-        }else{
-            callback(microdataParser);    
-        }
-        
-        
-        
-    });   
+        });     
+    }catch(err){
+        callback(err,null);
+    } 
 }
 
 
@@ -65,45 +66,49 @@ exports.items = function(presentationURL, html, type, callback){
 * @param callback callback function that is called after all items are found
  */
 exports.vcards = function(presentationURL, html, type,callback){
-    var    window = jsdom.jsdom().createWindow();
-    jsdom.jQueryify(window, "../../public/lib/jquery-1.7.min.js", function() {
-        window.jQuery('html').append(html);
-        var  $ = window.jQuery;
-        var baseUrl='';
-        $('html').find('base').each(function(){
-            if($(this).attr('href').length)
-                baseUrl=($(this).attr('href'));
+    try{
+        var    window = jsdom.jsdom().createWindow();
+        jsdom.jQueryify(window, "../../public/lib/jquery-1.7.min.js", function() {
+            window.jQuery('html').append(html);
+            var  $ = window.jQuery;
+            var baseUrl='';
+            $('html').find('base').each(function(){
+                if($(this).attr('href').length)
+                    baseUrl=($(this).attr('href'));
             
-        });
-        var microdataParser = microdata( $, baseUrl, true);
-        var microdataTyped = {};
-        microdataTyped.items = [];
+            });
+            var microdataParser = microdata( $, baseUrl, true);
+            var microdataTyped = {};
+            microdataTyped.items = [];
         
-        for(var i=0;i<microdataParser.items.length;i++){
-            finalize(microdataParser.items[i]);
-        }
+            for(var i=0;i<microdataParser.items.length;i++){
+                finalize(microdataParser.items[i]);
+            }
                 
-        function finalize(microitem){
-            if(microitem.type){
-                for(var j=0; j<microitem.type.length;j++){ // iterate all itemtypes
-                    if(microitem.type[j] && microitem.type[j].toLowerCase() === "http://microformats.org/profile/hcard"){
-                        microdataTyped.items.push(microitem);
-                        j = microitem.type.length+1;
+            function finalize(microitem){
+                if(microitem.type){
+                    for(var j=0; j<microitem.type.length;j++){ // iterate all itemtypes
+                        if(microitem.type[j] && microitem.type[j].toLowerCase() === "http://microformats.org/profile/hcard"){
+                            microdataTyped.items.push(microitem);
+                            j = microitem.type.length+1;
+                        }
                     }
                 }
             }
-        }
-        var toReturn = "";
+            var toReturn = "";
         
-        for(var i=0;i<microdataTyped.items.length;i++) // each item
-            toReturn+=(vcard(microdataTyped.items[i], $, presentationURL));
+            for(var i=0;i<microdataTyped.items.length;i++) // each item
+                toReturn+=(vcard(microdataTyped.items[i], $, presentationURL));
         
-        callback(toReturn);
-    });   
+            callback(null, toReturn);
+        });   
+    }catch(err){
+        callback(err, null);
+    }
 }
 
 /**
- * Returns all itemscope items in given presentation (or slide if slideNumber is given). Be aware that it could return one item several times.
+ * Returns all itemscope items in given presentation in slide given by slideNumber. Be aware that it could return one item several times.
  * That is because it have to returned items both itemscope and itemprop attribute and also items with only itemscope. The point is that a itemscope can
  * start in different slide and have some property (itemprop) on another slide. And to enable proper faceted browsing you want to be able to navigate to the slide
  * that actually contains the property, not to slide where some itemscope begins.
@@ -114,48 +119,51 @@ exports.vcards = function(presentationURL, html, type,callback){
  *
  */
 exports.itemsFaceted = function(html, type, callback, slideNumber){
-    
-    var    window = jsdom.jsdom().createWindow();
-    jsdom.jQueryify(window, "../../public/lib/jquery-1.7.min.js", function() {
-        window.jQuery('html').append(html);
-        var  $ = window.jQuery;
-        var baseUrl='';
-        $('html').find('base').each(function(){
-            if($(this).attr('href').length)
-                baseUrl=($(this).attr('href'));
-        });
-        var microdataParser = microdataFaceted($, baseUrl, slideNumber);
-        if(typeof type!="undefined"){
-            var microdataTyped = {};
-            microdataTyped.items = [];
+    try{
+        var    window = jsdom.jsdom().createWindow();
+        jsdom.jQueryify(window, "../../public/lib/jquery-1.7.min.js", function() {
+            window.jQuery('html').append(html);
+            var  $ = window.jQuery;
+            var baseUrl='';
+            $('html').find('base').each(function(){
+                if($(this).attr('href').length)
+                    baseUrl=($(this).attr('href'));
+            });
+            var microdataParser = microdataFaceted($, baseUrl, slideNumber);
+            if(typeof type!="undefined"){
+                var microdataTyped = {};
+                microdataTyped.items = [];
         
-            for(var i=0;i<microdataParser.items.length;i++){
-                finalize(microdataParser.items[i]);
-            }
+                for(var i=0;i<microdataParser.items.length;i++){
+                    finalize(microdataParser.items[i]);
+                }
                 
-            function finalize(microitem){
-                if(microitem.properties){ // if item contains other items
-                    for(var key in microitem.properties){
-                        for(var j=0; j< microitem.properties[key].length; j++){
-                            finalize(microitem.properties[key][j]);        
+                function finalize(microitem){
+                    if(microitem.properties){ // if item contains other items
+                        for(var key in microitem.properties){
+                            for(var j=0; j< microitem.properties[key].length; j++){
+                                finalize(microitem.properties[key][j]);        
+                            }
                         }
                     }
-                }
 
-                if(microitem.type){
-                    for(var j=0; j<microitem.type.length;j++){ // iterate all itemtypes
-                        if(microitem.type[j] && microitem.type[j].toLowerCase() === type.toLowerCase()){
-                            microdataTyped.items.push(microitem);
-                            j = microitem.type.length+1;
+                    if(microitem.type){
+                        for(var j=0; j<microitem.type.length;j++){ // iterate all itemtypes
+                            if(microitem.type[j] && microitem.type[j].toLowerCase() === type.toLowerCase()){
+                                microdataTyped.items.push(microitem);
+                                j = microitem.type.length+1;
+                            }
                         }
                     }
                 }
+                callback(null, microdataTyped);
+            }else{
+                callback(null, microdataParser);    
             }
-            callback(microdataTyped);
-        }else{
-            callback(microdataParser);    
-        }
-    });   
+        });   
+    }catch(err){   
+        callback(err, null);
+    }
 }
 
 /*
@@ -266,7 +274,7 @@ function getItemsFaceted($, slideNumber){
             var slideid = $(this).attr('data-slideid');
             
             if($(this).attr('itemscope').length){ //  the entire div with class attribute "slide" is itemscope => it is the only top level item 
-                
+                console.log("SLIDE");
                 var item = {};
                 item.type = $(this).attr('itemtype')+"/dsdsdsd";
                 item.container = this;
@@ -277,8 +285,8 @@ function getItemsFaceted($, slideNumber){
                 a.item = $(this);
                 a.slideid = slideid;
                 items.push(a);
-                
-            }else{ // any itemscope (note that it causes duplications - one nested itemscope (aka itemprop with itemscope) is returned as property of some item and also as a single item
+            }          
+//            }else{ // any itemscope (note that it causes duplications - one nested itemscope (aka itemprop with itemscope) is returned as property of some item and also as a single item
 
                 $(this).find('*[itemscope]').each(function(){ // because this returns EVERYTHING in jsdom :(
                     if($(this).attr('itemscope').length) //&& (!$(this).attr('itemprop').length || $(this).parent().attr('data-slideid')=== slideid) 
@@ -295,7 +303,7 @@ function getItemsFaceted($, slideNumber){
                         items.push(a);
                     }
                 });
-            }     
+//            }     
         }
         iterator++;
     });

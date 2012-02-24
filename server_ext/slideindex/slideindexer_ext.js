@@ -182,7 +182,6 @@ function returnThrowError(code, msg, res, callback){
  *
  */
 function parseDocument(res, body, pathToCourse, filename, lecture, course, alt,callback){
-    console.log("PARSUJU");
     jsdom.env({
         html: body,
         src: [
@@ -243,12 +242,11 @@ function parseDocument(res, body, pathToCourse, filename, lecture, course, alt,c
                                 if(this.format==="json" || this.format==="xml"){
                                     path.exists(JSON_DIRECTORY+pathToCourse, function (exists) {
                                         if(exists){
-
                                             fs.writeFile(JSON_DIRECTORY+pathToCourse+file+"."+slideIndex.format, textindex, function (err) {
                                                 if (err) {
                                                     console.error('Error while saving '+err);
                                                 }else{
-                                                    console.log('It\'s saved!'+JSON_DIRECTORY+"/"+ pathToCourse+file+"."+slideIndex.format);
+                                                    console.log('It\'s saved!'+JSON_DIRECTORY+ pathToCourse+file+"."+slideIndex.format);
                                                 }
                                             });
                                         }else{
@@ -376,7 +374,8 @@ function parseTitles(slideIndex,$){
     slideIndex.content.course = $('meta[name="course"]').attr('content');
     slideIndex.content.lecture = $('meta[name="lecture"]').attr('content');
     var keywords = $('meta[name="keywords"]').attr('content');
-    slideIndex.content.keywords=keywords.split(',');
+    if(typeof keywords!="undefined" && keywords.length>0)
+        slideIndex.content.keywords=keywords.split(',');
     slideIndex.content.numberOfSlide = $('div.slide').length+1;// +1 for slide intro
                 
     var i=0;
@@ -467,7 +466,7 @@ function parseTitles(slideIndex,$){
                                 //                                                console.log(iterator+'-- '+decodeURI($(this).has('h1').text()).trim());
                                 iterator++;
                             }else{
-                                tmp = {
+                                var tmp = {
                                     parentSection: parent,
                                     title: sec
                                 };

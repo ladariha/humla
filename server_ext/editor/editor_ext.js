@@ -66,7 +66,7 @@ exports.removeSlide = function(course ,lecture, slide, host, res, callback){
  * @return if used via REST then JSON format of HTMLCode otherwise instance of HTMLCode
  */
 exports.editSlide = function(course ,lecture, slide, host, res, content,callback){
- editSlideContent(course, lecture, slide, content, res, host, callback);
+    editSlideContent(course, lecture, slide, content, res, host, callback);
 }
 
 /**
@@ -416,7 +416,7 @@ function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureUR
                             for(var k = 0;k<crs.length;k++){
                                 if(crs[k].slideid===key){
                                     crs[k].remove(function (err){
-                                        returnThrowError("Error removing slideid", callback);
+                                        returnThrowError(500, "Error removing slideid", res, callback);
                                     });
                                 }
                             }
@@ -429,7 +429,7 @@ function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureUR
                                     crs[h].slideid=updatedid[key2];
                                     crs[h].save(function(err) {
                                         if(err) {
-                                            returnThrowError("Error updating slideid", callback);
+                                            returnThrowError(500, "Error updating slideid", res, callback);
                                         }
                                     });   
                                 }
@@ -441,7 +441,7 @@ function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureUR
                             sid.slideid = newids[key3];
                             sid.save(function(err) {
                                 if(err) {
-                                    returnThrowError("Error saving new slideid", callback);
+                                    returnThrowError(500, "Error saving new slideid", res, callback);
                                 }
                             });   
                         }
@@ -457,6 +457,134 @@ function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureUR
         }             
     });
 }
+
+
+/**
+ * This method is very similar to addIDsToSlidesAndWriteToFile() but it is uses complex callbacks. It is called only from facet_ext when 
+ * the parsing file is missing data-slideid attributes. This function fixes this problem, waits (not in synchronized way - it all rely on callbacks) until 
+ * each DB and File operations are done and then call the original method in facet_ext which it was called from. So at the end it sort of restarts the process
+ * started in facet_ext
+ *
+ * Adds, updates and removes IDs of slides. First of all, all slideids are loaded from db,  then ids for new 
+ * slides are created, existing ids altered (i.e. after inserting/removing slides) and all deleted ids from 
+ * HTML source are deleted from db as well.
+ * @param content HTML source code of presentation
+ * @param courseID course ID ("mdw")
+ * @param lecture lecture ID ("lecture1")
+ * @param res HTTP response
+ * @param lectureURL URL address of presentation
+ * @param file file where the presentation should be stored in
+ * @param callback
+ */
+exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lecture, callback, originalCallback){
+    
+    fs.readFile(SLIDES_DIRECTORY+ '/'+courseID+'/'+lecture+".html", function (err, data) {
+        if (err){
+            returnThrowError(404, "Not found"+err, res, originalCallback);
+        }else{
+    
+            var prefix =new RegExp("^"+courseID+"_"+lecture+"_");
+            Slideid.find({
+                slideid: prefix
+            }, function(err,crs){   
+                if(!err) {
+                    var slidesToDelete = new Array();
+                    for(var i=0;i<crs.length;i++){
+                        slidesToDelete[crs[i].slideid]=1;
+                    }
+
+                    jsdom.env({
+                        html:data.toString(),
+                        src: [
+                        jquery
+                        ],
+                        done : function(errors, window) {
+                            if(!errors){
+                                var $ = window.$;
+                                var d = new Date().getTime();
+                                var updatedid = [];
+                                var newids = new Array();
+                                var it = 0;
+                                var counter = 0;
+            
+                                $('body').find('.slide').each(function(){
+                                    counter++;
+                                    if (!$(this).attr('data-slideid')) { // slide doesn't have ID => all following slideids have to be update
+                                        var n = courseID+"_"+lecture+"_"+counter+"_"+(d+it);
+                                        $(this).attr('data-slideid', n);
+                                        newids.push(n);
+                                        it++;
+                                    }else{
+                                        delete slidesToDelete[$(this).attr('data-slideid')]; // this slideid is used, no need to delete it from db
+                                        if($(this).attr('data-slideid').indexOf( courseID+"_"+lecture+"_"+counter+"_", 0)<0){ // slide number is changed => update slideid
+                                            var parts = ($(this).attr('data-slideid')).split("_");
+                                            updatedid[$(this).attr('data-slideid')] = parts[0]+"_"+parts[1]+"_"+counter+"_"+parts[3];    // counter is a new slide number
+                                            $(this).attr('data-slideid', parts[0]+"_"+parts[1]+"_"+counter+"_"+parts[3]);
+                                        }            
+                                    } 
+                                });
+                                var lock = new IDSyncLock(slidesToDelete.length, updatedid.length, newids.length, callback, lecture, courseID, originalCallback, res);
+                                var newcontent= $("html").html();    
+                                newcontent = "<!DOCTYPE html><html>"+newcontent+"</html>";
+                                fs.writeFile(SLIDES_DIRECTORY+ '/'+courseID+'/'+lecture+".html", newcontent, function (err) {
+                                    if (err) {
+                                        returnThrowError(500, "Error writing to file", res, originalCallback);
+                                    }else{
+                                        
+                                        for(var key in slidesToDelete){
+                                            for(var k = 0;k<crs.length;k++){
+                                                if(crs[k].slideid===key){
+                                                    crs[k].remove(function (err){
+                                               
+                                                        if(err)
+                                                            returnThrowError(500, "Error removing slideid", res, originalCallback);
+                                                        lock.notifyDeleted();
+                                                    });
+                                                }
+                                            }
+                                        }
+                    
+                                        // update existingids (slideid is unique!)
+                                        for(var key2 in updatedid){
+                                            for(var h = 0;h<crs.length;h++){
+                                                if(crs[h].slideid===key2){
+                                                    crs[h].slideid=updatedid[key2];
+                                                    crs[h].save(function(err) {
+                                                
+                                                        if(err) {
+                                                            returnThrowError(500, "Error updating slideid",res, originalCallback);
+                                                        }
+                                                        lock.notifyUpdated();
+                                                    });   
+                                                }
+                                            }
+                                        }
+                                        // insert new ids
+                                        for(var key3 in newids){
+                                            var sid = new Slideid();
+                                            sid.slideid = newids[key3];
+                                            sid.save(function(err) {
+                                                if(err) {
+                                                    returnThrowError(500, "Error saving new slideid",res,  originalCallback);
+                                                }
+                                                lock.notifyInserted();
+                                            });   
+                                        }
+                                    }
+                                });   
+                            }else{
+                                returnThrowError(500, errors, res, originalCallback);
+                            } 
+                        }
+                    });
+                } else {
+                    returnThrowError(500, "Problems with database", res, originalCallback); 
+                }             
+            });
+        }
+    });
+}
+
 
 function writeToFile(res, file, lectureUrl, content, callback){
     fs.writeFile(file, content, function (err) {
@@ -647,4 +775,68 @@ function refreshIndexFile(course, lecture, host){
 function HTMLContent(url, htmlCode){
     this.url = url;
     this.html = htmlCode;
+}
+
+
+/**
+ * Function to synchronize methods in _addIDsToSlidesAndWriteToFileForFacets.
+ * @param toDelete number of ID to be removed
+ * @param toUpdate number of ID to be updated
+ * @param toInsert number of ID to be inserted
+ * @param callback function in facet_ext
+ * @param lecture lecture ID
+ * @param course course ID
+ * @param originalCallback original callback that the original function in facet_ext (specified by the callback param) was called with
+ * @param originalResponse original reponse that the original function in facet_ext (specified by the callback param) was called with
+ */
+function IDSyncLock(toDelete, toUpdate, toInsert, callback, lecture, course, originalCallback, originalResponse){
+    
+    this.toDelete = toDelete;
+    this.toUpdate = toUpdate;
+    this.toInsert = toInsert;
+    this.deleted = 0;
+    this.updated = 0;
+    this.inserted = 0;
+    this.content = ''; 
+    this.lecture = lecture;
+    this.course = course;
+    this.callback = callback;
+    this.response = originalResponse;
+    this.originalCallback = originalCallback;
+    
+    this.notifyDeleted = function(){
+        this.deleted++;
+        if(this.deleted === this.toDelete)
+            this.globalNotify();
+    };
+    
+    //    this.write = function(){
+    //        fs.writeFile(file, this.content, function (err) {
+    //            if (err) {
+    //                returnThrowError(500, 'Problem with saving document: '+err.message, res, callback);
+    //            }else{
+    //                var t = new HTMLContent("http://"+lectureUrl, "Document updated, <a href=\"http://"+lectureUrl+"\">back to presentation</a>");
+    //                returnData(res, callback, t);
+    //
+    //            }
+    //        });   
+    //    };
+    
+    this.notifyUpdated = function(){
+        this.updated++;
+        if(this.updated === this.toUpdate)
+            this.globalNotify();
+    };
+    
+    this.notifyInserted = function(){
+        this.inserted++;
+        console.log("NOTIFICATION");
+        if(this.inserted === this.toInsert)
+            this.globalNotify();
+    };
+    
+    this.globalNotify = function(){
+        if(this.inserted === this.toInsert && this.updated === this.toUpdate && this.deleted === this.toDelete)
+            callback(this.response, this.course, this.lecture, this.originalCallback);
+    }
 }

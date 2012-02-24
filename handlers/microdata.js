@@ -46,13 +46,21 @@ app.get('/api/:course/:lecture/microdata', function api(req, res) {
                 defaults.returnError(404, err.message, res);
             }else{
                 //                negotiation.microdataSelection
-                negotiation.microdataSelection(presentationUrl, data.toString(),undefined ,function(data){
-                    var container = negotiation.finalize(data, req, course, lecture, undefined);
-                    res.writeHead(200, {
-                        'Content-Type': negotiation.contentType
-                    });
-                    res.write(negotiation.formatCallback(container, undefined,2));
-                    res.end();
+                negotiation.microdataSelection(presentationUrl, data.toString(),undefined ,function(err, data){
+                    if(err){
+                        res.writeHead(500, {
+                            'Content-Type': 'text/plain'
+                        });
+                        res.write(err);
+                        res.end(); 
+                    }else{
+                        var container = negotiation.finalize(data, req, course, lecture, undefined);
+                        res.writeHead(200, {
+                            'Content-Type': negotiation.contentType
+                        });
+                        res.write(negotiation.formatCallback(container, undefined,2));
+                        res.end(); 
+                    }
                 });
             }
         });
@@ -77,21 +85,30 @@ app.get('/api/:course/:lecture/microdata/:itemtype', function api(req, res) {
             if (err){
                 defaults.returnError(404, err.message, res);
             }else{
-                negotiation.microdataSelection(undefined,data.toString(),itemtype, function(data){
+                negotiation.microdataSelection(undefined,data.toString(),itemtype, function(err, data){
                 
-                    var container = {};
-                    container.url = req.headers.host+"/api"+"/"+course+"/"+lecture+"/microdata/"+encodeURIComponent(itemtype);
-                    container.course = course;
-                    container.lecture = lecture;
-                    container.allmicrodataUrl = req.headers.host+"/api"+"/"+course+"/"+lecture+"/microdata"
-                    container.presentationUrl = req.headers.host+RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+'.html';
-                    container.items =data.items;
+                    if(err){
+                        res.writeHead(500, {
+                            'Content-Type': 'text/plain'
+                        });
+                        res.write(err);
+                        res.end(); 
+                    }else{
+                        var container = {};
+                        container.url = req.headers.host+"/api"+"/"+course+"/"+lecture+"/microdata/"+encodeURIComponent(itemtype);
+                        container.course = course;
+                        container.lecture = lecture;
+                        container.allmicrodataUrl = req.headers.host+"/api"+"/"+course+"/"+lecture+"/microdata"
+                        container.presentationUrl = req.headers.host+RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+'.html';
+                        container.items =data.items;
                     
-                    res.writeHead(200, {
-                        'Content-Type': negotiation.contentType
-                    });
-                    res.write(negotiation.formatCallback(container, undefined,2));
-                    res.end();
+                        res.writeHead(200, {
+                            'Content-Type': negotiation.contentType
+                        });
+                        res.write(negotiation.formatCallback(container, undefined,2));
+                        res.end();
+                    }
+                 
                 });
             }
         });   
