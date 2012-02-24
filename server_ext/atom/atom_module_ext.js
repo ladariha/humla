@@ -11,7 +11,6 @@ var ATOM_ITEM_LIMIT = 10;
 exports.updateAllFeed =function updateAllFeed(domain){
     updateHumlaFeed(domain);
     updateCoursesFeed(domain);
-    
 }
 
 function updateHumlaFeed(domain){

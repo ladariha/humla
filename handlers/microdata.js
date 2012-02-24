@@ -24,7 +24,9 @@ accepts["text/vcard"] = new ContentNegotiation("text/vcard",microdataParser.vcar
 });
 accepts["vcard"] = new ContentNegotiation("text/vcard", microdataParser.vcards, function(data){
     return data;
-}, function(data){return data;});
+}, function(data){
+    return data;
+});
 
 /**
  * Returns all microdata items in :lecture of :course
@@ -34,7 +36,7 @@ app.get('/api/:course/:lecture/microdata', function api(req, res) {
     var lecture = req.params.lecture;
     var alt = querystring.parse(require('url').parse(req.url).query)['alt'];
     var negotiation = negotiateContent(alt, req.headers.accept);
-        var presentationUrl = req.headers.host+RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+'.html';
+    var presentationUrl = req.headers.host+RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+'.html';
     if(typeof negotiation=="undefined"){
         defaults.returnError(406, "Not Acceptable format: Try application/json or application/xml or text/xml or  */*", res);
     }else{
@@ -57,15 +59,6 @@ app.get('/api/:course/:lecture/microdata', function api(req, res) {
     }
 });
 
-app.get("/api/fuj", function(req, res){
-    
-    var slideIndexer = require('./slideindexer');
-    slideIndexer.index("mdw22", "lecture1", "raw", undefined, function(data){
-        console.log(data);
-    });
-    
-    
-});
 /**
  * Returns all microdata items of type given by :itemtype in presentation specified by :course and :lecture
  */
@@ -84,7 +77,7 @@ app.get('/api/:course/:lecture/microdata/:itemtype', function api(req, res) {
             if (err){
                 defaults.returnError(404, err.message, res);
             }else{
-                negotiation.microdataSelection(presentationUrl,data.toString(),itemtype, function(data){
+                negotiation.microdataSelection(undefined,data.toString(),itemtype, function(data){
                 
                     var container = {};
                     container.url = req.headers.host+"/api"+"/"+course+"/"+lecture+"/microdata/"+encodeURIComponent(itemtype);
@@ -93,9 +86,7 @@ app.get('/api/:course/:lecture/microdata/:itemtype', function api(req, res) {
                     container.allmicrodataUrl = req.headers.host+"/api"+"/"+course+"/"+lecture+"/microdata"
                     container.presentationUrl = req.headers.host+RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+'.html';
                     container.items =data.items;
-                
-                  
-               
+                    
                     res.writeHead(200, {
                         'Content-Type': negotiation.contentType
                     });

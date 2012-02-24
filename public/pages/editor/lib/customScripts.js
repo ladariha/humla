@@ -54,8 +54,7 @@ function loadSlide(){
     if(course.length > 0 && lecture.length>0 && slide.length>0){
         if(append.length > 0){
             
-            var url = "/api/"+course+"/"+lecture+"/"+"slide0"+"/editor"; 
-            
+            var url = "/api/template/0/editor"; 
             var request = new XMLHttpRequest();
             request.open("GET", url, true);
             request.onreadystatechange = function(){

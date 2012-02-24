@@ -126,7 +126,7 @@ function getIndex(res, course, lecture, alt, url, refresh, callback){
                 getDocumentFromUrl(res, url, pathToCourse, filename,lecture, course, alt,callback);    
             }            
         }else{
-            returnThrowError(400,  "Invalid value or parameter \"refresh\"", res);
+            returnThrowError(400,  "Invalid value or parameter \"refresh\"", res, callback);
         }
     }
 }
@@ -139,17 +139,22 @@ function returnData(res, contentType, callback, data){
         res.end();
     }else{
         if(typeof callback!="undefined")
-            callback(data);
+            callback(null, data);
         else
             throw "Nor HTTP Response or callback function defined!";
     }
 }
 
-function returnThrowError(code, msg, res){
+function returnThrowError(code, msg, res, callback){
     if(typeof res!="undefined")
         defaults.returnError(code, msg, res);
-    else
-        throw msg;
+    else{
+        if(typeof callback!="undefined"){
+            callback(msg, null);
+        }else{
+            throw msg;
+        }
+    }       
 }
 
 /**
@@ -185,7 +190,7 @@ function parseDocument(res, body, pathToCourse, filename, lecture, course, alt,c
         ],
         done: function(errors, window) {
             if(errors){
-                returnThrowError(500, 'Error while parsing document by jsdom', res);
+                returnThrowError(500, 'Error while parsing document by jsdom', res, callback);
             }else{
                 try{
                     var $ = window.$;
@@ -287,7 +292,7 @@ function parseDocument(res, body, pathToCourse, filename, lecture, course, alt,c
 
                 }
                 catch(err){
-                    returnThrowError(500, 'Error while parsing document: '+err, res);
+                    returnThrowError(500, 'Error while parsing document: '+err, res, callback);
                 }
             }
         }
@@ -335,7 +340,7 @@ function getDocumentFromUrl(res, url, pathToCourse, filename, lecture, course, a
     });
     request.end();
     request.on('error', function(e) {
-        returnThrowError(500, e.message, res);
+        returnThrowError(500, e.message, res, callback);
     });
 }
 
@@ -353,7 +358,7 @@ function getDocumentFromUrl(res, url, pathToCourse, filename, lecture, course, a
 function getDocumentFromFileSystem(res, pathToCourse, filename, lecture, course, alt,callback){
     fs.readFile(SLIDES_DIRECTORY+pathToCourse+filename+".html", function (err, data) {
         if (err){
-            returnThrowError(500, err.message, res);  
+            returnThrowError(500, err.message, res, callback);  
         }else{
             parseDocument(res, data, pathToCourse, filename,lecture, course, alt,callback);   
         }
