@@ -10,8 +10,11 @@ var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../../public/data/s
 var SLIDE_TEMPLATE = (path.join(path.dirname(__filename),'../../public/data/templates')).toString();
 var mongoose = require("mongoose");
 var Slideid = mongoose.model("Slideid");
-
 var defaults = require('../../handlers/defaults');
+
+var EventEmitter = require("events" ).EventEmitter;
+var editor_emitter  = new EventEmitter();
+exports.emitter = editor_emitter;
 
 /**
  * Returns HTML source code of given slide. 
@@ -415,8 +418,10 @@ function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureUR
                         for(var key in slidesToDelete){
                             for(var k = 0;k<crs.length;k++){
                                 if(crs[k].slideid===key){
+                                    var _id= crs[k]._id;
                                     crs[k].remove(function (err){
                                         returnThrowError(500, "Error removing slideid", res, callback);
+                                        editor_emitter.emit("removedID", _id);
                                     });
                                 }
                             }
@@ -446,7 +451,7 @@ function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureUR
                             });   
                         }
                         //write to file
-                        writeToFile(res, file, lectureURL, newcontent, callback);
+                        writeToFile(courseID, lecture, res, file, lectureURL, newcontent, callback);
                     }else{
                         returnThrowError(500, errors, res, callback);
                     } 
@@ -530,14 +535,15 @@ exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lectur
                                     if (err) {
                                         returnThrowError(500, "Error writing to file", res, originalCallback);
                                     }else{
-                                        
+                                        editor_emitter.emit("fileUpdated",courseID, lecture);
                                         for(var key in slidesToDelete){
                                             for(var k = 0;k<crs.length;k++){
                                                 if(crs[k].slideid===key){
+                                                    var _id= crs[k]._id;
                                                     crs[k].remove(function (err){
-                                               
                                                         if(err)
                                                             returnThrowError(500, "Error removing slideid", res, originalCallback);
+                                                        editor_emitter.emit("removedID", _id);
                                                         lock.notifyDeleted();
                                                     });
                                                 }
@@ -586,7 +592,11 @@ exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lectur
 }
 
 
-function writeToFile(res, file, lectureUrl, content, callback){
+function writeToFile(course, lecture, res, file, lectureUrl, content, callback){
+
+    editor_emitter.emit("fileUpdated", course, lecture);
+
+    console.log(">>");
     fs.writeFile(file, content, function (err) {
         if (err) {
             returnThrowError(500, 'Problem with saving document: '+err.message, res, callback);
@@ -810,18 +820,6 @@ function IDSyncLock(toDelete, toUpdate, toInsert, callback, lecture, course, ori
             this.globalNotify();
     };
     
-    //    this.write = function(){
-    //        fs.writeFile(file, this.content, function (err) {
-    //            if (err) {
-    //                returnThrowError(500, 'Problem with saving document: '+err.message, res, callback);
-    //            }else{
-    //                var t = new HTMLContent("http://"+lectureUrl, "Document updated, <a href=\"http://"+lectureUrl+"\">back to presentation</a>");
-    //                returnData(res, callback, t);
-    //
-    //            }
-    //        });   
-    //    };
-    
     this.notifyUpdated = function(){
         this.updated++;
         if(this.updated === this.toUpdate)
@@ -838,5 +836,5 @@ function IDSyncLock(toDelete, toUpdate, toInsert, callback, lecture, course, ori
     this.globalNotify = function(){
         if(this.inserted === this.toInsert && this.updated === this.toUpdate && this.deleted === this.toDelete)
             callback(this.response, this.course, this.lecture, this.originalCallback);
-    }
+    };
 }

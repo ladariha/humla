@@ -2,9 +2,13 @@ var mongoose = require("mongoose");
 var LectureToUpdate = mongoose.model("LectureToUpdate");
 var operations = [];
 var slideindexer_ext =  require('../slideindex/slideindexer_ext.js');
+var editor_ext = require('../editor/editor_ext.js');
 
+editor_ext.emitter.on("fileUpdated",addLectureToQueue);
 
-exports.addLectureToQueue = function(course, lecture){
+exports.addLectureToQueue = addLectureToQueue;
+
+function addLectureToQueue(course, lecture){
     LectureToUpdate.find({
         lectureID: lecture,
         courseID: course

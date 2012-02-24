@@ -87,17 +87,19 @@ function generateGbooksSmallThumbnail(data, req, res){
     content = content.replace("##DATE", data.volumeInfo.publishedDate);
            
     var temp="";
-    for (var i = 0; i < data.volumeInfo.categories.length; i++)
-        temp +=data.volumeInfo.categories[i]+",";
-           
-    temp = temp.substr(0, temp.length-1);
-    content = content.replace("##CATEGORY", temp);
+    if(typeof data.volumeInfo.categories !="undefined"){
+        for (var i = 0; i < data.volumeInfo.categories.length; i++)
+            temp +=data.volumeInfo.categories[i]+",";
+        temp = temp.substr(0, temp.length-1);
+    }
+    content = content.replace("##CATEGORY", temp);   
 
     temp="";
-    for (var i = 0; i < data.volumeInfo.authors.length; i++)
-        temp +=data.volumeInfo.authors[i]+",";
-           
-    temp = temp.substr(0, temp.length-1);
+    if(typeof data.volumeInfo.authors !="undefined"){
+        for (var i = 0; i < data.volumeInfo.authors.length; i++)
+            temp +=data.volumeInfo.authors[i]+",";
+        temp = temp.substr(0, temp.length-1);
+    }
     content = content.replace("##AUTHOR", temp);
             
     res.writeHead(200, {
@@ -127,17 +129,20 @@ function generateGbooksSimpleList(data, req, res){
     content = content.replace("##DATE", data.volumeInfo.publishedDate);
            
     var temp="";
-    for (var i = 0; i < data.volumeInfo.categories.length; i++)
-        temp +=data.volumeInfo.categories[i]+",";
-           
-    temp = temp.substr(0, temp.length-1);
+    if(typeof data.volumeInfo.categories !="undefined"){
+        for (var i = 0; i < data.volumeInfo.categories.length; i++)
+            temp +=data.volumeInfo.categories[i]+",";
+        temp = temp.substr(0, temp.length-1);
+    }
     content = content.replace("##CATEGORY", temp);
 
     temp="";
-    for (var i = 0; i < data.volumeInfo.authors.length; i++)
-        temp +=data.volumeInfo.authors[i]+",";
+    if(typeof data.volumeInfo.authors !="undefined"){
+        for (var i = 0; i < data.volumeInfo.authors.length; i++)
+            temp +=data.volumeInfo.authors[i]+",";
            
-    temp = temp.substr(0, temp.length-1);
+        temp = temp.substr(0, temp.length-1);
+    }
     content = content.replace("##AUTHOR", temp);
             
     res.writeHead(200, {
@@ -177,17 +182,21 @@ function generateGbooksBigThumbnail(data, req, res){
     content = content.replace("##DATE", data.volumeInfo.publishedDate);
            
     var temp="";
-    for (var i = 0; i < data.volumeInfo.categories.length; i++)
-        temp +=data.volumeInfo.categories[i]+",";
+    if(typeof data.volumeInfo.categories !="undefined"){
+        for (var i = 0; i < data.volumeInfo.categories.length; i++)
+            temp +=data.volumeInfo.categories[i]+",";
            
-    temp = temp.substr(0, temp.length-1);
+        temp = temp.substr(0, temp.length-1);
+    }
     content = content.replace("##CATEGORY", temp);
 
     temp="";
-    for (var i = 0; i < data.volumeInfo.authors.length; i++)
-        temp +=data.volumeInfo.authors[i]+",";
+    if(typeof data.volumeInfo.authors !="undefined"){
+        for (var i = 0; i < data.volumeInfo.authors.length; i++)
+            temp +=data.volumeInfo.authors[i]+",";
            
-    temp = temp.substr(0, temp.length-1);
+        temp = temp.substr(0, temp.length-1);
+    }
     content = content.replace("##AUTHOR", temp);
             
     res.writeHead(200, {

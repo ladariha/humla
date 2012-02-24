@@ -17,7 +17,7 @@ exports.parse =function parse($,slideIndex){
     });   
     
     if(temporary.gbooks.length===0)
-           slideIndex.sendResponse(slideIndex); 
+        slideIndex.sendResponse(slideIndex); 
     
     for(var i in temporary.gbooks){
         parseSingleGbook(temporary.gbooks[i],slideIndex);
@@ -64,12 +64,14 @@ function parseSingleGbook(gbook,slideIndex){
                 gbook.date = data.volumeInfo.publishedDate;
                 gbook.category = [];
                 var temp="";
-                for (var i = 0; i < data.volumeInfo.categories.length; i++)
-                    gbook.category[i] = data.volumeInfo.categories[i];
+                if(typeof data.volumeInfo.categories !="undefined")
+                    for (var i = 0; i < data.volumeInfo.categories.length; i++)
+                        gbook.category[i] = data.volumeInfo.categories[i];
            
                 gbook.author = [];
-                for (var i = 0; i < data.volumeInfo.authors.length; i++)
-                    gbook.author[i]=data.volumeInfo.authors[i];
+                if(typeof data.volumeInfo.authors !="undefined")
+                    for (var i = 0; i < data.volumeInfo.authors.length; i++)
+                        gbook.author[i]=data.volumeInfo.authors[i];
 
                 slideIndex.content.gbooks.push(gbook);
             }else{
