@@ -21,7 +21,8 @@ var plugins = [];
 plugins.push('./server_ext/slideindex/slideindexer_ext.js');
 plugins.push('./server_ext/atom/atom_module_ext.js');
 plugins.push('./server_ext/editor/editor_ext.js');
-plugins.push('./server_ext/facet/facet_ext.js');
+plugins.push('./server_ext/facet/facetparser_ext.js');
+plugins.push('./server_ext/facet/facetengine_ext.js');
 plugins.push('./server_ext/microdata/microdataparser_ext.js');
 plugins.push('./server_ext/maintenance/maintenance_ext.js');
 
