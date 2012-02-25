@@ -20,7 +20,8 @@ var ObjectId = Schema.ObjectId;
 var FacetRecord = new Schema({
     type: {type: String}, // mdw
     value: {type: String}, // lecture1
-    slideid: {type:String}
+    slideid: {type:String},
+    title: {type: String}
 });
 
 mongoose.model('FacetRecord', FacetRecord);  

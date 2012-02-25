@@ -377,7 +377,7 @@ function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureUR
         slideid: prefix
     }, function(err,crs){   
         if(!err) {
-            var slidesToDelete = new Array();
+            var slidesToDelete ={};
             for(var i=0;i<crs.length;i++){
                 slidesToDelete[crs[i].slideid]=1;
             }
@@ -391,7 +391,7 @@ function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureUR
                     if(!errors){
                         var $ = window.$;
                         var d = new Date().getTime();
-                        var updatedid = [];
+                        var updatedid = {};
                         var newids = new Array();
                         var it = 0;
                         var counter = 0;
@@ -465,10 +465,10 @@ function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureUR
 
 
 /**
- * This method is very similar to addIDsToSlidesAndWriteToFile() but it is uses complex callbacks. It is called only from facet_ext when 
+ * This method is very similar to addIDsToSlidesAndWriteToFile() but it is uses complex callbacks. It is called only from facetparser_ext when 
  * the parsing file is missing data-slideid attributes. This function fixes this problem, waits (not in synchronized way - it all rely on callbacks) until 
- * each DB and File operations are done and then call the original method in facet_ext which it was called from. So at the end it sort of restarts the process
- * started in facet_ext
+ * each DB and File operations are done and then call the original method in facetparser_ext which it was called from. So at the end it sort of restarts the process
+ * started in facetparser_ext
  *
  * Adds, updates and removes IDs of slides. First of all, all slideids are loaded from db,  then ids for new 
  * slides are created, existing ids altered (i.e. after inserting/removing slides) and all deleted ids from 
@@ -493,7 +493,7 @@ exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lectur
                 slideid: prefix
             }, function(err,crs){   
                 if(!err) {
-                    var slidesToDelete = new Array();
+                    var slidesToDelete = {};
                     for(var i=0;i<crs.length;i++){
                         slidesToDelete[crs[i].slideid]=1;
                     }
@@ -507,7 +507,7 @@ exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lectur
                             if(!errors){
                                 var $ = window.$;
                                 var d = new Date().getTime();
-                                var updatedid = [];
+                                var updatedid = {};
                                 var newids = new Array();
                                 var it = 0;
                                 var counter = 0;
@@ -593,14 +593,11 @@ exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lectur
 
 
 function writeToFile(course, lecture, res, file, lectureUrl, content, callback){
-
-    editor_emitter.emit("fileUpdated", course, lecture);
-
-    console.log(">>");
     fs.writeFile(file, content, function (err) {
         if (err) {
             returnThrowError(500, 'Problem with saving document: '+err.message, res, callback);
         }else{
+            editor_emitter.emit("fileUpdated", course, lecture);
             var t = new HTMLContent("http://"+lectureUrl, "Document updated, <a href=\"http://"+lectureUrl+"\">back to presentation</a>");
             returnData(res, callback, t);
 
@@ -737,44 +734,6 @@ function endsWith(string, suffix) {
     return string.indexOf(suffix, string.length - suffix.length) !== -1;
 }
 
-
-/**
- * Refreshes index files for given presentation. It should be called every time some edits are made
- * @param course course ID ("mdw")
- * @param lecture lecture ID ("lecture1")
- * @param host hostname (domain)
- */
-function refreshIndexFile(course, lecture, host){
-    
-    var url = "http://"+host+'/api/'+course+'/'+lecture+'/index?refresh=true';
-    //    url = url.replace('http://',''); // TODO no support for other than HTTP protocol
-    var stop = url.indexOf('/');
-    var options = {
-        host: url.substring(0, stop),
-        port: 80,
-        path: url.substring(stop),
-        method: 'GET'
-    };
-
-    var request = http.request(options, function(res) {});
-    request.end();
-    
-    // refresh XML
-    url = url +"&alt=xml";
-    options = {
-        host: url.substring(0, stop),
-        port: 80,
-        path: url.substring(stop),
-        method: 'GET'
-    };
-
-    var request2 = http.request(options, function(res) {});
-    request2.end();
-    
-}
-
-
-
 /**
  * Instance of this function is always returned by this extension. If editor_ext is called via REST
  * then it returns JSON.stringify(instance, undefined, 4) of this function. If it's called internally then
@@ -793,11 +752,11 @@ function HTMLContent(url, htmlCode){
  * @param toDelete number of ID to be removed
  * @param toUpdate number of ID to be updated
  * @param toInsert number of ID to be inserted
- * @param callback function in facet_ext
+ * @param callback function in facetparser_ext
  * @param lecture lecture ID
  * @param course course ID
- * @param originalCallback original callback that the original function in facet_ext (specified by the callback param) was called with
- * @param originalResponse original reponse that the original function in facet_ext (specified by the callback param) was called with
+ * @param originalCallback original callback that the original function in facetparser_ext (specified by the callback param) was called with
+ * @param originalResponse original reponse that the original function in facetparser_ext (specified by the callback param) was called with
  */
 function IDSyncLock(toDelete, toUpdate, toInsert, callback, lecture, course, originalCallback, originalResponse){
     

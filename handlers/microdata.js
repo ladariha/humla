@@ -12,7 +12,7 @@ var microdataParser = require('../server_ext/microdata/microdataparser_ext');
  * This associative array contains instances of ContentNegotiation (see below). Array keys are all possible formats 
  * that this api can return. 
  */
-var accepts = [];
+var accepts = {};
 accepts["json"] = new ContentNegotiation("application/json", microdataParser.items,  JSON.stringify,additionalInfo);
 accepts["xml"] = new ContentNegotiation("application/xml",microdataParser.items,  defaults.objectToXML,additionalInfo);
 accepts["application/json"] = new ContentNegotiation("application/json",  microdataParser.items, JSON.stringify,additionalInfo);
@@ -136,6 +136,10 @@ function negotiateContent(alt, accept){
         if(accept.indexOf(",")>-1){ // multiple values
             var choices = accept.split(",");
             for(var i=0;i<choices.length;i++){
+                if(choices[i].indexOf(";")>-1){
+                    var t = choices[i].split(";");
+                    choices[i] = t[0];
+                }
                 if(typeof accepts[choices[i]]!="undefined") // return first match
                     return accepts[choices[i]];
             }

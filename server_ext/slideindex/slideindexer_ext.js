@@ -28,7 +28,7 @@ fs.readdir( EXTENSIONS_DIRECTORY, function( err, files ) { // require() all js f
 var slideindexer={};
 
 // taken from http://alexgorbatchev.com/SyntaxHighlighter/manual/brushes/
-slideindexer.styles = new Array();
+slideindexer.styles = {};
 slideindexer.styles["as3"]="ActionScript3";  
 slideindexer.styles["actionscipt3"]="ActionScript3";  
 slideindexer.styles["bash"]="Bash/shell";
@@ -76,8 +76,8 @@ slideindexer.styles["html"]="XML";
 slideindexer.styles["xslt"]="XML";  
 
 
-exports.index = function(course, lecture, format, url, callback){
-    getIndex(undefined, course, lecture, format, url, "true",callback );
+exports.index = function(course, lecture, format, url, host, callback){
+    getIndex(undefined, course, lecture, format, url, host, "true",callback );
 };
 
 exports.indexRest = getIndex;
@@ -86,7 +86,7 @@ exports.indexRest = getIndex;
  * Returns slide's index given by URL or course name and lecture<br/> 
  * @param 
  */
-function getIndex(res, course, lecture, alt, url, refresh, callback){
+function getIndex(res, course, lecture, alt, url, host, refresh, callback){
     
     var pathToCourse = '/'+course+'/';
     var filename = lecture;
@@ -99,7 +99,7 @@ function getIndex(res, course, lecture, alt, url, refresh, callback){
                     if(err){
                         console.error("ERROR reading "+alt+" file "+indexfile);
                         console.error("   => parsing source html file instead");
-                        getDocumentFromFileSystem(res, pathToCourse,filename, lecture, course, alt,callback);
+                        getDocumentFromFileSystem(res, pathToCourse,filename, lecture, course, alt, host, callback);
                     }else{
                         if(alt==="json"){
                             
@@ -111,9 +111,9 @@ function getIndex(res, course, lecture, alt, url, refresh, callback){
                 });
             }else{
                 if(typeof url == "undefined"){
-                    getDocumentFromFileSystem(res, pathToCourse,filename, lecture, course, alt, callback);
+                    getDocumentFromFileSystem(res, pathToCourse,filename, lecture, course, alt, host, callback);
                 }else{
-                    getDocumentFromUrl(res, url, pathToCourse, filename, lecture, course, alt,callback);    
+                    getDocumentFromUrl(res, url, pathToCourse, filename, lecture, course, alt,host, callback);    
                 }      
                     
             } 
@@ -121,9 +121,9 @@ function getIndex(res, course, lecture, alt, url, refresh, callback){
     }else{ // parse the document again and update JSON index file
         if(refresh==="true"){
             if(typeof  url == "undefined"){
-                getDocumentFromFileSystem(res, pathToCourse,filename, lecture, course, alt,callback);
+                getDocumentFromFileSystem(res, pathToCourse,filename, lecture, course, alt, host, callback);
             }else{
-                getDocumentFromUrl(res, url, pathToCourse, filename,lecture, course, alt,callback);    
+                getDocumentFromUrl(res, url, pathToCourse, filename,lecture, course, alt,host, callback);    
             }            
         }else{
             returnThrowError(400,  "Invalid value or parameter \"refresh\"", res, callback);
@@ -181,7 +181,7 @@ function returnThrowError(code, msg, res, callback){
  * * @param callback if index is retrieving via internal API, the callback parameter is a function that will be called when index is constructed
  *
  */
-function parseDocument(res, body, pathToCourse, filename, lecture, course, alt,callback){
+function parseDocument(res, body, pathToCourse, filename, lecture, course, alt, host, callback){
     jsdom.env({
         html: body,
         src: [
@@ -194,6 +194,7 @@ function parseDocument(res, body, pathToCourse, filename, lecture, course, alt,c
                 try{
                     var $ = window.$;
                     var slideIndex = {
+                        host: host,
                         pathToCourse : pathToCourse,
                         format : alt,
                         filename : filename,
@@ -269,7 +270,7 @@ function parseDocument(res, body, pathToCourse, filename, lecture, course, alt,c
                     };
                     slideIndex.response = res;
                     parseTitles(slideIndex, $);
-                    slideIndex.content.structure = makeStructureHierarchical(slideIndex);
+                  
                     parseImagesAndCodeBlocks(slideIndex,$);
                     
                     extensions.forEach(function (ext){
@@ -280,7 +281,12 @@ function parseDocument(res, body, pathToCourse, filename, lecture, course, alt,c
                                         
                     extensions.forEach(function (ext){
                         if(ext.parse !== null && typeof ext.parse== 'function'){
-                            ext.parse($,slideIndex);     
+                            try{
+                            ext.parse($,slideIndex);         
+                            }catch(error){
+                                console.error("FAILED EXTENSION "+error);
+                            }
+                            
                         }
                     });
 
@@ -309,7 +315,7 @@ function parseDocument(res, body, pathToCourse, filename, lecture, course, alt,c
  * @param alt - output format, either json or xml (case sensitive)
  * @param callback if index is retrieving via internal API, the callback parameter is a function that will be called when index is constructed
  */
-function getDocumentFromUrl(res, url, pathToCourse, filename, lecture, course, alt, callback){
+function getDocumentFromUrl(res, url, pathToCourse, filename, lecture, course, alt, host, callback){
     url = decodeURI(url);
     url = url.replace('http://',''); // TODO no support for other than HTTP protocol
     var stop = url.indexOf('/');
@@ -330,7 +336,7 @@ function getDocumentFromUrl(res, url, pathToCourse, filename, lecture, course, a
 
         res.on('end', function () {
             if(res.statusCode === 200){
-                parseDocument(res, content, pathToCourse, filename,lecture, course, alt, callback);
+                parseDocument(res, content, pathToCourse, filename,lecture, course, alt, host, callback);
             }else{
                 defaults.returnError(res.statusCode, content, res);
             }   
@@ -353,12 +359,12 @@ function getDocumentFromUrl(res, url, pathToCourse, filename, lecture, course, a
  * @param alt - output format, either json or xml (case sensitive)
  * @param callback if index is retrieving via internal API, the callback parameter is a function that will be called when index is constructed
  */
-function getDocumentFromFileSystem(res, pathToCourse, filename, lecture, course, alt,callback){
+function getDocumentFromFileSystem(res, pathToCourse, filename, lecture, course, alt,host, callback){
     fs.readFile(SLIDES_DIRECTORY+pathToCourse+filename+".html", function (err, data) {
         if (err){
             returnThrowError(500, err.message, res, callback);  
         }else{
-            parseDocument(res, data, pathToCourse, filename,lecture, course, alt,callback);   
+            parseDocument(res, data, pathToCourse, filename,lecture, course, alt, host, callback);   
         }
     });
 }
@@ -379,109 +385,104 @@ function parseTitles(slideIndex,$){
     slideIndex.content.numberOfSlide = $('div.slide').length+1;// +1 for slide intro
                 
     var i=0;
-    var iterator=1;
     var parent = -1;
     var chapterParent = -1;
+    var p = 0;
+    var pointerP = [];
+    
+    // ALL TITLES
+    $('body').find('.slide').each(function (index, element){
+        pointerP[index]=0;
+        $(this).find('hgroup h1').each(function(){
+            var text = $(this).text().trim();
+            if(text.length>0){
+                var t = {
+                    order: index+1,
+                    title :text
+                };
+                slideIndex.content.slides.titles.push(t);
+            }
+        });
+    });
+
     $('body').children().each(function (){
         switch($(this).prop('tagName').toLowerCase()){
             case 'div':
-                if($(this).prop('class') === 'slide'){
+                if($(this).prop('class')==="slide"){
                     parent++;
                     $(this).find('hgroup h1').each(function(){
-                        //                                        console.log(iterator+'- '+ decodeURI($(this).text()));
-                        iterator++;
                         slideIndex.content.slides.sectionSlide.push(decodeURI($(this).text()));
-                        slideIndex.content.slides.titles.push(decodeURI($(this).text()));
                     })
                 }
                 break;
             case 'section':
                 parent++;
                 var sec='';
-                var section = this;
-                var section2;
-                $(this).children('header').each(function(){
-                    if($(this).text()!== ''){
-                        sec = decodeURI($(this).text()).trim();
-                        //                                        console.log(iterator+'- '+ (sec));
-                        slideIndex.content.slides.sectionSlide.push(sec);
-                        slideIndex.content.slides.titles.push(sec);
-                        iterator++;
-                    }
-                    if($(section).has('section').length > 0){
-                        $(section).children('section').each(function (){
-                            section2=this;
-                            $(this).children('header').each(function(){
-                                           
-                                if($(this).text()!== ''){
-                                    sec=decodeURI($(this).text()).trim();
-                                    var tmp = {
-                                        parentSection: parent,
-                                        title: sec
-                                    };
-                                    slideIndex.content.slides.chapterSlide.push(tmp);
-                                    slideIndex.content.slides.titles.push(sec);
-                                    chapterParent++;
-                                    //                                                    console.log(iterator+'-- '+ decodeURI($(this).text()));
-                                    iterator++;                                                
-                                }
-                                $(section2).find('div > hgroup').each(function (){
-                                    if($(this).has('h1').length === 1){
-                                        var tmpTitle = decodeURI($(this).has('h1').text()).trim();
-                                        tmp = {
-                                            parentChapter: chapterParent,
-                                            title: tmpTitle
-                                        };
-                                        slideIndex.content.slides.simpleSlide.push(tmp);
-                                        slideIndex.content.slides.titles.push(tmpTitle);
-                                                    
-                                        //                                                        console.log(iterator+'--- '+decodeURI($(this).has('h1').text()).trim());
-                                        iterator++;
-                                    }else{
-                                        tmp = {
-                                            parentChapter: chapterParent,
-                                            title: sec
-                                        };
-                                        slideIndex.content.slides.simpleSlide.push(tmp);
-                                        slideIndex.content.slides.titles.push(sec);
-                                        //                                                        console.log(iterator+'--- '+sec);
-                                        iterator++;
-                                    }
-                                })
-                                            
-                            })
-                        })                            
-                    }else{
-                        $(section).find('div > hgroup').each(function (){
-                            if($(this).has('h1').length === 1){
+                $(this).children().each(function(){
+                    switch($(this).prop('tagName').toLowerCase()){
+                        case 'div': // then it is CHAPTER AND END
+                            $(this).find('hgroup h1').each(function(ie, ee){           
                                 sec=decodeURI($(this).text()).trim();
-                                var tmpTitle = decodeURI($(this).has('h1').text()).trim();
                                 var tmp = {
                                     parentSection: parent,
-                                    title: tmpTitle
+                                    title: sec,
+                                    ro:pointerP[parent]
                                 };
+                                pointerP[parent]++;
                                 slideIndex.content.slides.chapterSlide.push(tmp);
-                                slideIndex.content.slides.titles.push(tmpTitle);
                                 chapterParent++;
-                                //                                                console.log(iterator+'-- '+decodeURI($(this).has('h1').text()).trim());
-                                iterator++;
-                            }else{
-                                var tmp = {
-                                    parentSection: parent,
-                                    title: sec
+                            });
+                            break;       
+                        case 'section':
+                            $(this).children().each(function(){
+                                switch($(this).prop('tagName').toLowerCase()){
+                                    case 'div': // then it is CHAPTER AND END
+                                        $(this).find('hgroup h1').each(function(ie, ee){           
+                                            sec=decodeURI($(this).text()).trim();
+                                            var tmp = {
+                                                parentChapter: chapterParent,
+                                                title: sec,
+                                                ro:pointerP[parent]
+                                            };
+                                            pointerP[parent]++;
+                                            slideIndex.content.slides.simpleSlide.push(tmp);
+                                        //                                            chapterParent++;
+                                        });
+                                        break;       
+                                    case 'header': // CHAPTER AND CONTINUE
+                                        
+                                        if($(this).text()!== ''){
+                                            
+                                            sec = decodeURI($(this).text()).trim();
+                                            var tmp = {
+                                                parentSection: parent,
+                                                title: sec,
+                                                ro:pointerP[parent]
+                                            };
+                                            pointerP[parent]++;
+                                            chapterParent++;
+                                            slideIndex.content.slides.chapterSlide.push(tmp);
+                                        }
+                                        break;   
+                                    case 'section':
+                                        break;
                                 };
-                                chapterParent++;
-                                slideIndex.content.slides.chapterSlide.push(tmp);
-                                slideIndex.content.slides.titles.push(sec);
-                                //                                                console.log(iterator+'-- '+sec);
-                                iterator++;
+                            });      
+                            break;
+                        case 'header': // CHAPTER AND CONTINUE
+                            if($(this).text()!== ''){
+                                sec = decodeURI($(this).text()).trim();
+                                slideIndex.content.slides.sectionSlide.push(sec);
                             }
-                        })
+                            break;   
                     }
                 });                    
                 break;
         }
-    })
+    })                 
+    
+    slideIndex.content.structure = makeStructureHierarchical(slideIndex);
+
 }
 
 /**
@@ -491,44 +492,60 @@ function parseTitles(slideIndex,$){
  */
 function parseImagesAndCodeBlocks(slideIndex,$){
     var image={};
-    var code={};
-    var slide=1; //
-    if($('body').has('.slide intro').length>0){
-    //TODO parse slide intro
-    }else{
-        slide = 0;
+    var code={};    
+    var _arr = {};
+    for(var a=0;a<slideIndex.content.slides.titles.length;a++){
+        _arr[slideIndex.content.slides.titles[a].order] = slideIndex.content.slides.titles[a];
     }
-    //    slideIndex.content.codeBlocks = [];
-    $('body').find('.slide').each(function(){ // each slide
-        
-        slide++; // first div with class slide has index 
-        $(this).find('img').each(function(){
-            image = {};
-            image.alt = $(this).prop('alt');
-            image.url = $(this).prop('src'); // TODO FIX RELATIVE URL
-            image.filename = image.url.substring(image.url.lastIndexOf('/')+1);
-            image.slideURL = slideIndex.baseURL+"#!/"+slide; // this corresponds to number in slide's URL, so first slide has number 1
-            image.type = 'picture';
-            slideIndex.content.images.push(image);
+
+
+    slideIndex.content.codeBlocks = [];
+
+    try{
+        $('body').find('.slide').each(function(slide, element){ // each slide 
+            $(this).find('img').each(function(index, element){
+                image = {};
+                image.alt = $(this).prop('alt');
+                image.url = $(this).prop('src');
+                image.title= _arr[slide+1].title;
+                image.filename = image.url.substring(image.url.lastIndexOf('/')+1);
+                image.slideURL = slideIndex.baseURL+"#!/"+_arr[slide+1].order; // this corresponds to number in slide's URL, so first slide has number 1
+                image.type = 'picture';
+                slideIndex.content.images.push(image); 
+                
+         
+
+            });
         });
-        
-        $(this).find('pre').each(function(){
-            code = {};
-            code.slideURL = slideIndex.baseURL+"#!/"+slide;
-            code.title= slideIndex.content.slides.titles[slide-1];
-            var classAtr = $(this).prop('class');
-            var i = classAtr.indexOf("brush:")+6;
-            var j = classAtr.indexOf(";", i);
-            if(j>-1){
-                code.language = (classAtr.substring(i,j )).trim();    
-            }else{ // case <pre class="brush: js">
-                code.language = (classAtr.substring(i)).trim();
-            }
-            code.language = slideindexer.styles[code.language];
+    }catch(err){
+        console.error("FAILED WITH "+(slide+1)+": "+err);
+    }
+    
+    
+    try{
+        $('body').find('.slide').each(function(slide, element){ 
+            $(this).find('pre').each(function(index, element){
+                code = {};
+                code.slideURL = slideIndex.baseURL+"#!/"+_arr[slide+1].order;
+                code.title= _arr[slide+1].title;
+                var classAtr = $(this).prop('class');
+                var i = classAtr.indexOf("brush:")+6;
+                var j = classAtr.indexOf(";", i);
+                if(j>-1){
+                    code.language = (classAtr.substring(i,j )).trim();    
+                }else{ // case <pre class="brush: js">
+                    code.language = (classAtr.substring(i)).trim();
+                }
+                code.language = slideindexer.styles[code.language];
             
-            slideIndex.content.codeBlocks.push(code);
-        });
-    });   
+                slideIndex.content.codeBlocks.push(code);
+            });
+        });  
+        
+    }catch(err){
+        console.error("FAILED WITH "+(slide+1)+": "+err);
+    }
+ 
 }
 
 /**
@@ -571,7 +588,7 @@ function makeStructureHierarchical(slideIndex){
                     }         
                 }   
                 tmp.chapters.push(chapter);    
-            }       
+            }     
         }
         newcontent.push(tmp);    
     } 

@@ -14,7 +14,7 @@ exports.parse =function parse($,slideIndex){
                     code.project = githubInfo[1];
                 }
             }
-            code.title= slideIndex.content.slides.titles[slide-1];
+            code.title= slideIndex.content.slides.titles[slide-1].title;
             code.slide = slideIndex.baseURL+'#!/'+slide; // this corresponds to number in slide's URL, so first slide has number 1
             slideIndex.content.github.push(code);
         });
