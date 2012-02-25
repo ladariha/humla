@@ -274,7 +274,6 @@ function getItemsFaceted($, slideNumber){
             var slideid = $(this).attr('data-slideid');
             
             if($(this).attr('itemscope').length){ //  the entire div with class attribute "slide" is itemscope => it is the only top level item 
-                console.log("SLIDE");
                 var item = {};
                 item.type = $(this).attr('itemtype')+"/dsdsdsd";
                 item.container = this;
