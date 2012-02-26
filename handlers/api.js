@@ -10,7 +10,7 @@ var Lecture = mongoose.model("Lecture");
 /**
  * Returns all courses
  */
-app.get('/api/api/courses', function(req, res){ // TODO database timeout
+app.get('/api/info/courses', function(req, res){ // TODO database timeout
     Course.find({
         isActive:true
         
@@ -43,7 +43,7 @@ app.get('/api/api/courses', function(req, res){ // TODO database timeout
 /**
  * Returns all lectures for given course
  */
-app.get('/api/api/:course/lectures', function(req, res){
+app.get('/api/info/:course/lectures', function(req, res){
     var course = req.params.course;
     Lecture.find({
         isActive:true,
