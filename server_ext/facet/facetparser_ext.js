@@ -8,78 +8,101 @@ var FacetRecord = mongoose.model("FacetRecord");
 var Slideid = mongoose.model("Slideid");
 var JSON_DIRECTORY = (path.join(path.dirname(__filename), '../../cache/index')).toString();
 var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../../public/data/slides')).toString();
+var typePrefix =require("./facetengine_ext.js").prefix;
 
-var mapping = [];
 
+// For each Schema to be parsed register parser function here. All functiong will be given the same parameters: 
+// @param mapping array of objects of Slideid schema that contains mapping data-slideid ~ _id 
+// @param item microdata item of given type 
+// @param course course ID
+// @param lecture lecture ID
 var itemParsers = [];
-var typePrefix = "";
 itemParsers[typePrefix+'Slide'] = parseSlideType;
 
+/**
+ * Editor emitter emits event removeID when some ID is removed from DB. Then all facet records related to this
+ * ID should be removed from DB as well
+ */
 editor_ext.emitter.on("removedID",function(id){
-    FacetRecord.find({
-        slideid: id
-    }, function(err,crs){  
-        if(err){
-            throw err;
-        }else{
-            for(var i=0;i<crs.length;i++){
-                crs[i].remove(function (err){
-                    if(err)
-                        throw "Fcet Event on removedID: Problem with removing id "+id+": "+err+err.message;
-                });
+    try{
+        FacetRecord.find({
+            slideid: id
+        }, function(err,crs){  
+            if(err){
+                throw err;
+            }else{
+                for(var i=0;i<crs.length;i++){
+                    crs[i].remove(function (err){
+                        if(err)
+                            throw "Facet Event on removedID: Problem with removing id "+id+": "+err+err.message;
+                    });
+                }
             }
-        }
-    });
+        });
+    }catch(error){
+        console.error(error);
+    }
+  
 });
 
-
+/**
+ * Parses presentation given by course ID and lecture ID and searches for microdata for faceted purposes
+* @param res HTTP response (if called via REST otherwise undefined)
+ * @param courseID course ID
+ * @param lectureID lecture ID
+ * @param callback callback function (if called internally otherwise undefined)
+ */
 function parsePresentation(res, courseID, lectureID, callback){
-    
-    fs.readFile(SLIDES_DIRECTORY+ '/'+courseID+'/'+lectureID+".html", function (err, data) {
-        if (err){
-            returnThrowError(404, "Not found"+err, res, callback);
-        }else{
-            try{
-                microdata_ext.itemsFaceted(data.toString(),undefined ,function(err, data){
-                    if(err)
-                        callback(err, null);
-                    else
-                        checkIDs(courseID, lectureID, data, res, callback);
-                }, undefined);
-            }catch(errs){
-                callback(errs, null);
+    try{
+        fs.readFile(SLIDES_DIRECTORY+ '/'+courseID+'/'+lectureID+".html", function (err, data) {
+            if (err){
+                returnThrowError(404, "Not found"+err, res, callback);
+            }else{
+                try{
+                    microdata_ext.itemsFaceted(data.toString(),undefined ,function(err, data){
+                        if(err)
+                            callback(err, null);
+                        else
+                            checkIDs(courseID, lectureID, data, res, callback);
+                    }, undefined);
+                }catch(errs){
+                    callback(errs, null);
+                }
             }
-        }
-    });
+        }); 
+    }catch(error){
+        returnThrowError(500, error, res, callback);
+    }
 }
 
 exports.parsePresentation= parsePresentation;
 
 
-
+/**
+ * Checks if given lecture already contains attributes data-slideid. If yes processes with parsing. If not calls method in editor_ext which adds 
+ * the attributes and store their values to DB. After that the editor_ext method calls back parsePresentation() method causing the process is restarted
+ * and run again but now checkID will not call editor_ext but continue with parsing
+ * @param course course ID
+ * @param lecture lecture ID
+ * @param data microdata from microdataparser_ext
+ * @param res HTTP response (if called via REST otherwise undefined)
+ * @param callback callback function (if called internally otherwise undefined)
+ */
 function checkIDs(course, lecture, data, res, callback){
     if(data.items.length > 0 && data.items[0].slideid.length <1){
         // need to add ids to slides and call parsePresentation again
         editor_ext._addIDsToSlidesAndWriteToFileForFacets(course, res, lecture, exports.parsePresentation, callback);
     }else{    
-        if(mapping.length === 0){
-            var prefix =new RegExp("^"+course+"_"+lecture+"_");
-            Slideid.find({
-                slideid: prefix
-            }, function(err,crs){   
-                if(!err) {
-                    mapping = crs;
-                    processData(mapping, course, lecture, data, res, callback);
-                }else{
-                    returnThrowError(500 ,"Cannot retrieve slide ids", res, callback);
-                }
-            });
-        }else{
-            // mapping already present
-            console.log("CAHE ");
-            processData(mapping, course, lecture, data, res, callback);
-        }
-  
+        var prefix =new RegExp("^"+course+"_"+lecture+"_");
+        Slideid.find({
+            slideid: prefix
+        }, function(err,crs){   
+            if(!err) {
+                processData(crs, course, lecture, data, res, callback);
+            }else{
+                returnThrowError(500 ,"Cannot retrieve slide ids", res, callback);
+            }
+        });
     }
 }
 
@@ -96,7 +119,15 @@ function processData(mapping, course, lecture, data, res, callback){
 }
 
 
-function parseSlideType(mapping, item, course, lecture, res, callback){
+/**
+ * Parses the Slide type and searches for slide type, keywords and importance and stores found value to DB (and manage existing records accordingly)
+ * @param mapping array of objects of Slideid schema that contains mapping data-slideid ~ _id 
+ * @param item microdata item of given type 
+ * @param course course ID
+ * @param lecture lecture ID
+ * 
+ */
+function parseSlideType(mapping, item, course, lecture){
     // values searched: type, keywords, importance
     var _id = findId(item.slideid, mapping);               
     var done = 0; // +1 for type;+2 for importance; 

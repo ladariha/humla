@@ -25,6 +25,7 @@ plugins.push('./server_ext/facet/facetparser_ext.js');
 plugins.push('./server_ext/facet/facetengine_ext.js');
 plugins.push('./server_ext/microdata/microdataparser_ext.js');
 plugins.push('./server_ext/maintenance/maintenance_ext.js');
+plugins.push('./server_ext/gbooks/gbooks_ext.js');
 
 app = null; // je to schválně bez var - aby to bylo v module contextu
 

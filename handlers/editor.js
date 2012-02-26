@@ -35,7 +35,7 @@ function editor(res, req){
         case 'GET':
             var regx =/^\/api\/([A-Za-z0-9-_]+)\/([A-Za-z0-9-_]+)\/slide([0-9]+)\/editor/; 
             req.url.match(regx);
-            editor_ext.getSlide(RegExp.$1, RegExp.$2, RegExp.$3, req.headers.host, res, undefined);
+            editor_ext.getSlide(RegExp.$1, RegExp.$2, RegExp.$3, req.headers.host, res);
             break;
         case 'PUT':
             if(typeof  req.body == "undefined" || typeof  req.body.slide == "undefined"){
@@ -45,16 +45,16 @@ function editor(res, req){
                 var regx =/^\/api\/([A-Za-z0-9-_]+)\/([A-Za-z0-9-_]+)\/slide([0-9]+)\/editor/; 
                 req.url.match(regx);
                 if(append === "true"){
-                    editor_ext.appendSlide(RegExp.$1, RegExp.$2, RegExp.$3, req.headers.host, res, req.body.slide, undefined);
+                    editor_ext.appendSlide(RegExp.$1, RegExp.$2, RegExp.$3, req.headers.host, res, req.body.slide);
                 }else{
-                    editor_ext.editSlide(RegExp.$1, RegExp.$2, RegExp.$3, req.headers.host, res, req.body.slide, undefined);
+                    editor_ext.editSlide(RegExp.$1, RegExp.$2, RegExp.$3, req.headers.host, res, req.body.slide);
                 }
             }
             break;
         case 'DELETE':
             var regx =/^\/api\/([A-Za-z0-9-_]+)\/([A-Za-z0-9-_]+)\/slide([0-9]+)\/editor/; 
             req.url.match(regx);
-            editor_ext.removeSlide(RegExp.$1, RegExp.$2, RegExp.$3, req.headers.host, res, undefined);
+            editor_ext.removeSlide(RegExp.$1, RegExp.$2, RegExp.$3, req.headers.host, res);
             break;
         default:
             defaults.returnError(405, "Method not Allowed", res);
@@ -66,7 +66,7 @@ function editor(res, req){
  */
 app.get('/api/template/:templateID/editor', function api(req, res) {
     var template = req.params.templateID;
-    editor_ext.getTemplate(template, res, undefined);
+    editor_ext.getTemplate(template, res);
 });
 
 /**
@@ -75,7 +75,7 @@ app.get('/api/template/:templateID/editor', function api(req, res) {
 app.get('/api/:course/:lecture/editor', function api(req, res) { // TODO check changes in url
     var course = req.params.course;//RegExp.$1;
     var lecture = req.params.lecture;
-    editor_ext.getLecture(course, lecture, res, undefined);
+    editor_ext.getLecture(course, lecture, res);
 });
 
 /**
@@ -84,12 +84,12 @@ app.get('/api/:course/:lecture/editor', function api(req, res) { // TODO check c
 app.put('/api/:course/:lecture/raw/editor', function api(req, res) {
     var course = req.params.course;//RegExp.$1;
     var lecture = req.params.lecture;
-    editor_ext.editLecture(course, lecture,  req.headers.host, res, req.body.content, undefined);
+    editor_ext.editLecture(course, lecture,  req.headers.host, res, req.body.content);
 });
 
 /**
  * Replaces HTML source code of entire presentation with given data (for edit view mode only)
  */
 app.put('/api/:course/:lecture/editor', function api(req, res) { // TODO check changes in url
-    editor_ext.editLectureViewMode(req.params.course, req.params.lecture, req.headers.host,  res, req.body, undefined);
+    editor_ext.editLectureViewMode(req.params.course, req.params.lecture, req.headers.host,  res, req.body);
 });

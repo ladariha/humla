@@ -26,7 +26,11 @@ exports.parse =function parse($,slideIndex){
 };
 
 
-
+/**
+ * Parses single Google Book
+ * @param gbook object with information about gbook that was found in parse method
+ * @param slideIndex index container itself
+ */
 function parseSingleGbook(gbook,slideIndex){
     var https = require('https');
     var id = gbook.id;

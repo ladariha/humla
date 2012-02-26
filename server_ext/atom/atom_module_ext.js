@@ -27,7 +27,7 @@ function updateHumlaFeed(domain){
             atom.parse(domain);
         } else {
             // TODO LOG ERROR
-            console.log(err);
+            console.error(err);
         }     
     });
 };
@@ -81,7 +81,12 @@ function AtomModule(title, subtitle, domain, link, folder){
     this.parse = function(domain){
         // for each lecture
         for(var i=0;i<this.lectures.length;i++){
-            richDataGenerator.create(this, i, domain);
+            try{
+                richDataGenerator.create(this, i, domain);    
+            }catch(error){
+                console.error("AtomModule: FAILED TO CREATE ATOM ITEM "+error);
+            }
+            
         }
     }
     

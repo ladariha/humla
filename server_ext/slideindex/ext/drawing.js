@@ -29,9 +29,8 @@ exports.parse =function parse($,slideIndex){
  * and filename is taken from HTTP response. After this, the function checks
  * if all drawings have been parsed (variable slideIndex.drawingsCount is decreased
  * by one after each successful parsing), then method <code>sendResponse()</code> is called</p>
- * @param drawing Object that represents drawing, it's property id is use to 
- * identify the drawing on Google Docs
- *
+ * @param drawing Object that represents drawing, it's property id is use to  identify the drawing on Google Docs
+ * @param slideIndex index container itself
  */
 function parseSingleDrawing(drawing,slideIndex){
     //function parseSingleDrawing(drawing,slideIndex,response, _pathToCourse, _filename){

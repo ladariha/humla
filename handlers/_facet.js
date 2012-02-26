@@ -1,4 +1,15 @@
-var typePrefix = "";
+var facet_ext = require('../server_ext/facet/facetengine_ext.js');
+
+
+
+app.get('/api/facets', function(req, res){
+    
+    facet_ext.types(res);
+    
+    
+    });
+
+
 
 
 app.get('/api/facets/:schema/:key/:value', function(req, res){

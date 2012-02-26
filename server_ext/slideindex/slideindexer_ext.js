@@ -84,52 +84,72 @@ exports.indexRest = getIndex;
 
 /**
  * Returns slide's index given by URL or course name and lecture<br/> 
- * @param 
+ * @param res HTTP response (if called via REST)
+ * @param course course ID
+ * @param lecture lecture ID
+ * @param alt output format, either json or xml (case sensitive)
+ * @param url URL address of presentation (if it should be retriveved from URL and not from file system
+ * @param host Hostname of where the lecture is located
+ * @param refresh string if "true" fresh index will be created otherwise cached index from file will be returned
+ * @param callback if index is retrieving via internal API, the callback parameter is a function that will be called when index is constructed (if called via REST should be omitted OR undefined)
  */
 function getIndex(res, course, lecture, alt, url, host, refresh, callback){
-    
-    var pathToCourse = '/'+course+'/';
-    var filename = lecture;
-    var indexfile = JSON_DIRECTORY+pathToCourse+filename+"."+alt;
-    if(!refresh){
-        path.exists(indexfile, function (exists) {
-            if(exists){
+    try{
+        var pathToCourse = '/'+course+'/';
+        var filename = lecture;
+        var indexfile = JSON_DIRECTORY+pathToCourse+filename+"."+alt;
+        if(!refresh){
+            path.exists(indexfile, function (exists) {
+                if(exists){
               
-                fs.readFile(indexfile, function(err, data) {
-                    if(err){
-                        console.error("ERROR reading "+alt+" file "+indexfile);
-                        console.error("   => parsing source html file instead");
+                    fs.readFile(indexfile, function(err, data) {
+                        if(err){
+                            console.error("ERROR reading "+alt+" file "+indexfile);
+                            console.error("   => parsing source html file instead");
+                            getDocumentFromFileSystem(res, pathToCourse,filename, lecture, course, alt, host, callback);
+                        }else{
+                            if(alt==="json"){
+                            
+                                returnData(res, 'application/json', callback, data.toString());
+                            }else{
+                                returnData(res, 'application/xml', callback, data.toString());
+                            }
+                        }
+                    });
+                }else{
+                    if(typeof url == "undefined"){
                         getDocumentFromFileSystem(res, pathToCourse,filename, lecture, course, alt, host, callback);
                     }else{
-                        if(alt==="json"){
-                            
-                            returnData(res, 'application/json', callback, data.toString());
-                        }else{
-                            returnData(res, 'application/xml', callback, data.toString());
-                        }
-                    }
-                });
-            }else{
-                if(typeof url == "undefined"){
+                        getDocumentFromUrl(res, url, pathToCourse, filename, lecture, course, alt,host, callback);    
+                    }      
+                    
+                } 
+            });
+        }else{ // parse the document again and update JSON index file
+            if(refresh==="true"){
+                if(typeof  url == "undefined"){
                     getDocumentFromFileSystem(res, pathToCourse,filename, lecture, course, alt, host, callback);
                 }else{
-                    getDocumentFromUrl(res, url, pathToCourse, filename, lecture, course, alt,host, callback);    
-                }      
-                    
-            } 
-        });
-    }else{ // parse the document again and update JSON index file
-        if(refresh==="true"){
-            if(typeof  url == "undefined"){
-                getDocumentFromFileSystem(res, pathToCourse,filename, lecture, course, alt, host, callback);
+                    getDocumentFromUrl(res, url, pathToCourse, filename,lecture, course, alt,host, callback);    
+                }            
             }else{
-                getDocumentFromUrl(res, url, pathToCourse, filename,lecture, course, alt,host, callback);    
-            }            
-        }else{
-            returnThrowError(400,  "Invalid value or parameter \"refresh\"", res, callback);
+                returnThrowError(400,  "Invalid value or parameter \"refresh\"", res, callback);
+            }
         }
+        
+    }catch(error){
+        returnThrowError(500,  error, res, callback);
     }
+   
 }
+
+/**
+ * Returns data in json format (if it's called via REST) or  calls  callback with javascript object as parameter
+ * @param res HTTP response (if called via REST)
+ * @param contentType content type of returned data (internally returns js object)
+ * @param callback callback function (if called via internal API)
+ * @param data data to be retuned
+ */
 function returnData(res, contentType, callback, data){
     if(typeof res!="undefined"){
         res.writeHead(200, {
@@ -145,6 +165,9 @@ function returnData(res, contentType, callback, data){
     }
 }
 
+/**
+ *
+ */
 function returnThrowError(code, msg, res, callback){
     if(typeof res!="undefined")
         defaults.returnError(code, msg, res);
@@ -178,7 +201,8 @@ function returnThrowError(code, msg, res, callback){
  * @param lecture
  * @param course
  * @param alt - output format, either json or xml (case sensitive)
- * * @param callback if index is retrieving via internal API, the callback parameter is a function that will be called when index is constructed
+ * @param host Hostname of where the lecture is located
+ * @param callback if index is retrieving via internal API, the callback parameter is a function that will be called when index is constructed
  *
  */
 function parseDocument(res, body, pathToCourse, filename, lecture, course, alt, host, callback){
@@ -269,8 +293,12 @@ function parseDocument(res, body, pathToCourse, filename, lecture, course, alt, 
                         }  
                     };
                     slideIndex.response = res;
-                    parseTitles(slideIndex, $);
-                  
+                    try{
+                        parseTitles(slideIndex, $);
+                    }catch(error){
+                        returnThrowError(500, 'Error while parsing document', res, callback);
+                        return; // if parseTitles fails there is no reason to continue
+                    }
                     parseImagesAndCodeBlocks(slideIndex,$);
                     
                     extensions.forEach(function (ext){
@@ -282,7 +310,7 @@ function parseDocument(res, body, pathToCourse, filename, lecture, course, alt, 
                     extensions.forEach(function (ext){
                         if(ext.parse !== null && typeof ext.parse== 'function'){
                             try{
-                            ext.parse($,slideIndex);         
+                                ext.parse($,slideIndex);         
                             }catch(error){
                                 console.error("FAILED EXTENSION "+error);
                             }
@@ -313,6 +341,7 @@ function parseDocument(res, body, pathToCourse, filename, lecture, course, alt, 
  * @param lecture
  * @param course
  * @param alt - output format, either json or xml (case sensitive)
+ * @param host Hostname of where the lecture is located
  * @param callback if index is retrieving via internal API, the callback parameter is a function that will be called when index is constructed
  */
 function getDocumentFromUrl(res, url, pathToCourse, filename, lecture, course, alt, host, callback){
@@ -357,6 +386,7 @@ function getDocumentFromUrl(res, url, pathToCourse, filename, lecture, course, a
  * @param lecture
  * @param course
  * @param alt - output format, either json or xml (case sensitive)
+ * @param host Hostname of where the lecture is located
  * @param callback if index is retrieving via internal API, the callback parameter is a function that will be called when index is constructed
  */
 function getDocumentFromFileSystem(res, pathToCourse, filename, lecture, course, alt,host, callback){
