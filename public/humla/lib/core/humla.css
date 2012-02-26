@@ -61,7 +61,7 @@ nav {
     background: rgba(0, 0, 0, 0.796875) no-repeat 10px 10px;
     background-position: 10px 10px;
     background-repeat: no-repeat;
-    padding: 5px 10px 5px 10px;
+    padding: 5px 10px 0px 10px;
     min-width: 285px;
     min-height: 15px;
     border-top-left-radius: 10px 10px;
@@ -78,12 +78,18 @@ nav.lower {
 
 nav.lower:hover {
     opacity: 0.9;
-    
+
 }
 
 nav>ul {
     padding-left: 0px;
+}
 
+nav>div {
+    width:100%;
+    text-align:center;
+    color:white;
+    padding-bottom: 5px;
 }
 
 nav li {
@@ -98,7 +104,7 @@ nav li {
     background: black;
     border-radius: 5px;
     text-indent: -9999px;
-    
+
 }
 
 nav #menu-item-views {
@@ -395,18 +401,18 @@ nav #menu-item-editor {
 
     color: WhiteSmoke;
     background: -webkit-gradient(linear, left top, left bottom, from(#353f49), to(#252a2e));
-    
-   /* Safari 5.1+, Mobile Safari, Chrome 10+ */
-   background-image: -webkit-linear-gradient(top, #353f49, #252a2e); 
 
-   /* Firefox 3.6+ */
-   background-image: -moz-linear-gradient(top, #353f49, #252a2e);
+    /* Safari 5.1+, Mobile Safari, Chrome 10+ */
+    background-image: -webkit-linear-gradient(top, #353f49, #252a2e); 
 
-   /* IE 10+ */
-   background-image: -ms-linear-gradient(top, #353f49, #252a2e);
+    /* Firefox 3.6+ */
+    background-image: -moz-linear-gradient(top, #353f49, #252a2e);
 
-   /* Opera 11.10+ */
-   background-image: -o-linear-gradient(top, #353f49, #252a2e);
+    /* IE 10+ */
+    background-image: -ms-linear-gradient(top, #353f49, #252a2e);
+
+    /* Opera 11.10+ */
+    background-image: -o-linear-gradient(top, #353f49, #252a2e);
 }
 
 .intro > hgroup h1 {

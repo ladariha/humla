@@ -13,6 +13,16 @@ var clearTextarea;
 
 var ex_comments = {    
     
+    processMenu: function(menu) {
+        
+        menu.addTab("comments",{            
+            name:"Comments",
+            html:"<h1>Comments</h1>"
+        +"<div><p>First Comment</p><p>Second comment</p></div>"
+        });
+        
+    },
+    
     processSlide : function(slide) {
         
         // ---------- init -------------
