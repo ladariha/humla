@@ -1,67 +1,67 @@
 .CodeMirror {
-  line-height: 1em;
-  font-family: monospace;
+    line-height: 1em;
+    font-family: monospace;
 }
 
 .CodeMirror-scroll {
-  overflow: auto;
-  height: 400px;
-  /* This is needed to prevent an IE[67] bug where the scrolled content
-     is visible outside of the scrolling box. */
-  position: relative;
+    overflow: auto;
+    height: 400px;
+    /* This is needed to prevent an IE[67] bug where the scrolled content
+       is visible outside of the scrolling box. */
+    position: relative;
 }
 
 .CodeMirror-gutter {
-  position: absolute; left: 0; top: 0;
-  z-index: 10;
-  background-color: #f7f7f7;
-  border-right: 1px solid #eee;
-  min-width: 2em;
-  height: 100%;
+    position: absolute; left: 0; top: 0;
+    z-index: 10;
+    background-color: #f7f7f7;
+    border-right: 1px solid #eee;
+    min-width: 2em;
+    height: 100%;
 }
 .CodeMirror-gutter-text {
-  color: #aaa;
-  text-align: right;
-  padding: .4em .2em .4em .4em;
+    color: #aaa;
+    text-align: right;
+    padding: .4em .2em .4em .4em;
 }
 .CodeMirror-lines {
-  padding: .4em;
+    padding: .4em;
 }
 
 .CodeMirror pre {
-  -moz-border-radius: 0;
-  -webkit-border-radius: 0;
-  -o-border-radius: 0;
-  border-radius: 0;
-  border-width: 0; margin: 0; padding: 0; background: transparent;
-  font-family: inherit;
-  font-size: inherit;
-  padding: 0; margin: 0;
-  white-space: pre;
-  word-wrap: normal;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    -o-border-radius: 0;
+    border-radius: 0;
+    border-width: 0; margin: 0; padding: 0; background: transparent;
+    font-family: inherit;
+    font-size: inherit;
+    padding: 0; margin: 0;
+    white-space: pre;
+    word-wrap: normal;
 }
 
 .CodeMirror textarea {
-  font-family: inherit !important;
-  font-size: inherit !important;
+    font-family: inherit !important;
+    font-size: inherit !important;
 }
 
 .CodeMirror-cursor {
-  z-index: 10;
-  position: absolute;
-  visibility: hidden;
-  border-left: 1px solid black !important;
+    z-index: 10;
+    position: absolute;
+    visibility: hidden;
+    border-left: 1px solid black !important;
 }
 .CodeMirror-focused .CodeMirror-cursor {
-  visibility: visible;
+    visibility: visible;
 }
 
 span.CodeMirror-selected {
-  background: #ccc !important;
-  color: HighlightText !important;
+    background: #ccc !important;
+    color: HighlightText !important;
 }
 .CodeMirror-focused span.CodeMirror-selected {
-  background: Highlight !important;
+    background: Highlight !important;
 }
 
 .CodeMirror-matchingbracket {color: #0f0 !important;}
@@ -73,15 +73,15 @@ span.CodeMirror-selected {
 }
 
 #controlPanel div{
-     margin: 0 0 10px 0;
-    
+    margin: 0 0 10px 0;
+
 }
 
 #controlPanel .editor-icon{
-  margin: 0 5px;
+    margin: 0 5px;
     opacity: 0.4;
     filter:alpha(opacity=40); 
-    
+
 }
 
 #controlPanel .editor-icon:hover{
@@ -100,4 +100,53 @@ span.CodeMirror-selected {
     font: 75%;
     font-style: italic;
     color:#aaa;
+}
+
+.annotation_panel{
+    float:left;
+    width:100px;
+    height: 400px;
+    margin: 0 5px 0 0;
+}
+
+.editor_right{
+    float:left;
+}
+
+.annotation_list{
+    margin:0;
+    list-style: none;
+    padding: 0;
+}
+
+.ann_button {
+    opacity: 0.8;
+    filter:alpha(opacity=80); /* For IE8 and earlier */
+    margin: 0;
+    border-top: 1px solid #d2d8db;
+    margin: 2px 0 2px 0;
+    background: #f5ebf5;
+    background: -webkit-gradient(linear, left top, left bottom, from(#fafdff), to(#f5ebf5));
+    background: -webkit-linear-gradient(top, #fafdff, #f5ebf5);
+    background: -moz-linear-gradient(top, #fafdff, #f5ebf5);
+    background: -ms-linear-gradient(top, #fafdff, #f5ebf5);
+    background: -o-linear-gradient(top, #fafdff, #f5ebf5);
+    padding: 5px 10px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    color: #1c1c1c;
+    font-size: 12px;
+    text-decoration: none;
+    vertical-align: middle;
+}
+.ann_button:hover {
+    border-top-color: #5e5d5e;
+    background: #5e5d5e;
+    cursor: pointer;
+    color: #ccc;
+}
+.ann_button:active {
+    border-top-color: #5e5d5e;
+    background: #5e5d5e;
 }

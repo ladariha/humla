@@ -14,7 +14,11 @@ exports.parse =function parse($,slideIndex){
             temporary.gbooks.push(gbook);
         });
         slide++;    
-    });    
+    });   
+    
+    if(temporary.gbooks.length===0)
+        slideIndex.sendResponse(slideIndex); 
+    
     for(var i in temporary.gbooks){
         parseSingleGbook(temporary.gbooks[i],slideIndex);
     }
@@ -22,7 +26,11 @@ exports.parse =function parse($,slideIndex){
 };
 
 
-
+/**
+ * Parses single Google Book
+ * @param gbook object with information about gbook that was found in parse method
+ * @param slideIndex index container itself
+ */
 function parseSingleGbook(gbook,slideIndex){
     var https = require('https');
     var id = gbook.id;
@@ -43,10 +51,10 @@ function parseSingleGbook(gbook,slideIndex){
         res2.on('end', function () {
             if(res2.statusCode === 200){
                 var data = eval('(' + content + ')');
-                if(data.volumeInfo.industryIdentifiers[1] !== undefined){
+                if(typeof data.volumeInfo.industryIdentifiers[1] != "undefined"){
                     gbook.isbn=data.volumeInfo.industryIdentifiers[1].identifier;
                 }else{
-                    if(content.volumeInfo.industryIdentifiers[0]!== undefined){
+                    if(typeof content.volumeInfo.industryIdentifiers[0]!= "undefined"){
                         gbook.isbn = data.volumeInfo.industryIdentifiers[0].identifier;    
                     }else{
                         gbook.isbn = "-1";
@@ -60,12 +68,14 @@ function parseSingleGbook(gbook,slideIndex){
                 gbook.date = data.volumeInfo.publishedDate;
                 gbook.category = [];
                 var temp="";
-                for (var i = 0; i < data.volumeInfo.categories.length; i++)
-                    gbook.category[i] = data.volumeInfo.categories[i];
+                if(typeof data.volumeInfo.categories !="undefined")
+                    for (var i = 0; i < data.volumeInfo.categories.length; i++)
+                        gbook.category[i] = data.volumeInfo.categories[i];
            
                 gbook.author = [];
-                for (var i = 0; i < data.volumeInfo.authors.length; i++)
-                    gbook.author[i]=data.volumeInfo.authors[i];
+                if(typeof data.volumeInfo.authors !="undefined")
+                    for (var i = 0; i < data.volumeInfo.authors.length; i++)
+                        gbook.author[i]=data.volumeInfo.authors[i];
 
                 slideIndex.content.gbooks.push(gbook);
             }else{
@@ -91,22 +101,4 @@ function parseSingleGbook(gbook,slideIndex){
             return slideIndex;
         }
     });
-};
-
-
-exports.createFeedList = function(index){
-    
-    var ul = "<p>Google Books</p><ul >";
-    for(var i in index.gbooks){
-        var d = index.gbooks[i];
-        var t = "";
-        for(var j in d.author){
-            t +=d.author[j]+",";
-        }
-        ul+="<li><a href=\""+d.slide+"\">"+t+":"+d.title+"</a></li>";
-    }
-        
-    ul+="</ul>"
-    return ul;  
-    
 };

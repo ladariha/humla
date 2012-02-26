@@ -16,6 +16,8 @@ exports.parse =function parse($,slideIndex){
         });
         slide++;    
     });    
+        if(temporary.drawings.length===0)
+           slideIndex.sendResponse(slideIndex); 
     for(var i in temporary.drawings){
         parseSingleDrawing(temporary.drawings[i],slideIndex);
     }
@@ -27,9 +29,8 @@ exports.parse =function parse($,slideIndex){
  * and filename is taken from HTTP response. After this, the function checks
  * if all drawings have been parsed (variable slideIndex.drawingsCount is decreased
  * by one after each successful parsing), then method <code>sendResponse()</code> is called</p>
- * @param drawing Object that represents drawing, it's property id is use to 
- * identify the drawing on Google Docs
- *
+ * @param drawing Object that represents drawing, it's property id is use to  identify the drawing on Google Docs
+ * @param slideIndex index container itself
  */
 function parseSingleDrawing(drawing,slideIndex){
     //function parseSingleDrawing(drawing,slideIndex,response, _pathToCourse, _filename){
@@ -78,21 +79,4 @@ function parseSingleDrawing(drawing,slideIndex){
             return slideIndex;
         }
     });   
-};
-
-exports.createFeedList = function(index){
-    var ul = "<p>Google Drawings </p><ul >";
-    for(var i in index.drawings){
-        var d = index.drawings[i];
-        ul+="<li>";
-        if(d.alt.length>0){
-            ul+="<a href=\""+d.slide+"\">"+d.alt+"</a>";
-        }else{
-            ul+="<a href=\""+d.slide+"\">"+d.filename+"</a>";
-        }
-        ul+="</li>"
-    }
-        
-    ul+="</ul>"
-    return ul;          
 };

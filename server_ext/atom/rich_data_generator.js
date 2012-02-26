@@ -1,6 +1,6 @@
 var extensions = new Array();
 var path = require("path");
-var EXTENSIONS_DIRECTORY = (path.join(path.dirname(__filename), '../ext')).toString();
+var EXTENSIONS_DIRECTORY = (path.join(path.dirname(__filename), './ext')).toString();
 var fs   = require('fs');
 
 
