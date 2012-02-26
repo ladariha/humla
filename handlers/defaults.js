@@ -13,7 +13,7 @@ app.get('/', function(req,res) {
 });
 
 app.get('/pages/humla', function(req,res) {
-    res.redirect("/pages/humla.html");
+    res.redirect("/pages/index.html");
 });
 
 app.get('/pages/newcourse', function(req,res) {

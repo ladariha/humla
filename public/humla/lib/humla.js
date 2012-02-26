@@ -584,8 +584,7 @@ var MenuBar = function(message) {
             +"<h2>Settings</h2>"            
             +"<div class='button' onclick='humla.controler.activateView(3);humla.menubar.showLayer(\"menu-rating\",true);'>View 4</div></div>";
         
-            this.nav.addEventListener("mousefocus", function() {
-                
+            this.nav.addEventListener("mousefocus", function() {                
                 humla.menubar.nav.className="";
                
             });
@@ -623,10 +622,8 @@ var MenuBar = function(message) {
         this.hidden = !this.hidden;
     }
     
-    this.showLayer= function(id, hide) {
-        console.log(id);
-        var elm = humla.utils.document.getElementById(id);
-        console.log(elm);
+    this.showLayer= function(id, hide) {        
+        var elm = humla.utils.document.getElementById(id);        
         if (elm) {
             hide = elm.style.display == "block";
             elm.style.display = hide? "none": "block";
