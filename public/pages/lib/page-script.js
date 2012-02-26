@@ -41,7 +41,7 @@ function DataAccess() {
     
     // Send GET request for courses JSON
     this.loadCourses = function() {
-        var $jqXHR = $.getJSON("/api/facet/courses", function(courses) {                   
+        var $jqXHR = $.getJSON("/api/info/courses", function(courses) {                   
             course_ul.innerHTML = "" ;//lectures_ul.innerHTML = "";
             $("#course-hint").hide();
             for(var i in courses) {
@@ -74,7 +74,7 @@ function DataAccess() {
     }
     // send GET request for lectures based on course id
     this.loadLectures = function (id) {
-        var $jqXHR = $.getJSON("/api/facet/"+id+"/lectures", function(lectures) {            
+        var $jqXHR = $.getJSON("/api/info/"+id+"/lectures", function(lectures) {            
             currentLectures = lectures;
             console.log(id);
             lectures_ul.innerHTML="";
