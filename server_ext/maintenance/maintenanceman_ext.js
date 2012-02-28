@@ -6,36 +6,39 @@
  * passed to run method, then these arguments will be available to all "maintenance_" methods as well.
  * You can create your own "maintenance_" methods that should be called.
  * @param object object that is available to all methods (access via this.object)
+ * @param name name of the instance of MaintenanceMan
+ * @param dispose boolean if true then this function will be called having the object as argument
  */
-function MaintenanceMan(object, name){
+function MaintenanceMan(object, name, dispose){
     this.object  = object;
     this.limit = 0;
     this.name = name;
     this.counter = 0;
+    this.callback = dispose;
 
     this.notify = function(){
         this.counter++;
         if(this.counter === this.limit)
         {
-            this.object.remove(function(err) { // once its finished remove record from queue
-                if (err) {
-                    console.error("refreshIndexFiles: "+err);
-                }else
-                    console.log("REMOVED");
-            });    
+            try{
+                if(typeof dispose!="undefined")
+                    dispose(this.object);   
+            }catch(e){
+                console.error(this.name+": Unable to dispose - undefined dispose method");
+            }
         }
     }
     
-//    this.maintenance_FOO = function(){
-//        var _ref = this;
-//        slideindex_ext.index(this.object.courseID, this.object.lectureID, "json", undefined, function(err, data){
-//            if(err){
-//                console.error("refreshIndexFiles: "+err);
-//            }else{
-//                _ref.notify();                          
-//            }
-//        }); 
-//    }
+    //    this.maintenance_FOO = function(){
+    //        var _ref = this;
+    //        slideindex_ext.index(this.object.courseID, this.object.lectureID, "json", undefined, function(err, data){
+    //            if(err){
+    //                console.error("refreshIndexFiles: "+err);
+    //            }else{
+    //                _ref.notify();                          
+    //            }
+    //        }); 
+    //    }
 
     
     this.run = function(args){
