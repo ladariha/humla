@@ -11,15 +11,20 @@ var addCommentCallback;
 var toggleComments;
 var clearTextarea;
 
+var menu_link;
+
 var ex_comments = {    
     
-    processMenu: function(menu) {
+    processMenu: function(menu) {        
+        menu_link = menu;
         
         menu.addTab("comments",{            
             name:"Comments",
             html:"<h1>Comments</h1>"
         +"<div><p>First Comment</p><p>Second comment</p></div>"
         });
+        
+
         
     },
     
@@ -71,6 +76,16 @@ var ex_comments = {
                 +'<a href="javascript:addComment(\''+link+'\','+slideNumber+');"  id="comment-add" class="button" >Comment</a>'
                 +'<a href="javascript:clearTextarea('+slideNumber+');" id="comment-clear" class="button">Clear</a></div>';
                 s+='</div>';
+                
+                
+                /*
+                menu_link.addTab("comments",{
+                    name:"Comments",
+                    html:"<h1>Comments</h1>"+s
+                });
+                menu_link.show();
+        */
+        
                 
                 slide.element.innerHTML = slide.element.innerHTML + s;               
             }

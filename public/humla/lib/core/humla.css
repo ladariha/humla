@@ -141,7 +141,7 @@ nav #menu-item-editor {
     margin-left: -200px;
 }
 
-.menu-layer .button {
+#menu-views .button {
     width:64px;
     height: 64px;
     border: 1px solid #555;

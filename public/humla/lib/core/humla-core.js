@@ -228,10 +228,8 @@ var View = function(config, keys, baseDir) {
                 this.currentSlide = 1;
             humla.utils.activateStyle(this.baseDir + config.style.src, config.style.media);
             this.controler.fullscreen = false;
-            this.executeViewInterface('enterView', this);
+            this.executeViewInterface('enterView', this);            
             
-            
-            console.log("gg");
             // Call enterMenu on all extensions
             humla.controler.callExtensionsInterface("processMenu", humla.menu, function(){
                 humla.menu.show();
@@ -410,7 +408,7 @@ var Menu = function(config) {
         +"<div class='button' onclick='humla.controler.activateView(1);humla.menu.showLayer(\"menu-views\",true);'>Presentation</div>"
         +"<div class='button' onclick='humla.controler.activateView(2);humla.menu.showLayer(\"menu-views\",true);'>Overview</div>"
         +"<div class='button' onclick='humla.controler.activateView(3);humla.menu.showLayer(\"menu-views\",true);'>Print</div></div>"
-        }
+        }        
     };
 
     
@@ -449,7 +447,7 @@ var Menu = function(config) {
         }
     }
     
-    // Add new tab    
+    // Add new tab to tabs object
     this.addTab = function(id, tab) {
         this.tabs[id]=tab;        
     }    
@@ -460,38 +458,24 @@ var Menu = function(config) {
         var menu_items="",layer_items="";
         for(var tab in this.tabs) {
             if(this.tabs.hasOwnProperty(tab)) {
-                menu_items+="<li id='menu-item-"+tab+"' onclick='humla.menu.showLayer(\"menu-"+tab+"\");'>"+this.tabs[tab].name+"</li>"            
+                menu_items+="<li id='menu-item-"+tab+"' title='"+this.tabs[tab].name+"' onclick='humla.menu.showLayer(\"menu-"+tab+"\");'>"+this.tabs[tab].name+"</li>"            
                 layer_items+="<div id='menu-"+tab+"' class='menu-layer' style='display:none;'>"
                 +"<span class='menu-close-button' onclick='humla.menu.showLayer(\"\",true);'>X</span>"
-                +this.tabs[tab].html;               
+                +this.tabs[tab].html+"</div>";               
             }
         }
-        /*for(var i=0; i < this.tabs.length; i++) {
-            tab = this.tabs[i];
-            menu_items+="<li id='menu-item-"+tab.id+"' onclick='humla.menu.showLayer(\"menu-"+tab.id+"\");'>"+tab.name+"</li>"            
-            layer_items+="<div id='menu-"+tab.id+"' class='menu-layer' style='display:none;'>"
-            +"<span class='menu-close-button' onclick='humla.menu.showLayer(\"\",true);'>X</span>"
-            +tab.html;
-        } */       
         this.nav_menu.innerHTML = menu_items;
-        this.layer.innerHTML = layer_items;
-        
-        if (this.hidden) {
-        //this.hideMenu();            
-        } else {            
-    //this.showMenu(true); // po kliknuti zustane otevřeno            
+        this.layer.innerHTML = layer_items;        
     }
-        
-    }
-    
+     
+    // Hide all layers and show one with id
     this.showLayer= function(id, hide) {        
         var layers = this.layer.childNodes;            
         for(var i = 0;i<layers.length;i++) {            
             layers[i].style.display = !hide && id == layers[i].id ? "block" : "none";                           
             
         }                
-    }
-    
+    }   
     
     // run menu init
     this.init();
