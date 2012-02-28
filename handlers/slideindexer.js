@@ -92,7 +92,7 @@ app.get('/api/:course/:lecture/index', function api(req, res) {
         }
     }
     var refresh = querystring.parse(require('url').parse(req.url).query)['refresh'];
-    require('../server_ext/slideindex/slideindexer_ext.js').indexRest(res, course, lecture, alt, url, req.headers.host, refresh, undefined);
+    require('../server_ext/slideindex/slideindex_ext.js').indexRest(res, course, lecture, alt, url, req.headers.host, refresh, undefined);
  
 }
 );

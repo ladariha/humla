@@ -2,18 +2,21 @@ exports.parse =function parse($,slideIndex){
     var temporary = {};      
     temporary.gbooks = [];
     slideIndex.content.gbooks= [];
-    var slide=1; 
+    var _arr = {};
+    for(var a=0;a<slideIndex.content.slides.titles.length;a++){
+        _arr[slideIndex.content.slides.titles[a].order] = slideIndex.content.slides.titles[a];
+    }
+    
     slideIndex.gBooksCount = 0;
-    $('body').find('.slide').each(function(){
+    $('body').find('.slide').each(function(index, element){
         $(this).find('.h-gbooks').each(function(){
             slideIndex.gBooksCount++;
             var gbook = {};
             gbook.id = $(this).prop('id');
-            gbook.slide = slideIndex.baseURL+'#!/'+slide; // this corresponds to number in slide's URL, so first slide has number 1
+            gbook.slide = slideIndex.baseURL+'#!/'+_arr[index+1].order; // this corresponds to number in slide's URL, so first slide has number 1
             gbook.type = 'gbooks';
             temporary.gbooks.push(gbook);
         });
-        slide++;    
     });   
     
     if(temporary.gbooks.length===0)

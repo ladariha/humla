@@ -312,6 +312,7 @@ function parseDocument(res, body, pathToCourse, filename, lecture, course, alt, 
                             try{
                                 ext.parse($,slideIndex);         
                             }catch(error){
+                                slideIndex.sendResponse();
                                 console.error("FAILED EXTENSION "+error);
                             }
                             

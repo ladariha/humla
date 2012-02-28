@@ -1,8 +1,14 @@
 //exports.parse =function parse($,slideIndex,response, _pathToCourse, _filename){
 exports.parse =function parse($,slideIndex){
     var slide=1; 
+    
+    var _arr = {};
+    for(var a=0;a<slideIndex.content.slides.titles.length;a++){
+        _arr[slideIndex.content.slides.titles[a].order] = slideIndex.content.slides.titles[a];
+    }
+    
     slideIndex.content.github = [];
-    $('body').find('.slide').each(function(){
+    $('body').find('.slide').each(function(index, element){
         $(this).find('.h-github').each(function(){
             var code = {};
             code.owner = $(this).attr('user-repo');
@@ -14,8 +20,8 @@ exports.parse =function parse($,slideIndex){
                     code.project = githubInfo[1];
                 }
             }
-            code.title= slideIndex.content.slides.titles[slide-1].title;
-            code.slide = slideIndex.baseURL+'#!/'+slide; // this corresponds to number in slide's URL, so first slide has number 1
+            code.title= _arr[index+1].title;
+            code.slide = slideIndex.baseURL+'#!/'+_arr[index+1].order; // this corresponds to number in slide's URL, so first slide has number 1
             slideIndex.content.github.push(code);
         });
         slide++;

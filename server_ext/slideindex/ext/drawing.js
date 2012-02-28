@@ -2,22 +2,26 @@ exports.parse =function parse($,slideIndex){
     var temporary = {};      
     temporary.drawings = [];
     slideIndex.content.drawings = [];
-    var slide=1; 
+    
+    var _arr = {};
+    for(var a=0;a<slideIndex.content.slides.titles.length;a++){
+        _arr[slideIndex.content.slides.titles[a].order] = slideIndex.content.slides.titles[a];
+    }
+    
     slideIndex.drawingsCount = 0;
-    $('body').find('.slide').each(function(){
+    $('body').find('.slide').each(function(index, element){
         $(this).find('.h-drawing').each(function(){
             slideIndex.drawingsCount++;
             var image = {};
             image.alt = $(this).attr('alt'); // prop() doesn't work here
             image.id = $(this).prop('id');
-            image.slide = slideIndex.baseURL+'#!/'+slide; // this corresponds to number in slide's URL, so first slide has number 1
+            image.slide = slideIndex.baseURL+'#!/'+_arr[index+1].order; // this corresponds to number in slide's URL, so first slide has number 1
             image.type = 'drawing';
             temporary.drawings.push(image);
         });
-        slide++;    
     });    
-        if(temporary.drawings.length===0)
-           slideIndex.sendResponse(slideIndex); 
+    if(temporary.drawings.length===0)
+        slideIndex.sendResponse(slideIndex); 
     for(var i in temporary.drawings){
         parseSingleDrawing(temporary.drawings[i],slideIndex);
     }
