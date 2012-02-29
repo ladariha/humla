@@ -89,20 +89,28 @@ exports.parsePresentation= parsePresentation;
  * @param callback callback function (if called internally otherwise undefined)
  */
 function checkIDs(course, lecture, data, res, callback){
-    if(data.items.length > 0 && data.items[0].slideid.length <1){
+    if(data.items.length > 0){
+        var fileOK = true;
         // need to add ids to slides and call parsePresentation again
-        editor_ext._addIDsToSlidesAndWriteToFileForFacets(course, res, lecture, exports.parsePresentation, callback);
-    }else{    
-        var prefix =new RegExp("^"+course+"_"+lecture+"_");
-        Slideid.find({
-            slideid: prefix
-        }, function(err,crs){   
-            if(!err) {
-                processData(crs, course, lecture, data, res, callback);
-            }else{
-                returnThrowError(500 ,"Cannot retrieve slide ids", res, callback);
+        for(var i = 0;i<data.items.length;i++){
+            if(data.items[i].slideid.length <1){
+                fileOK = false;
+                editor_ext._addIDsToSlidesAndWriteToFileForFacets(course, res, lecture, exports.parsePresentation, callback);
+                i = data.items.length+1;
             }
-        });
+        }
+        if(fileOK){
+            var prefix =new RegExp("^"+course+"_"+lecture+"_");
+            Slideid.find({
+                slideid: prefix
+            }, function(err,crs){   
+                if(!err) {
+                    processData(crs, course, lecture, data, res, callback);
+                }else{
+                    returnThrowError(500 ,"Cannot retrieve slide ids", res, callback);
+                }
+            });          
+        }
     }
 }
 

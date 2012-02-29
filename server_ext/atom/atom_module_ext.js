@@ -84,7 +84,7 @@ function AtomModule(title, subtitle, domain, link, folder){
             try{
                 richDataGenerator.create(this, i, domain);    
             }catch(error){
-                console.error("AtomModule: FAILED TO CREATE ATOM ITEM "+error);
+                this.notify('', i);
             }
             
         }
