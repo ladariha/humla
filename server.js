@@ -18,7 +18,7 @@ var handlers = loadFiles(HANDLERS_DIRECTORY);
 var models = loadFiles(MODELS_DIRECTORY);
 
 var plugins = [];
-plugins.push('./server_ext/slideindex/slideindexer_ext.js');
+plugins.push('./server_ext/slideindex/slideindex_ext.js');
 plugins.push('./server_ext/atom/atom_module_ext.js');
 plugins.push('./server_ext/editor/editor_ext.js');
 plugins.push('./server_ext/facet/facetparser_ext.js');
