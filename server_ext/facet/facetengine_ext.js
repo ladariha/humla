@@ -4,12 +4,16 @@ var FacetRecord = mongoose.model("FacetRecord");
 var Slideid = mongoose.model("Slideid");
 var typePrefix = "";//http://humla.org/microdata/"; // TODO fix sample URL
 exports.prefix = typePrefix;
-
+var PAGE_SIZE = 200;
 // List of all types. Instead of selecting distinct values from DB it's less expensive to use array'
 var allTypes = [
 "Slide",
 "CodeSnippet",
-"Algorithm"
+"Algorithm",
+"Slideindex_Gbook_Author",
+"Slideindex_Gbook_Category",
+"Slideindex_Gdrawing",
+"Slideindex_Github"
 ];
 
 var BASE_FACET_URL = "/api/facets/"; // TODO ADD REAL HOSTNAME
@@ -35,33 +39,38 @@ exports.types = function(res, callback){
 }
 /*
  *Perform simple query (=one key and one value). If value is empty string it returns records that have any value of specified schema and property
-*@param schema searched Schema
-*@param property searched property
+*@param schemaproperty searched Schema_Property
 *@param value searched value
+*@param page offset
 * @param res HTTP response (if called via REST otherwise undefined)
+* @param baseUrl base url for HATEOAS
 * @param callback callback function (if called internally otherwise undefined)
  */
-exports.simpleQuery = function(schema, property, value, res, callback){
+exports.simpleQuery = function(schemaproperty, value, page, baseUrl,res,  callback){
     try{
         if(value.length ===0){
-            FacetRecord.find({
-                type: typePrefix+schema+"_"+property
-            }, function(err,crs){  
+            var q = FacetRecord.find({});
+            q.where('type', typePrefix+schemaproperty);
+            q.skip((parseInt(page)-1)*PAGE_SIZE);
+            q.limit(page*PAGE_SIZE);
+            q.run(function(err,crs){  
                 if(err){
                     returnThrowError(500, err, res, callback);
                 }else{
-                    returnData(res, callback, crs);
+                    addMapping(crs, page, baseUrl, res, callback);
                 }
             });
         }else{
-            FacetRecord.find({
-                value: value,
-                type: typePrefix+schema+"_"+property
-            }, function(err,crs){  
+            var q = FacetRecord.find({});
+            q.where('type', typePrefix+schemaproperty);
+            q.where('value', value);
+            q.skip((parseInt(page)-1)*PAGE_SIZE);
+            q.limit(PAGE_SIZE);
+            q.run(function(err,crs){  
                 if(err){
                     returnThrowError(500, err, res, callback);;
                 }else{
-                    returnData(res, callback, crs);
+                    addMapping(crs, page, baseUrl, res,  callback);
                 }
             });
         }
@@ -70,20 +79,32 @@ exports.simpleQuery = function(schema, property, value, res, callback){
     }
 }
 
-function addMapping(data, res, callback){
-    
+function addMapping(data, page, baseUrl,res, callback){
     var tmp = [];
     for(var j=0;j<data.length;j++){
         tmp[j]={
-            slideid: tmp[j].slideid
+            _id: data[j].slideid
         }
     }
     
     var query = Slideid.find({});
     query.$or(tmp);
     query.exec(function (err, docs) {
-       
-        });
+        for(var i=0;i<data.length;i++){
+            for(var j=0;j<docs.length;j++){
+                if(docs[j]._id+"" === data[i].slideid){
+                    data[i].slideid = docs[j].slideid;
+                    j = docs.length+1;
+                }
+            }
+        }
+        var results = {};
+        results.results = data;
+        if(page>1)
+            results.previous = baseUrl+"?page="+(page-1);
+        results.next = baseUrl+"?page="+(page+1);
+        returnData(res, callback, results);
+    });
 }
 
 

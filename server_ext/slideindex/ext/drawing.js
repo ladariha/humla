@@ -1,4 +1,5 @@
 exports.parse =function parse($,slideIndex){   
+try{
     var temporary = {};      
     temporary.drawings = [];
     slideIndex.content.drawings = [];
@@ -27,6 +28,10 @@ exports.parse =function parse($,slideIndex){
     for(var i in temporary.drawings){
         parseSingleDrawing(temporary.drawings[i],slideIndex);
     }
+}catch(e){
+     slideIndex.sendResponse(); 
+}
+
 };
 
 

@@ -8,6 +8,8 @@ var FacetRecord = mongoose.model("FacetRecord");
 var Slideid = mongoose.model("Slideid");
 var GITHUB_TYPE = "Slideindex_Github";
 var GBOOK_TYPE = "Slideindex_Gbook";
+var GBOOK_CATEGORY = "Slideindex_Gbook_Category";
+var GBOOK_AUTHOR = "Slideindex_Gbook_Author";
 var GDRAWING_TYPE = "Slideindex_Gdrawing";
 exports.name = "Slideindex parser";
 exports.parse= function(mapping, course, lecture, data){
@@ -23,6 +25,8 @@ exports.parse= function(mapping, course, lecture, data){
 
 function processData(mapping, course ,lecture, data, index){
     // gbooks
+    if(typeof index.gbooks!="undefined")
+        processGbooks(index.gbooks, course, lecture, mapping);
     // boolean github
     if(typeof index.github!="undefined")
         processGithubOrDrawing(index.github, course, lecture, mapping, GITHUB_TYPE);
@@ -31,6 +35,73 @@ function processData(mapping, course ,lecture, data, index){
         processGithubOrDrawing(index.drawings, course, lecture, mapping, GDRAWING_TYPE);
 }
 
+function processGbooks(items, course, lecture, mapping){
+    try{
+        var defaultTitle = course.toUpperCase()+": "+lecture;
+        var prefix =new RegExp("^"+typePrefix+GBOOK_TYPE); 
+        var arr = [];
+        for(var a in mapping){
+            arr.push(mapping[a]);
+        }
+        var query = FacetRecord.remove({  // remove all existing records for Gbooks for given presentation
+            type: prefix
+        });
+        query.where('_id').in(arr);  
+        query.exec(function(err,data){
+            if(err){
+                console.error(err);
+            }else{ // if ok, insert all new items
+                for(var i=0;i<items.length;i++){
+                    // each author
+                    try{
+                        for(var j=0;j<items[i].author.length;j++){
+                            if(items[i].author[j].length>0){
+                                try{
+                                    var a = new FacetRecord();
+                                    a.title = items[i].slide_title;
+                                    a.type =typePrefix+GBOOK_AUTHOR;
+                                    a.value = items[i].author[j];
+                                    a.slideid = mapping[items[i].slideid];
+                                    a.save(function (err){
+                                        if(err)
+                                            throw "Problem saving FacetRecord "+items[i].slideid+": "+err.toString();
+                                    });   
+                                }catch(e){
+                                    console.error(e);
+                                }
+                            }  
+                        }
+                
+                        // each category
+//                        for(var j=0;j<items[i].category.length;j++){
+                        for(var j=0;j<2;j++){
+                            if(items[i].category[j].length>0){
+                                try{
+                                    var a = new FacetRecord();
+                                    a.title = items[i].slide_title;
+                                    a.type =typePrefix+GBOOK_CATEGORY;
+                                    a.value = items[i].category[j];
+                                    a.slideid = mapping[items[i].slideid];
+                                    a.save(function (err){
+                                        if(err)
+                                            throw "Problem saving FacetRecord "+items[i].slideid+": "+err;
+                                    });   
+                                }catch(e){
+                                    console.error(e.toString());
+                                }
+                            }  
+                        }
+                    }catch(er){
+                        console.error(er.toString());
+                    }
+                   
+                }
+            }
+        });
+    }catch(ee){
+        console.error(ee.toString());
+    }
+}
 
 
 function processGithubOrDrawing(items, course, lecture, mapping, type){
