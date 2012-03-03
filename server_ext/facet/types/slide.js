@@ -8,21 +8,50 @@ var thisType = "Slide";
 
 exports.type = "Slide";
 
-exports.parse = function(mapping, course, lecture, data){
+exports.parse = function(mapping, course, lecture, data){ 
+    var notToDelete ={};
     for(var j=0;j<data.items.length;j++){
+        notToDelete[data.items[j].slideid]=1;
         if(typeof data.items[j].type!="undefined"){// should be always true since microdataparser returns only typed items
             for(var i=0; i< data.items[j].type.length;i++){
                 if(data.items[j].type[i] === typePrefix+thisType){
                     try{
                         parseSlideType(mapping, data.items[j], course ,lecture);        
                     }catch(e){
-                        console.error("Problem parsing Slide type");
+                        console.error("Problem parsing Slide type "+e);
                     }
                 }                   
             }
         }
     }
+    clearRecords(notToDelete, mapping);
 }
+
+function clearRecords(notToDelete, mapping){
+    // every record for slide w/ id in notToDelete array is up to date (updated, removed, inserted) - thanks to parseSlideType function
+    // but it is necessary to remove all records for slides of this presentation that are no longer valid (for example if there was a microdata item
+    // Slide in presentation and now it is deleted (only the microdata item, not the slide itself) it has to be deleted from DB as well
+    
+    // slides to delete are mapping\notToDelete
+    
+    var toDelete = [];
+    for(var j in mapping){
+        if(typeof notToDelete[j]!="undefined"){// so it was already taken care of => nothing to do
+        }else{ // remove the record
+            var a = {};
+            a._id = mapping[j];
+            toDelete.push(mapping[j]);
+        }
+    }
+    // toDelete contains _id values
+    
+    if(toDelete.length>0){
+        var query =  FacetRecord.remove({});
+        query.or(toDelete);
+        query.exec(function(a){});
+    }
+}
+
 
 
 /**
@@ -31,20 +60,18 @@ exports.parse = function(mapping, course, lecture, data){
  * @param item microdata item of given type 
  * @param course course ID
  * @param lecture lecture ID
- * 
  */
 function parseSlideType(mapping, item, course, lecture){
     // values searched: type, keywords, importance
-    var _id = findId(item.slideid, mapping);               
+    var _id = mapping[item.slideid];
     var done = 0; // +1 for type;+2 for importance; 
     var keywordRecords = {};
     var typeTest =  ( typeof item.properties.type != "undefined" && item.properties.type.length > 0 &&  item.properties.type[0].length >0);
     var impTest =  ( typeof item.properties.importance != "undefined" && item.properties.importance.length > 0 &&  item.properties.importance[0].length >0) 
     
     var title = course.toUpperCase()+" - "+lecture;
-    if(typeof item.properties.title!=undefined && item.properties.title.length>0 && item.properties.title[0].length>0)
+    if(typeof item.properties.title!="undefined" && item.properties.title.length>0 && item.properties.title[0].length>0)
         title+=  ": "+ item.properties.title[0];
-    
     if(typeof _id!="undefined"){
         var prefix =new RegExp("^"+typePrefix+"Slide_"); // get all records for type /Slide at once
         FacetRecord.find({
@@ -58,7 +85,7 @@ function parseSlideType(mapping, item, course, lecture){
                     
                     for(var i=0;i<crs.length;i++){
                         crs[i].title =title;
-                        switch(crs[i].type){ 
+                        switch(crs[i].type){ // decide what type
                             case typePrefix+"Slide_Type":
                                 done+=1;
                                 crs[i].value = typeTest ? item.properties.type[0] : "";
@@ -207,15 +234,4 @@ function parseSlideType(mapping, item, course, lecture){
             }
         });
     }
-}
-
-
-
-
-function findId(slideid, mapping){
-    for(var i=0;i<mapping.length;i++){
-        if(mapping[i].slideid === slideid)
-            return mapping[i]._id;
-    }
-    return undefined;
 }

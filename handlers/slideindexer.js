@@ -45,55 +45,64 @@ var defaults = require('./defaults');
  */
 
 app.get('/api/:course/:lecture/index', function api(req, res) {
-    var regx =/^\/api\/([A-Za-z0-9-_]+)\/([A-Za-z0-9-_]+)\/index/; 
-    req.url.match(regx);
-    var course = RegExp.$1;
-    var lecture = RegExp.$2;
-    var url = querystring.parse(require('url').parse(req.url).query)['url'];
-    var alt = querystring.parse(require('url').parse(req.url).query)['alt'];
-    var accept = req.headers.accept;
+    try{
+        var regx =/^\/api\/([A-Za-z0-9-_]+)\/([A-Za-z0-9-_]+)\/index/; 
+        req.url.match(regx);
+        var course = RegExp.$1;
+        var lecture = RegExp.$2;
+        var url = querystring.parse(require('url').parse(req.url).query)['url'];
+        var alt = querystring.parse(require('url').parse(req.url).query)['alt'];
+        var accept = req.headers.accept;
     
-    if(typeof alt == "undefined"){
-        switch(req.headers.accept){
-            case "application/json":
-                alt = "json";
-                break;
-            case "application/xml":
-                alt = "xml";
-                break;
-            case "text/xml":
-                alt = "xml";
-                break;
-            case "*/*":
-                alt = "json";
-                break;
-            default:
-                if(accept.indexOf("application/json")>-1 || accept.indexOf("*/*")>-1){
+        if(typeof alt == "undefined"){
+            switch(req.headers.accept){
+                case "application/json":
                     alt = "json";
-                }else{
-                    if(accept.indexOf("application/xml")>-1 || accept.indexOf("text/xml")>-1 ){
-                        alt = "xml";
+                    break;
+                case "application/xml":
+                    alt = "xml";
+                    break;
+                case "text/xml":
+                    alt = "xml";
+                    break;
+                case "*/*":
+                    alt = "json";
+                    break;
+                default:
+                    if(accept.indexOf("application/json")>-1 || accept.indexOf("*/*")>-1){
+                        alt = "json";
                     }else{
-                        defaults.returnError(406, "Not Acceptable format: Try application/json or application/xml or text/xml or  */*", res);
-                        return;
+                        if(accept.indexOf("application/xml")>-1 || accept.indexOf("text/xml")>-1 ){
+                            alt = "xml";
+                        }else{
+                            defaults.returnError(406, "Not Acceptable format: Try application/json or application/xml or text/xml or  */*", res);
+                            return;
+                        }
                     }
-                }
-                break;
-        }
+                    break;
+            }
     
-    }else{
-        if(alt!=="json" && alt!=="xml"){
-            // incorrect format requested
-            res.writeHead(406, { // TODO fix status code
-                'Content-Type': 'text/plain'
-            });
-            res.write("Not Acceptable. Allowed values are xml or json.");
-            res.end();
+        }else{
+            if(alt!=="json" && alt!=="xml"){
+                // incorrect format requested
+                res.writeHead(406, { // TODO fix status code
+                    'Content-Type': 'text/plain'
+                });
+                res.write("Not Acceptable. Allowed values are xml or json.");
+                res.end();
+            }
         }
-    }
-    var refresh = querystring.parse(require('url').parse(req.url).query)['refresh'];
-    require('../server_ext/slideindex/slideindex_ext.js').indexRest(res, course, lecture, alt, url, req.headers.host, refresh, undefined);
+        var refresh = querystring.parse(require('url').parse(req.url).query)['refresh'];
+        require('../server_ext/slideindex/slideindex_ext.js').indexRest(res, course, lecture, alt, url, req.headers.host, refresh, undefined);
  
+    }catch(ex){
+           res.writeHead(500, { // TODO fix status code
+                    'Content-Type': 'text/plain'
+                });
+                res.write(ex.toString());
+                res.end();
+    }
+   
 }
 );
 

@@ -86,7 +86,7 @@ slideindexer.styles["xslt"]="XML";
  * @param callback if index is retrieving via internal API, the callback parameter is a function that will be called when index is constructed (if called via REST should be omitted OR undefined)
  */
 exports.index = function(course, lecture, format, url, host, callback){
-    getIndex(undefined, course, lecture, format, url, host, "true",callback );
+    getIndex(undefined, course, lecture, format, url, host, "true",callback);
 };
 
 exports.indexRest = getIndex;
@@ -256,9 +256,7 @@ function parseDocument(res, body, pathToCourse, filename, lecture, course, alt, 
                         sendResponse : function(){
                             this.check = this.check+1;
                             if(this.check === this.numberOfCalledExtensions || this.numberOfCalledExtensions===0){
-                       
-                                delete this.content.slides;
-                                
+                   
                                 var textindex ="";
                                 if(this.format === "json"){
                                     textindex = JSON.stringify(this.content, null, 4);

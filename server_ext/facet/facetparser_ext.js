@@ -67,11 +67,10 @@ editor_ext.emitter.on("removedID",function(id){
 * @param res HTTP response (if called via REST otherwise undefined)
  * @param courseID course ID
  * @param lectureID lecture ID
- * @param callback callback function (if called internally otherwise undefined)
  */
-function parsePresentation(res, courseID, lectureID, callback){
+function parsePresentation(res, courseID, lectureID){
     //var parser = new FacetParser(extraParsers, types);
-    run(res, courseID, lectureID, callback);
+    run(res, courseID, lectureID, true);
 }
 
 exports.parsePresentation= parsePresentation;
@@ -83,8 +82,7 @@ function processData(_mapping, course, lecture, data){
     for(var k=0;k<_mapping.length;k++){
         mapping[_mapping[k].slideid] = _mapping[k]._id;
     }
-        
-        
+ 
     for(var i=0;i<types.length;i++){
         try{
             types[i].parse(mapping, course, lecture, data);    
@@ -93,18 +91,16 @@ function processData(_mapping, course, lecture, data){
             console.error(e);
         }
     }
-    
     for(var j=0;j<extraParsers.length;j++){
         try{
-        //         this.additionalParsers[i].parse(mapping, course, lecture, data);    
+            extraParsers[j].parse(mapping, course, lecture, data);    
         }catch(e){
-            console.error("Failed extra parser: "+extraParsers[i].name);
-            console.error(e);
+            console.error("Failed extra parser:"+extraParsers[j].name+" > " + e);         
         }
     }    
 };
     
-    
+exports.processData = processData;
     
 /**
  * Checks if given lecture already contains attributes data-slideid. If yes processes with parsing. If not calls method in editor_ext which adds 
@@ -114,28 +110,31 @@ function processData(_mapping, course, lecture, data){
  * @param lecture lecture ID
  * @param data microdata from microdataparser_ext
  * @param res HTTP response (if called via REST otherwise undefined)
- * @param callback callback function (if called internally otherwise undefined)
+ *@param checkID boolean if check ID is neccessary
  */
-function checkIDs(course, lecture, data, res, callback){
-    if(data.items.length > 0){
+function checkIDs(course, lecture, data, res, checkID){
+    if(data.items.length >= 0){
         var fileOK = true;
         // need to add ids to slides and call parsePresentation again
-        for(var i = 0;i<data.items.length;i++){
-            if(data.items[i].slideid.length <1){
-                fileOK = false;
-                editor_ext._addIDsToSlidesAndWriteToFileForFacets(course, res, lecture, exports.run, callback);
-                i = data.items.length+1;
+        if(checkID){
+            for(var i = 0;i<data.items.length;i++){
+                if(data.items[i].slideid.length <1){
+                    fileOK = false;
+                    editor_ext._addIDsToSlidesAndWriteToFileForFacets(course, res, lecture, exports.run, undefined);
+                    i = data.items.length+1;
+                }
             }
         }
+
         if(fileOK){
             var prefix =new RegExp("^"+course+"_"+lecture+"_");
             Slideid.find({
                 slideid: prefix
             }, function(err,crs){   
                 if(!err) {
-                    processData(crs, course, lecture, data, res, callback);
+                    processData(crs, course, lecture, data, res);
                 }else{
-                    returnThrowError(500 ,"Cannot retrieve slide ids", res, callback);
+                    console.error("Facetparser checkIDs error: "+err.toString());
                 }
             });          
         }
@@ -147,30 +146,29 @@ function checkIDs(course, lecture, data, res, callback){
 * @param res HTTP response (if called via REST otherwise undefined)
  * @param courseID course ID
  * @param lectureID lecture ID
- * @param callback callback function (if called internally otherwise undefined)
+ * @param checkID if check id procedure is necessary
  */
-function run(res, courseID, lectureID, callback){
+function run(res, courseID, lectureID, checkID){
    
     try{
         fs.readFile(SLIDES_DIRECTORY+ '/'+courseID+'/'+lectureID+".html", function (err, data) {
             if (err){
-                returnThrowError(404, "Not found"+err, res, callback);
+                console.error("Facetparser run error: "+err.toString());
             }else{
                 try{
                     microdata_ext.itemsFaceted(data.toString(),undefined ,function(err, data){
-                        if(err)
-                            callback(err, null);
-                        else{
-                            checkIDs(courseID, lectureID, data, res, callback);
-                        }   
+                        if(!err)
+                            checkIDs(courseID, lectureID, data, res, checkID);
+                        else
+                            console.error("Facetparser run error: "+err.toString());
                     }, undefined);
                 }catch(errs){
-                    callback(errs, null);
+                    console.error("Facetparser run error: "+errs.toString());
                 }
             }
         }); 
     }catch(error){
-        returnThrowError(500, error, res, callback);
+        console.error("Facetparser run error: "+error.toString());
     }
 };
 

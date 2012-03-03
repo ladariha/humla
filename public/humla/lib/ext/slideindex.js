@@ -142,7 +142,7 @@ var ex_slideindex = {
             ul+="<li class=\"slideindex-li\">";
             
             if(d.title.length>0){
-                ul+=d.title;
+                ul+=d.slide_title;
             }else{
                 ul+=d.file;
             }

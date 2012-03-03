@@ -514,7 +514,7 @@ exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lectur
     try{
         fs.readFile(SLIDES_DIRECTORY+ '/'+courseID+'/'+lecture+".html", function (err, data) {
             if (err){
-                returnThrowError(404, "Not found"+err, res, originalCallback);
+                throw "_addIDsToSlidesAndWriteToFileForFacets "+err.toString();
             }else{
     
                 var prefix =new RegExp("^"+courseID+"_"+lecture+"_");
@@ -570,7 +570,7 @@ exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lectur
                                     newcontent = "<!DOCTYPE html><html>"+newcontent+"</html>";
                                     fs.writeFile(SLIDES_DIRECTORY+ '/'+courseID+'/'+lecture+".html", newcontent, function (err) {
                                         if (err) {
-                                            returnThrowError(500, "Error writing to file", res, originalCallback);
+                                               throw "_addIDsToSlidesAndWriteToFileForFacets "+err.toString();
                                         }else{
                                             editor_emitter.emit("fileUpdated",courseID, lecture);
                                             for(var key in slidesToDelete){
@@ -579,7 +579,7 @@ exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lectur
                                                         var _id= crs[k]._id;
                                                         crs[k].remove(function (err){
                                                             if(err)
-                                                                returnThrowError(500, "Error removing slideid", res, originalCallback);
+                                                                 throw "_addIDsToSlidesAndWriteToFileForFacets "+err.toString();
                                                             editor_emitter.emit("removedID", _id);
                                                             lock.notifyDeleted();
                                                         });
@@ -595,7 +595,7 @@ exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lectur
                                                         crs[h].save(function(err) {
                                                 
                                                             if(err) {
-                                                                returnThrowError(500, "Error updating slideid",res, originalCallback);
+                                                                   throw "_addIDsToSlidesAndWriteToFileForFacets "+err.toString();
                                                             }
                                                             lock.notifyUpdated();
                                                         });   
@@ -608,7 +608,7 @@ exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lectur
                                                 sid.slideid = newids[key3];
                                                 sid.save(function(err) {
                                                     if(err) {
-                                                        returnThrowError(500, "Error saving new slideid",res,  originalCallback);
+                                                           throw "_addIDsToSlidesAndWriteToFileForFacets "+err.toString();
                                                     }
                                                     lock.notifyInserted();
                                                 });   
@@ -616,18 +616,18 @@ exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lectur
                                         }
                                     });   
                                 }else{
-                                    returnThrowError(500, errors, res, originalCallback);
+                                      throw "_addIDsToSlidesAndWriteToFileForFacets "+errors.toString();
                                 } 
                             }
                         });
                     } else {
-                        returnThrowError(500, "Problems with database", res, originalCallback); 
+                           throw "_addIDsToSlidesAndWriteToFileForFacets "+err.toString();
                     }             
                 });
             }
         });
     }catch(error){
-        returnThrowError(500, error, res, originalCallback);
+          throw "_addIDsToSlidesAndWriteToFileForFacets "+error.toString();
     }
 }
 
@@ -832,7 +832,7 @@ function IDSyncLock(toDelete, toUpdate, toInsert, callback, lecture, course, ori
     
     this.globalNotify = function(){
         if(this.inserted === this.toInsert && this.updated === this.toUpdate && this.deleted === this.toDelete){
-        callback(this.response, this.course, this.lecture, this.originalCallback);
+        callback(this.response, this.course, this.lecture, false, this.originalCallback);
         }
     };
 }
