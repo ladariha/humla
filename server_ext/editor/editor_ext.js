@@ -507,7 +507,7 @@ function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureUR
  * @param courseID course ID ("mdw")
  * @param res HTTP response
  * @param lecture lecture ID ("lecture1")
- * @param callback function from facetparser_ext
+ * @param callback callback function
  * @param originalCallback function that the callback function was called with
  */
 exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lecture, callback, originalCallback){
@@ -557,7 +557,15 @@ exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lectur
                                             }            
                                         } 
                                     });
-                                    var lock = new IDSyncLock(slidesToDelete.length, updatedid.length, newids.length, callback, lecture, courseID, originalCallback, res);
+                                    var _count = 0;
+                                    for(var r in slidesToDelete){
+                                        _count++;
+                                    }
+                                    var _count2 = 0;
+                                    for(var s in updatedid){
+                                        _count2++;
+                                    }
+                                    var lock = new IDSyncLock(_count, _count2, newids.length, callback, lecture, courseID, originalCallback, res);
                                     var newcontent= $("html").html();    
                                     newcontent = "<!DOCTYPE html><html>"+newcontent+"</html>";
                                     fs.writeFile(SLIDES_DIRECTORY+ '/'+courseID+'/'+lecture+".html", newcontent, function (err) {
@@ -801,7 +809,6 @@ function IDSyncLock(toDelete, toUpdate, toInsert, callback, lecture, course, ori
     this.content = ''; 
     this.lecture = lecture;
     this.course = course;
-    this.callback = callback;
     this.response = originalResponse;
     this.originalCallback = originalCallback;
     
@@ -824,7 +831,8 @@ function IDSyncLock(toDelete, toUpdate, toInsert, callback, lecture, course, ori
     };
     
     this.globalNotify = function(){
-        if(this.inserted === this.toInsert && this.updated === this.toUpdate && this.deleted === this.toDelete)
-            callback(this.response, this.course, this.lecture, this.originalCallback);
+        if(this.inserted === this.toInsert && this.updated === this.toUpdate && this.deleted === this.toDelete){
+        callback(this.response, this.course, this.lecture, this.originalCallback);
+        }
     };
 }

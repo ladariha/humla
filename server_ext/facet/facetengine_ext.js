@@ -2,7 +2,7 @@ var defaults = require('../../handlers/defaults');
 var mongoose = require("mongoose"); 
 var FacetRecord = mongoose.model("FacetRecord");
 var Slideid = mongoose.model("Slideid");
-var typePrefix = "http://humla.org/microdata/"; // TODO fix sample URL
+var typePrefix = "";//http://humla.org/microdata/"; // TODO fix sample URL
 exports.prefix = typePrefix;
 
 // List of all types. Instead of selecting distinct values from DB it's less expensive to use array'

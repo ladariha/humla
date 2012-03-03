@@ -75,7 +75,16 @@ slideindexer.styles["xhtml"]="XML";
 slideindexer.styles["html"]="XML";  
 slideindexer.styles["xslt"]="XML";  
 
-
+/**
+ *
+ * Returns slide's index given by URL or course name and lecture<br/> 
+ * @param course course ID
+ * @param lecture lecture ID
+ * @param format output format, either json or xml (case sensitive)
+ * @param url URL address of presentation (if it should be retriveved from URL and not from file system
+ * @param host Hostname of where the lecture is located
+ * @param callback if index is retrieving via internal API, the callback parameter is a function that will be called when index is constructed (if called via REST should be omitted OR undefined)
+ */
 exports.index = function(course, lecture, format, url, host, callback){
     getIndex(undefined, course, lecture, format, url, host, "true",callback );
 };
@@ -424,6 +433,7 @@ function parseTitles(slideIndex,$){
     // ALL TITLES
     $('body').find('.slide').each(function (index, element){
         pointerP[index]=0;
+        var ref = this;
         $(this).find('hgroup h1').each(function(){
             var text = $(this).text().trim();
             if(text.length>0){
@@ -431,6 +441,10 @@ function parseTitles(slideIndex,$){
                     order: index+1,
                     title :text
                 };
+                if($(ref).attr('data-slideid').length>0)
+                    t.slideid = $(ref).attr('data-slideid');
+                else
+                    t.slideid = "";
                 slideIndex.content.slides.titles.push(t);
             }
         });
@@ -539,6 +553,7 @@ function parseImagesAndCodeBlocks(slideIndex,$){
                 image.alt = $(this).prop('alt');
                 image.url = $(this).prop('src');
                 image.title= _arr[slide+1].title;
+                image.slideid = _arr[slide+1].slideid;
                 image.filename = image.url.substring(image.url.lastIndexOf('/')+1);
                 image.slideURL = slideIndex.baseURL+"#!/"+_arr[slide+1].order; // this corresponds to number in slide's URL, so first slide has number 1
                 image.type = 'picture';
@@ -568,7 +583,7 @@ function parseImagesAndCodeBlocks(slideIndex,$){
                     code.language = (classAtr.substring(i)).trim();
                 }
                 code.language = slideindexer.styles[code.language];
-            
+                code.slideid = _arr[slide+1].slideid;
                 slideIndex.content.codeBlocks.push(code);
             });
         });  
@@ -585,6 +600,11 @@ function parseImagesAndCodeBlocks(slideIndex,$){
  *@return hiararchical structure
  */
 function makeStructureHierarchical(slideIndex){
+    
+    var _arr = {};
+    for(var a=0;a<slideIndex.content.slides.titles.length;a++){
+        _arr[slideIndex.content.slides.titles[a].order] = slideIndex.content.slides.titles[a];
+    }
     var sections = {};
     var newcontent = new Array();
     var baseURL = slideIndex.host+ RAW_SLIDES_DIRECTORY+"/"+slideIndex.course+"/"+slideIndex.lecture+".html"; //GENERAL_LECTURE_NAME+
@@ -597,6 +617,9 @@ function makeStructureHierarchical(slideIndex){
         //        tmp.chapters = new Array();
         tmp.title  = slideIndex.content.slides.sectionSlide[section];
         tmp.url = baseURL+counter;
+        if(typeof _arr[counter]!="undefined")
+            tmp.slideid = _arr[counter].slideid;
+        
         for(var ch in slideIndex.content.slides.chapterSlide){
             if(slideIndex.content.slides.chapterSlide[ch].parentSection == section){
                 if(typeof tmp.chapters=="undefined"){
@@ -606,6 +629,9 @@ function makeStructureHierarchical(slideIndex){
                 var chapter = {};
                 chapter.title = slideIndex.content.slides.chapterSlide[ch].title;
                 chapter.url = baseURL+counter;
+                if(typeof _arr[counter]!="undefined")
+                    chapter.slideid  = _arr[counter].slideid;
+               
                 for(var s in slideIndex.content.slides.simpleSlide){
                     if(slideIndex.content.slides.simpleSlide[s].parentChapter == ch){
                         if(typeof chapter.slides=="undefined"){
@@ -614,6 +640,9 @@ function makeStructureHierarchical(slideIndex){
                         counter++;
                         var slide = {};
                         slide.title = slideIndex.content.slides.simpleSlide[s].title;
+                        if(typeof _arr[counter]!="undefined")
+                            slide.slideid = _arr[counter].slideid;
+                        
                         slide.url = baseURL+counter;
                         chapter.slides.push(slide);
                     }         

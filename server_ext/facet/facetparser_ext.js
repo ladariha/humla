@@ -70,42 +70,43 @@ editor_ext.emitter.on("removedID",function(id){
  * @param callback callback function (if called internally otherwise undefined)
  */
 function parsePresentation(res, courseID, lectureID, callback){
-    var parser = new FacetParser(extraParsers, types);
-    parser.run(res, courseID, lectureID, callback);
+    //var parser = new FacetParser(extraParsers, types);
+    run(res, courseID, lectureID, callback);
 }
 
 exports.parsePresentation= parsePresentation;
 
 
 
-function FacetParser(parsers, typeParsers){
-    
-    this.additionalParsers = parsers;
-    this.itemParsers = typeParsers;
-
-    this.processData = function(mapping, course, lecture, data){
-        for(var i=0;i<this.itemParsers.length;i++){
-            try{
-                this.itemParsers[i].parse(mapping, course, lecture, data);    
-            }catch(e){
-                console.error("Failed type parser: "+this.itemParsers[i].name);
-                console.error(e);
-            }
+function processData(_mapping, course, lecture, data){
+    var mapping = {};
+    for(var k=0;k<_mapping.length;k++){
+        mapping[_mapping[k].slideid] = _mapping[k]._id;
+    }
+        
+        
+    for(var i=0;i<types.length;i++){
+        try{
+            types[i].parse(mapping, course, lecture, data);    
+        }catch(e){
+            console.error("Failed type parser: "+types[i].name);
+            console.error(e);
         }
+    }
     
-        for(var j=0;j<this.additionalParsers.length;j++){
-            try{
-                this.additionalParsers[i].parse(mapping, course, lecture);    
-            }catch(e){
-                console.error("Failed extra parser: "+this.additionalParsers[i].name);
-                console.error(e);
-            }
-        }    
-    };
+    for(var j=0;j<extraParsers.length;j++){
+        try{
+        //         this.additionalParsers[i].parse(mapping, course, lecture, data);    
+        }catch(e){
+            console.error("Failed extra parser: "+extraParsers[i].name);
+            console.error(e);
+        }
+    }    
+};
     
     
     
-    /**
+/**
  * Checks if given lecture already contains attributes data-slideid. If yes processes with parsing. If not calls method in editor_ext which adds 
  * the attributes and store their values to DB. After that the editor_ext method calls back parsePresentation() method causing the process is restarted
  * and run again but now checkID will not call editor_ext but continue with parsing
@@ -115,64 +116,65 @@ function FacetParser(parsers, typeParsers){
  * @param res HTTP response (if called via REST otherwise undefined)
  * @param callback callback function (if called internally otherwise undefined)
  */
-    this.checkIDs = function(course, lecture, data, res, callback){
-        if(data.items.length > 0){
-            var fileOK = true;
-            // need to add ids to slides and call parsePresentation again
-            for(var i = 0;i<data.items.length;i++){
-                if(data.items[i].slideid.length <1){
-                    fileOK = false;
-                    editor_ext._addIDsToSlidesAndWriteToFileForFacets(course, res, lecture, this.run, callback);
-                    i = data.items.length+1;
-                }
-            }
-            if(fileOK){
-                var prefix =new RegExp("^"+course+"_"+lecture+"_");
-                Slideid.find({
-                    slideid: prefix
-                }, function(err,crs){   
-                    if(!err) {
-                        processData(crs, course, lecture, data, res, callback);
-                    }else{
-                        returnThrowError(500 ,"Cannot retrieve slide ids", res, callback);
-                    }
-                });          
+function checkIDs(course, lecture, data, res, callback){
+    if(data.items.length > 0){
+        var fileOK = true;
+        // need to add ids to slides and call parsePresentation again
+        for(var i = 0;i<data.items.length;i++){
+            if(data.items[i].slideid.length <1){
+                fileOK = false;
+                editor_ext._addIDsToSlidesAndWriteToFileForFacets(course, res, lecture, exports.run, callback);
+                i = data.items.length+1;
             }
         }
-    };
+        if(fileOK){
+            var prefix =new RegExp("^"+course+"_"+lecture+"_");
+            Slideid.find({
+                slideid: prefix
+            }, function(err,crs){   
+                if(!err) {
+                    processData(crs, course, lecture, data, res, callback);
+                }else{
+                    returnThrowError(500 ,"Cannot retrieve slide ids", res, callback);
+                }
+            });          
+        }
+    }
+};
     
-    /**
+/**
  * Parses presentation given by course ID and lecture ID and searches for microdata for faceted purposes
 * @param res HTTP response (if called via REST otherwise undefined)
  * @param courseID course ID
  * @param lectureID lecture ID
  * @param callback callback function (if called internally otherwise undefined)
  */
-    this.run = function(res, courseID, lectureID, callback){
-        try{
-            fs.readFile(SLIDES_DIRECTORY+ '/'+courseID+'/'+lectureID+".html", function (err, data) {
-                if (err){
-                    returnThrowError(404, "Not found"+err, res, callback);
-                }else{
-                    try{
-                        microdata_ext.itemsFaceted(data.toString(),undefined ,function(err, data){
-                            if(err)
-                                callback(err, null);
-                            else
-                                checkIDs(courseID, lectureID, data, res, callback);
-                        }, undefined);
-                    }catch(errs){
-                        callback(errs, null);
-                    }
+function run(res, courseID, lectureID, callback){
+   
+    try{
+        fs.readFile(SLIDES_DIRECTORY+ '/'+courseID+'/'+lectureID+".html", function (err, data) {
+            if (err){
+                returnThrowError(404, "Not found"+err, res, callback);
+            }else{
+                try{
+                    microdata_ext.itemsFaceted(data.toString(),undefined ,function(err, data){
+                        if(err)
+                            callback(err, null);
+                        else{
+                            checkIDs(courseID, lectureID, data, res, callback);
+                        }   
+                    }, undefined);
+                }catch(errs){
+                    callback(errs, null);
                 }
-            }); 
-        }catch(error){
-            returnThrowError(500, error, res, callback);
-        }
-    };
-    
-}
+            }
+        }); 
+    }catch(error){
+        returnThrowError(500, error, res, callback);
+    }
+};
 
+exports.run  =run;
 
 function endsWith(string, suffix) {
     return string.indexOf(suffix, string.length - suffix.length) !== -1;

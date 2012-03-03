@@ -22,6 +22,7 @@ exports.parse =function parse($,slideIndex){
             }
             code.title= _arr[index+1].title;
             code.slide = slideIndex.baseURL+'#!/'+_arr[index+1].order; // this corresponds to number in slide's URL, so first slide has number 1
+            code.slideid = _arr[index+1].slideid;
             slideIndex.content.github.push(code);
         });
         slide++;

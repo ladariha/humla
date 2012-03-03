@@ -13,6 +13,7 @@ exports.parse =function parse($,slideIndex){
             slideIndex.gBooksCount++;
             var gbook = {};
             gbook.id = $(this).prop('id');
+            gbook.slideid = _arr[index+1].slideid;
             gbook.slide = slideIndex.baseURL+'#!/'+_arr[index+1].order; // this corresponds to number in slide's URL, so first slide has number 1
             gbook.type = 'gbooks';
             temporary.gbooks.push(gbook);

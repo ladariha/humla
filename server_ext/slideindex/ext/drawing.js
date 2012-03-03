@@ -15,6 +15,7 @@ exports.parse =function parse($,slideIndex){
             var image = {};
             image.alt = $(this).attr('alt'); // prop() doesn't work here
             image.id = $(this).prop('id');
+            image.slideid = _arr[index+1].slideid;
             image.slide = slideIndex.baseURL+'#!/'+_arr[index+1].order; // this corresponds to number in slide's URL, so first slide has number 1
             image.type = 'drawing';
             temporary.drawings.push(image);
