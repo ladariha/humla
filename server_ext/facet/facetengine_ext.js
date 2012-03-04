@@ -1,20 +1,14 @@
 var defaults = require('../../handlers/defaults');
 var mongoose = require("mongoose"); 
+var fs     = require('fs');
 var FacetRecord = mongoose.model("FacetRecord");
 var Slideid = mongoose.model("Slideid");
 var typePrefix = "";//http://humla.org/microdata/"; // TODO fix sample URL
 exports.prefix = typePrefix;
 var PAGE_SIZE = 200;
 // List of all types. Instead of selecting distinct values from DB it's less expensive to use array'
-var allTypes = [
-"Slide",
-"CodeSnippet",
-"Algorithm",
-"Slideindex_Gbook_Author",
-"Slideindex_Gbook_Category",
-"Slideindex_Gdrawing",
-"Slideindex_Github"
-];
+var path = require('path');
+
 
 var BASE_FACET_URL = "/api/facets/"; // TODO ADD REAL HOSTNAME
 
@@ -25,27 +19,85 @@ var BASE_FACET_URL = "/api/facets/"; // TODO ADD REAL HOSTNAME
  */
 exports.types = function(res, callback){
     try{
-        var structuredInfo = [];
-        for(var i =0;i<allTypes.length;i++){
-            var a = {};
-            a.type = typePrefix+allTypes[i];
-            a.url = BASE_FACET_URL+allTypes[i];
-            structuredInfo.push(a);
-        }
-        returnData(res, callback, structuredInfo);
+        fs.readFile( (path.join(path.dirname(__filename), './')).toString()+"types.json", function(err, data) {
+            if(err){
+                returnThrowError(500, err.toString(), res, callback);
+            }else{
+                if(typeof res!="undefined"){
+                    res.writeHead(200, {
+                        'Content-Type': 'application/json'
+                    });
+                    res.write(data.toString(), null ,4);
+                    res.end();
+                }else{
+                    if(typeof callback!="undefined")
+                        callback(null, data);
+                    else
+                        throw "Nor HTTP Response or callback function defined!";
+                }
+            }
+        });
     }catch(error){
         returnThrowError(500, error, res, callback);
     }
 }
+
+exports.topValues = function(schemaproperty, res, callback){
+    // FacetRecord.group({key: {value:true},cond: {type:"Slideindex_Gbook_Category"},reduce: function(obj,prev) {prev.csum += 1;},initial: {csum: 0}});
+    var tagReduce = function(previous, current) { 
+        var count = 0; 
+        for (var index in current) { 
+            count += current[index]; 
+        } 
+        return count; 
+    }; 
+
+    mongoose.connect('mongodb://localhost/humla'); 
+
+    var command = { 
+        mapreduce: "facetrecords",
+        query:{
+            'type':schemaproperty
+        },
+        map: "function(){emit(this.value,1);}", 
+        reduce: tagReduce.toString(),
+        sort: {
+            value: -1
+        }, 
+        out: schemaproperty
+    }; 
+
+    mongoose.connection.db.executeDbCommand(command, function(err, dbres) 
+    { 
+        if (err !== null) { 
+            returnThrowError(500, err.toString(), res, callback);
+        }else { 
+            mongoose.connection.db.collection(schemaproperty, function(err, collection) { //query the new map-reduced table
+                if(!err){
+                    collection.find({}).sort({
+                        'value': -1
+                    }).limit(20).toArray(function(err, pings) { //only pull in the top 10 results and sort descending by number of pings
+                        if(err)
+                            returnThrowError(500, err, res, callback);
+                        else
+                            returnData(res, callback, pings);
+                    });
+                }else{
+                    returnThrowError(500, err, res, callback);
+                }
+            });
+        } 
+    }); 
+};
 /*
- *Perform simple query (=one key and one value). If value is empty string it returns records that have any value of specified schema and property
+*Perform simple query (=one key and one value). If value is empty string it returns records that have any value of specified schema and property
 *@param schemaproperty searched Schema_Property
 *@param value searched value
 *@param page offset
 * @param res HTTP response (if called via REST otherwise undefined)
 * @param baseUrl base url for HATEOAS
 * @param callback callback function (if called internally otherwise undefined)
- */
+*/
 exports.simpleQuery = function(schemaproperty, value, page, baseUrl,res,  callback){
     try{
         if(value.length ===0){
@@ -121,11 +173,11 @@ function returnThrowError(code, msg, res, callback){
 }
 
 /**
- * Returns data in json format (if it's called via REST) or  calls  callback with javascript object as parameter
- * @param res HTTP response (if called via REST)
- * @param callback callback function (if called via internal API)
- * @param data data to be retuned
- */
+* Returns data in json format (if it's called via REST) or  calls  callback with javascript object as parameter
+* @param res HTTP response (if called via REST)
+* @param callback callback function (if called via internal API)
+* @param data data to be retuned
+*/
 function returnData(res, callback, data){
     if(typeof res!="undefined"){
         res.writeHead(200, {

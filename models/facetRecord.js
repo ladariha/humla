@@ -24,5 +24,6 @@ var FacetRecord = new Schema({
     title: {type: String}
 });
 
+FacetRecord.index({ type: 1, value: -1 });
 mongoose.model('FacetRecord', FacetRecord);  
 

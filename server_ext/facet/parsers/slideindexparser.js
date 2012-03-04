@@ -73,28 +73,35 @@ function processGbooks(items, course, lecture, mapping){
                         }
                 
                         // each category
-//                        for(var j=0;j<items[i].category.length;j++){
-                        for(var j=0;j<2;j++){
+                        var cat_records = {};
+                        for(var j=0;j<items[i].category.length;j++){
                             if(items[i].category[j].length>0){
-                                try{
-                                    var a = new FacetRecord();
-                                    a.title = items[i].slide_title;
-                                    a.type =typePrefix+GBOOK_CATEGORY;
-                                    a.value = items[i].category[j];
-                                    a.slideid = mapping[items[i].slideid];
-                                    a.save(function (err){
-                                        if(err)
-                                            throw "Problem saving FacetRecord "+items[i].slideid+": "+err;
-                                    });   
-                                }catch(e){
-                                    console.error(e.toString());
+                                var cats = items[i].category[j].split("/");
+                                for(var b=0;b<cats.length;b++){
+                                    var category = cats[b].replace(/^\s+|\s+$/g, '');
+                                    category = category.toLowerCase();
+                                    if(typeof cat_records[category]=="undefined"){ // insert only new value
+                                        cat_records[category]=1; // mark inserted
+                                        try{
+                                            var a = new FacetRecord();
+                                            a.title = items[i].slide_title;
+                                            a.type =typePrefix+GBOOK_CATEGORY;
+                                            a.value = category;
+                                            a.slideid = mapping[items[i].slideid];
+                                            a.save(function (err){
+                                                if(err)
+                                                    throw "Problem saving FacetRecord "+items[i].slideid+": "+err;
+                                            });   
+                                        }catch(e){
+                                            console.error(e.toString());
+                                        }   
+                                    }
                                 }
                             }  
                         }
                     }catch(er){
                         console.error(er.toString());
                     }
-                   
                 }
             }
         });

@@ -58,3 +58,7 @@ app.get('/api/facets/complex', function(req, res){
         }             
     });
 });
+
+app.get('/api/facets/top/:shortName', function(req, res){
+   facet_ext.topValues(decodeURIComponent(req.params.shortName),res);
+    });
