@@ -79,7 +79,7 @@ function processGbooks(items, course, lecture, mapping){
                                 var cats = items[i].category[j].split("/");
                                 for(var b=0;b<cats.length;b++){
                                     var category = cats[b].replace(/^\s+|\s+$/g, '');
-                                    category = category.toLowerCase();
+//                                    category = category.toLowerCase();
                                     if(typeof cat_records[category]=="undefined"){ // insert only new value
                                         cat_records[category]=1; // mark inserted
                                         try{

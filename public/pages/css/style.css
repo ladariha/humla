@@ -635,7 +635,14 @@ input[type=text]:focus, textarea:focus { background:#f1f6f9; padding:8px 5px; bo
     box-shadow: 0px 0px 10px 0px #000;
 }
 
-
+/*----- FACETS -----------------------*/
+.facet_section{
+    margin:5px 10px;
+}
+#facet_section div{
+    background-color:#fff;
+    border:1px solid #D2D2D2;
+}
 
 /*----- MEDIA QUERIES --------------*/ 
 

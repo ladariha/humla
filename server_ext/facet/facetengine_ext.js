@@ -41,6 +41,17 @@ exports.types = function(res, callback){
         returnThrowError(500, error, res, callback);
     }
 }
+exports.total = function(schemaproperty, res, callback){
+    var q = FacetRecord.distinct("slideid");
+    q.where('type', typePrefix+schemaproperty);
+    q.run(function(err,crs){  
+        if(err){
+            returnThrowError(500, err, res, callback);;
+        }else{
+            returnData(res, callback, crs.length)
+        }
+    });
+}
 
 exports.topValues = function(schemaproperty, res, callback){
     // FacetRecord.group({key: {value:true},cond: {type:"Slideindex_Gbook_Category"},reduce: function(obj,prev) {prev.csum += 1;},initial: {csum: 0}});
