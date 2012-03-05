@@ -5,6 +5,7 @@ var fs     = require('fs');
 var defaults = require('../../handlers/defaults');
 var mongoose = require("mongoose"); 
 var FacetRecord = mongoose.model("FacetRecord");
+var Slidetitle = mongoose.model("Slidetitle");
 var Slideid = mongoose.model("Slideid");
 var JSON_DIRECTORY = (path.join(path.dirname(__filename), '../../cache/index')).toString();
 var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../../public/data/slides')).toString();
@@ -13,7 +14,6 @@ var TYPE_PARSERS_DIRECTORY = (path.join(path.dirname(__filename), './types')).to
 var EXTRA_PARSERS_DIRECTORY = (path.join(path.dirname(__filename), './parsers')).toString();
 // load extra parsers
 var types = new Array();
-
 
 fs.readdir( TYPE_PARSERS_DIRECTORY, function( err, files ) { // require() all js files in humla extensions directory
     files.forEach(function(file) {
@@ -87,7 +87,7 @@ function processData(_mapping, course, lecture, data){
         try{
             types[i].parse(mapping, course, lecture, data);    
         }catch(e){
-            console.error("Failed type parser: "+types[i].name);
+            console.error("Failed type parser: "+types[i].type);
             console.error(e);
         }
     }

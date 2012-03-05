@@ -20,8 +20,7 @@ var ObjectId = Schema.ObjectId;
 var FacetRecord = new Schema({
     type: {type: String}, // mdw
     value: {type: String}, // lecture1
-    slideid: {type:String},
-    title: {type: String}
+    slideid: {type:String}
 });
 
 FacetRecord.index({ type: 1, value: -1 });

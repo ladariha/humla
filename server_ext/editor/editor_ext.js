@@ -430,17 +430,25 @@ function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureUR
                         $('body').find('.slide').each(function(){
                             counter++;
                             if (!$(this).attr('data-slideid')) { // slide doesn't have ID => all following slideids have to be update
-                                var n = courseID+"_"+lecture+"_"+counter+"_"+(d+it);
-                                $(this).attr('data-slideid', n);
+                                var n = {};
+                                n.id= courseID+"_"+lecture+"_"+counter+"_"+(d+it);
+                                n.title = $(this).find("h1").eq(0).text();
+                                $(this).attr('data-slideid', n.id);
                                 newids.push(n);
                                 it++;
                             }else{
-                                delete slidesToDelete[$(this).attr('data-slideid')]; // this slideid is used, no need to delete it from db
-                                if($(this).attr('data-slideid').indexOf( courseID+"_"+lecture+"_"+counter+"_", 0)<0){ // slide number is changed => update slideid
+                                var sec = $(this).attr('data-slideid');
+                                if($(this).attr('data-slideid').indexOf( courseID+"_"+lecture+"_"+counter+"_", 0)<0
+                                    || $(this).find("h1").eq(0).text()!==crs[slidesToDelete[$(this).attr('data-slideid')]].title
+                                    ){ // slide number is changed => update slideid
                                     var parts = ($(this).attr('data-slideid')).split("_");
-                                    updatedid[$(this).attr('data-slideid')] = parts[0]+"_"+parts[1]+"_"+counter+"_"+parts[3];    // counter is a new slide number
+                                    var n = {};
+                                    n.id =parts[0]+"_"+parts[1]+"_"+counter+"_"+parts[3]; 
+                                    n.title = $(this).find("h1").eq(0).text();
+                                    updatedid[$(this).attr('data-slideid')] = n;    // counter is a new slide number
                                     $(this).attr('data-slideid', parts[0]+"_"+parts[1]+"_"+counter+"_"+parts[3]);
                                 }            
+                                delete slidesToDelete[sec]; // this slideid is used, no need to delete it from db    
                             } 
                         });
                         var newcontent= $("html").html();    
@@ -448,9 +456,13 @@ function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureUR
                         // delete slidesToDelete
                         for(var key in slidesToDelete){
                             for(var k = 0;k<crs.length;k++){
-                                if(crs[k].slideid===key){
+                                if(typeof crs[k]!="undefined" && crs[k].slideid===key){
                                     var _id= crs[k]._id;
                                     crs[k].remove(function (err){
+                                        console.log(">>");
+                                        console.log(err);
+                                        console.log("==");  
+                                        console.log(crs[k]);
                                         returnThrowError(500, "Error removing slideid", res, callback);
                                         editor_emitter.emit("removedID", _id);
                                     });
@@ -462,7 +474,8 @@ function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureUR
                         for(var key2 in updatedid){
                             for(var h = 0;h<crs.length;h++){
                                 if(crs[h].slideid===key2){
-                                    crs[h].slideid=updatedid[key2];
+                                    crs[h].slideid=updatedid[key2].id;
+                                    crs[h].title=updatedid[key2].title;
                                     crs[h].save(function(err) {
                                         if(err) {
                                             returnThrowError(500, "Error updating slideid", res, callback);
@@ -474,7 +487,9 @@ function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureUR
                         // insert new ids
                         for(var key3 in newids){
                             var sid = new Slideid();
-                            sid.slideid = newids[key3];
+                            sid.slideid = newids[key3].id;
+                            sid.title = newids[key3].title;
+                            console.log(sid);
                             sid.save(function(err) {
                                 if(err) {
                                     returnThrowError(500, "Error saving new slideid", res, callback);
@@ -544,17 +559,25 @@ exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lectur
                                     $('body').find('.slide').each(function(){
                                         counter++;
                                         if (!$(this).attr('data-slideid')) { // slide doesn't have ID => all following slideids have to be update
-                                            var n = courseID+"_"+lecture+"_"+counter+"_"+(d+it);
-                                            $(this).attr('data-slideid', n);
+                                            var n = {};
+                                            n.id= courseID+"_"+lecture+"_"+counter+"_"+(d+it);
+                                            n.title = $(this).find("h1").eq(0).text();
+                                            $(this).attr('data-slideid', n.id);
                                             newids.push(n);
                                             it++;
                                         }else{
-                                            delete slidesToDelete[$(this).attr('data-slideid')]; // this slideid is used, no need to delete it from db
-                                            if($(this).attr('data-slideid').indexOf( courseID+"_"+lecture+"_"+counter+"_", 0)<0){ // slide number is changed => update slideid
+                                            var sec = $(this).attr('data-slideid');
+                                            if($(this).attr('data-slideid').indexOf( courseID+"_"+lecture+"_"+counter+"_", 0)<0
+                                                || $(this).find("h1").eq(0).text()!==crs[slidesToDelete[$(this).attr('data-slideid')]].title
+                                                ){ // slide number is changed => update slideid
                                                 var parts = ($(this).attr('data-slideid')).split("_");
-                                                updatedid[$(this).attr('data-slideid')] = parts[0]+"_"+parts[1]+"_"+counter+"_"+parts[3];    // counter is a new slide number
+                                                var n = {};
+                                                n.id =parts[0]+"_"+parts[1]+"_"+counter+"_"+parts[3]; 
+                                                n.title = $(this).find("h1").eq(0).text();
+                                                updatedid[$(this).attr('data-slideid')] = n;    // counter is a new slide number
                                                 $(this).attr('data-slideid', parts[0]+"_"+parts[1]+"_"+counter+"_"+parts[3]);
                                             }            
+                                            delete slidesToDelete[sec]; // this slideid is used, no need to delete it from db    
                                         } 
                                     });
                                     var _count = 0;
@@ -570,7 +593,7 @@ exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lectur
                                     newcontent = "<!DOCTYPE html><html>"+newcontent+"</html>";
                                     fs.writeFile(SLIDES_DIRECTORY+ '/'+courseID+'/'+lecture+".html", newcontent, function (err) {
                                         if (err) {
-                                               throw "_addIDsToSlidesAndWriteToFileForFacets "+err.toString();
+                                            throw "_addIDsToSlidesAndWriteToFileForFacets "+err.toString();
                                         }else{
                                             editor_emitter.emit("fileUpdated",courseID, lecture);
                                             for(var key in slidesToDelete){
@@ -579,7 +602,7 @@ exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lectur
                                                         var _id= crs[k]._id;
                                                         crs[k].remove(function (err){
                                                             if(err)
-                                                                 throw "_addIDsToSlidesAndWriteToFileForFacets "+err.toString();
+                                                                throw "_addIDsToSlidesAndWriteToFileForFacets "+err.toString();
                                                             editor_emitter.emit("removedID", _id);
                                                             lock.notifyDeleted();
                                                         });
@@ -591,11 +614,12 @@ exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lectur
                                             for(var key2 in updatedid){
                                                 for(var h = 0;h<crs.length;h++){
                                                     if(crs[h].slideid===key2){
-                                                        crs[h].slideid=updatedid[key2];
+                                                        crs[h].slideid=updatedid[key2].id;
+                                                        crs[h].title=updatedid[key2].title;
                                                         crs[h].save(function(err) {
                                                 
                                                             if(err) {
-                                                                   throw "_addIDsToSlidesAndWriteToFileForFacets "+err.toString();
+                                                                throw "_addIDsToSlidesAndWriteToFileForFacets "+err.toString();
                                                             }
                                                             lock.notifyUpdated();
                                                         });   
@@ -605,10 +629,11 @@ exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lectur
                                             // insert new ids
                                             for(var key3 in newids){
                                                 var sid = new Slideid();
-                                                sid.slideid = newids[key3];
+                                                sid.slideid = newids[key3].id;
+                                                sid.title = newids[key3].title;
                                                 sid.save(function(err) {
                                                     if(err) {
-                                                           throw "_addIDsToSlidesAndWriteToFileForFacets "+err.toString();
+                                                        throw "_addIDsToSlidesAndWriteToFileForFacets "+err.toString();
                                                     }
                                                     lock.notifyInserted();
                                                 });   
@@ -616,18 +641,18 @@ exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lectur
                                         }
                                     });   
                                 }else{
-                                      throw "_addIDsToSlidesAndWriteToFileForFacets "+errors.toString();
+                                    throw "_addIDsToSlidesAndWriteToFileForFacets "+errors.toString();
                                 } 
                             }
                         });
                     } else {
-                           throw "_addIDsToSlidesAndWriteToFileForFacets "+err.toString();
+                        throw "_addIDsToSlidesAndWriteToFileForFacets "+err.toString();
                     }             
                 });
             }
         });
     }catch(error){
-          throw "_addIDsToSlidesAndWriteToFileForFacets "+error.toString();
+        throw "_addIDsToSlidesAndWriteToFileForFacets "+error.toString();
     }
 }
 
@@ -832,7 +857,7 @@ function IDSyncLock(toDelete, toUpdate, toInsert, callback, lecture, course, ori
     
     this.globalNotify = function(){
         if(this.inserted === this.toInsert && this.updated === this.toUpdate && this.deleted === this.toDelete){
-        callback(this.response, this.course, this.lecture, false, this.originalCallback);
+            callback(this.response, this.course, this.lecture, false, this.originalCallback);
         }
     };
 }

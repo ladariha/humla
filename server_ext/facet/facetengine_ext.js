@@ -142,6 +142,19 @@ exports.simpleQuery = function(schemaproperty, value, page, baseUrl,res,  callba
     }
 }
 
+exports.complexQuery = recursiveQuery;
+
+function recursiveQuery(depth, query, result, res, callback){
+    if(result.length < 1 && depth !== 0 ){ // nothing found and algorithm have run atleast over one search parameter
+        returnData(res, callback, []);
+    }else{
+        
+        
+        
+    }
+    
+}
+
 function addMapping(data, page, baseUrl,res, callback){
     var tmp = [];
     for(var j=0;j<data.length;j++){
