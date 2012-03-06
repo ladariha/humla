@@ -67,11 +67,7 @@ function parseSlideType(mapping, item, course, lecture){
     var done = 0; // +1 for type;+2 for importance; 
     var keywordRecords = {};
     var typeTest =  ( typeof item.properties.type != "undefined" && item.properties.type.length > 0 &&  item.properties.type[0].length >0);
-    var impTest =  ( typeof item.properties.importance != "undefined" && item.properties.importance.length > 0 &&  item.properties.importance[0].length >0) 
-    
-    var title = course.toUpperCase()+" - "+lecture;
-    if(typeof item.properties.title!="undefined" && item.properties.title.length>0 && item.properties.title[0].length>0)
-        title+=  ": "+ item.properties.title[0];
+    var impTest =  ( typeof item.properties.importance != "undefined" && item.properties.importance.length > 0 &&  item.properties.importance[0].length >0) ;
     if(typeof _id!="undefined"){
         var prefix =new RegExp("^"+typePrefix+"Slide_"); // get all records for type /Slide at once
         FacetRecord.find({
@@ -84,7 +80,6 @@ function parseSlideType(mapping, item, course, lecture){
                 if(crs.length >0){
                     
                     for(var i=0;i<crs.length;i++){
-                        crs[i].title =title;
                         switch(crs[i].type){ // decide what type
                             case typePrefix+"Slide_Type":
                                 done+=1;
@@ -118,7 +113,6 @@ function parseSlideType(mapping, item, course, lecture){
                     case 0: // importance & type
                         if(impTest){
                             var a  = new FacetRecord();
-                            a.title = title;
                             a.type =typePrefix+"Slide_Importance";
                             a.value = item.properties.importance[0] ;
                             a.slideid = _id;
@@ -130,7 +124,6 @@ function parseSlideType(mapping, item, course, lecture){
                         
                         if(typeTest){
                             var a  = new FacetRecord();
-                            a.title = title;
                             a.type =typePrefix+"Slide_Type";
                             a.value = item.properties.type[0] ;
                             a.slideid = _id;
@@ -145,7 +138,6 @@ function parseSlideType(mapping, item, course, lecture){
                         //  importance
                         if(impTest){
                             var a  = new FacetRecord();
-                            a.title = title;
                             a.type =typePrefix+"Slide_Importance";
                             a.value = item.properties.importance[0] ;
                             a.slideid = _id;
@@ -159,7 +151,6 @@ function parseSlideType(mapping, item, course, lecture){
                         // type 
                         if(typeTest){
                             var a  = new FacetRecord();
-                            a.title = title;
                             a.type =typePrefix+"Slide_Type";
                             a.value = item.properties.type[0] ;
                             a.slideid = _id;
@@ -184,7 +175,6 @@ function parseSlideType(mapping, item, course, lecture){
                     for(var j=0; j< item.properties.keyword.length;j++){
                         if(typeof keywordRecords[item.properties.keyword[j]]=="undefined" && item.properties.keyword[j].length>0){ // keyword  is not in db
                             var a = new FacetRecord();
-                            a.title = title;
                             a.type =typePrefix+"Slide_Keyword";
                             a.value = item.properties.keyword[j] ;
                             a.slideid = _id;
@@ -210,7 +200,6 @@ function parseSlideType(mapping, item, course, lecture){
                     for(var j=0; j< item.properties.keyword.length;j++){
                         if( item.properties.keyword[j].length>0){
                             var a = new FacetRecord();
-                            a.title = title;
                             a.type =typePrefix+"Slide_Keyword";
                             a.value = item.properties.keyword[j] ;
                             a.slideid = _id;

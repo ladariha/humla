@@ -5,7 +5,6 @@ var fs     = require('fs');
 var defaults = require('../../handlers/defaults');
 var mongoose = require("mongoose"); 
 var FacetRecord = mongoose.model("FacetRecord");
-var Slidetitle = mongoose.model("Slidetitle");
 var Slideid = mongoose.model("Slideid");
 var JSON_DIRECTORY = (path.join(path.dirname(__filename), '../../cache/index')).toString();
 var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../../public/data/slides')).toString();
@@ -64,13 +63,12 @@ editor_ext.emitter.on("removedID",function(id){
 
 /**
  * Parses presentation given by course ID and lecture ID and searches for microdata for faceted purposes
-* @param res HTTP response (if called via REST otherwise undefined)
  * @param courseID course ID
  * @param lectureID lecture ID
  */
-function parsePresentation(res, courseID, lectureID){
+function parsePresentation(courseID, lectureID){
     //var parser = new FacetParser(extraParsers, types);
-    run(res, courseID, lectureID, true);
+    run(courseID, lectureID, true);
 }
 
 exports.parsePresentation= parsePresentation;
@@ -109,10 +107,9 @@ exports.processData = processData;
  * @param course course ID
  * @param lecture lecture ID
  * @param data microdata from microdataparser_ext
- * @param res HTTP response (if called via REST otherwise undefined)
  *@param checkID boolean if check ID is neccessary
  */
-function checkIDs(course, lecture, data, res, checkID){
+function checkIDs(course, lecture, data,checkID){
     if(data.items.length >= 0){
         var fileOK = true;
         // need to add ids to slides and call parsePresentation again
@@ -120,7 +117,7 @@ function checkIDs(course, lecture, data, res, checkID){
             for(var i = 0;i<data.items.length;i++){
                 if(data.items[i].slideid.length <1){
                     fileOK = false;
-                    editor_ext._addIDsToSlidesAndWriteToFileForFacets(course, res, lecture, exports.run, undefined);
+                    editor_ext._addIDsToSlidesAndWriteToFileForFacets(course, undefined, lecture, exports.run, undefined);
                     i = data.items.length+1;
                 }
             }
@@ -132,7 +129,7 @@ function checkIDs(course, lecture, data, res, checkID){
                 slideid: prefix
             }, function(err,crs){   
                 if(!err) {
-                    processData(crs, course, lecture, data, res);
+                    processData(crs, course, lecture, data);
                 }else{
                     console.error("Facetparser checkIDs error: "+err.toString());
                 }
@@ -143,13 +140,13 @@ function checkIDs(course, lecture, data, res, checkID){
     
 /**
  * Parses presentation given by course ID and lecture ID and searches for microdata for faceted purposes
-* @param res HTTP response (if called via REST otherwise undefined)
  * @param courseID course ID
  * @param lectureID lecture ID
  * @param checkID if check id procedure is necessary
  */
-function run(res, courseID, lectureID, checkID){
-   
+function run(courseID, lectureID, checkID){
+   console.log("COURSE JE "+courseID);
+   console.log("LECTURE JE "+lectureID);
     try{
         fs.readFile(SLIDES_DIRECTORY+ '/'+courseID+'/'+lectureID+".html", function (err, data) {
             if (err){
@@ -158,7 +155,7 @@ function run(res, courseID, lectureID, checkID){
                 try{
                     microdata_ext.itemsFaceted(data.toString(),undefined ,function(err, data){
                         if(!err)
-                            checkIDs(courseID, lectureID, data, res, checkID);
+                            checkIDs(courseID, lectureID, data,checkID);
                         else
                             console.error("Facetparser run error: "+err.toString());
                     }, undefined);

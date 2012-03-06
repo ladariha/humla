@@ -120,7 +120,7 @@ exports.simpleQuery = function(schemaproperty, value, page, baseUrl,res,  callba
                 if(err){
                     returnThrowError(500, err, res, callback);
                 }else{
-                    addMapping(crs, page, baseUrl, res, callback);
+                    addMapping(crs, page, baseUrl, false, res, callback);
                 }
             });
         }else{
@@ -133,7 +133,7 @@ exports.simpleQuery = function(schemaproperty, value, page, baseUrl,res,  callba
                 if(err){
                     returnThrowError(500, err, res, callback);;
                 }else{
-                    addMapping(crs, page, baseUrl, res,  callback);
+                    addMapping(crs, page, baseUrl, false, res,  callback);
                 }
             });
         }
@@ -142,27 +142,76 @@ exports.simpleQuery = function(schemaproperty, value, page, baseUrl,res,  callba
     }
 }
 
-exports.complexQuery = recursiveQuery;
+exports.complexQuery = function( query,page, baseUrl, res,callback ){
+    recursiveQuery(0, query, page, baseUrl, res,callback );
+};
 
-function recursiveQuery(depth, query, result, res, callback){
-    if(result.length < 1 && depth !== 0 ){ // nothing found and algorithm have run atleast over one search parameter
-        returnData(res, callback, []);
+function recursiveQuery(depth, query, page, baseUrl, res, callback){
+    if((query.results.length < 1 && depth > 0) || (query.valueQueries.length<1 && query.booleanQueries.length<1) ){ // nothing found and algorithm have run atleast over one search parameter
+        addMapping(query.results, page, baseUrl, true, res,  callback);
     }else{
+        var _query = FacetRecord.find();
+        if(query.results.length>0) // zatim nefunguje
+            _query.$or(query.results); // FIXME  need to check that it really works :)
+
+        if(query.valueQueries.length>0){ // run value queries first since they could significantly reduce total results
+            var q = query.valueQueries.splice(0,1); // take 1st item from array
+            _query.where('type', typePrefix+q[0].type);
+            _query.where('value',q[0].value);
+        }else if(query.booleanQueries.length>0){
+            var q = query.booleanQueries.splice(0,1); // take 1st item from array        
+            _query.where('type', typePrefix+q[0].type);
+            
+        }else{// should not happen but better safe than sorry ;)
+            returnData(res, callback, query.results);
+        }
+
+        if(query.booleanQueries.length<1 && query.valueQueries.length<1){ // skip only in last run, this way if user gurantee order of  paramateres in query the pagination will work flawlessly
+            _query.skip((parseInt(page)-1)*PAGE_SIZE);
+            _query.limit(PAGE_SIZE);
+        }
         
-        
-        
+        _query.run(function(err,crs){  
+            if(err){
+                returnThrowError(500, err, res, callback);;
+            }else{
+                query.setResults(crs);
+                recursiveQuery(depth+1, query, page, baseUrl,res, callback);
+            }
+        });
     }
     
 }
 
-function addMapping(data, page, baseUrl,res, callback){
+function Query(booleanQ, valueQ){
+    this.booleanQueries = booleanQ;
+    this.valueQueries = valueQ;
+    this.results = [];
+    //    
+    this.setResults = function(items){
+        var tmp = [];
+        for(var j=0;j<items.length;j++){
+            tmp[j]={
+                slideid: items[j].slideid
+            };
+        }
+        this.results = tmp;
+    };
+}
+
+exports.query  = function(booleanQ, valueQ){
+    return new Query(booleanQ, valueQ);
+};
+
+
+function addMapping(data, page, baseUrl, complex, res, callback){
+    
     var tmp = [];
     for(var j=0;j<data.length;j++){
         tmp[j]={
             _id: data[j].slideid
-        }
+        };
     }
-    
     var query = Slideid.find({});
     query.$or(tmp);
     query.exec(function (err, docs) {

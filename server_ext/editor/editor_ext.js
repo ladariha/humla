@@ -459,10 +459,6 @@ function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureUR
                                 if(typeof crs[k]!="undefined" && crs[k].slideid===key){
                                     var _id= crs[k]._id;
                                     crs[k].remove(function (err){
-                                        console.log(">>");
-                                        console.log(err);
-                                        console.log("==");  
-                                        console.log(crs[k]);
                                         returnThrowError(500, "Error removing slideid", res, callback);
                                         editor_emitter.emit("removedID", _id);
                                     });
@@ -489,7 +485,6 @@ function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureUR
                             var sid = new Slideid();
                             sid.slideid = newids[key3].id;
                             sid.title = newids[key3].title;
-                            console.log(sid);
                             sid.save(function(err) {
                                 if(err) {
                                     returnThrowError(500, "Error saving new slideid", res, callback);

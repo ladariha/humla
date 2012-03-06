@@ -128,7 +128,32 @@ function loadValueInit(object, index){
     request.send(null);     
 }
 
-
+function sendComplexQuery(){
+    
+    
+    
+    var q = {};
+    q.booleanQueries = [];
+    q.valueQueries = [];
+    q.booleanQueries[0] = {type:'Slideindex_Github'};
+    q.booleanQueries[1] = {type:'Slideindex_Gdrawing'};
+    var request = new XMLHttpRequest();
+    request.open("POST", '/api/complexQuery/facets', true);
+    request.setRequestHeader("Content-type", "application/json");
+    request.onreadystatechange = function(){
+        if (request.readyState==4) {
+            if(request.status==200){
+                var object = eval('(' + request.responseText + ')');
+                console.log(object);
+            }else{
+                document.getElementById('msg').innerHTML=request.status+": "+request.statusText;    
+            }
+        }
+    };
+    console.log(JSON.stringify(q));
+    request.send(JSON.stringify(q));
+    
+}
 
 function toggleFilter(index, element){
     var property = toLoad[index].shortName;

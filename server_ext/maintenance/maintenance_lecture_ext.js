@@ -1,6 +1,7 @@
 var mongoose = require("mongoose"); 
 var LectureToUpdate = mongoose.model("LectureToUpdate");
 var slideindex_ext =  require('../slideindex/slideindex_ext.js');
+var facet_ext =  require('../facet/facetparser_ext.js');
 var editor_ext = require('../editor/editor_ext.js');
 var mm = require('./maintenanceman_ext.js');
 
@@ -91,6 +92,15 @@ exports.refreshLectures= function(){
                                 }
                             }); 
                         }
+                        
+                        man.maintenance_refreshFacetRecords= function(){       
+                            var _ref = this;
+                            var course = this.object.courseID;
+                            var lecture = this.object.lectureID;
+                            facet_ext.parsePresentation(course, lecture);
+                            _ref.notify();                          
+                        }
+                        
                         man.run();  
                     }
                 }
