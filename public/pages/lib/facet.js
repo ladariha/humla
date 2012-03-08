@@ -72,14 +72,59 @@ function FacetedContainer(){
             value: value, 
             type: type
         });
-    }
+    };
     
-    this.removeCriteria = function(key){
+    this.removeCriteria = function(key, value, type){
         for(var i=0;i<this.criteria.length;i++){
-            if(this.criteria[i].key === key)
-                delete this.criteria[i];
+            if(this.criteria[i].schemaproperty == key)
+            {
+                this.criteria.splice(i,1);
+                return;
+            }
         }
-    }
+    };
+    
+    this.performQuery = function(){
+      
+        var q = {};
+        q.booleanQueries = [];
+        q.valueQueries = [];
+        
+        for(var i=0;i<this.criteria.length;i++){
+            if(this.criteria[i].type === "boolean"){
+                q.booleanQueries.push({
+                    type: this.criteria[i].schemaproperty
+                });
+            }else{
+                q.valueQueries.push({
+                    type: this.criteria[i].schemaproperty,
+                    value: this.criteria[i].value
+                });
+            }   
+        }
+        
+        var request = new XMLHttpRequest();
+        request.open("POST", '/api/complexQuery/facets', true);
+        request.setRequestHeader("Content-type", "application/json");
+        request.onreadystatechange = function(){
+            if (request.readyState==4) {
+                if(request.status==200){
+                    var object = eval('(' + request.responseText + ')');
+                    $('#results').empty();//= '';
+                    $('#results').append("<ul>");
+                    for(var j=0;j<object.results.length;j++){
+                        var _a = object.results[j].slideid.split("_");
+                    
+                        $('#results').append("<li><a href=\"\">"+_a[0].toUpperCase()+" - "+_a[1].toUpperCase()+": "+object.results[j].title+"</a></li>");    
+                    }
+                    $('#results').append("</ul>");
+                }else{
+                    document.getElementById('msg').innerHTML=request.status+": "+request.statusText;    
+                }
+            }
+        };
+        request.send(JSON.stringify(q));
+    };
     
     this.contains =function(shortname){
         for(var i=0;i<this.criteria.length;i++){
@@ -88,17 +133,15 @@ function FacetedContainer(){
                 return true;
         }
         return false;
-    }
+    };
     
     
 }
 function loadBooleanInit(object, index){
    
     var element = document.createElement('div'); 
-   
-   
     var content = "<span class=\"facet_title\">"+object.property+"</span>";
-    content+="<ul><li onClick=\"toggleFilter("+index+", this);\" >Yes</li>";
+    content+="<ul class=\"facet_menu\"><li onClick=\"toggleFilter("+index+", this);\" >Yes</li>";
     content+="<li onClick=\"toggleFilter("+index+", this);\" >No</li></ul>";
     element.innerHTML = content;
     document.getElementById("facet_section").appendChild(element);
@@ -111,7 +154,7 @@ function loadValueInit(object, index){
             if(request.status==200){
                 var resp = eval('(' + request.responseText + ')');
                 
-                var element = "<div><span class=\"facet_title\">"+object.property+"</span><ul>";
+                var element = "<div><span class=\"facet_title\">"+object.property+"</span><ul class=\"facet_menu\">";
                 for(var a in resp){
                  
                     element+="<li onClick=\"toggleFilter("+index+", this);\" >"+resp[a]._id+"</li>";    
@@ -128,36 +171,26 @@ function loadValueInit(object, index){
     request.send(null);     
 }
 
-function sendComplexQuery(){
-    
-    
-    
-    var q = {};
-    q.booleanQueries = [];
-    q.valueQueries = [];
-    q.booleanQueries[0] = {type:'Slideindex_Github'};
-    q.booleanQueries[1] = {type:'Slideindex_Gdrawing'};
-    var request = new XMLHttpRequest();
-    request.open("POST", '/api/complexQuery/facets', true);
-    request.setRequestHeader("Content-type", "application/json");
-    request.onreadystatechange = function(){
-        if (request.readyState==4) {
-            if(request.status==200){
-                var object = eval('(' + request.responseText + ')');
-                console.log(object);
-            }else{
-                document.getElementById('msg').innerHTML=request.status+": "+request.statusText;    
-            }
-        }
-    };
-    console.log(JSON.stringify(q));
-    request.send(JSON.stringify(q));
-    
-}
-
 function toggleFilter(index, element){
     var property = toLoad[index].shortName;
-    container.addCriteria(property, $(element).text() ,toLoad[index].type);
-    console.log("==");
-    console.log(container);
+    if($(element).attr("class")!== "facet_selected"){
+        container.addCriteria(property, $(element).text() ,toLoad[index].type);
+        $(element).attr("class", "facet_selected");
+        //    $(element).toggleClass("facet_selected");
+        var parent = $(element).parent();
+        $(parent).find('li').each(function(index,el){
+            if(el!==element){
+                $(el).attr("class","facet_notselected");
+            }
+        });
+    }else{
+        $(element).attr("class", "");
+        var parent = $(element).parent();
+        $(parent).find('li').each(function(index,el){
+            $(el).attr("class","");
+        });
+        container.removeCriteria(property, $(element).text() ,toLoad[index].type);
+    }
+    
+    container.performQuery();
 }

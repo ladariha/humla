@@ -636,12 +636,48 @@ input[type=text]:focus, textarea:focus { background:#f1f6f9; padding:8px 5px; bo
 }
 
 /*----- FACETS -----------------------*/
-.facet_section{
+#facet_section{
     margin:5px 10px;
+    width: 200px;
+      float:left;
+    display:block;
+}
+
+#facet_section div{
+    margin:0 5px 5px 1px;
+    padding: 3px;
+    -webkit-box-shadow: 0px 0px 10px #ccc;
+-moz-box-shadow: 0px 0px 10px #ccc;
+box-shadow: 0px 0px 10px #ccc;
 }
 #facet_section div{
     background-color:#fff;
     border:1px solid #D2D2D2;
+}
+
+.facet_menu li, .facet_menu{
+    list-style: none;
+    display:block;
+    padding-left: 10px;
+    margin-left: 0;
+}
+
+.facet_menu li:hover{
+     color: #fff;
+     background-color: #3F9DCD;
+     cursor: pointer;
+}
+
+.facet_title{
+    color:#444;
+    font-weight: bold;
+}
+
+.facet_selected{
+    background: #3F9DCD;
+}
+.facet_notselected{
+    opacity: 0.6;
 }
 
 /*----- MEDIA QUERIES --------------*/ 

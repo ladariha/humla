@@ -206,7 +206,8 @@ function returnData(res,callback, data){
         if(typeof callback!="undefined")
             callback(null, data);
         else
-            throw "Nor HTTP Response or callback function defined!";
+             console.error("Nor HTTP Response or callback function defined!");
+//            throw "Nor HTTP Response or callback function defined!";
     }
 }
 
@@ -217,7 +218,7 @@ function returnThrowError(code, msg, res, callback){
         if(typeof callback!="undefined"){
             callback(msg, null);
         }else{
-            throw msg;
+              console.error(msg);
         }
     }       
 }
@@ -241,6 +242,7 @@ function returnDataHTML(res, callback, data){
             o.html = data;
             callback(null, o);
         }else
-            throw "Nor HTTP Response or callback function defined!";
+             console.error("Nor HTTP Response or callback function defined!");
+//            throw "Nor HTTP Response or callback function defined!";
     }
 }

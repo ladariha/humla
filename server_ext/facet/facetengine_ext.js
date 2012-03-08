@@ -219,6 +219,7 @@ function addMapping(data, page, baseUrl, complex, res, callback){
             for(var j=0;j<docs.length;j++){
                 if(docs[j]._id+"" === data[i].slideid){
                     data[i].slideid = docs[j].slideid;
+                    data[i].title = docs[j].title;
                     j = docs.length+1;
                 }
             }
@@ -240,7 +241,7 @@ function returnThrowError(code, msg, res, callback){
         if(typeof callback!="undefined"){
             callback(msg, null);
         }else{
-            throw msg;
+             console.error(msg);
         }
     }       
 }
@@ -262,6 +263,7 @@ function returnData(res, callback, data){
         if(typeof callback!="undefined")
             callback(null, data);
         else
-            throw "Nor HTTP Response or callback function defined!";
+             console.error("Nor HTTP Response or callback function defined!");
+//            throw "Nor HTTP Response or callback function defined!";
     }
 }
