@@ -152,3 +152,14 @@ function getLecturesFromFS(req, res, course){
 function endsWith(string, suffix) {
     return string.indexOf(suffix, string.length - suffix.length) !== -1;
 }
+
+app.get("/main/pokus",  function(req, res){
+    
+    var main =  require('../server_ext/facet/facetparser_ext.js');
+    //    main.addLectureToQueue("jejda", "lecture1");
+    main.parsePresentation( "we", "lecture2", undefined);
+//    console.log("KONEC");
+    
+    
+    
+})

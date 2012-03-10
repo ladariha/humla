@@ -66,32 +66,44 @@ exports.refreshLectures= function(){
                         var man = mm.maintenanceMan(crs[i], crs[i].courseID+":"+crs[i].lectureID, function(o){
                             o.remove(function(err) { // once its finished remove record from queue
                                 if (err) {
-                                    console.error("refreshIndexFiles: "+err);
+                                    console.error("remove refreshIndexFiles: "+err);
                                 }else
                                     console.log("REMOVED");
                             });  
-                        });            
+                        });      
+                        
+                        man.maintenance_refreshIndices = function(){       
+                            var _ref = this;
+                            editor_ext.makeindices(this.object.courseID, this.object.lectureID, "host", undefined, function(err, data){
+                                if(err){
+                                    console.error("refreshIndices: "+err);
+                                }else{
+                                    _ref.notify();                          
+                                }
+                            }, false); 
+                        };
+            
                         man.maintenance_refreshIndexJSON = function(){
                             var _ref = this;
-                            slideindex_ext.index(this.object.courseID, this.object.lectureID, "json", undefined, function(err, data){
+                            slideindex_ext.index(this.object.courseID, this.object.lectureID, "json", undefined, undefined, function(err, data){
                                 if(err){
                                     console.error("refreshIndexFiles: "+err);
                                 }else{
                                     _ref.notify();                          
                                 }
                             }); 
-                        }
+                        };
     
                         man.maintenance_refreshIndexXML = function(){       
                             var _ref = this;
-                            slideindex_ext.index(this.object.courseID, this.object.lectureID, "xml", undefined, function(err, data){
+                            slideindex_ext.index(this.object.courseID, this.object.lectureID, "xml", undefined, undefined, function(err, data){
                                 if(err){
                                     console.error("refreshIndexFiles: "+err);
                                 }else{
                                     _ref.notify();                          
                                 }
                             }); 
-                        }
+                        };
                         
                         man.maintenance_refreshFacetRecords= function(){       
                             var _ref = this;
@@ -99,7 +111,7 @@ exports.refreshLectures= function(){
                             var lecture = this.object.lectureID;
                             facet_ext.parsePresentation(course, lecture);
                             _ref.notify();                          
-                        }
+                        };
                         
                         man.run();  
                     }

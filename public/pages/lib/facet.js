@@ -46,7 +46,7 @@ var container = new FacetedContainer();
 
 window.onload = function(){
     for(var i=0;i<toLoad.length;i++){
-        if(toLoad[i].type=="boolean"){
+        if(toLoad[i].type==="boolean"){
             loadBooleanInit(toLoad[i],i);
         }
             
@@ -62,16 +62,30 @@ function FacetedContainer(){
         for(var i=0;i<this.criteria.length;i++){
             if(this.criteria[i].schemaproperty == key)
             {
-                this.criteria[i].value = value;
+                if(type==="boolean"){
+                    this.criteria[i].value = (value.toLowerCase()==="yes")?true:false;    
+                }else{
+                    this.criteria[i].value = value;
+                }
                 return;
             }
         }
         
-        this.criteria.push({
-            schemaproperty: key, 
-            value: value, 
-            type: type
-        });
+        
+        if(type==="boolean"){
+            this.criteria.push({
+                schemaproperty: key, 
+                value:  (value.toLowerCase()==="yes")?true:false, 
+                type: type
+            });
+            
+        }else{
+            this.criteria.push({
+                schemaproperty: key, 
+                value: value, 
+                type: type
+            });
+        }
     };
     
     this.removeCriteria = function(key, value, type){
@@ -93,7 +107,8 @@ function FacetedContainer(){
         for(var i=0;i<this.criteria.length;i++){
             if(this.criteria[i].type === "boolean"){
                 q.booleanQueries.push({
-                    type: this.criteria[i].schemaproperty
+                    type: this.criteria[i].schemaproperty,
+                    value: this.criteria[i].value
                 });
             }else{
                 q.valueQueries.push({
@@ -110,25 +125,27 @@ function FacetedContainer(){
             if (request.readyState==4) {
                 if(request.status==200){
                     var object = eval('(' + request.responseText + ')');
-                    $('#results').empty();//= '';
-                    $('#results').append("<ul>");
+                    console.log(request.responseText);
+                    $('#facet_results').empty();//= '';
+                    var content = "<ul>";
                     for(var j=0;j<object.results.length;j++){
                         var _a = object.results[j].slideid.split("_");
-                    
-                        $('#results').append("<li><a href=\"\">"+_a[0].toUpperCase()+" - "+_a[1].toUpperCase()+": "+object.results[j].title+"</a></li>");    
-                    }
-                    $('#results').append("</ul>");
+                        var link = _a[0]+"/"+_a[1]+".html#/"+_a[2]+"/v1";
+                        content+="<li><a href=\"http://127.0.0.1:1338/data/slides/"+link+"\">"+_a[0].toUpperCase()+" - "+_a[1].toUpperCase()+": "+object.results[j].title+"</a></li>";    
+                }
+                content+="</ul>"
+                    $('#facet_results').append(content);
                 }else{
                     document.getElementById('msg').innerHTML=request.status+": "+request.statusText;    
                 }
             }
         };
+        console.log(JSON.stringify(q));
         request.send(JSON.stringify(q));
     };
     
     this.contains =function(shortname){
         for(var i=0;i<this.criteria.length;i++){
-            console.log("CR"+this.criteria[i].schemaproperty+" | "+shortname);
             if(this.criteria[i].schemaproperty == shortname)
                 return true;
         }

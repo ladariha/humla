@@ -37,7 +37,6 @@ function processData(mapping, course ,lecture, data, index){
 
 function processGbooks(items, course, lecture, mapping){
     try{
-        var defaultTitle = course.toUpperCase()+": "+lecture;
         var prefix =new RegExp("^"+typePrefix+GBOOK_TYPE); 
         var arr = [];
         for(var a in mapping){
@@ -58,14 +57,15 @@ function processGbooks(items, course, lecture, mapping){
                             if(items[i].author[j].length>0){
                                 try{
                                     var a = new FacetRecord();
-                                    a.title = items[i].slide_title;
                                     a.type =typePrefix+GBOOK_AUTHOR;
                                     a.value = items[i].author[j];
                                     a.slideid = mapping[items[i].slideid];
-                                    a.save(function (err){
-                                        if(err)
-                                            throw "Problem saving FacetRecord "+items[i].slideid+": "+err.toString();
-                                    });   
+                                    if(typeof mapping[items[i].slideid]!="undefined"){
+                                        a.save(function (err){
+                                            if(err)
+                                                throw "Problem saving FacetRecord "+items[i].slideid+": "+err.toString();
+                                        });   
+                                    }
                                 }catch(e){
                                     console.error(e);
                                 }
@@ -79,19 +79,20 @@ function processGbooks(items, course, lecture, mapping){
                                 var cats = items[i].category[j].split("/");
                                 for(var b=0;b<cats.length;b++){
                                     var category = cats[b].replace(/^\s+|\s+$/g, '');
-//                                    category = category.toLowerCase();
+                                    //                                    category = category.toLowerCase();
                                     if(typeof cat_records[category]=="undefined"){ // insert only new value
                                         cat_records[category]=1; // mark inserted
                                         try{
                                             var a = new FacetRecord();
-                                            a.title = items[i].slide_title;
                                             a.type =typePrefix+GBOOK_CATEGORY;
                                             a.value = category;
                                             a.slideid = mapping[items[i].slideid];
-                                            a.save(function (err){
-                                                if(err)
-                                                    throw "Problem saving FacetRecord "+items[i].slideid+": "+err;
-                                            });   
+                                            if(typeof mapping[items[i].slideid]!="undefined"){
+                                                a.save(function (err){
+                                                    if(err)
+                                                        throw "Problem saving FacetRecord "+items[i].slideid+": "+err;
+                                                });   
+                                            }                              
                                         }catch(e){
                                             console.error(e.toString());
                                         }   
@@ -113,8 +114,7 @@ function processGbooks(items, course, lecture, mapping){
 
 function processGithubOrDrawing(items, course, lecture, mapping, type){
     try{
-        var defaultTitle = course.toUpperCase()+": "+lecture;
-        var prefix =new RegExp("^"+typePrefix+type); // get all records for type /Slide at once
+        var prefix =new RegExp("^"+typePrefix+type); // get all records for type /GithubOrDrawing at once
         var query = FacetRecord.find({
             type: prefix
         });
@@ -123,9 +123,14 @@ function processGithubOrDrawing(items, course, lecture, mapping, type){
         for(var a in mapping){
             arr.push(mapping[a]);
         }
+        
+        var handledSlides = {};
+        
         query.where('_id').in(arr);  
+        
         query.exec(function(err, data){ // get all github data from db for given presentation (all slides)
             var toInsert = [];
+            var alreadyInToInsert = {};
             var data_assoc = {};
             for(var j=0;j<data.length;j++){
                 data_assoc[data[j].slideid] = data[j];
@@ -138,36 +143,65 @@ function processGithubOrDrawing(items, course, lecture, mapping, type){
         
             for(var j=0;j<items.length;j++){
                 if(typeof data_assoc[items[j].slideid]!="undefined"){
-                
-                    if(data_assoc[items[j].slideid].title !== defaultTitle+  ": "+items[j].slide_title){
-                        // update title
-                        data_assoc[items[j].slideid].title = defaultTitle+  ": "+items[j].slide_title;
-                        data_assoc[items[j].slideid].save(function(err){
-                            console.error("Problem saving slideindex item "+err.toString());
-                        });
-                    }
-
                     delete toDelete[items[j].slideid];
                 }else{
-                    toInsert.push(items[j]);
+                    if(typeof alreadyInToInsert[items[j].slideid]=="undefined"){ // to avoid multiple records (2 gdrawings in one slide)
+                        toInsert.push(items[j]);
+                        alreadyInToInsert[items[j].slideid]=1
+                    }
                 }
             }
         
-            for(var i =0;i<toInsert.length;i++){
+            for(var i =0;i<toInsert.length;i++){ // existing records to TRUE
                 try{
                     var a  = new FacetRecord();
-                    a.title = toInsert[i].slide_title;
                     a.type =typePrefix+type;
-                    a.value = 1;
+                    a.value = "true";
                     a.slideid = mapping[toInsert[i].slideid];
-                    a.save(function (err){
-                        if(err)
-                            throw "Problem saving FacetRecord slideindex: "+err;
-                    });   
+                    handledSlides[mapping[toInsert[i].slideid]]=1; // add not that this slide is taken care of
+                    if(typeof mapping[toInsert[i].slideid]!="undefined"){
+                        a.save(function (err){
+                            if(err)
+                                throw "Problem saving FacetRecord slideindex: "+err;
+                        });   
+                    }
                 }catch(e){
                     console.error("Error while saving slideindex "+e.toString());
                 }
             }
+            
+            for(var b in toDelete){// all already existing records that are no longer in presentation set to FALSE
+                if(typeof toDelete[b]!="undefined"){
+                    toDelete[b].value = "false";
+                    handledSlides[toDelete[b]._id]=1; // add not that this slide is taken care of
+                    toDelete[b].save(function (err){
+                        if(err)
+                            throw "Problem saving FacetRecord slideindex: "+err;
+                    });   
+                }
+            }
+            
+            
+            // now there is  all mapping in mapping and slides _id in handledSlides. To diff between these two sets needs to be inserted as a false record
+            for(var q in mapping){
+                if(typeof handledSlides[mapping[q]]=="undefined"){
+                    try{
+                        var a  = new FacetRecord();
+                        a.type =typePrefix+type;
+                        a.value = "false";
+                        a.slideid = mapping[q];
+                        if(typeof mapping[q]!="undefined"){
+                            a.save(function (err){
+                                if(err)
+                                    throw "Problem saving FacetRecord slideindex: "+err;
+                            });   
+                        }         
+                    }catch(e){
+                        console.error("Error while saving slideindex "+e.toString());
+                    }
+                }
+            }
+            
         });
     }catch(_err){
         console.error("processGithubOrDrawing: "+_err.toString());

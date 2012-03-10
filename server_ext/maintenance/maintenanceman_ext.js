@@ -14,6 +14,7 @@ function MaintenanceMan(object, name, dispose){
     this.limit = 0;
     this.name = name;
     this.counter = 0;
+    this.dispose = dispose;
     this.callback = dispose;
 
     this.notify = function(){
@@ -21,8 +22,9 @@ function MaintenanceMan(object, name, dispose){
         if(this.counter === this.limit)
         {
             try{
-                if(typeof dispose!="undefined")
-                    dispose(this.object);   
+                if(typeof this.dispose!="undefined"){
+                    this.dispose(this.object);   
+                }   
             }catch(e){
                 console.error(this.name+": Unable to dispose - undefined dispose method");
             }
@@ -57,6 +59,6 @@ function MaintenanceMan(object, name, dispose){
     }
 }
 
-exports.maintenanceMan = function(object, name){
-    return new MaintenanceMan(object, name);
+exports.maintenanceMan = function(object, name, dispose){
+    return new MaintenanceMan(object, name, dispose);
 };

@@ -401,8 +401,9 @@ function deleteSlide(res, htmlfile, slide, resourceURL, course, lecture, callbac
  * @param lectureURL URL address of presentation
  * @param file file where the presentation should be stored in
  * @param callback
+ * @param emitEvents if true or undefined emitter wil emit notifications about updated file and removed IDs
  */
-function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureURL, file,callback){
+function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureURL, file,callback, emitEvents){
     var prefix =new RegExp("^"+courseID+"_"+lecture+"_");
     Slideid.find({
         slideid: prefix
@@ -459,8 +460,12 @@ function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureUR
                                 if(typeof crs[k]!="undefined" && crs[k].slideid===key){
                                     var _id= crs[k]._id;
                                     crs[k].remove(function (err){
-                                        returnThrowError(500, "Error removing slideid", res, callback);
-                                        editor_emitter.emit("removedID", _id);
+                                        if(err){
+                                            returnThrowError(500, "Error removing slideid", res, callback);    
+                                        }
+                                        
+                                        if(typeof emitEvents=="undefined" || emitEvents===true)
+                                            editor_emitter.emit("removedID", _id);
                                     });
                                 }
                             }
@@ -492,7 +497,7 @@ function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureUR
                             });   
                         }
                         //write to file
-                        writeToFile(courseID, lecture, res, file, lectureURL, newcontent, callback);
+                        writeToFile(courseID, lecture, res, file, lectureURL, newcontent, callback, emitEvents);
                     }else{
                         returnThrowError(500, errors, res, callback);
                     } 
@@ -521,10 +526,11 @@ function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureUR
  * @param originalCallback function that the callback function was called with
  */
 exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lecture, callback, originalCallback){
+    console.log("ZACINAME "+courseID+" LECTURE "+lecture);
     try{
         fs.readFile(SLIDES_DIRECTORY+ '/'+courseID+'/'+lecture+".html", function (err, data) {
             if (err){
-                throw "_addIDsToSlidesAndWriteToFileForFacets "+err.toString();
+                console.log("_addIDsToSlidesAndWriteToFileForFacets "+err.toString());
             }else{
     
                 var prefix =new RegExp("^"+courseID+"_"+lecture+"_");
@@ -590,15 +596,15 @@ exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lectur
                                         if (err) {
                                             throw "_addIDsToSlidesAndWriteToFileForFacets "+err.toString();
                                         }else{
-                                            editor_emitter.emit("fileUpdated",courseID, lecture);
+                                            // editor_emitter.emit("fileUpdated",courseID, lecture); // again endless loop, look few lines below
                                             for(var key in slidesToDelete){
                                                 for(var k = 0;k<crs.length;k++){
                                                     if(crs[k].slideid===key){
                                                         var _id= crs[k]._id;
                                                         crs[k].remove(function (err){
                                                             if(err)
-                                                                throw "_addIDsToSlidesAndWriteToFileForFacets "+err.toString();
-                                                            editor_emitter.emit("removedID", _id);
+                                                                console.log("_addIDsToSlidesAndWriteToFileForFacets "+err.toString());
+                                                            //    editor_emitter.emit("removedID", _id); // no need to cause recursion - this is called using MMan but another emit causes endless loop (maintenance_ext catch it again and again save info about update for MMan...)
                                                             lock.notifyDeleted();
                                                         });
                                                     }
@@ -652,12 +658,13 @@ exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lectur
 }
 
 
-function writeToFile(course, lecture, res, file, lectureUrl, content, callback){
+function writeToFile(course, lecture, res, file, lectureUrl, content, callback, emitEvents){
     fs.writeFile(file, content, function (err) {
         if (err) {
             returnThrowError(500, 'Problem with saving document: '+err.message, res, callback);
         }else{
-            editor_emitter.emit("fileUpdated", course, lecture);
+            if(typeof emitEvents=="undefined" || emitEvents===true)
+                editor_emitter.emit("fileUpdated", course, lecture);
             var t = new HTMLContent("http://"+lectureUrl, "Document updated, <a href=\"http://"+lectureUrl+"\">back to presentation</a>");
             returnData(res, callback, t);
 
@@ -743,8 +750,8 @@ function returnData(res, callback, data){
         if(typeof callback!="undefined")
             callback(null, data);
         else
-             console.error("Nor HTTP Response or callback function defined!");
-//            throw "Nor HTTP Response or callback function defined!";
+            console.error("Nor HTTP Response or callback function defined!");
+    //            throw "Nor HTTP Response or callback function defined!";
     }
 }
 
@@ -767,8 +774,8 @@ function returnDataHTML(res, callback, data){
             o.html = data;
             callback(null, o);
         }else
-             console.error("Nor HTTP Response or callback function defined!");
-//            throw "Nor HTTP Response or callback function defined!";
+            console.error("Nor HTTP Response or callback function defined!");
+    //            throw "Nor HTTP Response or callback function defined!";
     }
 }
 
@@ -857,4 +864,30 @@ function IDSyncLock(toDelete, toUpdate, toInsert, callback, lecture, course, ori
             callback(this.response, this.course, this.lecture, false, this.originalCallback);
         }
     };
-}
+};
+
+
+/**
+ * Add id to presentation without using editor
+ * @param courseID course ID ("mdw")
+ * @param lectureID lecture ID ("lecture1")
+ * @param host hostname (domain)
+ * @param res HTTP response (if called via HTTP)
+ * @param callback callback function (internally)
+ * @param emitEvents if true emiiter emits events about removed IDs and updated file
+ */
+exports.makeindices = function(courseID, lectureID, host, res, callback, emitEvents){
+    var htmlfile = SLIDES_DIRECTORY+ '/'+courseID+'/'+lectureID+".html";
+    fs.readFile(htmlfile, function (err, data) {
+        if (err){
+            returnThrowError(500, err.message, res, callback);
+        }else{
+            try{
+                var resourceURL = host+ RAW_SLIDES_DIRECTORY+"/"+courseID+"/"+lectureID+".html";
+                addIDsToSlidesAndWriteToFile(data.toString(), courseID, lectureID, res, resourceURL, htmlfile, callback,emitEvents);      
+            }catch(error){
+                returnThrowError(500, error, res, callback);
+            }
+        }
+    });
+};

@@ -162,7 +162,7 @@ nav li > a:hover, nav li > a:active {
 }
 #rssicon{
     margin:0;
-     display: inline-block;
+    display: inline-block;
     position: relative;
     display: inline-block; 
     height: 21px;
@@ -639,7 +639,7 @@ input[type=text]:focus, textarea:focus { background:#f1f6f9; padding:8px 5px; bo
 #facet_section{
     margin:5px 10px;
     width: 200px;
-      float:left;
+    float:left;
     display:block;
 }
 
@@ -647,8 +647,8 @@ input[type=text]:focus, textarea:focus { background:#f1f6f9; padding:8px 5px; bo
     margin:0 5px 5px 1px;
     padding: 3px;
     -webkit-box-shadow: 0px 0px 10px #ccc;
--moz-box-shadow: 0px 0px 10px #ccc;
-box-shadow: 0px 0px 10px #ccc;
+    -moz-box-shadow: 0px 0px 10px #ccc;
+    box-shadow: 0px 0px 10px #ccc;
 }
 #facet_section div{
     background-color:#fff;
@@ -663,9 +663,9 @@ box-shadow: 0px 0px 10px #ccc;
 }
 
 .facet_menu li:hover{
-     color: #fff;
-     background-color: #3F9DCD;
-     cursor: pointer;
+    color: #fff;
+    background-color: #3F9DCD;
+    cursor: pointer;
 }
 
 .facet_title{
@@ -675,10 +675,34 @@ box-shadow: 0px 0px 10px #ccc;
 
 .facet_selected{
     background: #3F9DCD;
+    color:#fff;
 }
 .facet_notselected{
     opacity: 0.6;
 }
+
+#facet_results{
+    float:left; 
+    -moz-column-count: 2;
+    -webkit-column-count: 2;
+    -moz-column-gap: 2em;
+    -moz-column-width: 380px;
+    -webkit-column-width: 380px;    
+    -webkit-column-rule: 1px solid #c4c8cc;
+    -webkit-column-gap: 2em;
+    margin:0 0 0 20px;
+    padding: 0;
+}
+
+#facet_results ul{
+    margin:0;
+    padding: 0;
+}
+
+#facet_results ul li{
+    padding: 2px 0 0 0;
+}
+
 
 /*----- MEDIA QUERIES --------------*/ 
 

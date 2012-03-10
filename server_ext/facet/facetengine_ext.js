@@ -160,8 +160,12 @@ function recursiveQuery(depth, query, page, baseUrl, res, callback){
             _query.where('value',q[0].value);
         }else if(query.booleanQueries.length>0){
             var q = query.booleanQueries.splice(0,1); // take 1st item from array        
-            _query.where('type', typePrefix+q[0].type);
-            
+                _query.where('type', typePrefix+q[0].type);
+            if(typeof q[0].value=="boolean" && q[0].value===true){
+                _query.where('value',"true");
+            }else if(typeof q[0].value=="boolean" && q[0].value===false){
+                 _query.where('value',"false");
+            }
         }else{// should not happen but better safe than sorry ;)
             returnData(res, callback, query.results);
         }
@@ -241,7 +245,7 @@ function returnThrowError(code, msg, res, callback){
         if(typeof callback!="undefined"){
             callback(msg, null);
         }else{
-             console.error(msg);
+            console.error(msg);
         }
     }       
 }
@@ -263,7 +267,7 @@ function returnData(res, callback, data){
         if(typeof callback!="undefined")
             callback(null, data);
         else
-             console.error("Nor HTTP Response or callback function defined!");
-//            throw "Nor HTTP Response or callback function defined!";
+            console.error("Nor HTTP Response or callback function defined!");
+    //            throw "Nor HTTP Response or callback function defined!";
     }
 }

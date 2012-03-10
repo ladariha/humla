@@ -170,7 +170,7 @@ function returnData(res, contentType, callback, data){
         if(typeof callback!="undefined")
             callback(null, data);
         else
-              console.error("Nor HTTP Response or callback function defined!");
+              console.error("Nor HTTP Response or callback function defined! - Slideindex");
 //            throw "Nor HTTP Response or callback function defined!";
     }
 }
