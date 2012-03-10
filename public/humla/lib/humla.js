@@ -544,6 +544,60 @@ var MessageBox = function(message) {
 };
 
 
+/* MENU BAR */
+
+var MenuBar = function(message) {
+    this.nav = null;    
+    this.hidden = true;
+    
+    // Menu bude mít buď zobrazený poloprůhledný klikadlo, nebo celý menu, nebo menu i s nabídkou
+    
+    this.showMenu = function(update) {
+        if (this.nav && update) {
+            humla.utils.documentBody.removeChild(this.nav);
+            this.nav = null;
+        }
+        
+        if (!this.div) {
+            this.nav = humla.utils.document.createElement("nav");           
+            
+            //Generate menu Icons with texts TODO
+            this.nav.innerHTML = "<ul id='menu'><li>Plugins</li><li>Views</li><li>Settings</li><li class='buttonActive' id='buttonDraw' onclick='ex_canvas.addCanvas(); return false;'>Draw</li></ul>";            
+            
+            humla.utils.documentBody.insertBefore(this.nav, humla.utils.documentBody.childNodes[0]);
+        }        
+    }    
+    
+    this.hideMenu = function() {        
+        if (this.nav) {
+            this.nav.innerHTML = "<div class='toggle'></div>";        
+        } else {            
+            this.nav = humla.utils.document.createElement("nav");
+            this.nav.innerHTML = "<div class='toggle'></div>";
+            humla.utils.documentBody.insertBefore(this.nav, humla.utils.documentBody.childNodes[0]);
+        }
+        this.nav.className = "lower";
+        this.nav.addEventListener("mouseup", function() {
+            humla.menubar.showMenu(true);
+            humla.menubar.hidden = false;
+        });
+    }
+    
+    this.toggle = function() {
+        if(this.hidden) {
+            this.showMenu(true);
+        } else {
+            this.hideMenu();
+        }
+        this.hidden = !this.hidden;
+    }
+    
+    
+    
+};
+
+
+
 /* LOAD HUMLA */
 
 document.addEventListener("DOMContentLoaded", function() {

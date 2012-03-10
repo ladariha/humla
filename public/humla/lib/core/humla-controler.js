@@ -17,7 +17,10 @@ Controler = function(window) {
     
     // fullscreen 
     this._fullscreen = false;
-        
+    
+    // To build elements
+    this._toBuild = false;
+    
     // HTML document
     this.document = window.document;
     
@@ -25,9 +28,11 @@ Controler = function(window) {
     this.lastModified = "n/a";
     if (this.document.lastModified) {
         var lmd = new Date(Date.parse(document.lastModified) - new Date().getTimezoneOffset()*60*1000);
-        var fmt = function(v) { return (v+"").length == 1 ? "0" + v : v; };        
+        var fmt = function(v) {
+            return (v+"").length == 1 ? "0" + v : v;
+        };        
         this.lastModified = lmd.toDateString() + ", " + fmt(lmd.getHours()) + 
-            ":" + fmt(lmd.getMinutes()) + ":" + fmt(lmd.getSeconds());
+        ":" + fmt(lmd.getMinutes()) + ":" + fmt(lmd.getSeconds());
     }
     
     // currently pressed key
@@ -37,7 +42,10 @@ Controler = function(window) {
     this.views = [];
     
     // enabled extensions
-    this.extensions = { index : {}, list : [] };
+    this.extensions = {
+        index : {}, 
+        list : []
+    };
     
     // currently selected presentation view
     this.currentView = null;
@@ -84,15 +92,20 @@ Controler = function(window) {
     
     /* calls a method of all extensions if exist */
     this.callExtensionsInterface = function(method, params, onSuccess, onError) {
+        var toContinue = true;
         try {
-            for (var i = 0; i < this.extensions.list.length; i++)
-                this.extensions.list[i].callExtensionInterface(method, params);
+            
+            for (var i = 0; i < this.extensions.list.length; i++){
+                var returned = this.extensions.list[i].callExtensionInterface(method, params);
+                if (returned != null && returned == false) toContinue = false;
+            }
             if (onSuccess)
                 onSuccess();
         } catch (e) {
             if (onError)
                 onError(e);
         }    
+        return toContinue;
     };
     
     // the main method to load the views' scripts and run the controler
@@ -105,40 +118,53 @@ Controler = function(window) {
                 for (var z = 0; z < this.extensions.list[y].config.scripts.length; z++) {
                     var _src = (this.extensions.list[y].config.scripts[z].src.indexOf("http") !== 0  ? 
                         this.extensions.list[y].baseDir : "") + this.extensions.list[y].config.scripts[z].src;
-                    scripts.push({ src : _src,
-                        g : this.extensions.list[y].config.scripts[z].g });
+                    scripts.push({
+                        src : _src,
+                        g : this.extensions.list[y].config.scripts[z].g
+                    });
                 }
         }
         for (var x = 0; x < this.views.length; x++)
-            scripts.push({ src : this.views[x].baseDir + this.views[x].config.script.src,
-                g : this.views[x].config.script.g });
+            scripts.push({
+                src : this.views[x].baseDir + this.views[x].config.script.src,
+                g : this.views[x].config.script.g
+            });
         
         // loads the scripts and update the state of the controler once 
         // all finished loading
         var ctrl = this;
-        humla.utils.loadScripts(function() { ctrl.updateControlerState(); }, scripts);       
+        humla.utils.loadScripts(function() {
+            ctrl.updateControlerState();
+        }, scripts);       
     };
 
     // update window to fit the slide to the fullscreen if enabled
     this.updateFullscreenWindow = function(event) {
         if (this._fullscreen) {
             var newZoom = 1;
+            document.body.webkitRequestFullScreen();
             if (this.window.innerHeight < this.window.innerWidth)
                 newZoom = this.window.innerHeight / SLIDE_HEIGHT;
+                //newZoom = (screen.height-10) / SLIDE_HEIGHT;
             else
                 newZoom = this.window.innerWidth / SLIDE_WIDTH;
+                //newZoom = (screen.width - 10) / SLIDE_WIDTH;
             for (var i = 0; i < humla.slides.length; i++)
                 humla.slides[i].element.style.zoom = newZoom;        
+            
         }
-	};
+    };
     
     // set the fullscreen on/off
     this.__defineSetter__('fullscreen', function(value) {
         if (this._fullsceen != value) {
             this._fullscreen = value;
-            if (!this._fullscreen)
+            if (!this._fullscreen){
                 for (var i = 0; i < humla.slides.length; i++)
                     humla.slides[i].element.removeAttribute("style");
+                
+                document.webkitCancelFullScreen();
+            }
             else
                 this.updateFullscreenWindow();
         }
@@ -149,12 +175,22 @@ Controler = function(window) {
         return this._fullscreen;
     });
     
+    // set the fullscreen on/off
+    this.__defineSetter__('toBuild', function(value) {
+        this._toBuild = value;
+    });
+    
+    // get the value of the toBuild
+    this.__defineGetter__('toBuild', function() {
+        return this._toBuild;
+    });
+    
     // sets the state of the controler - updates the window location hash 
     this.setState = function() {
         if (this.currentView !== null) {
             var cm = this.currentView;
             this.window.location.hash = humla.slides[cm.currentSlide - 1].url + 
-                "/v" + cm.config.id;
+            "/v" + cm.config.id;
         }
     };
     
@@ -177,7 +213,10 @@ Controler = function(window) {
     // parses the state and returns it as a state object
     this.parseState = function(state_str) {
         var state = (state_str ? state_str : this.window.location.hash);
-        var r = { view : this.currentView ? this.currentView.config.id : 1, slideNum :  1 };
+        var r = {
+            view : this.currentView ? this.currentView.config.id : 1, 
+            slideNum :  1
+        };
         var rexp = new RegExp("^#!?/?([0-9A-Za-z_\-]+)(/v([0-9A-Za-z]{1,2}))?/?$");
         if (rexp.test(state)) {
             if (RegExp.$3)

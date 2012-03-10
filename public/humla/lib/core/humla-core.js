@@ -187,11 +187,17 @@ var View = function(config, keys, baseDir) {
     });
 
     this.executeViewInterface = function(method, params) {
-        if (this.objref && this.objref[method])
-            this.objref[method].call(this.objref, params);
+        var toContinue = true;
+        var returned = true;
+        if (this.objref && this.objref[method]){
+            returned = this.objref[method].call(this.objref, params);
+            if (returned != null && returned == false) toContinue = false;
+            }
                 
         // try to execute the same method on extensions
-        humla.controler.callExtensionsInterface(method, params, null, null);        
+        returned = humla.controler.callExtensionsInterface(method, params, null, null); 
+        if (returned != null && returned == false) toContinue = false;
+        return toContinue;
     };
     
     // current slide
@@ -314,8 +320,8 @@ var View = function(config, keys, baseDir) {
 
     this.gotoNext = function() {
         if (this.currentSlide - 1 < humla.slides.length - 1) {
-            this.executeViewInterface('leaveSlide', humla.slides[this.currentSlide - 1]);
-            this.currentSlide = this.currentSlide + 1;
+            var leave = this.executeViewInterface('leaveSlide', humla.slides[this.currentSlide - 1]);   
+            if (leave) this.currentSlide = this.currentSlide + 1;
             this.activateCurrentSlide();        
         }
     };
@@ -377,7 +383,9 @@ var Extension = function(config, baseDir) {
     
     this.callExtensionInterface = function(method, params) {
         if (this.objref && this.objref[method])
-            this.objref[method].call(this.objref, params);
+            var returned = this.objref[method].call(this.objref, params);
+        if (returned != null && returned == false) return false;
+        else return true;
     };
     
     
