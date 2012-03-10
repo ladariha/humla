@@ -1,0 +1,63 @@
+.paintingCanvas{
+    width: 800px;
+    height: 600px;
+    z-index: 10;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.controlPanel{
+    width: 40px;
+    height: 300px;
+    margin-top: 130px;
+    margin-bottom: 130px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    z-index: 15;
+    position:absolute;
+    right: 0;
+    top: 0;
+    background: rgba(0, 0, 0, 0.1);
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    
+}
+.controlPanel ul{
+    float: left;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.controlPanel li{
+    width: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    height: 20px;
+    padding: 7px;
+    margin: 3px;
+    float: left;
+    font-size: 15px;
+    text-align: center
+}
+.controlPanel li:hover{
+    background: rgba(255, 255, 255, 0.5);
+}
+.controlPanel li.clicked{
+    background: rgba(255, 255, 255, 0.5);
+    font-weight: bold;
+}
+.buttonActive{
+    display: block;
+}
+.buttonInactive{
+    display: none;
+}
+#canvasPalette{
+    position: absolute;
+    top:0;
+    z-index: 100;
+    height: 30px;
+    min-width: 100px;
+    background: black;
+    opacity: 0.6;    
+}
