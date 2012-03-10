@@ -1,17 +1,6 @@
-{
-    // TODO: only placeholder for now
-
-    "views": [
-        {   "id"     : "1",
-            "object" : "view_browser",
-            "script" : { "src" : "views/browser.js" }, 
-            "style"  : { "src" : "views/browser.css", "media" : "screen" }
-        }
-        
-    ],
-    
+{   
     "extensions": [
-        {   "id" : "outline",
+        {   "id" : "ONLY PLACEHOLDER FOR NOW - PLEASE EDIT",
             "object" : "ex_outline",
             "scripts"  : [ { "src" : "ext/outline.js" } ],  
             "styles"   : [ { "src" : "ext/outline.css", "media" : "screen, print" } ], 

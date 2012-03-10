@@ -196,12 +196,6 @@
             "scripts" : [ {"src" : "ext/menu.js"} ],      
             "enabled" : true 
         },
-        {"id" : "indexeddb",
-            "object" : "ex_db",
-            "scripts" : [ {"src" : "ext/indexeddb/indexeddb.js"} ],      
-            "enabled" : true 
-        },
-        
         {"id" : "slideindex",
             "object" : "ex_slideindex",
             "scripts" : [ {"src" : "ext/slideindex.js"} ],

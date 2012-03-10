@@ -1,32 +1,44 @@
 exports.parse =function parse($,slideIndex){   
-    var temporary = {};      
-    temporary.gbooks = [];
-    slideIndex.content.gbooks= [];
-    var slide=1; 
-    slideIndex.gBooksCount = 0;
-    $('body').find('.slide').each(function(){
-        $(this).find('.h-gbooks').each(function(){
-            slideIndex.gBooksCount++;
-            var gbook = {};
-            gbook.id = $(this).prop('id');
-            gbook.slide = slideIndex.baseURL+'#!/'+slide; // this corresponds to number in slide's URL, so first slide has number 1
-            gbook.type = 'gbooks';
-            temporary.gbooks.push(gbook);
-        });
-        slide++;    
-    });   
+    try{
+        var temporary = {};      
+        temporary.gbooks = [];
+        slideIndex.content.gbooks= [];
+        var _arr = {};
+        for(var a=0;a<slideIndex.content.slides.titles.length;a++){
+            _arr[slideIndex.content.slides.titles[a].order] = slideIndex.content.slides.titles[a];
+        }
     
-    if(temporary.gbooks.length===0)
-           slideIndex.sendResponse(slideIndex); 
+        slideIndex.gBooksCount = 0;
+        $('body').find('.slide').each(function(index, element){
+            $(this).find('.h-gbooks').each(function(){
+                slideIndex.gBooksCount++;
+                var gbook = {};
+                gbook.id = $(this).prop('id');
+                gbook.slideid = _arr[index+1].slideid;
+                gbook.slide_title= _arr[index+1].title;
+                gbook.slide = slideIndex.baseURL+'#!/'+_arr[index+1].order; // this corresponds to number in slide's URL, so first slide has number 1
+                gbook.type = 'gbooks';
+                temporary.gbooks.push(gbook);
+            });
+        });   
     
-    for(var i in temporary.gbooks){
-        parseSingleGbook(temporary.gbooks[i],slideIndex);
+        if(temporary.gbooks.length===0)
+            slideIndex.sendResponse(slideIndex); 
+    
+        for(var i in temporary.gbooks){
+            parseSingleGbook(temporary.gbooks[i],slideIndex);
+        }
+    }catch(e){
+       slideIndex.sendResponse(); 
     }
-
 };
 
 
-
+/**
+ * Parses single Google Book
+ * @param gbook object with information about gbook that was found in parse method
+ * @param slideIndex index container itself
+ */
 function parseSingleGbook(gbook,slideIndex){
     var https = require('https');
     var id = gbook.id;
@@ -64,12 +76,14 @@ function parseSingleGbook(gbook,slideIndex){
                 gbook.date = data.volumeInfo.publishedDate;
                 gbook.category = [];
                 var temp="";
-                for (var i = 0; i < data.volumeInfo.categories.length; i++)
-                    gbook.category[i] = data.volumeInfo.categories[i];
+                if(typeof data.volumeInfo.categories !="undefined")
+                    for (var i = 0; i < data.volumeInfo.categories.length; i++)
+                        gbook.category[i] = data.volumeInfo.categories[i];
            
                 gbook.author = [];
-                for (var i = 0; i < data.volumeInfo.authors.length; i++)
-                    gbook.author[i]=data.volumeInfo.authors[i];
+                if(typeof data.volumeInfo.authors !="undefined")
+                    for (var i = 0; i < data.volumeInfo.authors.length; i++)
+                        gbook.author[i]=data.volumeInfo.authors[i];
 
                 slideIndex.content.gbooks.push(gbook);
             }else{

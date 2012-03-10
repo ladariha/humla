@@ -11,7 +11,8 @@ var ObjectId = Schema.ObjectId;
 
 var SlideidSchema = new Schema({
     _id: ObjectId,
-    slideid: String
+    slideid: String,
+    title: String
 });
 
 mongoose.model('Slideid', SlideidSchema);  

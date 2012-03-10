@@ -45,7 +45,11 @@ exports.create =  function(atom, iterator, domain){
                 generatedLists+= structureToHtml(index);
                 extensions.forEach(function (ext){
                     if(ext.createFeedList !== null && typeof ext.createFeedList== 'function'){
-                        generatedLists+="<div>"+ext.createFeedList(index)+"</div>\n";  // THIS IS SYNCHRONOUS SINCE EXTENSIONS SHOULD ONLY CREATE STRUCTURE FROM GIVEN DATA, NO I/O NEEDED   
+                        try{
+                            generatedLists+="<div>"+ext.createFeedList(index)+"</div>\n";  // THIS IS SYNCHRONOUS SINCE EXTENSIONS SHOULD ONLY CREATE STRUCTURE FROM GIVEN DATA, NO I/O NEEDED   
+                        }catch(err){
+                            generatedLists+="";
+                        }
                     }
                 });
                 atom.notify(generatedLists, iterator);

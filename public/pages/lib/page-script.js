@@ -22,8 +22,8 @@ var lectures_ul;
 var infotext_elm;
 var debug_elm;
 
-//TODO: stáhnout lectures a courses data v jednom jsonu najednou
-var lectures = [];
+// Cached current lectures (only 1 course)
+var currentLectures = [];
 
 ///////////////////////////////
 // Handler of data access 
@@ -41,7 +41,7 @@ function DataAccess() {
     
     // Send GET request for courses JSON
     this.loadCourses = function() {
-        var $jqXHR = $.getJSON("/api/facet/courses", function(courses) {                   
+        var $jqXHR = $.getJSON("/api/info/courses", function(courses) {                   
             course_ul.innerHTML = "" ;//lectures_ul.innerHTML = "";
             $("#course-hint").hide();
             for(var i in courses) {
@@ -74,7 +74,8 @@ function DataAccess() {
     }
     // send GET request for lectures based on course id
     this.loadLectures = function (id) {
-        var $jqXHR = $.getJSON("/api/facet/"+id+"/lectures", function(lectures) {            
+        var $jqXHR = $.getJSON("/api/info/"+id+"/lectures", function(lectures) {            
+            currentLectures = lectures;
             console.log(id);
             lectures_ul.innerHTML="";
             $("#lecture-hint").hide();
@@ -89,6 +90,7 @@ function DataAccess() {
                 }
                 console.log("_"+c.presentationURL);
                 new_element.setAttribute('data-link', c.presentationURL);        
+                new_element.setAttribute('data-id', c._id);        
                 new_element.setAttribute('id', c.courseID+';'+c.lectureID);  
                 new_element.setAttribute('title', c.presentationURL); // kvulit IE
                 lectures_ul.insertBefore(new_element, lectures_ul.firstChild);
@@ -114,21 +116,31 @@ function DataAccess() {
         
     }
     
+    this.findLecture = function(id) {
+        for(var i=0, n=currentLectures.length; i<n; i++) {            
+            if (currentLectures[i]._id == id) return currentLectures[i];            
+        }        
+        return null;
+    }
     
     // First fill all available info about slide and then send request to index API
-    this.loadInfo = function (url) { //(course_id,lect_id) {  
-        var a = '<h2 id="lecturename">MI-MDW: Data se propsala</h2>';
+    this.loadInfo = function (elm) { //(course_id,lect_id) {          
+        var url = elm.dataset ? elm.dataset.link : elm.title;
+        var lecture = this.findLecture(elm.dataset ? elm.dataset.id : -1);           
+        var t = ($(elm).attr('id')).split(';');       
+
+        var a = '<h2 id="lecturename">'+lecture.title+'</h2>';
         a+= '<div id="buttons"><a href="http://'+url+'" target="_blank" class="button" tabindex="3">Open</a>';
-        a+= '<a href="">Edit</a>';
+        a+= '<a href="editlecture.html?course='+t[0]+'&lecture='+t[1]+'">Edit</a>';
         a+= '</div><br/>';
-        a+= '<h3>Abstrakt</h3>';
-        a+= '<p id="abstract">Obsah této přednášky</p> ';
-        a+= '<h3>Index</h3>';
-        a+= '<ul id="index" class="slideindex-ul" >';
-        a+= '<li>Nedddco</li>';
-        a+= '<li>Neco</li>';
-        a+= '</ul>';
-        infotext_elm.innerHTML = a;
+        if (lecture.lectureAbstract != "undefined") {
+            a+= '<h3>Abstrakt</h3>';
+            a+= '<p id="abstract">'+lecture.lectureAbstract+'</p> ';
+        }
+        a+= '<h3>Index</h3>';        
+        a+= '<ul id="index" class="slideindex-ul" ><li>Loading...</li><ul>' 
+        infotext_elm.innerHTML = a;        
+
         
         this.loadIndex(url);
         
@@ -246,7 +258,7 @@ function PageHandler(){
         $("#lecture-items").on("click", "li", function(e){
             $(this).toggleClass("selected",true).siblings().removeClass("selected");            
             var targ = (e.srcElement) ? e.srcElement : e.target; // hack kvuli FF
-            dataAccess.loadInfo(targ.dataset ? targ.dataset.link : targ.title); //hack kvuli IE        
+            dataAccess.loadInfo(targ); //targ.dataset ? targ.dataset.link : targ.title, targ.dataset ? targ.dataset.id : targ.title); //hack kvuli IE        
         });  
         
         // login/registration button // TODO: odprasit... moc selektorů

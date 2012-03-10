@@ -39,7 +39,7 @@ button {  width: auto; overflow: visible; }
 
 body, select, input, textarea {
     color: #111;  
-    font-family: 'Trebuchet MS', Trebuchet, 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;  
+    font-family: 'Trebuchet MS', Trebuchet, 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Calibri, Arial, sans-serif;  
 }
 h1, h2, h3, h4, h5, h6 { font-weight: bold; }
 h2 {font-size: 1.571em}	
@@ -400,6 +400,7 @@ header div#login a:hover {
 }
 .items li {
     font-size: 1.4em;    
+    font-family: Calibri;
     margin: 0; 
     padding: 5px 10px;
     list-style:none;
@@ -634,7 +635,50 @@ input[type=text]:focus, textarea:focus { background:#f1f6f9; padding:8px 5px; bo
     box-shadow: 0px 0px 10px 0px #000;
 }
 
+/*----- FACETS -----------------------*/
+#facet_section{
+    margin:5px 10px;
+    width: 200px;
+      float:left;
+    display:block;
+}
 
+#facet_section div{
+    margin:0 5px 5px 1px;
+    padding: 3px;
+    -webkit-box-shadow: 0px 0px 10px #ccc;
+-moz-box-shadow: 0px 0px 10px #ccc;
+box-shadow: 0px 0px 10px #ccc;
+}
+#facet_section div{
+    background-color:#fff;
+    border:1px solid #D2D2D2;
+}
+
+.facet_menu li, .facet_menu{
+    list-style: none;
+    display:block;
+    padding-left: 10px;
+    margin-left: 0;
+}
+
+.facet_menu li:hover{
+     color: #fff;
+     background-color: #3F9DCD;
+     cursor: pointer;
+}
+
+.facet_title{
+    color:#444;
+    font-weight: bold;
+}
+
+.facet_selected{
+    background: #3F9DCD;
+}
+.facet_notselected{
+    opacity: 0.6;
+}
 
 /*----- MEDIA QUERIES --------------*/ 
 

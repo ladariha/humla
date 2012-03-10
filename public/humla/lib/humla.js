@@ -1,3 +1,10 @@
+/*
+    Humla - HTML5 presentation environment
+    Tomas Vitvar, tomas@vitvar.com    
+    
+    humla, browser, Utils, MessageBox
+*/
+
 
 // if you want to change this you need to adjust values in humla.css
 var SLIDE_WIDTH = 800;
@@ -25,8 +32,8 @@ var humla = {
     // message box
     msgbox    : null,
     
-    // menu bar
-    menubar   : null,
+    // menu
+    menu   : null,
     
     // all slides in the presentation
     slides    : [],
@@ -69,11 +76,9 @@ var humla = {
     load : function() {
     
         // create utils object
-        humla.utils = new Utils(window);
+        humla.utils = new Utils(window);       
         
-        // create MenuBar object
-        humla.menubar = new MenuBar();
-    
+           
         // get the base url of the humla directory
         var scripts = humla.utils.documentHead.getElementsByTagName("script");
         if (scripts !== null)
@@ -169,6 +174,9 @@ var humla = {
             
             // create the controler
             humla.controler = new Controler(window);
+            
+            // create Menu object
+            humla.menu = new Menu();        
             
             // create the root section and load the slides
             humla.root = new Section(humla.utils.documentBody, null);
@@ -275,9 +283,8 @@ var humla = {
                     registerViews(mainConfig.data, mainConfig.baseDir);
                     registerViews(suplConfig.data, suplConfig.baseDir);
                     registerExtensions(mainConfig.data, mainConfig.baseDir);
-                    registerExtensions(suplConfig.data, suplConfig.baseDir);
+                    registerExtensions(suplConfig.data, suplConfig.baseDir);                   
                     
-                   
                     
                     // load all the scripts and run the controller
                     humla.controler.run();
@@ -555,7 +562,7 @@ var MenuBar = function(message) {
             this.nav = humla.utils.document.createElement("nav");           
             
             //Generate menu Icons with texts TODO
-            this.nav.innerHTML = "<ul id='menu'><li>Plugins</li><li>Views</li><li>Settings</li><li class='buttonActive' id='buttonDraw' onclick='ex_canvas.addCanvas(); return false;'>Draw</li><li class='buttonInactive' id='buttonStopDrawing'>Stop drawing</li></ul>";            
+            this.nav.innerHTML = "<ul id='menu'><li>Plugins</li><li>Views</li><li>Settings</li><li class='buttonActive' id='buttonDraw' onclick='ex_canvas.addCanvas(); return false;'>Draw</li></ul>";            
             
             humla.utils.documentBody.insertBefore(this.nav, humla.utils.documentBody.childNodes[0]);
         }        
@@ -588,7 +595,6 @@ var MenuBar = function(message) {
     
     
 };
-
 
 
 

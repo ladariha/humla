@@ -8,51 +8,52 @@ var jsdom = require('jsdom');
 * @param callback callback function that is called after all items are found
  */
 exports.items = function(presentationURL, html, type, callback){
-    var    window = jsdom.jsdom().createWindow();
-    jsdom.jQueryify(window, "../../public/lib/jquery-1.7.min.js", function() {
-        window.jQuery('html').append(html);
-        var  $ = window.jQuery;
-        var baseUrl='';
-        $('html').find('base').each(function(){
-            if($(this).attr('href').length)
-                baseUrl=($(this).attr('href'));
-        });
-        var microdataParser = microdata('html',  $, baseUrl);
+    try{
+        var    window = jsdom.jsdom().createWindow();
+        jsdom.jQueryify(window, "../../public/lib/jquery-1.7.min.js", function() {
+            window.jQuery('html').append(html);
+            var  $ = window.jQuery;
+            var baseUrl='';
+            $('html').find('base').each(function(){
+                if($(this).attr('href').length)
+                    baseUrl=($(this).attr('href'));
+            });
+            var microdataParser = microdata($, baseUrl);
         
-        if(typeof type!="undefined"){
-            var microdataTyped = {};
-            microdataTyped.items = [];
+            if(typeof type!="undefined"){
+                var microdataTyped = {};
+                microdataTyped.items = [];
         
-            for(var i=0;i<microdataParser.items.length;i++){
-                finalize(microdataParser.items[i]);
-            }
+                for(var i=0;i<microdataParser.items.length;i++){
+                    finalize(microdataParser.items[i]);
+                }
                 
-            function finalize(microitem){
-                if(microitem.properties){ // if item contains other items
-                    for(var key in microitem.properties){
-                        for(var j=0; j< microitem.properties[key].length; j++){
-                            finalize(microitem.properties[key][j]);        
+                function finalize(microitem){
+                    if(microitem.properties){ // if item contains other items
+                        for(var key in microitem.properties){
+                            for(var j=0; j< microitem.properties[key].length; j++){
+                                finalize(microitem.properties[key][j]);        
+                            }
                         }
                     }
-                }
 
-                if(microitem.type){
-                    for(var j=0; j<microitem.type.length;j++){ // iterate all itemtypes
-                        if(microitem.type[j] && microitem.type[j].toLowerCase() === type.toLowerCase()){
-                            microdataTyped.items.push(microitem);
-                            j = microitem.type.length+1;
+                    if(microitem.type){
+                        for(var j=0; j<microitem.type.length;j++){ // iterate all itemtypes
+                            if(microitem.type[j] && microitem.type[j].toLowerCase() === type.toLowerCase()){
+                                microdataTyped.items.push(microitem);
+                                j = microitem.type.length+1;
+                            }
                         }
                     }
                 }
+                callback(null, microdataTyped);
+            }else{
+                callback(null, microdataParser);    
             }
-            callback(microdataTyped);
-        }else{
-            callback(microdataParser);    
-        }
-        
-        
-        
-    });   
+        });     
+    }catch(err){
+        callback(err,null);
+    } 
 }
 
 
@@ -65,43 +66,105 @@ exports.items = function(presentationURL, html, type, callback){
 * @param callback callback function that is called after all items are found
  */
 exports.vcards = function(presentationURL, html, type,callback){
-    var    window = jsdom.jsdom().createWindow();
-    jsdom.jQueryify(window, "../../public/lib/jquery-1.7.min.js", function() {
-        window.jQuery('html').append(html);
-        var  $ = window.jQuery;
-        var baseUrl='';
-        $('html').find('base').each(function(){
-            if($(this).attr('href').length)
-                baseUrl=($(this).attr('href'));
+    try{
+        var    window = jsdom.jsdom().createWindow();
+        jsdom.jQueryify(window, "../../public/lib/jquery-1.7.min.js", function() {
+            window.jQuery('html').append(html);
+            var  $ = window.jQuery;
+            var baseUrl='';
+            $('html').find('base').each(function(){
+                if($(this).attr('href').length)
+                    baseUrl=($(this).attr('href'));
             
-        });
-        var microdataParser = microdata('html',  $, baseUrl, true);
-        var microdataTyped = {};
-        microdataTyped.items = [];
+            });
+            var microdataParser = microdata( $, baseUrl, true);
+            var microdataTyped = {};
+            microdataTyped.items = [];
         
-        for(var i=0;i<microdataParser.items.length;i++){
-            finalize(microdataParser.items[i]);
-        }
+            for(var i=0;i<microdataParser.items.length;i++){
+                finalize(microdataParser.items[i]);
+            }
                 
-        function finalize(microitem){
-            if(microitem.type){
-                for(var j=0; j<microitem.type.length;j++){ // iterate all itemtypes
-                    if(microitem.type[j] && microitem.type[j].toLowerCase() === "http://microformats.org/profile/hcard"){
-                        microdataTyped.items.push(microitem);
-                        j = microitem.type.length+1;
+            function finalize(microitem){
+                if(microitem.type){
+                    for(var j=0; j<microitem.type.length;j++){ // iterate all itemtypes
+                        if(microitem.type[j] && microitem.type[j].toLowerCase() === "http://microformats.org/profile/hcard"){
+                            microdataTyped.items.push(microitem);
+                            j = microitem.type.length+1;
+                        }
                     }
                 }
             }
-        }
-        var toReturn = "";
+            var toReturn = "";
         
-        for(var i=0;i<microdataTyped.items.length;i++) // each item
-            toReturn+=(vcard(microdataTyped.items[i], $, presentationURL));
+            for(var i=0;i<microdataTyped.items.length;i++) // each item
+                toReturn+=(vcard(microdataTyped.items[i], $, presentationURL));
         
-        callback(toReturn);
-    });   
+            callback(null, toReturn);
+        });   
+    }catch(err){
+        callback(err, null);
+    }
 }
 
+/**
+ * Returns all itemscope items in given presentation in slide given by slideNumber. Be aware that it could return one item several times.
+ * That is because it have to returned items both itemscope and itemprop attribute and also items with only itemscope. The point is that a itemscope can
+ * start in different slide and have some property (itemprop) on another slide. And to enable proper faceted browsing you want to be able to navigate to the slide
+ * that actually contains the property, not to slide where some itemscope begins.
+ * @param html html source code of the presentation
+* @param type (optional) of which itemtype items should be returned
+* @param callback callback function that is called after all items are found
+* @param slideNumber (optional) number of slide that should be searched
+ *
+ */
+exports.itemsFaceted = function(html, type, callback, slideNumber){
+    try{
+        var    window = jsdom.jsdom().createWindow();
+        jsdom.jQueryify(window, "../../public/lib/jquery-1.7.min.js", function() {
+            window.jQuery('html').append(html);
+            var  $ = window.jQuery;
+            var baseUrl='';
+            $('html').find('base').each(function(){
+                if($(this).attr('href').length)
+                    baseUrl=($(this).attr('href'));
+            });
+            var microdataParser = microdataFaceted($, baseUrl, slideNumber);
+            if(typeof type!="undefined"){
+                var microdataTyped = {};
+                microdataTyped.items = [];
+        
+                for(var i=0;i<microdataParser.items.length;i++){
+                    finalize(microdataParser.items[i]);
+                }
+                
+                function finalize(microitem){
+                    if(microitem.properties){ // if item contains other items
+                        for(var key in microitem.properties){
+                            for(var j=0; j< microitem.properties[key].length; j++){
+                                finalize(microitem.properties[key][j]);        
+                            }
+                        }
+                    }
+
+                    if(microitem.type){
+                        for(var j=0; j<microitem.type.length;j++){ // iterate all itemtypes
+                            if(microitem.type[j] && microitem.type[j].toLowerCase() === type.toLowerCase()){
+                                microdataTyped.items.push(microitem);
+                                j = microitem.type.length+1;
+                            }
+                        }
+                    }
+                }
+                callback(null, microdataTyped);
+            }else{
+                callback(null, microdataParser);    
+            }
+        });   
+    }catch(err){   
+        callback(err, null);
+    }
+}
 
 /*
  * FOLLOWING CODE IS MODIFIED VERSION OF MicrodataJS (more information here: https://gitorious.org/microdatajs).
@@ -195,7 +258,59 @@ function splitTokens(s) {
     return [];
 }
 
-function getItems(types, $, _selector) {
+/**
+ *
+ * Returns all top items inside slide div. Note that it does not return the slide item itself. In opposite of simple getItems() 
+ * the top items are all itemsThis is intended because if it should return slide item 
+ * then all items like code/image/etc would have to be properties of the slide item. But it would be limitation because one would have to use item of type
+ * Slide and also add all images/code blocks/tables etc. to the slide item as properties. This is not part of the Slide schema because it is too restrictive.
+ */
+function getItemsFaceted($, slideNumber){
+    var items = [];
+    var iterator = 0;
+    $('html').find('.slide').each(function(){
+        if(typeof slideNumber=="undefined" || iterator === slideNumber)
+        {
+            var slideid = $(this).attr('data-slideid');
+            
+            if($(this).attr('itemscope').length){ //  the entire div with class attribute "slide" is itemscope => it is the only top level item 
+                var item = {};
+                item.type = $(this).attr('itemtype')+"/dsdsdsd";
+                item.container = this;
+                item.properties = [];
+                if($(this).attr('itemref').length)
+                    item.refs = $(this).attr('itemref').split(" ");   
+                var a  = {};
+                a.item = $(this);
+                a.slideid = slideid;
+                items.push(a);
+            }          
+//            }else{ // any itemscope (note that it causes duplications - one nested itemscope (aka itemprop with itemscope) is returned as property of some item and also as a single item
+
+                $(this).find('*[itemscope]').each(function(){ // because this returns EVERYTHING in jsdom :(
+                    if($(this).attr('itemscope').length) //&& (!$(this).attr('itemprop').length || $(this).parent().attr('data-slideid')=== slideid) 
+                    {        
+                        var item = {};
+                        item.type = $(this).attr('itemtype')+"/dsdsdsd";
+                        item.container = this;
+                        item.properties = [];
+                        if($(this).attr('itemref').length)
+                            item.refs = $(this).attr('itemref').split(" ");   
+                        var a  = {};
+                        a.item = $(this);
+                        a.slideid = slideid;
+                        items.push(a);
+                    }
+                });
+//            }     
+        }
+        iterator++;
+    });
+    return items;
+}
+
+
+function getItems($) {
     var items = [];
     $('*[itemscope]').each(function(){ // because this returns EVERYTHING in jsdom :(
         // FIXME if element has itemscope="" then it is not found!!! There is no workaround right now
@@ -330,8 +445,12 @@ function properties($, selector,name) {
 }
 
 
-function findItems(types, $){
-    return getItems(types, $, types);
+function findItems($){ 
+    return getItems($);
+}
+
+function findItemsFaceted($, slideNumber){
+    return getItemsFaceted($, slideNumber);
 }
 
 function itemScope($, selector){
@@ -355,12 +474,12 @@ function itemRef($, selector){
 }
 
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/microdata.html#json
-function microdata(selector, $, baseUrl, extraTagName) {
+function microdata($, baseUrl, extraTagName) {
 
 
     function getObject(item, memory) {
-
-        var result = {};
+        
+        var result = {};  
         
         var types = tokenList('itemtype',$, item);
         if (types.length)
@@ -401,7 +520,7 @@ function microdata(selector, $, baseUrl, extraTagName) {
 
     var result = {};
     result.items = [];
-    var $items =  findItems(selector, $, selector);
+    var $items =  findItems($);
     for(var i = 0;i <$items.length;i++){
         if (itemScope($, $items[i])){
             result.items.push(getObject($items[i], []));
@@ -410,6 +529,69 @@ function microdata(selector, $, baseUrl, extraTagName) {
 
     return result;
 };
+
+/**
+ * For faceted purposes. It doesn't return standard microdata items
+ */
+function microdataFaceted($, baseUrl, slideNumber) {
+
+    function getObject(objecta, memory) {
+        
+        var result = {};
+        result.slideid = objecta.slideid;
+        var item = objecta.item;
+        var types = tokenList('itemtype',$, item);
+        if (types.length)
+            result.type = $(types).toArray();
+        if (itemId($, item, baseUrl))
+            result.id = itemId($, item, baseUrl);
+        result.properties = {};
+        if(typeof extraTagName!="undefined")
+            result.propertiesTagNames = {};
+        properties($, item).each(function(i, elem) {
+            
+            var value;
+            if (itemScope($, elem)) {
+                if ($.inArray(elem, memory) != -1) {
+                    value = 'ERROR';
+                } else {
+                    memory.push(item);
+                    var a = {};
+                    a.slideid = result.slideid;
+                    a.item = elem;
+                    value = getObject(a, memory);
+                    memory.pop();
+                }
+            } else {
+                value = itemValue($, elem, baseUrl);
+            }
+            $.each(tokenList('itemprop',$, elem), function(i, prop) {
+                if (!result.properties[prop])
+                    result.properties[prop] = [];
+                result.properties[prop].push(value);
+                if(typeof extraTagName!="undefined"){
+                    if(!result.propertiesTagNames[prop]){
+                        result.propertiesTagNames[prop] = [];
+                    }
+                    result.propertiesTagNames[prop].push($(elem).prop('tagName'));
+                }
+            });
+        });
+        return result;
+    }
+
+    var result = {};
+    result.items = [];
+    var $items =  findItemsFaceted( $,  slideNumber);
+    for(var i = 0;i <$items.length;i++){
+        if (itemScope($, $items[i].item)){
+            result.items.push(getObject($items[i], []));
+        }
+    }
+
+    return result;
+};
+
 
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/microdata.html#conversion-to-vcard
 function vcard(vcardItem, $, baseUrl) {
@@ -448,7 +630,7 @@ function vcard(vcardItem, $, baseUrl) {
         addLine('PROFILE', [], 'VCARD');
         addLine('VERSION', [], '3.0');
         addLine('SOURCE', [], baseUrl);
-//        addLine('NAME', [], escapeString(baseUrl));
+        //        addLine('NAME', [], escapeString(baseUrl));
         
         if ($vcard.id)
             addLine('UID', [], escapeString($vcard.id));

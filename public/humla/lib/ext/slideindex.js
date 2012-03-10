@@ -7,25 +7,21 @@ var ex_slideindex = {
         var presentationUrl = window.location.href; 
         //        if(humla.controler.currentView.config.id==1 || humla.controler.currentView.config.id==2){
             
-        var slideIndexKey = "slideindex_"+presentationUrl;
+        var fields = presentationUrl.split("/");
+        var course = fields[5];//presentationUrl.substr(0, presentationUrl.indexOf("/"));
+        var lecture= fields[6].substr(0, fields[6].indexOf("."));
+        var slideIndexKey = "slideindex_"+course+"_"+lecture;
         if (humla.utils.window.localStorage && humla.utils.window.localStorage.getItem(slideIndexKey)){
             alert(humla.utils.window.localStorage.getItem(slideIndexKey), 20000, "Content <img src=\"../../../humla/lib/ext/refresh.png\" class=\"slideindex-clearImg\" onClick=\"clearIndexFromLocalStorage('"+presentationUrl+"');\" title=\"Clear index from cache\" alt=\"Clear index from cache\"/>");
         }else{
             
             var ext = this;
-        
-            var fields = presentationUrl.split("/");
             var firstIndex = presentationUrl.indexOf("slides", 0)+7;
             presentationUrl = presentationUrl.substr(firstIndex, presentationUrl.length);
-            var course = fields[5];//presentationUrl.substr(0, presentationUrl.indexOf("/"));
-            var lecture= fields[6].substr(0, fields[6].indexOf("."));
-        
             var request = new XMLHttpRequest();
             var url = "/api/"+course+"/"+lecture+"/index";
             request.open("GET", url, true);
-            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            request.setRequestHeader("Content-length", 200);
-            request.setRequestHeader("Connection", "close");
+            request.setRequestHeader("Accept", "application/json");
             request.onreadystatechange = function(){
                 if (request.readyState==4) {
                     if (request.status == 200){
@@ -47,13 +43,16 @@ var ex_slideindex = {
     },
     designIndex : function(slide, index){
         var presentationUrl = window.location.href;
+        var fields = presentationUrl.split("/");
+        var course = fields[5];//presentationUrl.substr(0, presentationUrl.indexOf("/"));
+        var lecture= fields[6].substr(0, fields[6].indexOf("."));
         var drawings = this.drawingsToHtml(index);
         var github = this.githubToHtml(index);
         var images = this.imagesToHtml(index);
         var codeBlocks = this.codeBlocksToHtml(index);
         var structure = this.structureToHtml(index);
         var gbooks = this.gbooksToHtml(index);
-        var slideIndexKey = "slideindex_"+presentationUrl;
+        var slideIndexKey = "slideindex_"+course+"_"+lecture;
         var finalContent = structure+images+drawings+codeBlocks+github+gbooks;
         
         if (humla.utils.window.localStorage){
@@ -143,7 +142,7 @@ var ex_slideindex = {
             ul+="<li class=\"slideindex-li\">";
             
             if(d.title.length>0){
-                ul+=d.title;
+                ul+=d.slide_title;
             }else{
                 ul+=d.file;
             }
@@ -224,7 +223,11 @@ function dropdown(img, idOflist){
 }
 
 function clearIndexFromLocalStorage(presentationUrl){
-    var slideIndexKey = "slideindex_"+presentationUrl;
+    var presentationUrl = window.location.href; 
+    var fields = presentationUrl.split("/");
+    var course = fields[5];
+    var lecture= fields[6].substr(0, fields[6].indexOf("."));
+    var slideIndexKey = "slideindex_"+course+"_"+lecture;
     if (humla.utils.window.localStorage){
         humla.utils.window.localStorage.removeItem(slideIndexKey);
     }

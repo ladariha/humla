@@ -1,0 +1,47 @@
+{
+    "types":
+    [
+    {
+        "property": "Slide: Importance",
+        "shortName": "Slide_Importance",
+        "type": "value",
+        "url_simple": "/api/facets/Slide_Importance"
+    },
+    {
+        "property": "Slide: Keyword",
+        "type": "value",
+        "shortName": "Slide_Keyword",
+        "url_simple": "/api/facets/Slide_Keyword"
+    },
+    {
+        "property": "Slide: Type",
+        "type": "value",
+        "shortName": "Slide_Type",
+        "url_simple": "/api/facets/Slide_Type"
+    },
+    {
+        "property": "Google Books: Author",
+        "type": "value",
+        "shortName": "Slideindex_Gbook_Author",
+        "url_simple": "/api/facets/Slideindex_Gbook_Author"
+    },
+    {
+        "property": "Google Books: Category",
+        "type": "value",
+        "shortName": "Slideindex_Gbook_Author",
+        "url_simple": "/api/facets/Slideindex_Gbook_Category"
+    },
+    {
+        "property": "Google Drawing",
+        "type": "boolean",
+        "shortName": "Slideindex_Gdrawing",
+        "url_simple": "/api/facets/Slideindex_Gdrawing"
+    },
+    {
+        "property": "Github Code Snippet",
+        "type": "boolean",
+        "shortName": "Slideindex_Github",
+        "url_simple": "/api/facets/Slideindex_Github"
+    }
+    ]
+}

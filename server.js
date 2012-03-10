@@ -17,6 +17,16 @@ var MODELS_DIRECTORY = (path.join(path.dirname(__filename), './models/')).toStri
 var handlers = loadFiles(HANDLERS_DIRECTORY);
 var models = loadFiles(MODELS_DIRECTORY);
 
+var plugins = [];
+plugins.push('./server_ext/slideindex/slideindex_ext.js');
+plugins.push('./server_ext/atom/atom_module_ext.js');
+plugins.push('./server_ext/editor/editor_ext.js');
+plugins.push('./server_ext/facet/facetparser_ext.js');
+plugins.push('./server_ext/facet/facetengine_ext.js');
+plugins.push('./server_ext/microdata/microdataparser_ext.js');
+plugins.push('./server_ext/maintenance/maintenance_lecture_ext.js');
+plugins.push('./server_ext/gbooks/gbooks_ext.js');
+
 app = null; // je to schválně bez var - aby to bylo v module contextu
 
 exports.run = function run( PORT, WEBROOT) {    
@@ -67,6 +77,11 @@ exports.run = function run( PORT, WEBROOT) {
         //console.log("X-"+hand)
         require(hand);
     });
+
+
+    plugins.forEach(function(plugin){
+        require(plugin);
+    });
     
     
     // Static route - after our routes to make AJAX Crawling and request on our slides possible
@@ -79,7 +94,7 @@ exports.run = function run( PORT, WEBROOT) {
    
    
     app.listen(PORT);   
-    console.log("Humla (server) has started, 127.0.0.1:%d, Using Express %s", PORT, express.version);    
+    console.log("Humla (server) has started, 127.0.0.1:%d, Using Express %s, Node %s", PORT, express.version, process.version);    
 }
 
 /**

@@ -3,6 +3,8 @@
     Tomas Vitvar, tomas@vitvar.com
     
     core humla classes
+
+    Slide, Section, View, Extension
 */
 
 /**
@@ -232,7 +234,13 @@ var View = function(config, keys, baseDir) {
                 this.currentSlide = 1;
             humla.utils.activateStyle(this.baseDir + config.style.src, config.style.media);
             this.controler.fullscreen = false;
-            this.executeViewInterface('enterView', this);
+            this.executeViewInterface('enterView', this);            
+            
+            // Call enterMenu on all extensions
+            humla.controler.callExtensionsInterface("processMenu", humla.menu, function(){
+                humla.menu.show();
+            }, null);        
+            
             this.activateCurrentSlide();        
         } else
             throw "Unexpected Error: controler has not been set on the presentation view!";
@@ -294,7 +302,7 @@ var View = function(config, keys, baseDir) {
             this.gotoPrevious();
         
         else if (containsKey(event.keyCode, this.keys.menu))
-            humla.menubar.toggle();
+            humla.menu.toggle();
         
         else if (containsKey(event.keyCode, this.keys.index))
             humla.controler.getExtensionById("slideindex").callExtensionInterface("showIndex",humla.slides[this.currentSlide - 1]);
@@ -381,5 +389,105 @@ var Extension = function(config, baseDir) {
     };
     
     
+};
+
+
+/**
+ * Menu Class
+ * @constructor
+ */
+var Menu = function(config) {
+    
+    this.hidden = true;
+    this.active_layer = "";
+    
+    // Cached elements
+    this.nav = null;    
+    this.layer = null;
+    this.nav_close = null;
+    this.nav_menu = null;
+    
+    // Default tabs
+    this.tabs = {
+        "views":{
+            name:"Views",
+            html:"<h1>Views</h1>"
+        +"<div class='button' onclick='humla.controler.activateView(0);humla.menu.showLayer(\"menu-views\",true);'>Slideshow</div>"
+        +"<div class='button' onclick='humla.controler.activateView(1);humla.menu.showLayer(\"menu-views\",true);'>Presentation</div>"
+        +"<div class='button' onclick='humla.controler.activateView(2);humla.menu.showLayer(\"menu-views\",true);'>Overview</div>"
+        +"<div class='button' onclick='humla.controler.activateView(3);humla.menu.showLayer(\"menu-views\",true);'>Print</div></div>"
+        }        
+    };
+
+    
+    
+    // Class initialization   
+    this.init = function() {
+        this.nav = humla.utils.document.createElement("nav");           
+        this.layer = humla.utils.document.createElement("div");                                      
+        
+        this.nav.innerHTML = "<div class='toggle' onclick='humla.menu.toggle()'>Menu"
+        //this.nav.innerHTML = "<div style='width:100%;text-align:center; color:white;' class='toggle'>Menu"
+        +"<span id='menu-close' class='menu-close-button' style='display:none'>X</span></div>"
+        +"<ul id='menu' style='display:none; height:0px'></ul>";    
+        this.nav.className = "lower";
+        humla.utils.documentBody.insertBefore(this.nav, humla.utils.documentBody.childNodes[0]);
+        humla.utils.documentBody.insertBefore(this.layer, humla.utils.documentBody.childNodes[0]);        
+                
+        this.nav_close = humla.utils.document.getElementById("menu-close");
+        this.nav_menu = humla.utils.document.getElementById("menu");
+        
+    }
+    
+    // Toggle menu 
+    this.toggle = function() {
+        this.hidden = !this.hidden;
+        if(this.hidden) {
+            this.nav_menu.style.display = "none";
+            this.nav_close.style.display = "none";
+            this.nav.className = "lower";
+        //this.showMenu(true);
+        } else {
+            this.nav_menu.style.display = "block";
+            this.nav_close.style.display = "block";
+            this.nav.className = "";
+        //this.hideMenu();
+        }
+    }
+    
+    // Add new tab to tabs object
+    this.addTab = function(id, tab) {
+        this.tabs[id]=tab;        
+    }    
+    
+    
+    // Called after all extensions loaded and their processMenu called
+    this.show = function() {        
+        var menu_items="",layer_items="";
+        for(var tab in this.tabs) {
+            if(this.tabs.hasOwnProperty(tab)) {
+                menu_items+="<li id='menu-item-"+tab+"' title='"+this.tabs[tab].name+"' onclick='humla.menu.showLayer(\"menu-"+tab+"\");'>"+this.tabs[tab].name+"</li>"            
+                layer_items+="<div id='menu-"+tab+"' class='menu-layer' style='display:none;'>"
+                +"<span class='menu-close-button' onclick='humla.menu.showLayer(\"\",true);'>X</span>"
+                +this.tabs[tab].html+"</div>";               
+            }
+        }
+        this.nav_menu.innerHTML = menu_items;
+        this.layer.innerHTML = layer_items;        
+    }
+     
+    // Hide all layers and show one with id
+    this.showLayer= function(id, hide) {        
+        var layers = this.layer.childNodes;            
+        for(var i = 0;i<layers.length;i++) {            
+            layers[i].style.display = !hide && id == layers[i].id ? "block" : "none";                           
+            
+        }                
+    }   
+    
+    // run menu init
+    this.init();
+    
+//this.hideMenu();
 };
 

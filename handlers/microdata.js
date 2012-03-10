@@ -12,7 +12,7 @@ var microdataParser = require('../server_ext/microdata/microdataparser_ext');
  * This associative array contains instances of ContentNegotiation (see below). Array keys are all possible formats 
  * that this api can return. 
  */
-var accepts = [];
+var accepts = {};
 accepts["json"] = new ContentNegotiation("application/json", microdataParser.items,  JSON.stringify,additionalInfo);
 accepts["xml"] = new ContentNegotiation("application/xml",microdataParser.items,  defaults.objectToXML,additionalInfo);
 accepts["application/json"] = new ContentNegotiation("application/json",  microdataParser.items, JSON.stringify,additionalInfo);
@@ -24,7 +24,9 @@ accepts["text/vcard"] = new ContentNegotiation("text/vcard",microdataParser.vcar
 });
 accepts["vcard"] = new ContentNegotiation("text/vcard", microdataParser.vcards, function(data){
     return data;
-}, function(data){return data;});
+}, function(data){
+    return data;
+});
 
 /**
  * Returns all microdata items in :lecture of :course
@@ -34,7 +36,7 @@ app.get('/api/:course/:lecture/microdata', function api(req, res) {
     var lecture = req.params.lecture;
     var alt = querystring.parse(require('url').parse(req.url).query)['alt'];
     var negotiation = negotiateContent(alt, req.headers.accept);
-        var presentationUrl = req.headers.host+RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+'.html';
+    var presentationUrl = req.headers.host+RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+'.html';
     if(typeof negotiation=="undefined"){
         defaults.returnError(406, "Not Acceptable format: Try application/json or application/xml or text/xml or  */*", res);
     }else{
@@ -44,28 +46,27 @@ app.get('/api/:course/:lecture/microdata', function api(req, res) {
                 defaults.returnError(404, err.message, res);
             }else{
                 //                negotiation.microdataSelection
-                negotiation.microdataSelection(presentationUrl, data.toString(),undefined ,function(data){
-                    var container = negotiation.finalize(data, req, course, lecture, undefined);
-                    res.writeHead(200, {
-                        'Content-Type': negotiation.contentType
-                    });
-                    res.write(negotiation.formatCallback(container, undefined,2));
-                    res.end();
+                negotiation.microdataSelection(presentationUrl, data.toString(),undefined ,function(err, data){
+                    if(err){
+                        res.writeHead(500, {
+                            'Content-Type': 'text/plain'
+                        });
+                        res.write(err);
+                        res.end(); 
+                    }else{
+                        var container = negotiation.finalize(data, req, course, lecture, undefined);
+                        res.writeHead(200, {
+                            'Content-Type': negotiation.contentType
+                        });
+                        res.write(negotiation.formatCallback(container, undefined,2));
+                        res.end(); 
+                    }
                 });
             }
         });
     }
 });
 
-app.get("/api/fuj", function(req, res){
-    
-    var slideIndexer = require('./slideindexer');
-    slideIndexer.index("mdw22", "lecture1", "raw", undefined, function(data){
-        console.log(data);
-    });
-    
-    
-});
 /**
  * Returns all microdata items of type given by :itemtype in presentation specified by :course and :lecture
  */
@@ -84,23 +85,30 @@ app.get('/api/:course/:lecture/microdata/:itemtype', function api(req, res) {
             if (err){
                 defaults.returnError(404, err.message, res);
             }else{
-                negotiation.microdataSelection(presentationUrl,data.toString(),itemtype, function(data){
+                negotiation.microdataSelection(undefined,data.toString(),itemtype, function(err, data){
                 
-                    var container = {};
-                    container.url = req.headers.host+"/api"+"/"+course+"/"+lecture+"/microdata/"+encodeURIComponent(itemtype);
-                    container.course = course;
-                    container.lecture = lecture;
-                    container.allmicrodataUrl = req.headers.host+"/api"+"/"+course+"/"+lecture+"/microdata"
-                    container.presentationUrl = req.headers.host+RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+'.html';
-                    container.items =data.items;
-                
-                  
-               
-                    res.writeHead(200, {
-                        'Content-Type': negotiation.contentType
-                    });
-                    res.write(negotiation.formatCallback(container, undefined,2));
-                    res.end();
+                    if(err){
+                        res.writeHead(500, {
+                            'Content-Type': 'text/plain'
+                        });
+                        res.write(err);
+                        res.end(); 
+                    }else{
+                        var container = {};
+                        container.url = req.headers.host+"/api"+"/"+course+"/"+lecture+"/microdata/"+encodeURIComponent(itemtype);
+                        container.course = course;
+                        container.lecture = lecture;
+                        container.allmicrodataUrl = req.headers.host+"/api"+"/"+course+"/"+lecture+"/microdata"
+                        container.presentationUrl = req.headers.host+RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+'.html';
+                        container.items =data.items;
+                    
+                        res.writeHead(200, {
+                            'Content-Type': negotiation.contentType
+                        });
+                        res.write(negotiation.formatCallback(container, undefined,2));
+                        res.end();
+                    }
+                 
                 });
             }
         });   
@@ -128,6 +136,10 @@ function negotiateContent(alt, accept){
         if(accept.indexOf(",")>-1){ // multiple values
             var choices = accept.split(",");
             for(var i=0;i<choices.length;i++){
+                if(choices[i].indexOf(";")>-1){
+                    var t = choices[i].split(";");
+                    choices[i] = t[0];
+                }
                 if(typeof accepts[choices[i]]!="undefined") // return first match
                     return accepts[choices[i]];
             }

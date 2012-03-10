@@ -144,22 +144,6 @@ var view_editor = {
                         if (request.readyState==4) {
                             if(request.status==200){
                                 alert("Presentation was succesfully modified, reload page to view changes", 20000, "Info: ");
-                                
-                                // refesh JSON
-                                var request2 = new XMLHttpRequest();
-                                request2.open("GET", '/api/'+course+'/'+lecture+'/index?refresh=true', true);
-                                request2.setRequestHeader("Connection", "close");            
-                                request2.onreadystatechange = function(){};
-                                request2.send(null); 
-    
-                                // refresh XML
-                                var request3 = new XMLHttpRequest();
-                                request3.open("GET", '/api/'+course+'/'+lecture+'/index?refresh=true&alt=xml', true);
-                                request3.setRequestHeader("Connection", "close");            
-                                request3.onreadystatechange = function(){};
-                                request3.send(null); 
-                                
-                                
                             }else{
                                 alert("Problem while saving presentaion: "+request.status+": "+request.responseText, 20000, "Error: ");
                             }

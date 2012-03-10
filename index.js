@@ -20,6 +20,12 @@ server.run(PORT, WEBROOT);
 
 // ATOM UPDATE EVERY 2 HOURS
 cronJob('0 0 */2 * * *',  function(){ 
-    var atom = require((path.join(path.dirname(__filename), './server_ext/atom')).toString()+"/atom_module_ext");    
+    var atom = require((path.join(path.dirname(__filename), './server_ext/atom')).toString()+"/atom_module_ext.js");    
     atom.updateAllFeed(DOMAIN+":"+PORT); // TODO 
-}); 
+});
+
+// REFRESHING INDEX FILES AND FACET RECORDS
+cronJob('0 0 */2 * * *',function(){
+    var maintenance = require((path.join(path.dirname(__filename), './server_ext/maintenance')).toString()+"/maintenance_lecture_ext.js");    
+    maintenance.refreshLectures();
+});
