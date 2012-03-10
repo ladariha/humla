@@ -35,7 +35,7 @@ app.put('/api/:course/course', function(req, res){
     if(typeof req.body == "undefined"){
         defaults.returnError(400,"Missing fields \"course\"", res);
     }else{
-        admin_ext.editCourse(decodeURIComponent(req.body.id),req.body.courseID, req.body.longName, req.body.isActive, req.body.owner, req.headers.host, res);
+        admin_ext.editCourse(decodeURIComponent(req.body.id),req.body.longName, req.body.isActive, req.body.owner, req.headers.host, res);
     }
 });
 

@@ -24,7 +24,7 @@ exports.parse = function(mapping, course, lecture, data){
             }
         }
     }
-    clearRecords(notToDelete, mapping);
+clearRecords(notToDelete, mapping);
 }
 
 function clearRecords(notToDelete, mapping){
@@ -48,6 +48,7 @@ function clearRecords(notToDelete, mapping){
     if(toDelete.length>0){
         var query =  FacetRecord.remove({});
         query.or(toDelete);
+        query.and('type',typePrefix+thisType);
         query.exec(function(a){});
     }
 }

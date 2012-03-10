@@ -60,7 +60,7 @@ exports.createCourse = function(courseID, longName, isActive, owner, host, res, 
     });
 };
 
-exports.editCourse = function(_id,courseID, longName, isActive, owner, host, res, callback){
+exports.editCourse = function(_id,longName, isActive, owner, host, res, callback){
     Course.find({
         _id: _id
     }, function(err,crs){   
@@ -77,7 +77,6 @@ exports.editCourse = function(_id,courseID, longName, isActive, owner, host, res
                     }
                 }
                 var prev = course.courseID;
-                course.courseID = (typeof courseID == "undefined") ? course.courseID : decodeURIComponent(courseID);
                 course.longName = (typeof longName == "undefined") ? course.longName : decodeURIComponent(longName);
                 course.owner = (typeof owner == "undefined") ? '': decodeURIComponent(owner);
                 course.lecturesURLPreffix = host+'/data/slides/'+course.courseID;
@@ -85,14 +84,8 @@ exports.editCourse = function(_id,courseID, longName, isActive, owner, host, res
                 course.save(function(err) {
                     if (err){
                         returnThrowError(500, "Problems with database", res, callback);
-                    }else{                    
-                        fs.rename(SLIDES_DIRECTORY+'/'+prev, SLIDES_DIRECTORY+'/'+course.courseID, function (err) {
-                            if (!err){
-                                returnData(res, callback, course);
-                            }else{
-                                returnThrowError(500, "Directory for course was not renamed", res, callback);
-                            }
-                        });
+                    }else{
+                        returnData(res, callback, course);
                     }
                 });
             }else{

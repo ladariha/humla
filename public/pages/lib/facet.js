@@ -45,6 +45,7 @@ var toLoad =     [
 var container = new FacetedContainer();
 
 window.onload = function(){
+    facet_page =1;
     for(var i=0;i<toLoad.length;i++){
         if(toLoad[i].type==="boolean"){
             loadBooleanInit(toLoad[i],i);
@@ -119,28 +120,39 @@ function FacetedContainer(){
         }
         
         var request = new XMLHttpRequest();
-        request.open("POST", '/api/complexQuery/facets', true);
+        request.open("POST", '/api/complexQuery/facets?page='+facet_page, true);
         request.setRequestHeader("Content-type", "application/json");
         request.onreadystatechange = function(){
             if (request.readyState==4) {
                 if(request.status==200){
                     var object = eval('(' + request.responseText + ')');
-                    console.log(request.responseText);
                     $('#facet_results').empty();//= '';
                     var content = "<ul>";
                     for(var j=0;j<object.results.length;j++){
                         var _a = object.results[j].slideid.split("_");
                         var link = _a[0]+"/"+_a[1]+".html#/"+_a[2]+"/v1";
                         content+="<li><a href=\"http://127.0.0.1:1338/data/slides/"+link+"\">"+_a[0].toUpperCase()+" - "+_a[1].toUpperCase()+": "+object.results[j].title+"</a></li>";    
-                }
-                content+="</ul>"
+                    }
+                    content+="</ul>"
                     $('#facet_results').append(content);
+                    
+                    if(object.next){
+                        $('#facet_next').show();
+                    }else{
+                        $('#facet_next').hide();
+                    }
+                    
+                    if(object.previous){
+                        $('#facet_prev').show();
+                    }else{
+                        $('#facet_prev').hide();
+                    }
+                    
                 }else{
                     document.getElementById('msg').innerHTML=request.status+": "+request.statusText;    
                 }
             }
         };
-        console.log(JSON.stringify(q));
         request.send(JSON.stringify(q));
     };
     
@@ -154,6 +166,17 @@ function FacetedContainer(){
     
     
 }
+
+function goBack(){
+    facet_page--;
+    container.performQuery();
+}
+
+function goNext(){
+    facet_page++;
+    container.performQuery();
+}
+
 function loadBooleanInit(object, index){
    
     var element = document.createElement('div'); 

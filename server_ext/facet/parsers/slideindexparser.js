@@ -125,7 +125,7 @@ function processGithubOrDrawing(items, course, lecture, mapping, type){
         }
         
         var handledSlides = {};
-        
+
         query.where('_id').in(arr);  
         
         query.exec(function(err, data){ // get all github data from db for given presentation (all slides)

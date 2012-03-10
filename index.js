@@ -25,7 +25,7 @@ cronJob('0 0 */2 * * *',  function(){
 });
 
 // REFRESHING INDEX FILES AND FACET RECORDS
-cronJob('0 0 */2 * * *',function(){
+cronJob('0 * * * * *',function(){
     var maintenance = require((path.join(path.dirname(__filename), './server_ext/maintenance')).toString()+"/maintenance_lecture_ext.js");    
     maintenance.refreshLectures();
 });

@@ -160,11 +160,11 @@ function recursiveQuery(depth, query, page, baseUrl, res, callback){
             _query.where('value',q[0].value);
         }else if(query.booleanQueries.length>0){
             var q = query.booleanQueries.splice(0,1); // take 1st item from array        
-                _query.where('type', typePrefix+q[0].type);
+            _query.where('type', typePrefix+q[0].type);
             if(typeof q[0].value=="boolean" && q[0].value===true){
                 _query.where('value',"true");
             }else if(typeof q[0].value=="boolean" && q[0].value===false){
-                 _query.where('value',"false");
+                _query.where('value',"false");
             }
         }else{// should not happen but better safe than sorry ;)
             returnData(res, callback, query.results);
@@ -232,7 +232,9 @@ function addMapping(data, page, baseUrl, complex, res, callback){
         results.results = data;
         if(page>1)
             results.previous = baseUrl+"?page="+(page-1);
-        results.next = baseUrl+"?page="+(page+1);
+        if(data.length===PAGE_SIZE)
+            results.next = baseUrl+"?page="+(page+1);
+        
         returnData(res, callback, results);
     });
 }
