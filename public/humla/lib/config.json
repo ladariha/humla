@@ -16,8 +16,8 @@
         "view4"     : [52, 80],
         "view5"     : [53],
         "view6"     : [54],
-        "view7"     : [],
-        "view8"     : [],
+        "view7"     : [55],
+        "view8"     : [56],
         "view9"     : [],
         "index"     : [73],
         "menu"      : [77, 109]
@@ -58,6 +58,16 @@
             "object" : "view_items",        
             "script" : {"src" : "views/items.js"}, 
             "style"  : {"src" : "views/items.css", "media" : "screen"}
+        },
+        {"id"     : "7", 
+            "object" : "view_smartphone",        
+            "script" : {"src" : "views/smartphone/phone_script.js"}, 
+            "style"  : {"src" : "views/smartphone/phone_style.css", "media" : "screen"}
+        },
+        {"id"     : "8", 
+            "object" : "view_animation",        
+            "script" : {"src" : "views/animation/animation_script.js"}, 
+            "style"  : {"src" : "views/animation/animation_style.css", "media" : "screen"}
         }
         
     ],
@@ -155,6 +165,12 @@
              "styles"  : [ {"src" : "ext/items.css", "media" : "screen"} ],
             "enabled" : true 
         },
+         {"id" : "multitouch",
+            "object" : "multitouch",
+            "scripts" : [ {"src" : "ext/multitouch/multitouch.js"} ],
+             "styles"  : [ {"src" : "ext/multitouch/multitouch.css", "media" : "screen"} ],
+            "enabled" : true 
+        },
         
         {"id" : "comments",
             "object" : "ex_comments",
@@ -180,11 +196,23 @@
             "scripts" : [ {"src" : "ext/menu.js"} ],      
             "enabled" : true 
         },
+        {"id" : "indexeddb",
+            "object" : "ex_db",
+            "scripts" : [ {"src" : "ext/indexeddb/indexeddb.js"} ],      
+            "enabled" : true 
+        },
         
         {"id" : "slideindex",
             "object" : "ex_slideindex",
             "scripts" : [ {"src" : "ext/slideindex.js"} ],
             "styles"  : [ {"src" : "ext/slideindex.css", "media" : "screen, print"} ],
+            "enabled" : true 
+        },
+        
+        {"id" : "canvas",
+            "object" : "ex_canvas",
+            "scripts" : [ {"src" : "ext/canvas/canvas.js"} ],
+            "styles"  : [ {"src" : "ext/canvas/canvas.css", "media" : "screen, print"} ],
             "enabled" : true 
         }
         

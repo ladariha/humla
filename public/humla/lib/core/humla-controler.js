@@ -142,12 +142,16 @@ Controler = function(window) {
     this.updateFullscreenWindow = function(event) {
         if (this._fullscreen) {
             var newZoom = 1;
+            document.body.webkitRequestFullScreen();
             if (this.window.innerHeight < this.window.innerWidth)
                 newZoom = this.window.innerHeight / SLIDE_HEIGHT;
+                //newZoom = (screen.height-10) / SLIDE_HEIGHT;
             else
                 newZoom = this.window.innerWidth / SLIDE_WIDTH;
+                //newZoom = (screen.width - 10) / SLIDE_WIDTH;
             for (var i = 0; i < humla.slides.length; i++)
                 humla.slides[i].element.style.zoom = newZoom;        
+            
         }
     };
     
@@ -155,9 +159,12 @@ Controler = function(window) {
     this.__defineSetter__('fullscreen', function(value) {
         if (this._fullsceen != value) {
             this._fullscreen = value;
-            if (!this._fullscreen)
+            if (!this._fullscreen){
                 for (var i = 0; i < humla.slides.length; i++)
                     humla.slides[i].element.removeAttribute("style");
+                
+                document.webkitCancelFullScreen();
+            }
             else
                 this.updateFullscreenWindow();
         }
@@ -170,7 +177,7 @@ Controler = function(window) {
     
     // set the fullscreen on/off
     this.__defineSetter__('toBuild', function(value) {
-            this._toBuild = value;
+        this._toBuild = value;
     });
     
     // get the value of the toBuild

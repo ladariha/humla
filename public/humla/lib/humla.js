@@ -555,7 +555,7 @@ var MenuBar = function(message) {
             this.nav = humla.utils.document.createElement("nav");           
             
             //Generate menu Icons with texts TODO
-            this.nav.innerHTML = "<ul id='menu'><li>Plugins</li><li>Views</li><li>Settings</li></ul>";            
+            this.nav.innerHTML = "<ul id='menu'><li>Plugins</li><li>Views</li><li>Settings</li><li class='buttonActive' id='buttonDraw' onclick='ex_canvas.addCanvas(); return false;'>Draw</li><li class='buttonInactive' id='buttonStopDrawing'>Stop drawing</li></ul>";            
             
             humla.utils.documentBody.insertBefore(this.nav, humla.utils.documentBody.childNodes[0]);
         }        
