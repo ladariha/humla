@@ -145,8 +145,6 @@ function checkIDs(course, lecture, data,checkID){
  * @param checkID if check id procedure is necessary
  */
 function run(courseID, lectureID, checkID){
-   console.log("COURSE JE "+courseID);
-   console.log("LECTURE JE "+lectureID);
     try{
         fs.readFile(SLIDES_DIRECTORY+ '/'+courseID+'/'+lectureID+".html", function (err, data) {
             if (err){

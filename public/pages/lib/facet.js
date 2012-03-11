@@ -207,11 +207,12 @@ function loadValueInit(object, index){
                     var ref = this;
                     clearTimeout(timer);
                     timer =setTimeout(function(){
+                        facet_page = 0;
                         var property = toLoad[index].shortName;
                         if($(ref).val().length>1){
                             $(ref).parent().attr('class', 'facet_selected');
                             $(ref).parent().parent().find('li').each(function(index,el){
-                                if($(el).attr('id').length<0){
+                                if(typeof $(el).attr('id')=="undefined" || $(el).attr('id').length<0){
                                     $(el).attr("class","facet_notselected");
                                 }
                             });
@@ -222,6 +223,11 @@ function loadValueInit(object, index){
                             container.removeCriteria(property);
                             $(ref).parent().attr('class', '');
                             container.performQuery();
+                            $(ref).parent().parent().find('li').each(function(index,el){
+                                if(typeof $(el).attr('id')=="undefined" || $(el).attr('id').length<0){
+                                    $(el).attr("class","");
+                                }
+                            });
                         }
                        
                     },500);
@@ -235,6 +241,7 @@ function loadValueInit(object, index){
 }
 
 function toggleFilter(index, element){
+    facet_page = 0;
     var property = toLoad[index].shortName;
     if($(element).attr("class")!== "facet_selected"){
         container.addCriteria(property, $(element).text() ,toLoad[index].type);

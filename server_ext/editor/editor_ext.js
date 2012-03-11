@@ -440,7 +440,7 @@ function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureUR
                             }else{
                                 var sec = $(this).attr('data-slideid');
                                 if($(this).attr('data-slideid').indexOf( courseID+"_"+lecture+"_"+counter+"_", 0)<0
-                                    || $(this).find("h1").eq(0).text()!==crs[slidesToDelete[$(this).attr('data-slideid')]].title
+                                    || typeof crs[slidesToDelete[$(this).attr('data-slideid')]]=="undefined" || $(this).find("h1").eq(0).text()!==crs[slidesToDelete[$(this).attr('data-slideid')]].title
                                     ){ // slide number is changed => update slideid
                                     var parts = ($(this).attr('data-slideid')).split("_");
                                     var n = {};
