@@ -13,6 +13,7 @@ var Lecture = mongoose.model("Lecture");
 var Slideid = mongoose.model("Slideid");
 var defaults = require('./defaults');
 var admin_ext =  require('../server_ext/administration/administration_ext.js');
+var admin_auth_ext =  require('../server_ext/administration/a_authorization_ext.js');
 /**
  * Creates new course (new entry in db, new folder)
  */
@@ -23,7 +24,8 @@ app.post('/api/:course/course', function(req, res){ // TODO database timeout
         ){
         defaults.returnError(400,"Missing fields", res);
     }else{
-        admin_ext.createCourse(decodeURIComponent(req.body.courseID),  decodeURIComponent(req.body.longName), req.body.isActive, decodeURIComponent(req.body.owner), req.headers.host, res);
+        var author = admin_auth_ext.user(req, res);
+        admin_ext.createCourse(decodeURIComponent(req.body.courseID),  author, decodeURIComponent(req.body.longName), req.body.isActive, decodeURIComponent(req.body.owner), req.headers.host, res);
     }
 });
     
@@ -32,10 +34,14 @@ app.post('/api/:course/course', function(req, res){ // TODO database timeout
  * Edit existing course
  */
 app.put('/api/:course/course', function(req, res){
-    if(typeof req.body == "undefined"){
-        defaults.returnError(400,"Missing fields \"course\"", res);
+    if(admin_auth_ext.canModifyCourseRealId(req, res, decodeURIComponent(req.body.id))){
+        if(typeof req.body == "undefined"){
+            defaults.returnError(400,"Missing fields \"course\"", res);
+        }else{
+            admin_ext.editCourse(decodeURIComponent(req.body.id),req.body.longName, req.body.isActive, req.body.owner, req.headers.host, res);
+        }
     }else{
-        admin_ext.editCourse(decodeURIComponent(req.body.id),req.body.longName, req.body.isActive, req.body.owner, req.headers.host, res);
+          defaults.returnError(401,"Unauthorized", res);
     }
 });
 
@@ -57,7 +63,8 @@ app.post('/api/:course/:lecture/lecture', function(req, res){ // TODO database t
         ){
         defaults.returnError(400,"Missing fields", res);
     }else{
-        admin_ext.createLecture(req.body.courseID, req.body.title, req.body.order,req.body.author, req.body.authorEmail, req.body.authorTwitter, req.body.authorWeb, req.body.semester, req.body.org, req.body.orgfac, req.body.spec, req.body.web, req.body.abs, req.body.isActive, req.body.keywords, req.headers.host, res);
+        var author = admin_auth_ext.user(req, res);
+        admin_ext.createLecture(req.body.courseID, author, req.body.title, req.body.order,req.body.author, req.body.authorEmail, req.body.authorTwitter, req.body.authorWeb, req.body.semester, req.body.org, req.body.orgfac, req.body.spec, req.body.web, req.body.abs, req.body.isActive, req.body.keywords, req.headers.host, res);
     }
 });
 
@@ -66,10 +73,14 @@ app.post('/api/:course/:lecture/lecture', function(req, res){ // TODO database t
  * Edit lecture
  */
 app.put('/api/:course/:lecture/lecture', function(req, res){ // TODO database timeout
-    if(typeof req.body == "undefined"){
-        defaults.returnError(400,"Missing fields", res);
+    if(admin_auth_ext.canModifyLectureRealId(req, res, decodeURIComponent(req.body.id))){
+        if(typeof req.body == "undefined"){
+            defaults.returnError(400,"Missing fields", res);
+        }else{
+            admin_ext.editLecture(req.body.id,req.body.title, req.body.order,req.body.author, req.body.authorEmail, req.body.authorTwitter, req.body.authorWeb, req.body.semester, req.body.org, req.body.orgfac, req.body.spec, req.body.web, req.body.abs, req.body.isActive, req.body.keywords, req.headers.host, res);
+        }
     }else{
-        admin_ext.editLecture(req.body.id,req.body.title, req.body.order,req.body.author, req.body.authorEmail, req.body.authorTwitter, req.body.authorWeb, req.body.semester, req.body.org, req.body.orgfac, req.body.spec, req.body.web, req.body.abs, req.body.isActive, req.body.keywords, req.headers.host, res);
+          defaults.returnError(401,"Unauthorized", res);
     }
 });
 

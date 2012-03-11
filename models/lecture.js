@@ -15,6 +15,7 @@ var LectureSchema = new Schema({
     url: String, // api
     presentationURL: String, // presentation itself
     author: String,
+    authorID: String, // for oauth etc.
     authorEmail: String,
     authorTwitter: String,
     authorWeb: String,

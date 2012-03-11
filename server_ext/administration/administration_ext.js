@@ -14,7 +14,7 @@ var Slideid = mongoose.model("Slideid");
 var defaults = require('../../handlers/defaults');
 
 
-exports.createCourse = function(courseID, longName, isActive, owner, host, res, callback){
+exports.createCourse = function(courseID, authorID,  longName, isActive, owner, host, res, callback){
     Course.find({
         courseID: courseID
     }, function(err,crs){   
@@ -29,7 +29,7 @@ exports.createCourse = function(courseID, longName, isActive, owner, host, res, 
                     c.isActive = true;
                 else
                     c.isActive = false;
-                
+                c.authorID = authorID;
                 c.courseID = decodeURIComponent(courseID);
                 c.owner = decodeURIComponent(owner);
                 c.lecturesURLPreffix = host+'/data/slides/'+c.courseID;
@@ -155,7 +155,7 @@ function returnData(res, callback, data){
     }
 }
 
-exports.createLecture = function(courseID, title, order,author, authorEmail, authorTwitter, authorWeb, semester, org, orgfac, spec, web, abs, isActive, keywords, host, res, callback ){
+exports.createLecture = function(authorID, courseID, title, order,author, authorEmail, authorTwitter, authorWeb, semester, org, orgfac, spec, web, abs, isActive, keywords, host, res, callback ){
     
     Lecture.find({
         courseID: courseID,
@@ -170,6 +170,7 @@ exports.createLecture = function(courseID, title, order,author, authorEmail, aut
                 c.courseID = decodeURIComponent(courseID);
                 c.lectureID= 'lecture'+decodeURIComponent(order);
                 c.url = host+'/api/'+c.courseID+'/'+c.lectureID;
+                c.authorID = authorID;
                 c.presentationURL = host+'/data/slides/'+c.courseID+'/'+c.lectureID+'.html';
                 c.authorEmail = (typeof authorEmail == "undefined") ? '' : decodeURIComponent(authorEmail);
                 c.authorTwitter = (typeof authorTwitter == "undefined") ? '' : decodeURIComponent(authorTwitter);

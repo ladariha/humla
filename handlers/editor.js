@@ -8,6 +8,7 @@ editorAPI.urls = [ // list of available URL that this plugin handles
     ];
 var defaults = require('./defaults');
 var editor_ext =  require('../server_ext/editor/editor_ext.js');
+var editor_auth_ext =  require('../server_ext/editor/e_authorization_ext.js');
 /**
  * General router for editor API
  */
@@ -38,23 +39,33 @@ function editor(res, req){
             editor_ext.getSlide(RegExp.$1, RegExp.$2, RegExp.$3, req.headers.host, res);
             break;
         case 'PUT':
-            if(typeof  req.body == "undefined" || typeof  req.body.slide == "undefined"){
-                defaults.returnError(400, 'Missing field \"slide\" ', res); 
-            }else{
-                var append = req.body.append;
-                var regx =/^\/api\/([A-Za-z0-9-_]+)\/([A-Za-z0-9-_]+)\/slide([0-9]+)\/editor/; 
-                req.url.match(regx);
-                if(append === "true"){
-                    editor_ext.appendSlide(RegExp.$1, RegExp.$2, RegExp.$3, req.headers.host, res, req.body.slide);
+            var append = req.body.append;
+            var regx =/^\/api\/([A-Za-z0-9-_]+)\/([A-Za-z0-9-_]+)\/slide([0-9]+)\/editor/; 
+            req.url.match(regx);
+            
+            if(editor_auth_ext.canModifyLecture(req, res,decodeURIComponent(RegExp.$1), decodeURIComponent(RegExp.$2) )){
+                if(typeof  req.body == "undefined" || typeof  req.body.slide == "undefined"){
+                    defaults.returnError(400, 'Missing field \"slide\" ', res); 
                 }else{
-                    editor_ext.editSlide(RegExp.$1, RegExp.$2, RegExp.$3, req.headers.host, res, req.body.slide);
+                    if(append === "true"){
+                        editor_ext.appendSlide(decodeURIComponent(RegExp.$1), decodeURIComponent(RegExp.$2), decodeURIComponent(RegExp.$3), req.headers.host, res, req.body.slide);
+                    }else{
+                        editor_ext.editSlide(decodeURIComponent(RegExp.$1), decodeURIComponent(RegExp.$2), decodeURIComponent(RegExp.$3), req.headers.host, res, req.body.slide);
+                    }
                 }
+            }else{
+                defaults.returnError(401,"Unauthorized", res);
             }
+
             break;
         case 'DELETE':
             var regx =/^\/api\/([A-Za-z0-9-_]+)\/([A-Za-z0-9-_]+)\/slide([0-9]+)\/editor/; 
             req.url.match(regx);
-            editor_ext.removeSlide(RegExp.$1, RegExp.$2, RegExp.$3, req.headers.host, res);
+            if(editor_auth_ext.canModifyLecture(req, res,RegExp.$1, RegExp.$2 )){
+                editor_ext.removeSlide(RegExp.$1, RegExp.$2, RegExp.$3, req.headers.host, res);
+            }else{
+                defaults.returnError(401,"Unauthorized", res);
+            }
             break;
         default:
             defaults.returnError(405, "Method not Allowed", res);
@@ -73,8 +84,8 @@ app.get('/api/template/:templateID/editor', function api(req, res) {
  * Returns HTML source code of entire presentation
  */
 app.get('/api/:course/:lecture/editor', function api(req, res) { // TODO check changes in url
-    var course = req.params.course;//RegExp.$1;
-    var lecture = req.params.lecture;
+    var course = decodeURIComponent(req.params.course);//RegExp.$1;
+    var lecture = decodeURIComponent(req.params.lecture);
     editor_ext.getLecture(course, lecture, res);
 });
 
@@ -82,14 +93,24 @@ app.get('/api/:course/:lecture/editor', function api(req, res) { // TODO check c
  * Replaces HTML source code of entire presentation with given data (for raw editor)
  */
 app.put('/api/:course/:lecture/raw/editor', function api(req, res) {
-    var course = req.params.course;//RegExp.$1;
-    var lecture = req.params.lecture;
-    editor_ext.editLecture(course, lecture,  req.headers.host, res, req.body.content);
+    var course = decodeURIComponent(req.params.course);//RegExp.$1;
+    var lecture = decodeURIComponent(req.params.lecture);
+    if(editor_auth_ext.canModifyLecture(req, res,course, lecture)){
+        editor_ext.editLecture(course, lecture,  req.headers.host, res, req.body.content);            
+    }else{
+        defaults.returnError(401,"Unauthorized", res);  
+    }
 });
 
 /**
  * Replaces HTML source code of entire presentation with given data (for edit view mode only)
  */
 app.put('/api/:course/:lecture/editor', function api(req, res) { // TODO check changes in url
-    editor_ext.editLectureViewMode(req.params.course, req.params.lecture, req.headers.host,  res, req.body);
+    var course = decodeURIComponent(req.params.course);//RegExp.$1;
+    var lecture = decodeURIComponent(req.params.lecture);
+    if(editor_auth_ext.canModifyLecture(req, res,course, lecture)){
+        editor_ext.editLectureViewMode(course, lecture, req.headers.host,  res, req.body);
+    }else{
+        defaults.returnError(401,"Unauthorized", res);        
+    }
 });
