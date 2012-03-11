@@ -5,7 +5,7 @@ var FacetRecord = mongoose.model("FacetRecord");
 var Slideid = mongoose.model("Slideid");
 var typePrefix = "";//http://humla.org/microdata/"; // TODO fix sample URL
 exports.prefix = typePrefix;
-var PAGE_SIZE = 200;
+var PAGE_SIZE = 100;
 // List of all types. Instead of selecting distinct values from DB it's less expensive to use array'
 var path = require('path');
 
@@ -169,7 +169,7 @@ function recursiveQuery(depth, query, page, baseUrl, res, callback){
         }else{// should not happen but better safe than sorry ;)
             returnData(res, callback, query.results);
         }
-
+        _query.sort('slideid',1);
         if(query.booleanQueries.length<1 && query.valueQueries.length<1){ // skip only in last run, this way if user gurantee order of  paramateres in query the pagination will work flawlessly
             _query.skip((parseInt(page)-1)*PAGE_SIZE);
             _query.limit(PAGE_SIZE);

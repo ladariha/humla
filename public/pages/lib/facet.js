@@ -200,9 +200,32 @@ function loadValueInit(object, index){
                     element+="<li onClick=\"toggleFilter("+index+", this);\" >"+resp[a]._id+"</li>";    
                 }
                 
-                element+="</ul></div>";
+                element+="<li onClick=\"\" id=\""+index+"\">Value: <input id=\"type_"+index+"\" class=\"facet_smallinput\" type=\"text\" name/></li></ul></div>";
                 $("#facet_section").append(element);
-                
+                var timer;
+                $("#type_"+index).keyup(function(){
+                    var ref = this;
+                    clearTimeout(timer);
+                    timer =setTimeout(function(){
+                        var property = toLoad[index].shortName;
+                        if($(ref).val().length>1){
+                            $(ref).parent().attr('class', 'facet_selected');
+                            $(ref).parent().parent().find('li').each(function(index,el){
+                                if($(el).attr('id').length<0){
+                                    $(el).attr("class","facet_notselected");
+                                }
+                            });
+                            container.addCriteria(property,$(ref).val() ,toLoad[index].type);
+                            container.performQuery();  
+                        }               
+                        if($(ref).val().length<1){
+                            container.removeCriteria(property);
+                            $(ref).parent().attr('class', '');
+                            container.performQuery();
+                        }
+                       
+                    },500);
+                });
             }else{
                 document.getElementById('msg').innerHTML='Cannot load '+course;
             }  

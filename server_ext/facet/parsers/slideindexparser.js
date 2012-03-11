@@ -20,7 +20,7 @@ exports.parse= function(mapping, course, lecture, data){
             processData(mapping, course, lecture, data, index);
     }, true);
 };
-
+var ObjectId = require('mongoose').Types.ObjectId; 
 
 
 function processData(mapping, course ,lecture, data, index){
@@ -29,10 +29,10 @@ function processData(mapping, course ,lecture, data, index){
         processGbooks(index.gbooks, course, lecture, mapping);
     // boolean github
     if(typeof index.github!="undefined")
-        processGithubOrDrawing(index.github, course, lecture, mapping, GITHUB_TYPE);
+        processGithubOrDrawingEvo(index.github, course, lecture, mapping, GITHUB_TYPE);
     // boolean gdrawing
     if(typeof index.drawings!="undefined")
-        processGithubOrDrawing(index.drawings, course, lecture, mapping, GDRAWING_TYPE);
+        processGithubOrDrawingEvo(index.drawings, course, lecture, mapping, GDRAWING_TYPE);
 }
 
 function processGbooks(items, course, lecture, mapping){
@@ -111,8 +111,7 @@ function processGbooks(items, course, lecture, mapping){
     }
 }
 
-
-function processGithubOrDrawing(items, course, lecture, mapping, type){
+function processGithubOrDrawingEvo(items, course, lecture, mapping, type){// proste seber vsechny z db a nastav je na true nebo false, nic vic
     try{
         var prefix =new RegExp("^"+typePrefix+type); // get all records for type /GithubOrDrawing at once
         var query = FacetRecord.find({
@@ -120,88 +119,73 @@ function processGithubOrDrawing(items, course, lecture, mapping, type){
         });
         var arr = [];
     
-        for(var a in mapping){
-            arr.push(mapping[a]);
+        for(var a in mapping){ // mapping[mdw_lecture1_1_xxx] = _id;
+            arr.push(mapping[a]+'');
         }
-        
+
         var handledSlides = {};
 
-        query.where('_id').in(arr);  
+        query.where('slideid').in(arr);  // limit them to mapping records
         
         query.exec(function(err, data){ // get all github data from db for given presentation (all slides)
-            var toInsert = [];
-            var alreadyInToInsert = {};
             var data_assoc = {};
             for(var j=0;j<data.length;j++){
-                data_assoc[data[j].slideid] = data[j];
+                data_assoc[data[j].slideid] = data[j]; // data[j].slideid is mdw_lectur1.... SPATNE
             }
-        
-            var toDelete= {};
-            for(var j=0;j<data.length;j++){
-                toDelete[data[j].slideid] = data[j];
-            }
-        
+
             for(var j=0;j<items.length;j++){
-                if(typeof data_assoc[items[j].slideid]!="undefined"){
-                    delete toDelete[items[j].slideid];
-                }else{
-                    if(typeof alreadyInToInsert[items[j].slideid]=="undefined"){ // to avoid multiple records (2 gdrawings in one slide)
-                        toInsert.push(items[j]);
-                        alreadyInToInsert[items[j].slideid]=1
-                    }
-                }
-            }
-        
-            for(var i =0;i<toInsert.length;i++){ // existing records to TRUE
-                try{
-                    var a  = new FacetRecord();
-                    a.type =typePrefix+type;
-                    a.value = "true";
-                    a.slideid = mapping[toInsert[i].slideid];
-                    handledSlides[mapping[toInsert[i].slideid]]=1; // add not that this slide is taken care of
-                    if(typeof mapping[toInsert[i].slideid]!="undefined"){
-                        a.save(function (err){
+                if(typeof data_assoc[mapping[items[j].slideid]+'']!="undefined"){ // so the record is already in db for given slide, if it is true then nothing has to be done
+                    if(data_assoc[mapping[items[j].slideid]+''].value !== "true"){
+                        data_assoc[mapping[items[j].slideid]+''].value = "true";
+                        data_assoc[mapping[items[j].slideid]+''].save(function (err){
                             if(err)
-                                throw "Problem saving FacetRecord slideindex: "+err;
+                                throw "Problem saving FacetRecord "+items[j].slideid+": "+err;
                         });   
                     }
-                }catch(e){
-                    console.error("Error while saving slideindex "+e.toString());
-                }
-            }
-            
-            for(var b in toDelete){// all already existing records that are no longer in presentation set to FALSE
-                if(typeof toDelete[b]!="undefined"){
-                    toDelete[b].value = "false";
-                    handledSlides[toDelete[b]._id]=1; // add not that this slide is taken care of
-                    toDelete[b].save(function (err){
-                        if(err)
-                            throw "Problem saving FacetRecord slideindex: "+err;
-                    });   
-                }
-            }
-            
-            
-            // now there is  all mapping in mapping and slides _id in handledSlides. To diff between these two sets needs to be inserted as a false record
-            for(var q in mapping){
-                if(typeof handledSlides[mapping[q]]=="undefined"){
-                    try{
+                }else{
+                    if(typeof handledSlides[items[j].slideid]=="undefined"){ // to avoid multiple records (2 gdrawings in one slide)
                         var a  = new FacetRecord();
                         a.type =typePrefix+type;
-                        a.value = "false";
-                        a.slideid = mapping[q];
-                        if(typeof mapping[q]!="undefined"){
+                        a.value = "true";
+                        a.slideid = mapping[items[j].slideid];
+                        if(typeof mapping[items[j].slideid]!="undefined"){
                             a.save(function (err){
                                 if(err)
                                     throw "Problem saving FacetRecord slideindex: "+err;
                             });   
-                        }         
-                    }catch(e){
-                        console.error("Error while saving slideindex "+e.toString());
+                        }
+                    }
+                }
+                handledSlides[items[j].slideid]=1
+            }
+            
+            for(var a in mapping){ // a is data-slideid
+                if(typeof handledSlides[a]=="undefined"){
+                    
+                    //    console.log("typeof handledSlides[a]="+typeof handledSlides[a]+" where a: "+a);
+                    // so this slide has not been handled, it could be in DB but doesn't have to'
+                    if(typeof data_assoc[mapping[a]+'']=="undefined"){// so this mapping has no FR record yet
+                        var t  = new FacetRecord();
+                        t.type =typePrefix+type;
+                        t.value = "false";
+                        t.slideid = mapping[a]+'';
+                        if(typeof mapping[a]!="undefined"){
+                            t.save(function (err){
+                                if(err)
+                                    throw "Problem saving FacetRecord slideindex: "+err;
+                            });   
+                        }
+                    }else{
+                        if(data_assoc[mapping[a]+''].value !== "false"){
+                            data_assoc[mapping[a]+''].value = "false";
+                            data_assoc[mapping[a]+''].save(function (err){
+                                if(err)
+                                    throw "Problem saving FacetRecord slideindex: "+err;
+                            });
+                        } 
                     }
                 }
             }
-            
         });
     }catch(_err){
         console.error("processGithubOrDrawing: "+_err.toString());

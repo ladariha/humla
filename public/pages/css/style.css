@@ -684,10 +684,25 @@ input[type=text]:focus, textarea:focus { background:#f1f6f9; padding:8px 5px; bo
     opacity: 0.6;
 }
 
+input.facet_smallinput{
+    background:#fff;
+    border:solid 1px #E5E5E5;
+    font-weight: bold;
+    border-radius:2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    width:120px;
+    float:right;
+    padding:2px 2px; 
+    margin-bottom:  6px;
+}
+
+input[type=text].facet_smallinput:focus{ background:#f1f6f9; padding: 2px 2px;margin-bottom:  6px;border:solid 1px #D5E3F9;}
+
 #facet_results{
     column-fill: balance;
     float:left; 
-    height: 800px;
+    height: 900px;
     -moz-column-count: 2;
     -webkit-column-count: 2;
     column-count: 2;
@@ -703,19 +718,21 @@ input[type=text]:focus, textarea:focus { background:#f1f6f9; padding:8px 5px; bo
     padding: 0;
 }
 #facet_paging{
- text-align: center;
- width: 100%;
- cursor: pointer;
+    text-align: center;
+    width: 100%;
+    cursor: pointer;
+    margin: 0 0 20px 0;
+    
 
 }
 #facet_paging span{
-     padding: 0 10px 0 10px;
+    padding: 0 10px 0 10px;
 }
 
 #facet_paging span:hover{
     color: white;
-background-color: #3F9DCD;
-cursor: pointer;
+    background-color: #3F9DCD;
+    cursor: pointer;
 
 }
 
@@ -726,7 +743,7 @@ cursor: pointer;
 
 #facet_results ul li{
     padding: 2px 0 0 0;
-      list-style: none;
+    list-style: none;
 }
 
 
