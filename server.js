@@ -1,44 +1,39 @@
 /**
- * Humla Server - using Express
- * 
- * 
+ * Humla Server - using Express 
  * 
  */
-
-// Návod pro MongoDB na Win : http://www.webiyo.com/2011/02/install-mongodb-service-on-windows-7.html
-
 
 var express = require("express");
 var mongoose = require('mongoose');
 var fs = require("fs");
-var path = require('path')
-var HANDLERS_DIRECTORY = (path.join(path.dirname(__filename), './handlers/')).toString();
-var MODELS_DIRECTORY = (path.join(path.dirname(__filename), './models/')).toString();
-var handlers = loadFiles(HANDLERS_DIRECTORY);
-var models = loadFiles(MODELS_DIRECTORY);
+var path = require("path");
+var handlers = {};
+var models = {};
 
-var plugins = [];
-plugins.push('./server_ext/slideindex/slideindex_ext.js');
-plugins.push('./server_ext/atom/atom_module_ext.js');
-plugins.push('./server_ext/editor/editor_ext.js');
-plugins.push('./server_ext/facet/facetparser_ext.js');
-plugins.push('./server_ext/facet/facetengine_ext.js');
-plugins.push('./server_ext/microdata/microdataparser_ext.js');
-plugins.push('./server_ext/maintenance/maintenance_lecture_ext.js');
-plugins.push('./server_ext/gbooks/gbooks_ext.js');
+var config = {};
 
 app = null; // je to schválně bez var - aby to bylo v module contextu
 
-exports.run = function run( PORT, WEBROOT) {    
+exports.init = function(config_in) {
+    config = config_in;
+    var HANDLERS_DIRECTORY = (path.join(path.dirname(__filename), config.server.handlers_relative_path)).toString();
+    var MODELS_DIRECTORY = (path.join(path.dirname(__filename), config.server.models_relative_path)).toString();
+    handlers = loadFiles(HANDLERS_DIRECTORY);
+    models = loadFiles(MODELS_DIRECTORY);
+    
+};
+
+
+exports.run = function run() {     
     app = express.createServer();
     
     // Configuration
     app.configure( function() {
-        app.set('view engine', 'jade');
-        app.set('views', __dirname + '/views');
-        app.set('view options', {
-            layout: 'shared/layout'
-        });
+        //app.set('view engine', 'jade');
+        //app.set('views', __dirname + '/views');
+        //app.set('view options', {
+        //            layout: 'shared/layout'
+        //});
         app.use(express.methodOverride());   // pak mužeme z formu posílat put <input type="hidden" name="_method" value="put" />
         app.use(express.bodyParser());
         app.use(express.cookieParser());
@@ -46,11 +41,11 @@ exports.run = function run( PORT, WEBROOT) {
             secret: "HumlaSecretChange"
         }));
         app.use(app.router);
-        app.set('db-uri', 'mongodb://localhost/humla');
+        app.set('db-uri',  config.server.db_uri);
     });
     app.configure('development', function(){
         app.use(express.logger({
-            format: '\x1b[1m:method\x1b[0m \x1b[33m:url\x1b[0m :response-time ms :status'
+            format:  "\x1b[1m:method\x1b[0m \x1b[33m:url\x1b[0m :response-time ms :status"
         }))        
         app.use(express.errorHandler({
             dumpExceptions: true, 
@@ -79,22 +74,22 @@ exports.run = function run( PORT, WEBROOT) {
     });
 
 
-    plugins.forEach(function(plugin){
-        require(plugin);
+    config.plugins.forEach(function(plugin){
+        if (plugin.enable) require(plugin.src);
     });
     
     
     // Static route - after our routes to make AJAX Crawling and request on our slides possible
     app.configure( function() {
         var oneYear = 31557600000;      
-        app.use(express.static(WEBROOT, {    //__dirname + '/public', {
+        app.use(express["static"](path.join(path.dirname(__filename), config.server.webroot), {    //__dirname + '/public', {
             maxAge: oneYear
         }));
-    });
-   
-   
-    app.listen(PORT);   
-    console.log("Humla (server) has started, 127.0.0.1:%d, Using Express %s, Node %s", PORT, express.version, process.version);    
+    });    
+    
+    app.listen(config.server.port);   
+
+    console.log("Humla (server) has started, 127.0.0.1:%d, Using Express %s, Node %s", config.server.port, express.version, process.version);    
 }
 
 /**
@@ -120,3 +115,4 @@ function loadFiles(path) {
     });    
     return arr;
 }
+

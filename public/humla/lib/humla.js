@@ -375,9 +375,8 @@ var Utils = function(window) {
         // style has not been found - add it
         if (this.firstUserStyle == "")
             this.documentHead.appendChild(this.createStyleElement(style, media));
-        else{
-            this.documentHead.appendChild(this.createStyleElement(style, media));            
-            }
+        else
+            this.documentHead.insertBefore(this.createStyleElement(style, media), this.firstUserStyle);            
     };
 
     // deactivate the style on the document

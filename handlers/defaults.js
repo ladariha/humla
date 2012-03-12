@@ -44,7 +44,7 @@ app.get('/*//', function(req, res){
 // manifest - offline usage
 app.get('/cache.manifest',function manifest(req,res) {
     var body = 'CACHE MANIFEST\n#'+(new Date());
-    body += "\nError" //TODO: odebrat
+    body += "\nManifest not ready yet" //TODO: odebrat
     //TODO: automaticky generovat při spuštění serveru ze všech potřebných souborů
     res.writeHead(200, {
         "Content-Type": "text/cache-manifest"

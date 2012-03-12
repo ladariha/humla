@@ -31,7 +31,7 @@ var ex_likes = {
        
         
     // TODO: přidat lajkování a sharování z facebooku 
-    // TODO:
+    // TODO: stáhnout celej set lajků a pak jenom občas kontrolovat změny
         
     },
     

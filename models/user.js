@@ -16,6 +16,8 @@ var UserSchema = new Schema({
             validate: /b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}/
         },
     username: String,
+    password: String,
+    facebook_id: String,
     dateLogged  :  {
         type: Date
     }

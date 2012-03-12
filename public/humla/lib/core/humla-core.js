@@ -409,7 +409,7 @@ var Menu = function(config) {
     
     // Default tabs
     this.tabs = {
-        "views":{
+        "views":{  // there's only one default tab - Views
             name:"Views",
             html:"<h1>Views</h1>"
         +"<div class='button' onclick='humla.controler.activateView(0);humla.menu.showLayer(\"menu-views\",true);'>Slideshow</div>"

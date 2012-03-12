@@ -63,12 +63,8 @@
             "object" : "view_smartphone",        
             "script" : {"src" : "views/smartphone/phone_script.js"}, 
             "style"  : {"src" : "views/smartphone/phone_style.css", "media" : "screen"}
-        },
-        {"id"     : "8", 
-            "object" : "view_animation",        
-            "script" : {"src" : "views/animation/animation_script.js"}, 
-            "style"  : {"src" : "views/animation/animation_style.css", "media" : "screen"}
         }
+        
         
     ],
     
