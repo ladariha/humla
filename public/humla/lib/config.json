@@ -191,11 +191,6 @@
             "styles"  : [ {"src" : "ext/editor.css", "media" : "screen, print"} ],
             "enabled" : true 
         },
-        {"id" : "menu",
-            "object" : "ex_menu",
-            "scripts" : [ {"src" : "ext/menu.js"} ],      
-            "enabled" : true 
-        },
         {"id" : "slideindex",
             "object" : "ex_slideindex",
             "scripts" : [ {"src" : "ext/slideindex.js"} ],
