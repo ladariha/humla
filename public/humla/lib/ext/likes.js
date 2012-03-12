@@ -15,6 +15,8 @@ var ex_likes = {
         
         menu.addTab("likes",{
             name:"Likes",
+            //cb: function() {console.log("ahoj");}, // callback function, třeba provolá humla.neco.neco();
+            show_layer:true, // pro callback bez menu-layeru se dá false
             html:"<h1>Likes</h1>"
             +' <div id="fb-root"></div><script>(function(d, s, id) {var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)) return; js = d.createElement(s); js.id = id;  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";  fjs.parentNode.insertBefore(js, fjs);}(document, \'script\', \'facebook-jssdk\'));</script>'
         +"<div id='likes-block' >"
@@ -37,7 +39,7 @@ var ex_likes = {
     
     
     enterSlide : function(slide) {
-        console.log(slide);
+        //console.log(slide);
         // ---------- init -------------
         var presentationUrl = window.location.href; // TODO: udělat univerzální funkci na parsování dat
         var origin = window.location.origin;

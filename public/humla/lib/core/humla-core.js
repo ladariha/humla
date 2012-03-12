@@ -192,7 +192,7 @@ var View = function(config, keys, baseDir) {
         if (this.objref && this.objref[method]){
             returned = this.objref[method].call(this.objref, params);
             if (returned != null && returned == false) toContinue = false;
-            }
+        }
                 
         // try to execute the same method on extensions
         returned = humla.controler.callExtensionsInterface(method, params, null, null); 
@@ -411,6 +411,7 @@ var Menu = function(config) {
     this.tabs = {
         "views":{  // there's only one default tab - Views
             name:"Views",
+            show_layer:true,
             html:"<h1>Views</h1>"
         +"<div class='button' onclick='humla.controler.activateView(0);humla.menu.showLayer(\"menu-views\",true);'>Slideshow</div>"
         +"<div class='button' onclick='humla.controler.activateView(1);humla.menu.showLayer(\"menu-views\",true);'>Presentation</div>"
@@ -466,10 +467,14 @@ var Menu = function(config) {
         var menu_items="",layer_items="";
         for(var tab in this.tabs) {
             if(this.tabs.hasOwnProperty(tab)) {
-                menu_items+="<li id='menu-item-"+tab+"' title='"+this.tabs[tab].name+"' onclick='humla.menu.showLayer(\"menu-"+tab+"\");'>"+this.tabs[tab].name+"</li>"            
-                layer_items+="<div id='menu-"+tab+"' class='menu-layer' style='display:none;'>"
-                +"<span class='menu-close-button' onclick='humla.menu.showLayer(\"\",true);'>X</span>"
-                +this.tabs[tab].html+"</div>";               
+                if (this.tabs[tab].show_layer) {
+                    menu_items+="<li id='menu-item-"+tab+"' title='"+this.tabs[tab].name+"' onclick='humla.menu.showLayer(\"menu-"+tab+"\");'>"+this.tabs[tab].name+"</li>";
+                    layer_items+="<div id='menu-"+tab+"' class='menu-layer' style='display:none;'>"
+                    +"<span class='menu-close-button' onclick='humla.menu.showLayer(\"\",true);'>X</span>"
+                    +this.tabs[tab].html+"</div>";
+                } else{
+                    menu_items+="<li id='menu-item-"+tab+"' title='"+this.tabs[tab].name+"' onclick='humla.menu.callCallback(\""+tab+"\");'>"+this.tabs[tab].name+"</li>";
+                }
             }
         }
         this.nav_menu.innerHTML = menu_items;
@@ -484,6 +489,11 @@ var Menu = function(config) {
             
         }                
     }   
+    
+    // call callback function of one tab (without showing menu layer)
+    this.callCallback = function(id) {
+        this.tabs[id].cb();        
+    }
     
     // run menu init
     this.init();

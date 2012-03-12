@@ -20,6 +20,7 @@ var ex_comments = {
         
         menu.addTab("comments",{            
             name:"Comments",
+            show_layer:true,
             html:"<h1>Comments</h1>"
         +"<div><p>First Comment</p><p>Second comment</p></div>"
         });
