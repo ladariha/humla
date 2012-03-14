@@ -649,11 +649,12 @@ input[type=text]:focus, textarea:focus { background:#f1f6f9; padding:8px 5px; bo
     -webkit-box-shadow: 0px 0px 10px #ccc;
     -moz-box-shadow: 0px 0px 10px #ccc;
     box-shadow: 0px 0px 10px #ccc;
-}
-#facet_section div{
     background-color:#fff;
     border:1px solid #D2D2D2;
+    width: 200px;
+    float:left;
 }
+
 
 .facet_menu li, .facet_menu{
     list-style: none;
@@ -662,8 +663,14 @@ input[type=text]:focus, textarea:focus { background:#f1f6f9; padding:8px 5px; bo
     margin-left: 0;
 }
 
-.facet_menu li:hover{
+.facet_menu li:hover[class="facet_choice"]{
     color: #fff;
+    background-color: #3F9DCD;
+    cursor: pointer;
+}
+
+span.facet_label:hover{
+    color:#fff;
     background-color: #3F9DCD;
     cursor: pointer;
 }
@@ -694,15 +701,19 @@ input.facet_smallinput{
     width:120px;
     float:right;
     padding:2px 2px; 
-    margin-bottom:  6px;
+    margin:0 0 6px 0;
+    display: inline;
+}
+span.facet_label{
+    float:left;
 }
 
-input[type=text].facet_smallinput:focus{ background:#f1f6f9; padding: 2px 2px;margin-bottom:  6px;border:solid 1px #D5E3F9;}
+input[type=text].facet_smallinput:focus{ background:#f1f6f9; padding: 2px 2px;margin:0 0  6px 0;border:solid 1px #D5E3F9;}
 
 #facet_results{
     column-fill: balance;
     float:left; 
-    height: 900px;
+    height: 1000px;
     -moz-column-count: 2;
     -webkit-column-count: 2;
     column-count: 2;
@@ -722,18 +733,23 @@ input[type=text].facet_smallinput:focus{ background:#f1f6f9; padding: 2px 2px;ma
     width: 100%;
     cursor: pointer;
     margin: 0 0 20px 0;
-    
+
 
 }
 #facet_paging span{
     padding: 0 10px 0 10px;
 }
 
-#facet_paging span:hover{
-    color: white;
+#facet_paging span:hover[id^="facet_"]{
     background-color: #3F9DCD;
     cursor: pointer;
 
+}
+
+#facet_paging span[id="count"]{
+    font-style: italic;
+    color:#896777;
+    cursor: text;
 }
 
 #facet_results ul{

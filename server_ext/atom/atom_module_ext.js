@@ -26,7 +26,6 @@ function updateHumlaFeed(domain){
             }
             atom.parse(domain);
         } else {
-            // TODO LOG ERROR
             console.error(err);
         }     
     });

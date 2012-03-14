@@ -6,7 +6,7 @@ var Slideid = mongoose.model("Slideid");
 var typePrefix =require("../facetengine_ext.js").prefix;
 var thisType = "Slide";
 
-exports.type = "Slide";
+exports.type = thisType;
 
 exports.parse = function(mapping, course, lecture, data){ 
     var notToDelete ={};
