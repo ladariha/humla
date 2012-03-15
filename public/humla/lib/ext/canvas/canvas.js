@@ -4,6 +4,17 @@ var ex_canvas = {
     currentSlide : null,
     strokeColor : "#000000",
     strokeWidth : 5,
+    zoom : 1,
+    processMenu: function(menu) {                        
+        menu.addTab("draw",{
+            name:"Draw",
+            cb: function() {
+                ex_canvas.addCanvas();
+            }, // callback function, třeba provolá humla.neco.neco();
+            show_layer:false
+        });
+        
+    },
     setColor : function(color){
         this.strokeColor = color;
     },
@@ -32,23 +43,34 @@ var ex_canvas = {
     enterSlide : function(slide){
         this.currentSlide = slide;
         //if (!this.loaded){
+        this.loaded = true;
+        this.zoom = slide.element.style.zoom;
+        var resizeCanvas = function(){
+            console.log(slide.element.style.zoom);
+            var zoom = slide.element.style.zoom;
+            var array = slide.element.getElementsByClassName("paintingCanvas");
+            if (zoom != null && zoom != 0)
+                for (var i = 0; i < array.length; i++){
+                
+                    array[i].width = SLIDE_WIDTH * zoom;
+                     array[i].height = SLIDE_HEIGHT * zoom;
+                    /*
+                for (var j = 0; j < ex_canvas.canvasArray.length; j++){
+                    if (array[i].id == ex_canvas.canvasArray[j].element.id){
+                        ex_canvas.canvasArray[j].countOffset();
+                    }
+                }
+                */
+                    //array[i].style.width = SLIDE_WIDTH * 0.9;
+                    //array[i].style.height = SLIDE_HEIGHT * 0.9;
+                    }
+        }
+        resizeCanvas();
         
         this.findCanvases(slide);
-        //console.log("delka pole b: "+this.canvasArray.length);
-        /*
-        console.log("delka pole: "+this.canvasArray.length);
-        for (var i = 0; i < this.canvasArray.length; i++){
-            //console.log("vypis: "+this.canvasArray[i].parentSlide.number);
-            
-            console.log("porovnavam: "+this.canvasArray[i].parentSlide.number+ " a "+slide.number);
-            if (this.canvasArray[i].parentSlide.number == slide.number){
-                this.addListeners(this.canvasArray[i].element);
-                console.log("pridavam listener: "+slide.number);
-            }
-            
-        } 
-        */
-        this.loaded = true;
+        window.onresize = resizeCanvas;
+        
+        
     //}
     },//
     leaveSlide : function(slide){
@@ -97,14 +119,21 @@ var ex_canvas = {
                     } while (offElement = offElement.offsetParent);
                 }
                 
-                this.offsetLeft = curleft;
-                this.offsetTop = curtop;
+                
+                if (ex_canvas.zoom != null && ex_canvas.zoom != 0 && ex_canvas.zoom != 1){
+                    this.offsetLeft = curleft * ex_canvas.zoom;
+                    this.offsetTop = curtop * ex_canvas.zoom;
+                } else {
+                    this.offsetLeft = curleft;
+                    this.offsetTop = curtop;
+                }
+                
             }
             this.mouseDown = function(e){
                 
                 this.countOffset();
-                //console.log("X: "+e.pageX+" a "+this.offsetLeft);
-                //console.log("X: "+e.pageY+" a "+this.offsetTop);
+                console.log("X: "+e.pageX+" a "+this.offsetLeft);
+                console.log("X: "+e.pageY+" a "+this.offsetTop);
                 var mouseX = e.pageX - this.offsetLeft;
                 var mouseY = e.pageY - this.offsetTop;		
                 this.paint = true;
@@ -125,7 +154,7 @@ var ex_canvas = {
                       
             this.addClick =  function(x, y, dragging)
             {
-                //console.log("klik: "+x+" - "+y);
+                console.log("klik: "+x+" - "+y);
                 this.clickX.push(x);
                 this.clickY.push(y);
                 
@@ -135,7 +164,7 @@ var ex_canvas = {
             };
             this.clear = function(){
                 this.context.fillStyle = '#252525'; // Work around for Chrome
-                this.context.fillRect(0, 0, 750, 500); // Fill in the canvas with white
+                //this.context.fillRect(0, 0, 750, 500); // Fill in the canvas with white
                 this.element.width = this.element.width; // clears the canvas   
             };
             this.clearHistory = function(){                

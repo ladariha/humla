@@ -7,11 +7,13 @@
 
 .slide.current {
 	display: block;
-	margin-left: 0px;
+	margin-left: auto;
+        margin-right: auto;
 	margin-top: 0px;
-	left: 0px;
 	top: 0px;
-	width: 100%;
+        left: 0;
+        right: 0;
+	width: 800px;
 	height: 100%;
 }
 
@@ -19,6 +21,7 @@
 	display: none;
 	margin-left: 410px;
 }
+
 .hide{
     opacity: 0.1;
     /* Firefox */
