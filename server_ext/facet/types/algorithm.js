@@ -22,22 +22,16 @@ exports.parse = function(mapping, course, lecture, data){
             }
         }
     }
-     parseAlgorithmBigOType(mapping, toProcess, course ,lecture);     
-     parseAlgorithmTypeType(mapping, toProcess, course ,lecture);     
+    parseAlgorithmBigOType(mapping, toProcess, course ,lecture);     
+    parseAlgorithmTypeType(mapping, toProcess, course ,lecture);     
 }
 
 
 function parseAlgorithmTypeType(mapping, items, course, lecture){
-      // only one call total (aka all slides and codesnippets at once)
+    // only one call total (aka all slides and codesnippets at once)
     var arr = [];
     for(var a in mapping){
         arr.push(mapping[a]);
-    }
-    // array toInsert - contains all microdata - idealne assoc dle ugly ID
-    
-    var toInsert = {};
-    for(var j=0;j<items.length;j++){
-        toInsert[mapping[items[j].slideid]] = items[j];
     }
 
     if(items.length<1){
@@ -51,9 +45,6 @@ function parseAlgorithmTypeType(mapping, items, course, lecture){
             if(err)
                 console.error(err);
         });
-        
-        
-        
     }
     
     var query = FacetRecord.find({  // remove all existing records for Gbooks for given presentation
@@ -66,49 +57,43 @@ function parseAlgorithmTypeType(mapping, items, course, lecture){
         }else{
             if(data.length>0){
                 var data_toDelete= [];
-                if(items.length>0){
-                    for(var i=0;i<data.length;i++){   
-                        var foundMatch = false;
-                        for(var j=0;j<items.length;j++){   
-                            if(data[i].slideid+'' === mapping[items[j].slideid]+'' && typeof items[j].properties.type!="undefined" && items[j].properties.type.length>0 &&
-                                data[i].value === items[j].properties.type[0] && typeof items[j].properties.used=="undefined"){ // keep the untouched
-                                items[j].properties.used = 1; // mark already processed microdata
-                                delete toInsert[mapping[items[j].slideid]];
-                                foundMatch = true;
-                            }
-                        }
-                        if(!foundMatch){
-                            data_toDelete.push(data[i]);
+                for(var i=0;i<data.length;i++){   
+                    var foundMatch = false;
+                    for(var j=0;j<items.length;j++){   
+                        if(data[i].slideid+'' === mapping[items[j].slideid]+'' && typeof items[j].properties.language!="undefined" 
+                            && items[j].properties.language.length>0 &&
+                            data[i].value === items[j].properties.language[0] && typeof items[j].properties.used=="undefined" 
+                            && !foundMatch){ // keep the untouched
+                            items[j].properties.used = 1; // mark already processed microdata
+                            items[j].toInsert = false;
+                            foundMatch = true;
                         }
                     }
+                    if(!foundMatch){
+                        data_toDelete.push(data[i]);
+                    }
+                }
                 
-                    for(var a in toInsert){ // insert new records
-                        if(typeof toInsert[a]!="undefined"){
-                            var tmp = new FacetRecord();
-                            tmp.type =typePrefix+thisType+"_Type";
-                            tmp.value = toInsert[a].properties.type[0];
-                            tmp.slideid = mapping[toInsert[a].slideid];
-                            tmp.save(function(err){
-                                if(err)
-                                    throw "Problem saving FacetRecord "+": "+err;
-                            });
-                        }
-                    }
-                
-                    for(var j=0;j<data_toDelete.length;j++){
-                        data_toDelete[j].remove(function(err){
+                for(var a=0;a<items.length;a++){    // insert new records
+                    if(typeof items[a].toInsert=="undefined"){
+                        var tmp = new FacetRecord();
+                        tmp.type =typePrefix+thisType+"_Type";
+                        tmp.value = items[a].properties.type[0];
+                        tmp.slideid = mapping[items[a].slideid];
+                        tmp.save(function(err){
                             if(err)
-                                console.error("Problem removing old FacetRecord Snippet");
-                        });
-                    }
-                }else{ // nothing in HTML => delete all existing FR 
-                    for(var j=0;j<data.length;j++){
-                        data[j].remove(function(err){
-                            if(err)
-                                console.error("Problem removing old FacetRecord Snippet");
+                                throw "Problem saving FacetRecord "+": "+err;
                         });
                     }
                 }
+                
+                for(var j=0;j<data_toDelete.length;j++){
+                    data_toDelete[j].remove(function(err){
+                        if(err)
+                            console.error("Problem removing old FacetRecord Snippet");
+                    });
+                }
+                
             }else{ //insert all new record (no existing )
                 for(var j=0;j<items.length;j++){   
                     if(typeof items[j].properties.language!="undefined" && items[j].properties.language.length>0){
@@ -129,16 +114,10 @@ function parseAlgorithmTypeType(mapping, items, course, lecture){
 
 
 function parseAlgorithmBigOType(mapping, items, course, lecture){
-      // only one call total (aka all slides and codesnippets at once)
+    // only one call total (aka all slides and codesnippets at once)
     var arr = [];
     for(var a in mapping){
         arr.push(mapping[a]);
-    }
-    // array toInsert - contains all microdata - idealne assoc dle ugly ID
-    
-    var toInsert = {};
-    for(var j=0;j<items.length;j++){
-        toInsert[mapping[items[j].slideid]] = items[j];
     }
 
     if(items.length<1){
@@ -167,49 +146,43 @@ function parseAlgorithmBigOType(mapping, items, course, lecture){
         }else{
             if(data.length>0){
                 var data_toDelete= [];
-                if(items.length>0){
-                    for(var i=0;i<data.length;i++){   
-                        var foundMatch = false;
-                        for(var j=0;j<items.length;j++){   
-                            if(data[i].slideid+'' === mapping[items[j].slideid]+'' && typeof items[j].properties.bigO!="undefined" && items[j].properties.bigO.length>0 &&
-                                data[i].value === items[j].properties.bigO[0] && typeof items[j].properties.used=="undefined"){ // keep the untouched
-                                items[j].properties.used = 1; // mark already processed microdata
-                                delete toInsert[mapping[items[j].slideid]];
-                                foundMatch = true;
-                            }
-                        }
-                        if(!foundMatch){
-                            data_toDelete.push(data[i]);
+                for(var i=0;i<data.length;i++){   
+                    var foundMatch = false;
+                    for(var j=0;j<items.length;j++){   
+                        if(data[i].slideid+'' === mapping[items[j].slideid]+'' && typeof items[j].properties.language!="undefined" 
+                            && items[j].properties.language.length>0 &&
+                            data[i].value === items[j].properties.language[0] && typeof items[j].properties.used=="undefined" 
+                            && !foundMatch){ // keep the untouched
+                            items[j].properties.used = 1; // mark already processed microdata
+                            items[j].toInsert = false;
+                            foundMatch = true;
                         }
                     }
+                    if(!foundMatch){
+                        data_toDelete.push(data[i]);
+                    }
+                }
                 
-                    for(var a in toInsert){ // insert new records
-                        if(typeof toInsert[a]!="undefined"){
-                            var tmp = new FacetRecord();
-                            tmp.type =typePrefix+thisType+"_BigO";
-                            tmp.value = toInsert[a].properties.bigO[0];
-                            tmp.slideid = mapping[toInsert[a].slideid];
-                            tmp.save(function(err){
-                                if(err)
-                                    throw "Problem saving FacetRecord "+": "+err;
-                            });
-                        }
-                    }
-                
-                    for(var j=0;j<data_toDelete.length;j++){
-                        data_toDelete[j].remove(function(err){
+                for(var a=0;a<items.length;a++){    // insert new records
+                    if(typeof items[a].toInsert=="undefined"){
+                        var tmp = new FacetRecord();
+                        tmp.type =typePrefix+thisType+"_BigO";
+                        tmp.value = items[a].properties.bigO[0];
+                        tmp.slideid = mapping[items[a].slideid];
+                        tmp.save(function(err){
                             if(err)
-                                console.error("Problem removing old FacetRecord Snippet");
-                        });
-                    }
-                }else{ // nothing in HTML => delete all existing FR 
-                    for(var j=0;j<data.length;j++){
-                        data[j].remove(function(err){
-                            if(err)
-                                console.error("Problem removing old FacetRecord Snippet");
+                                throw "Problem saving FacetRecord "+": "+err;
                         });
                     }
                 }
+                
+                for(var j=0;j<data_toDelete.length;j++){
+                    data_toDelete[j].remove(function(err){
+                        if(err)
+                            console.error("Problem removing old FacetRecord Snippet");
+                    });
+                }
+                
             }else{ //insert all new record (no existing )
                 for(var j=0;j<items.length;j++){   
                     if(typeof items[j].properties.language!="undefined" && items[j].properties.language.length>0){

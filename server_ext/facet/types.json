@@ -42,6 +42,12 @@
         "type": "boolean",
         "shortName": "Slideindex_Github",
         "url_simple": "/api/facets/Slideindex_Github"
+    },
+    {
+        "property": "CodeSnippet language",
+        "type": "value",
+        "shortName": "CodeSnippet",
+        "url_simple": "/api/facets/CodeSnippet"
     }
     ]
 }

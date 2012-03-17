@@ -95,6 +95,8 @@ app.get('/api/:course/:lecture/editor', function api(req, res) { // TODO check c
 app.put('/api/:course/:lecture/raw/editor', function api(req, res) {
     var course = decodeURIComponent(req.params.course);//RegExp.$1;
     var lecture = decodeURIComponent(req.params.lecture);
+    if(lecture.indexOf(".html")>=0)
+        lecture= lecture.substring(0, lecture.indexOf(".html"));
     if(editor_auth_ext.canModifyLecture(req, res,course, lecture)){
         editor_ext.editLecture(course, lecture,  req.headers.host, res, req.body.content);            
     }else{

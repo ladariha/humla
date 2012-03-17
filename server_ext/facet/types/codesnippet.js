@@ -3,7 +3,7 @@ var FacetRecord = mongoose.model("FacetRecord");
 var Slideid = mongoose.model("Slideid");
 
 var typePrefix =require("../facetengine_ext.js").prefix;
-var thisType = "CodeSnippet_Language";
+var thisType = "CodeSnippet";
 var childType="Algorithm";
 exports.type = thisType;
 exports.childType=childType;
@@ -23,7 +23,7 @@ exports.parse = function(mapping, course, lecture, data){
             }
         }
     }
-     parseSnippetType(mapping, toProcess, course ,lecture);        
+    parseSnippetType(mapping, toProcess, course ,lecture);        
 }
 
 function parseSnippetType(mapping, items, course, lecture){
@@ -32,12 +32,7 @@ function parseSnippetType(mapping, items, course, lecture){
     for(var a in mapping){
         arr.push(mapping[a]);
     }
-    // array toInsert - contains all microdata - idealne assoc dle ugly ID
-    
-    var toInsert = {};
-    for(var j=0;j<items.length;j++){
-        toInsert[mapping[items[j].slideid]] = items[j];
-    }
+
     
     // find codesnippets for given presentation - check slideid and type
     // if found > 0
@@ -60,30 +55,27 @@ function parseSnippetType(mapping, items, course, lecture){
         query.exec(function(err,data){
             if(err)
                 console.error(err);
+        });        
+    }else{
+        var query = FacetRecord.find({  // remove all existing records for Gbooks for given presentation
+            type: typePrefix+thisType
         });
-        
-        
-        
-    }
-    
-    var query = FacetRecord.find({  // remove all existing records for Gbooks for given presentation
-        type: typePrefix+thisType
-    });
-    query.where('slideid').in(arr);  
-    query.exec(function(err,data){
-        if(err){
-            console.error(err);
-        }else{
-            if(data.length>0){
-                var data_toDelete= [];
-                if(items.length>0){
+        query.where('slideid').in(arr);  
+        query.exec(function(err,data){
+            if(err){
+                console.error(err);
+            }else{
+                if(data.length>0){
+                    var data_toDelete= [];
                     for(var i=0;i<data.length;i++){   
                         var foundMatch = false;
                         for(var j=0;j<items.length;j++){   
-                            if(data[i].slideid+'' === mapping[items[j].slideid]+'' && typeof items[j].properties.language!="undefined" && items[j].properties.language.length>0 &&
-                                data[i].value === items[j].properties.language[0] && typeof items[j].properties.used=="undefined"){ // keep the untouched
+                            if(data[i].slideid+'' === mapping[items[j].slideid]+'' && typeof items[j].properties.language!="undefined" 
+                                && items[j].properties.language.length>0 &&
+                                data[i].value === items[j].properties.language[0] && typeof items[j].properties.used=="undefined" 
+                                && !foundMatch){ // keep the untouched
                                 items[j].properties.used = 1; // mark already processed microdata
-                                delete toInsert[mapping[items[j].slideid]];
+                                items[j].toInsert = false;
                                 foundMatch = true;
                             }
                         }
@@ -92,12 +84,13 @@ function parseSnippetType(mapping, items, course, lecture){
                         }
                     }
                 
-                    for(var a in toInsert){ // insert new records
-                        if(typeof toInsert[a]!="undefined"){
+                      for(var a=0;a<items.length;a++){    // insert new records
+                        if(typeof items[a].toInsert=="undefined"){
+                            console.log("JEDEN NOVY");
                             var tmp = new FacetRecord();
                             tmp.type =typePrefix+thisType;
-                            tmp.value = toInsert[a].properties.language[0];
-                            tmp.slideid = mapping[toInsert[a].slideid];
+                            tmp.value = items[a].properties.language[0];
+                            tmp.slideid = mapping[items[a].slideid];
                             tmp.save(function(err){
                                 if(err)
                                     throw "Problem saving FacetRecord "+": "+err;
@@ -111,28 +104,21 @@ function parseSnippetType(mapping, items, course, lecture){
                                 console.error("Problem removing old FacetRecord Snippet");
                         });
                     }
-                }else{ // nothing in HTML => delete all existing FR 
-                    for(var j=0;j<data.length;j++){
-                        data[j].remove(function(err){
-                            if(err)
-                                console.error("Problem removing old FacetRecord Snippet");
-                        });
+                }else{ //insert all new record (no existing )
+                    for(var j=0;j<items.length;j++){   
+                        if(typeof items[j].properties.language!="undefined" && items[j].properties.language.length>0){
+                            var tmp = new FacetRecord();
+                            tmp.type =typePrefix+thisType;
+                            tmp.value = items[j].properties.language[0];
+                            tmp.slideid = mapping[items[j].slideid];
+                            tmp.save(function(err){
+                                if(err)
+                                    throw "Problem saving FacetRecord "+": "+err;
+                            });
+                        }    
                     }
                 }
-            }else{ //insert all new record (no existing )
-                for(var j=0;j<items.length;j++){   
-                    if(typeof items[j].properties.language!="undefined" && items[j].properties.language.length>0){
-                        var tmp = new FacetRecord();
-                        tmp.type =typePrefix+thisType;
-                        tmp.value = items[j].properties.language[0];
-                        tmp.slideid = mapping[items[j].slideid];
-                        tmp.save(function(err){
-                            if(err)
-                                throw "Problem saving FacetRecord "+": "+err;
-                        });
-                    }    
-                }
             }
-        }
-    });
+        });
+    }
 }

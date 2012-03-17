@@ -427,7 +427,7 @@ function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureUR
                         var newids = new Array();
                         var it = 0;
                         var counter = 0;
-            
+                        
                         $('body').find('.slide').each(function(){
                             counter++;
                             if (!$(this).attr('data-slideid')) { // slide doesn't have ID => all following slideids have to be update

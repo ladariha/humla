@@ -1,52 +1,4 @@
-var toLoad =     [
-{
-    property: "Slide: Importance",
-    shortName: "Slide_Importance",
-    type: "value",
-    url_simple: "/api/facets/Slide_Importance"
-},
-{
-    property: "Slide: Keyword",
-    type: "value",
-    shortName: "Slide_Keyword",
-    url_simple: "/api/facets/Slide_Keyword"
-},
-{
-    property: "Slide: Type",
-    type: "value",
-    shortName: "Slide_Type",
-    url_simple: "/api/facets/Slide_Type"
-},
-{
-    property: "Google Books: Author",
-    type: "value",
-    shortName: "Slideindex_Gbook_Author",
-    url_simple: "/api/facets/Slideindex_Gbook_Author"
-},
-{
-    property: "Google Books: Category",
-    type: "value",
-    shortName: "Slideindex_Gbook_Category",
-    url_simple: "/api/facets/Slideindex_Gbook_Category"
-},
-{
-    property: "Google Drawing",
-    type: "boolean",
-    shortName: "Slideindex_Gdrawing",
-    url_simple: "/api/facets/Slideindex_Gdrawing"
-},
-{
-    property: "Github Code Snippet",
-    type: "boolean",
-    shortName: "Slideindex_Github",
-    url_simple: "/api/facets/Slideindex_Github"
-}
-];
-
 var ctrlDown = false;
-
-
-
 var container = new FacetedContainer();
 
 window.onload = function(){
@@ -62,14 +14,27 @@ window.onload = function(){
     });
     
     facet_page =1;
-    for(var i=0;i<toLoad.length;i++){
-        if(toLoad[i].type==="boolean"){
-            loadBooleanInit(toLoad[i],i);
+    
+    var request = new XMLHttpRequest();
+    request.open("GET", "/api/facets", true);
+    request.onreadystatechange = function(){
+        if (request.readyState==4) {
+            if(request.status==200){
+                var resp = eval('(' + request.responseText + ')');
+                console.log(resp);
+                toLoad = resp.types;
+                for(var i=0;i<toLoad.length;i++){
+                    if(toLoad[i].type==="boolean")
+                        loadBooleanInit(toLoad[i],i);
+                    else
+                        loadValueInit(toLoad[i],i);
+                }
+            }else{
+                document.getElementById('msg').innerHTML='Cannot load '+course;
+            }
         }
-            
-        else
-            loadValueInit(toLoad[i],i);
-    }
+    };
+    request.send(null);     
 };
 
 function FacetedContainer(){
@@ -194,7 +159,7 @@ function FacetedContainer(){
                             $('#facet_prev').hide();
                         }
                     }else{
-                          $('#count').text(" | "+object.results.length+" results | ")
+                        $('#count').text(" | "+object.results.length+" results | ")
                     }
                 }else{
                     document.getElementById('msg').innerHTML=request.status+": "+request.statusText;    
@@ -248,7 +213,7 @@ function loadValueInit(object, index){
                     element+="<li class=\"facet_choice\" onClick=\"toggleFilter("+index+", this);\" >"+resp[a]._id+"</li>";    
                 }
                 
-                element+="<li onClick=\"\" id=\""+index+"\"><span class=\"facet_label\">Value:</span> <input id=\"type_"+index+"\" class=\"facet_smallinput\" type=\"text\" name/></li></ul></div>";
+                element+="</ul><ul class=\"facet_menu\"><li onClick=\"\" id=\""+index+"\"><span class=\"facet_label\">Value:</span> <input id=\"type_"+index+"\" class=\"facet_smallinput\" type=\"text\" /></li></ul></div>";
                 $("#facet_section").append(element);
                 var timer;
                 var prevVal = '';
@@ -268,6 +233,7 @@ function loadValueInit(object, index){
                         if($(ref).val().length<1){
                             container.removeCriteriaPrecise(property, prevVal);
                             $(ref).parent().attr('class', '');
+                            $(ref).parent().find(">:first-child").attr('class', '');
                             container.performQuery();
                         }
                        
@@ -289,8 +255,8 @@ function toggleFilter(index, element){
             container.removeCriteriaAll(property, $(element).text() ,toLoad[index].type);
             var parent = $(element).parent();
             $(parent).find('li').each(function(index,el){
-                if(el!== element)
-                    $(el).attr("class","");
+                if(el!== element && $(el).children().length<1)
+                    $(el).attr("class","facet_choice");
             });
             container.addCriteriaReplace(property, $(element).text() ,toLoad[index].type);
             $(element).attr("class", "facet_selected");
@@ -308,23 +274,23 @@ function toggleFilter(index, element){
             
             if(selected===choices){
                 $(parent).find('li').each(function(index,el){
-                    $(el).attr("class","");
+                    $(el).attr("class","facet_choice");
                 });
                 $(element).attr("class", "facet_selected");
                 container.removeCriteriaAll(property, $(element).text() ,toLoad[index].type);
                 container.addCriteriaReplace(property, $(element).text() ,toLoad[index].type);
             }else{
-                $(element).attr("class", "");
+                $(element).attr("class", "facet_choice");
                 var parent = $(element).parent();
                 $(parent).find('li').each(function(index,el){
-                    $(el).attr("class","");
+                    $(el).attr("class","facet_choice");
                 });
                 container.removeCriteriaAll(property, $(element).text() ,toLoad[index].type);
             }
         }
     }else{
         if($(element).attr("class")=== "facet_selected"){
-            $(element).attr("class", "");   
+            $(element).attr("class", "facet_choice");   
             container.removeCriteriaPrecise(property, $(element).text() ,toLoad[index].type);
         }else{
             $(element).attr("class", "facet_selected");
