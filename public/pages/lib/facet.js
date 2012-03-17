@@ -14,28 +14,60 @@ window.onload = function(){
     });
     
     facet_page =1;
-    
+    var now = new Date().getTime();
+    if(isLocalStorage() && localStorage.getItem("facet-menu")){
+        var menu = eval('('+localStorage.getItem("facet-menu")+')');
+        if(now-menu.timestamp> 3600000){
+            loadMenu();    
+        }else{
+            toLoad = menu.items;
+            for(var i=0;i<toLoad.length;i++){
+                if(toLoad[i].type==="boolean")
+                    loadBooleanInit(toLoad[i],i);
+                else
+                    loadValueInit(toLoad[i],i);
+            }    
+        }
+    }else{
+        loadMenu();
+    }
+};
+
+function loadMenu(){
     var request = new XMLHttpRequest();
     request.open("GET", "/api/facets", true);
     request.onreadystatechange = function(){
         if (request.readyState==4) {
             if(request.status==200){
                 var resp = eval('(' + request.responseText + ')');
-                console.log(resp);
                 toLoad = resp.types;
+                var o = {};
+                o.timestamp  = new Date().getTime();
+                o.items = toLoad;
                 for(var i=0;i<toLoad.length;i++){
                     if(toLoad[i].type==="boolean")
                         loadBooleanInit(toLoad[i],i);
                     else
                         loadValueInit(toLoad[i],i);
                 }
+                if(isLocalStorage())
+                    localStorage.setItem("facet-menu", JSON.stringify(o));
             }else{
-                document.getElementById('msg').innerHTML='Cannot load '+course;
+                document.getElementById('msg').innerHTML='Cannot load  menu';
             }
         }
     };
-    request.send(null);     
-};
+    request.send(null);  
+}
+
+function isLocalStorage(){
+    try{
+        localStorage.getItem('facet-menu');
+        return true;
+    }catch(e){
+        return false;
+    }
+}
 
 function FacetedContainer(){
     this.criteria = [];
@@ -199,46 +231,68 @@ function loadBooleanInit(object, index){
     element.innerHTML = content;
     document.getElementById("facet_section").appendChild(element);
 }
+
 function loadValueInit(object, index){
+    var now = new Date().getTime();
+    if(isLocalStorage() && localStorage.getItem("facet-menu-"+object.shortName)){
+        var menu = eval('('+localStorage.getItem("facet-menu-"+object.shortName)+')');
+        if(now-menu.timestamp> 3600000){
+            loadValueReq(object, index);
+        }else{
+            renderData(object, menu.data, index);
+        }
+    }else{
+        loadValueReq(object, index);
+    }
+}
+
+function renderData(object, data, index){
+    var element = "<div><span class=\"facet_title\">"+object.property+"</span><ul class=\"facet_menu\">";
+    for(var a in data){  
+        element+="<li class=\"facet_choice\" onClick=\"toggleFilter("+index+", this);\" >"+data[a]._id+"</li>";    
+    }
+                
+    element+="</ul><ul class=\"facet_menu\"><li onClick=\"\" id=\""+index+"\"><span class=\"facet_label\">Value:</span> <input id=\"type_"+index+"\" class=\"facet_smallinput\" type=\"text\" /></li></ul></div>";
+    $("#facet_section").append(element);
+    var timer;
+    var prevVal = '';
+    $("#type_"+index).keyup(function(){
+        var ref = this;
+        clearTimeout(timer);
+        timer =setTimeout(function(){
+            facet_page = 0;
+            var property = toLoad[index].shortName;
+            if($(ref).val().length>1){
+                $(ref).parent().find(">:first-child").attr('class', 'facet_selected');
+                container.removeCriteriaPrecise(property, prevVal);
+                prevVal = $(ref).val();
+                container.addCriteria(property,$(ref).val() ,toLoad[index].type);
+                container.performQuery();  
+            }               
+            if($(ref).val().length<1){
+                container.removeCriteriaPrecise(property, prevVal);
+                $(ref).parent().attr('class', '');
+                $(ref).parent().find(">:first-child").attr('class', '');
+                container.performQuery();
+            }
+                       
+        },500);
+    });
+}
+
+function loadValueReq(object, index){
     var request = new XMLHttpRequest();
     request.open("GET", "/api/facets/top/"+encodeURIComponent(object.shortName), true);
     request.onreadystatechange = function(){
         if (request.readyState==4) {
             if(request.status==200){
                 var resp = eval('(' + request.responseText + ')');
-                
-                var element = "<div><span class=\"facet_title\">"+object.property+"</span><ul class=\"facet_menu\">";
-                for(var a in resp){
-                 
-                    element+="<li class=\"facet_choice\" onClick=\"toggleFilter("+index+", this);\" >"+resp[a]._id+"</li>";    
-                }
-                
-                element+="</ul><ul class=\"facet_menu\"><li onClick=\"\" id=\""+index+"\"><span class=\"facet_label\">Value:</span> <input id=\"type_"+index+"\" class=\"facet_smallinput\" type=\"text\" /></li></ul></div>";
-                $("#facet_section").append(element);
-                var timer;
-                var prevVal = '';
-                $("#type_"+index).keyup(function(){
-                    var ref = this;
-                    clearTimeout(timer);
-                    timer =setTimeout(function(){
-                        facet_page = 0;
-                        var property = toLoad[index].shortName;
-                        if($(ref).val().length>1){
-                            $(ref).parent().find(">:first-child").attr('class', 'facet_selected');
-                            container.removeCriteriaPrecise(property, prevVal);
-                            prevVal = $(ref).val();
-                            container.addCriteria(property,$(ref).val() ,toLoad[index].type);
-                            container.performQuery();  
-                        }               
-                        if($(ref).val().length<1){
-                            container.removeCriteriaPrecise(property, prevVal);
-                            $(ref).parent().attr('class', '');
-                            $(ref).parent().find(">:first-child").attr('class', '');
-                            container.performQuery();
-                        }
-                       
-                    },500);
-                });
+                renderData(object, resp, index);
+                var o = {};
+                o.timestamp  = new Date().getTime();
+                o.data = resp;
+                if(isLocalStorage())
+                    localStorage.setItem("facet-menu-"+object.shortName, JSON.stringify(o));
             }else{
                 document.getElementById('msg').innerHTML='Cannot load '+course;
             }  
