@@ -3,7 +3,7 @@ var FacetRecord = mongoose.model("FacetRecord");
 var Slideid = mongoose.model("Slideid");
 
 var typePrefix =require("../facetengine_ext.js").prefix;
-var thisType = "Algorithm";
+var thisType = "CodeSnippet/Algorithm";
 
 exports.type = thisType;
 
