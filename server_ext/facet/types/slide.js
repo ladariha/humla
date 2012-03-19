@@ -171,21 +171,21 @@ function parseSlideType(mapping, item, course, lecture){
                     keywordsLength++;
                 }
                 // now keywords
-                var keyTest = (typeof item.properties.keyword!="undefined" && item.properties.keyword.length>0);
+                var keyTest = (typeof item.properties.keywords!="undefined" && item.properties.keywords.length>0);
                 if(keyTest && keywordsLength>0){
                     // match items (insert new and remove unused and preserve existing)
-                    for(var j=0; j< item.properties.keyword.length;j++){
-                        if(typeof keywordRecords[item.properties.keyword[j]]=="undefined" && item.properties.keyword[j].length>0){ // keyword  is not in db
+                    for(var j=0; j< item.properties.keywords.length;j++){
+                        if(typeof keywordRecords[item.properties.keywords[j]]=="undefined" && item.properties.keywords[j].length>0){ // keyword  is not in db
                             var a = new FacetRecord();
                             a.type =typePrefix+"Slide_Keyword";
-                            a.value = item.properties.keyword[j] ;
+                            a.value = item.properties.keywords[j] ;
                             a.slideid = _id;
                             a.save(function (err){
                                 if(err)
                                     throw "Problem saving FacetRecord "+_id+": "+err;
                             });
                         }else{ // if the keyword is in db, let it be there
-                            delete keywordRecords[item.properties.keyword[j]]; // so the values left in keywordRecords are meant to be deleted
+                            delete keywordRecords[item.properties.keywords[j]]; // so the values left in keywordRecords are meant to be deleted
                         }
                     }
                     
@@ -199,11 +199,11 @@ function parseSlideType(mapping, item, course, lecture){
                     } 
                 }else if(keyTest && keywordsLength<1){
                     // only insert new
-                    for(var j=0; j< item.properties.keyword.length;j++){
-                        if( item.properties.keyword[j].length>0){
+                    for(var j=0; j< item.properties.keywords.length;j++){
+                        if( item.properties.keywords[j].length>0){
                             var a = new FacetRecord();
                             a.type =typePrefix+"Slide_Keyword";
-                            a.value = item.properties.keyword[j] ;
+                            a.value = item.properties.keywords[j] ;
                             a.slideid = _id;
                             a.save(function (err){
                                 if(err)
