@@ -4,7 +4,7 @@ var Slideid = mongoose.model("Slideid");
 
 var typePrefix =require("../facetengine_ext.js").prefix;
 var thisType = "CodeSnippet";
-var childType="Algorithm";
+var childType="CodeSnippet/Algorithm";
 exports.type = thisType;
 exports.childType=childType;
 
