@@ -45,7 +45,7 @@ function processGbooks(items, course, lecture, mapping){
         var query = FacetRecord.remove({  // remove all existing records for Gbooks for given presentation
             type: prefix
         });
-        query.where('slideid').in(arr);  // TODO test this
+        query.where('slideid').in(arr); 
         query.exec(function(err,data){
             if(err){
                 console.error(err);

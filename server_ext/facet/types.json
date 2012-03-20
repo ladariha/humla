@@ -48,6 +48,24 @@
         "type": "value",
         "shortName": "CodeSnippet",
         "url_simple": "/api/facets/CodeSnippet"
+    },  
+    {
+        "property": "Algorithm type",
+        "type": "value",
+        "shortName": "Algorithm_Type",
+        "url_simple": "/api/facets/Algorithm_Type"
+    },
+    {
+        "property": "Algorithm BigO",
+        "type": "value",
+        "shortName": "Algorithm_BigO",
+        "url_simple": "/api/facets/Algorithm_BigO"
+    },
+    {
+        "property": "Tasks",
+        "type": "boolean",
+        "shortName": "Tasks",
+        "url_simple": "/api/facets/Tasks"
     }
     ]
 }
