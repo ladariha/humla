@@ -27,7 +27,7 @@ exports.parse = function(mapping, course, lecture, data){
 
 function processTasks(mapping, items , course, lecture){
     try{
-        var prefix =new RegExp("^"+typePrefix); 
+        var prefix =new RegExp("^"+typePrefix+thisType); 
         var query = FacetRecord.find({
             type: prefix
         });
@@ -53,19 +53,19 @@ function processTasks(mapping, items , course, lecture){
                         data_assoc[mapping[items[j].slideid]+''].value = "true";
                         data_assoc[mapping[items[j].slideid]+''].save(function (err){
                             if(err)
-                                throw "Problem saving FacetRecord "+items[j].slideid+": "+err;
+                                console.error("Problem saving FacetRecord: "+err);
                         });   
                     }
                 }else{
                     if(typeof handledSlides[items[j].slideid]=="undefined"){ // to avoid multiple records
                         var a  = new FacetRecord();
-                        a.type =typePrefix;
+                        a.type =typePrefix+thisType;
                         a.value = "true";
                         a.slideid = mapping[items[j].slideid];
                         if(typeof mapping[items[j].slideid]!="undefined"){
                             a.save(function (err){
                                 if(err)
-                                    throw "Problem saving FacetRecord : "+err;
+                                    console.error("Problem saving FacetRecord: "+err);
                             });   
                         }
                     }
@@ -79,13 +79,13 @@ function processTasks(mapping, items , course, lecture){
                     // so this slide has not been handled, it could be in DB but doesn't have to'
                     if(typeof data_assoc[mapping[a]+'']=="undefined"){// so this mapping has no FR record yet
                         var t  = new FacetRecord();
-                        t.type =typePrefix;
+                        t.type =typePrefix+thisType;
                         t.value = "false";
                         t.slideid = mapping[a]+'';
                         if(typeof mapping[a]!="undefined"){
                             t.save(function (err){
                                 if(err)
-                                    throw "Problem saving FacetRecord : "+err;
+                                    console.error("Problem saving FacetRecord: "+err);
                             });   
                         }
                     }else{
@@ -93,7 +93,7 @@ function processTasks(mapping, items , course, lecture){
                             data_assoc[mapping[a]+''].value = "false";
                             data_assoc[mapping[a]+''].save(function (err){
                                 if(err)
-                                    throw "Problem saving FacetRecord : "+err;
+                                    console.error("Problem saving FacetRecord: "+err);
                             });
                         } 
                     }

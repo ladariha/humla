@@ -174,7 +174,8 @@ function FacetedContainer(){
                         for(var j=0;j<object.results.length;j++){
                             var _a = object.results[j].slideid.split("_");
                             var link = _a[0]+"/"+_a[1]+".html#/"+_a[2]+"/v1";
-                            content+="<li><a href=\"http://127.0.0.1:1338/data/slides/"+link+"\">"+_a[0].toUpperCase()+" - "+_a[1].toUpperCase()+": "+object.results[j].title+"</a></li>";    
+                            var title = (typeof object.results[j].title!="undefined" )?object.results[j].title:"";
+                            content+="<li><a href=\"http://127.0.0.1:1338/data/slides/"+link+"\">"+_a[0].toUpperCase()+" - "+_a[1].toUpperCase()+": "+title+"</a></li>";    
                         }
                         content+="</ul>"
                         $('#facet_results').append(content);

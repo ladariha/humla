@@ -66,6 +66,12 @@
         "type": "boolean",
         "shortName": "Tasks",
         "url_simple": "/api/facets/Tasks"
+    },
+     {
+        "property": "Presentation Field",
+        "type": "value",
+        "shortName": "Presentation_Field",
+        "url_simple": "/api/facets/Presentation_Field"
     }
     ]
 }
