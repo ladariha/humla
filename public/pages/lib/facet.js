@@ -1,6 +1,7 @@
 var ctrlDown = false;
 var container = new FacetedContainer();
-
+var LIMIT = 3600000;
+LIMIT = 1;
 window.onload = function(){
     
     $(document).keydown(function(e)
@@ -17,7 +18,7 @@ window.onload = function(){
     var now = new Date().getTime();
     if(isLocalStorage() && localStorage.getItem("facet-menu")){
         var menu = eval('('+localStorage.getItem("facet-menu")+')');
-        if(now-menu.timestamp> 3600000){
+        if(now-menu.timestamp> LIMIT){
             loadMenu();    
         }else{
             toLoad = menu.items;
@@ -166,6 +167,9 @@ function FacetedContainer(){
         request.onreadystatechange = function(){
             if (request.readyState==4) {
                 if(request.status==200){
+                    $("html, body").animate({
+                        scrollTop: 0
+                    }, "slow");                       
                     var object = eval('(' + request.responseText + ')');
                     $('#facet_results').empty();//= '';
                     if(object.results.length>0){
@@ -226,18 +230,50 @@ function goNext(){
 function loadBooleanInit(object, index){
    
     var element = document.createElement('div'); 
-    var content = "<span class=\"facet_title\">"+object.property+"</span>";
+    var content = "<span class=\"facet_title\" onClick=\"expand(this);\">"+object.property+"</span><img class=\"facet_img\" onClick=\"expand(this);\" src=\"./img/left.png\" title=\"Show options\" alt=\"Show options\"/>";
     content+="<ul class=\"facet_menu\"><li class=\"facet_choice\" onClick=\"toggleFilter("+index+", this);\" >Yes</li>";
     content+="<li class=\"facet_choice\" onClick=\"toggleFilter("+index+", this);\" >No</li></ul>";
     element.innerHTML = content;
     document.getElementById("facet_section").appendChild(element);
+    $(".facet_menu").hide();
+}
+
+function expand(element){
+    $(element).parent().find(".facet_menu").each(function(){
+        $(this).slideToggle(500);
+    });
+    if(element.tagName.toLowerCase()=== "img"){
+        if($(element).attr('src').indexOf("left")>0){
+            $(element).attr('src', './img/down.png');    
+            $(element).attr('title', "Hide options");
+            $(element).attr('alt', "Hide options");
+        }else{
+            $(element).attr('src', './img/left.png');   
+            $(element).attr('title', "Show options");
+            $(element).attr('alt', "Show options");
+        }
+    }else{
+        $(element).next("img").each(function(){
+            if($(this).attr('src').indexOf("left")>0){
+                $(this).attr('src', './img/down.png');    
+                $(this).attr('title', "Hide options");
+                $(this).attr('alt', "Hide options");
+            }else{
+                $(this).attr('src', './img/left.png');   
+                $(this).attr('title', "Show options");
+                $(this).attr('alt', "Show options");
+            }
+        });
+    }
+    
+
 }
 
 function loadValueInit(object, index){
     var now = new Date().getTime();
     if(isLocalStorage() && localStorage.getItem("facet-menu-"+object.shortName)){
         var menu = eval('('+localStorage.getItem("facet-menu-"+object.shortName)+')');
-        if(now-menu.timestamp> 3600000){
+        if(now-menu.timestamp> LIMIT){
             loadValueReq(object, index);
         }else{
             renderData(object, menu.data, index);
@@ -248,7 +284,7 @@ function loadValueInit(object, index){
 }
 
 function renderData(object, data, index){
-    var element = "<div><span class=\"facet_title\">"+object.property+"</span><ul class=\"facet_menu\">";
+    var element = "<div><span class=\"facet_title\" onClick=\"expand(this);\">"+object.property+"</span><img class=\"facet_img\" onClick=\"expand(this);\" src=\"./img/left.png\" title=\"Show options\" alt=\"Show options\"/><ul class=\"facet_menu\">";
     for(var a in data){  
         element+="<li class=\"facet_choice\" onClick=\"toggleFilter("+index+", this);\" >"+data[a]._id+"</li>";    
     }
@@ -279,6 +315,7 @@ function renderData(object, data, index){
                        
         },500);
     });
+    $(".facet_menu").hide();
 }
 
 function loadValueReq(object, index){
@@ -327,7 +364,7 @@ function toggleFilter(index, element){
                     selected++;
             });
             
-            if(selected===choices){
+            if(selected===choices && choices>1){
                 $(parent).find('li').each(function(index,el){
                     $(el).attr("class","facet_choice");
                 });

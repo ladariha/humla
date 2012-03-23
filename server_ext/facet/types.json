@@ -68,10 +68,34 @@
         "url_simple": "/api/facets/Tasks"
     },
      {
-        "property": "Presentation Field",
+        "property": "Field",
         "type": "value",
         "shortName": "Presentation_Field",
         "url_simple": "/api/facets/Presentation_Field"
+    },
+     {
+        "property": "Author",
+        "type": "value",
+        "shortName": "Presentation_Author",
+        "url_simple": "/api/facets/Presentation_Author"
+    },
+     {
+        "property": "Course",
+        "type": "value",
+        "shortName": "Presentation_Course",
+        "url_simple": "/api/facets/Presentation_Course"
+    },
+     {
+        "property": "Presentation Keywords",
+        "type": "value",
+        "shortName": "Presentation_Keyword",
+        "url_simple": "/api/facets/Presentation_Keyword"
+    },
+     {
+        "property": "Organization",
+        "type": "value",
+        "shortName": "Presentation_Organization",
+        "url_simple": "/api/facets/Presentation_Organization"
     }
     ]
 }

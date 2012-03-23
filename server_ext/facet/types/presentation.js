@@ -22,7 +22,31 @@ exports.parse = function(mapping, course, lecture, data){
             }
         }
     }
-    parseField(mapping, toProcess, course ,lecture);        
+    try{
+        parseField(mapping, toProcess, course ,lecture);        
+    }catch(e){
+        console.error(e);
+    }
+    try{
+        parseOrganization(mapping, toProcess, course ,lecture);        
+    }catch(e){
+        console.error(e);
+    }
+    try{
+        parseAuthors(mapping, toProcess, course ,lecture);        
+    }catch(e){
+        console.error(e);
+    }
+    try{
+        parseKeywords(mapping, toProcess, course ,lecture);        
+    }catch(e){
+        console.error(e);
+    }
+    try{
+        parseCourse(mapping, toProcess, course, lecture);
+    }catch(e){
+        console.error(e);
+    }
 }
 
 
@@ -306,8 +330,8 @@ function parseOrganization(mapping, items, course, lecture){
 // course
 
 function parseCourse(mapping, items, course, lecture){
- 
-    var arr = [];
+
+var arr = [];
     for(var a in mapping){
         arr.push(mapping[a]);
     }
@@ -396,6 +420,69 @@ function parseCourse(mapping, items, course, lecture){
 }
 
 // authors
-
+function parseAuthors(mapping, items, course, lecture){
+    // remove all & insert all, otherwise awfully complicated code
+    var arr = [];
+    for(var a in mapping){
+        arr.push(mapping[a]);
+    }
+    var query = FacetRecord.remove({  // remove all existing records for Gbooks for given presentation
+        type: typePrefix+thisType+"_Author"
+    });
+    query.where('slideid').in(arr);  
+    query.exec(function(err,data){
+        if(err)
+            console.error(err);
+        else{
+            var authors = items[0].properties.authors;
+            for(var i=0;i<authors.length;i++){
+                if(typeof authors[i].properties.name[0]!="undefined" && authors[i].properties.name[0].length>0){
+                    for(var a in mapping){
+                        var tmp = new FacetRecord();
+                        tmp.type = typePrefix+thisType+"_Author"
+                        tmp.value = authors[i].properties.name[0];
+                        tmp.slideid = mapping[a];
+                        tmp.save(function(err){
+                            if(err)
+                                console.error("Problem saving FacetRecord: "+err);
+                        });               
+                    }
+                }
+            }
+        }   
+    });        
+}
 
 // keywords
+function parseKeywords(mapping, items, course, lecture){
+    // remove all & insert all, otherwise awfully complicated code
+    var arr = [];
+    for(var a in mapping){
+        arr.push(mapping[a]);
+    }
+    var query = FacetRecord.remove({  // remove all existing records for Gbooks for given presentation
+        type: typePrefix+thisType+"_Keyword"
+    });
+    query.where('slideid').in(arr);  
+    query.exec(function(err,data){
+        if(err)
+            console.error(err);
+        else{
+            var keywords = items[0].properties.keywords;
+            for(var i=0;i<keywords.length;i++){
+                if(typeof keywords[i]!="undefined" && keywords[i].length>0){
+                    for(var a in mapping){
+                        var tmp = new FacetRecord();
+                        tmp.type = typePrefix+thisType+"_Keyword"
+                        tmp.value = keywords[i];
+                        tmp.slideid = mapping[a];
+                        tmp.save(function(err){
+                            if(err)
+                                console.error("Problem saving FacetRecord: "+err);
+                        });               
+                    }
+                }
+            }
+        }   
+    });        
+}

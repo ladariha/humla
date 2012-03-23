@@ -676,8 +676,12 @@ span.facet_label:hover{
 }
 
 .facet_title{
+    cursor: pointer;
     color:#444;
     font-weight: bold;
+}
+.facet_img{
+    cursor: pointer;
 }
 
 .facet_selected{
