@@ -18,7 +18,7 @@ var ex_likes = {
             //cb: function() {console.log("ahoj");}, // callback function, třeba provolá humla.neco.neco();
             show_layer:true, // pro callback bez menu-layeru se dá false
             html:"<h1>Likes</h1>"
-            +' <div id="fb-root"></div><script>(function(d, s, id) {var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)) return; js = d.createElement(s); js.id = id;  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";  fjs.parentNode.insertBefore(js, fjs);}(document, \'script\', \'facebook-jssdk\'));</script>'
+        +' <div id="fb-root"></div><script>(function(d, s, id) {var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)) return; js = d.createElement(s); js.id = id;  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";  fjs.parentNode.insertBefore(js, fjs);}(document, \'script\', \'facebook-jssdk\'));</script>'
         +"<div id='likes-block' >"
         +'<div id="likes-hate" class="button" ><div >-</div></div>'
         +'<div id="likes-score">2</div>'
@@ -88,10 +88,10 @@ var ex_likes = {
                 /*slide.element.innerHTML = slide.element.innerHTML+et;      */
                 document.getElementById("likes-like").onclick = function() {
                     addLike(link,slideNumber,true)
-                    };
+                };
                 document.getElementById("likes-hate").onclick = function() {
                     addLike(link,slideNumber,false)
-                    };
+                };
                     
                 document.getElementById("likes-fb").innerHTML = '<div class="fb-like" data-href="https://www.facebook.com/plugins/like.php?href='+link+'" data-send="false" data-layout="button_count" data-width="60" data-show-faces="false" data-colorscheme="dark" data-font="arial"></div>';
                 
@@ -112,9 +112,14 @@ var ex_likes = {
         };
         
         addLikeCallback = function () {
-            if (this.readyState == 4) {                      
+            if (this.readyState == 4) {  
                 var d = document.getElementById("likes-score");
-                d.innerHTML = this._like?  parseInt(d.innerHTML)+1 :  parseInt(d.innerHTML)-1;                
+                if(this.status == 200) {
+                    d.innerHTML = this._like?  parseInt(d.innerHTML)+1 :  parseInt(d.innerHTML)-1;
+                }else {                    
+                    //TODO: vyhodit, že se to nepovedlo
+                    
+                }
             //TODO: udelat request a az tim to vypsat
             }            
         };

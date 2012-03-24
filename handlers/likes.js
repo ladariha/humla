@@ -33,7 +33,8 @@ app.get('/api/:course/:lecture/:slide/likes', function(req, res) {
 
 
 app.post('/api/:course/:lecture/:slide/likes/:op', function(req, res, next){    
-    //TODO: check logged user
+    //check logged user    
+    if (!req.isAuthenticated()) { return next(); }
     //TODO: get like/dislike param
     var p = req.params;
     var parlike = p.op === "like";  // or "dislike"

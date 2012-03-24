@@ -44,7 +44,7 @@ if(!module.parent) {
             "runserver":true,
             "usedb":true,
             "webroot":"public",
-            "domain":"127.0.0.1",
+            "domain":"http://aaaaaa",
             "port" :1338,        
             "db_uri": "mongodb://localhost/humla",
             "handlers_relative_path":"./handlers/",

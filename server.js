@@ -5,14 +5,15 @@
 
 var express = require("express");
 var mongoose = require('mongoose');
+var passport = require('passport')
 var fs = require("fs");
 var path = require("path");
 var handlers = {};
 var models = {};
 
-var config = {};
 
-app = null; // je to schválně bez var - aby to bylo v module contextu
+app = null; // je to schválně bez var - aby to bylo v globálním contextu
+config = {};
 
 exports.init = function(config_in) {
     config = config_in;
@@ -34,12 +35,14 @@ exports.run = function run() {
         //app.set('view options', {
         //            layout: 'shared/layout'
         //});
-        app.use(express.methodOverride());   // pak mužeme z formu posílat put <input type="hidden" name="_method" value="put" />
+        //app.use(express.methodOverride());   // pak mužeme z formu posílat put <input type="hidden" name="_method" value="put" />
         app.use(express.bodyParser());
-        app.use(express.cookieParser());
+        app.use(express.cookieParser());        
         app.use(express.session({
             secret: "HumlaSecretChange"
         }));
+        app.use(passport.initialize());
+        app.use(passport.session());
         app.use(app.router);
         app.set('db-uri',  config.server.db_uri);
     });
@@ -57,7 +60,7 @@ exports.run = function run() {
     });
     
     
-    var db = mongoose.connect(app.set('db-uri'));    
+     mongoose.connect(app.set('db-uri'));    
     
     //require("./models/comment")
 
@@ -116,3 +119,13 @@ function loadFiles(path) {
     return arr;
 }
 
+/**
+ * Reusable middleware for authentication
+ * Usage: app.post('/:op', ensureAuthenticated, function(req, res, next){   ...
+ */ 
+function ensureAuthenticated(req,res,next) {
+    if(req.isAuthenticated()) {
+        return next();
+    }
+    return res.redirect('/401'); // if failed...
+}

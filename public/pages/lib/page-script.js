@@ -39,6 +39,26 @@ function DataAccess() {
         return false;
     }
     
+    
+    this.displayLogin = function(user) {
+        var login = document.getElementById("login");
+        console.log(JSON.stringify(user));
+        if (user && user.email){
+            login.innerHTML = '<span>'+user.email+' </span><a id="login-logout" href="#login">(logout)</a>';
+        }else {
+            login.innerHTML = '<a id="login-login" href="#login">login</a>';                
+        }        
+    }
+    
+    this.loadUser = function() {
+        var $jqXHR = $.getJSON("/auth/user", function(user) { 
+            dataAccess.displayLogin(user);
+        });               
+        $jqXHR.error(function(e) {
+            debug_elm.innerHTML=e.status+": "+e.statusText+"<br/>"+e.responseText;            
+        });
+    }
+    
     // Send GET request for courses JSON
     this.loadCourses = function() {
         var $jqXHR = $.getJSON("/api/info/courses", function(courses) {                   
@@ -212,6 +232,7 @@ function PageHandler(){
         infotext_elm = document.getElementById("info-text")
         debug_elm = document.getElementById("msg")
         
+        dataAccess.loadUser();
         dataAccess.loadCourses();
     };
     
@@ -262,16 +283,23 @@ function PageHandler(){
         });  
         
         // login/registration button // TODO: odprasit... moc selektorů
-        $('#login > a#login-login').click(function(){
-            $(".register-field").hide();
-            $("#login-button").show();
-            $('div#login-form-overlay').toggle('fast');
-        })
+        $('#login').on("click","a",function(){
+            if(this.id==="login-logout") {
+                $.get("/logout", function() { 
+                    dataAccess.displayLogin(null);
+                });               
+            } else {
+                $("#login-button").show();
+                $('div#login-form-overlay').toggle('fast');
+            }
+        });        
+        
         $('#login > a#login-register,  a#form-close-btn').click(function(){
             $(".register-field").show();            
             $("#login-button").hide();
             $('div#login-form-overlay').toggle('fast');
         })
+    /*
         $("#reg-switch").click(function() {            
             $(".register-field").toggle("fast");
             if(this.innerHTML == "Registration") {
@@ -281,7 +309,7 @@ function PageHandler(){
                 $("#login-button").hide();
                 this.innerHTML = "Registration";
             }            
-        })
+        })*/
     };
     
     ///////////////////////////////////////////////////////////////////////// well commented line

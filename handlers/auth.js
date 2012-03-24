@@ -1,185 +1,136 @@
-
+/**
+ * Authentication & Login
+ * 
+ * 
+ */
 
 var mongoose = require("mongoose"); 
-var User = mongoose.model("User"); // Model toho commentu, můžu instanciovat
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+var GoogleStrategy = require('passport-google').Strategy;
+var User = mongoose.model("User"); 
 
-
-var openid = require('./openid');
-var url = require('url');
-var querystring = require('querystring');
-
-var extensions = [new openid.UserInterface(), 
-                  new openid.SimpleRegistration(
-                      {
-                        "nickname" : true, 
-                        "email" : true, 
-                        "fullname" : true,
-                        "dob" : true, 
-                        "gender" : true, 
-                        "postcode" : true,
-                        "country" : true, 
-                        "language" : true, 
-                        "timezone" : true
-                      }),
-                  new openid.AttributeExchange(
-                      {
-                        "http://axschema.org/contact/email": "required",
-                        "http://axschema.org/namePerson/friendly": "required",
-                        "http://axschema.org/namePerson": "required"
-                      })];
-
-var relyingParty = new openid.RelyingParty(
-    'http://localhost:1338/verify', // Verification URL (yours)
-    null, // Realm (optional, specifies realm for OpenID authentication)
-    false, // Use stateless verification
-    false, // Strict mode
-    extensions); // List of extensions to enable and include
-
-app.get('/authenticate', function(req, res) {   
+// SETUP GOOGLE OpenID strategy
+passport.use(new GoogleStrategy({
+    returnURL: config.server.domain+":"+config.server.port+'/auth/google/return', 
+    realm: config.server.domain+":"+config.server.port+'/',
+    profile: true
+},
+function(identifier, profile, done) {
+    //console.log("RECEIVED GOOGLE RESPONSE");      
+    findOrCreate(identifier,profile, function (err, user) {        
+        done(err, user);
+    });
 }
-    var parsedUrl = url.parse(req.url);
-        if(parsedUrl.pathname == '/authenticate')
-        { 
-          // User supplied identifier
-          var query = querystring.parse(parsedUrl.query);
-          var identifier = query.openid_identifier;
+));
 
-          // Resolve identifier, associate, and build authentication URL
-          relyingParty.authenticate(identifier, false, function(error, authUrl)
-          {
-            if(error)
-            {
-              res.writeHead(200, { 'Content-Type' : 'text/plain; charset=utf-8' });
-              res.end('Authentication failed: ' + error.message);
-            }
-            else if (!authUrl)
-            {
-              res.writeHead(200, { 'Content-Type' : 'text/plain; charset=utf-8' });
-              res.end('Authentication failed');
-            }
-            else
-            {
-              res.writeHead(302, { Location: authUrl });
-              res.end();
-            }
-          });
-        }
-        else if(parsedUrl.pathname == '/verify')
-        {
-          // Verify identity assertion
-          // NOTE: Passing just the URL is also possible
-          relyingParty.verifyAssertion(req, function(error, result)
-          {
-            res.writeHead(200, { 'Content-Type' : 'text/plain; charset=utf-8' });
+// Redirect the user to Google for authentication.  When complete, Google
+// will redirect the user back to the application at
+// /auth/google/return
+app.get('/auth/google', passport.authenticate('google'));
 
-            if(error)
-            {
-              res.end('Authentication failed: ' + error.message);
-            }
-            else
-            {
-              // Result contains properties:
-              // - authenticated (true/false)
-              // - answers from any extensions (e.g. 
-              //   "http://axschema.org/contact/email" if requested 
-              //   and present at provider)
-              res.end((result.authenticated ? 'Success :)' : 'Failure :(') +
-                '\n\n' + JSON.stringify(result));
-            }
-          });
+// Google will redirect the user to this URL after authentication.  Finish
+// the process by verifying the assertion.  If valid, the user will be
+// logged in.  Otherwise, authentication has failed.
+app.get('/auth/google/return', 
+    passport.authenticate('google', {
+        successRedirect: '/',
+        failureRedirect: '/500',
+        failureFlash: true
+    }));
+
+//Get User email //TODO: je to teď dost pitomé, udělat portál dynamicky
+app.get('/auth/user', function(req,res) {    
+    var user = {
+        'email': req.user && req.user.email
+    };
+    console.log(JSON.stringify(user));
+    //console.log("AUTH: " +req.isAuthenticated());    
+    res.writeHead(200);
+    res.write(JSON.stringify(user));
+    res.end();
+    
+});
+
+app.get('/logout', function(req, res){
+    req.logOut();  
+    res.writeHead(200);    
+    res.end();
+});
+    
+
+
+
+// Find or Create user field in db
+function findOrCreate(openid, profile, callback) {
+    //TEST ... pak smazat
+    //console.log(JSON.stringify(profile));
+    
+    User.findOne({
+        openid: openid
+    }, function(err, user) {
+        if (err) {
+            return callback(err);
         }
-        else
-        {
-            // Deliver an OpenID form on all other URLs
-            res.writeHead(200, { 'Content-Type' : 'text/html; charset=utf-8' });
-            res.end('<!DOCTYPE html><html><body>'
-                + '<form method="get" action="/authenticate">'
-                + '<p>Login using OpenID</p>'
-                + '<input name="openid_identifier" />'
-                + '<input type="submit" value="Login" />'
-                + '</form></body></html>');
+        if (!user) {            
+            var nu = new User();
+            nu.openid = openid;
+            nu.name = profile.displayName;
+            nu.email = profile.emails[0].value;            
+            nu.dateLogged = new Date();
+            
+            nu.save(function(err) {
+                if(err) {
+                    console.log("ERR");                    
+                    return callback(err);
+                }
+                console.log("New User Saved to DB: "+openid);
+                return callback(null, nu);
+            });            
+        } else {      
+            return callback(null, user);
         }
+      
+    });
+}
+
+passport.serializeUser(function(user, done) {
+    done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+    User.findById(id, function (err, user) {
+        done(err, user);
+    });
+});
 
 
 /*
 
-
-
-
-app.post('/auth/register', function(req, res){
-    var data = req.body;
-
-    // Check if username is in use
-    db.get(data.username, function(err, doc) {
-        if(doc) {
-            res.render('index', {
-                flash: 'Username is in use'
-            });
-
-        // Check if confirm password does not match
-        } else if(data.password != data.confirm_password) {
-            res.render('index', {
-                flash: 'Password does not match'
-            });
-
-        // Create user in database
-        } else {
-            delete data.confirm_password;
-            db.save(data.username, data,
-                function(db_err, db_res) {
-                    res.render('index', {
-                        flash: 'User created'
-                    });
-                });
-        }
+// SETUP PASSPORT LOCALSTRATEGY
+passport.use(new LocalStrategy({
+    usernameField: 'email'
+  },
+  function(username, password, done) {
+    User.findOne({ username: username }, function(err, user) {
+      if (err) { return done(err); }
+      if (!user) {
+        return done(null, false, { message: 'Unknown user' });
+      }
+      if (!user.validPassword(password)) {
+        return done(null, false, { message: 'Invalid password' });
+      }
+      return done(null, user);
     });
-});
+  }
+));
 
 
-app.post('/login', function(req, res){
-    var data = req.body;
 
-    // Check if there is a corresponding user in db
-    db.get(data.username, function(err, doc){
-        if(!doc) {
-            res.render('index', {
-                flash: 'No user found'
-            });
-
-        // Check if passwords match
-        } else if(doc.password != data.password) {
-            res.render('index', {
-                flash: 'Wrong password'
-            });
-
-        // User is logged in
-        } else {
-            res.render('index', {
-                flash: 'Logged in!'
-            });
-        }
-    });
-});
-
-
-module.exports.authenticate = function(login,password,callback) {
-    db.get('users/'+login,function(err,doc){
-        if(err) {
-            log(err.message);
-            callback(null);
-            return;
-        }
-        if(doc == null) {
-            callback(null);
-            return;
-        }
-        if(doc.password == password) {
-            callback(doc);
-            return;
-        }
-        log('retrieved: ' + doc);
-        callback(null);
-    });
-}
-
-*/
+app.post('/login', passport.authenticate('local'), function(req, res) {
+    // If this function gets called, authentication was successful.
+    // `req.user` property contains the authenticated user.
+    console.log("LOGGED");
+  });
+  
+  */

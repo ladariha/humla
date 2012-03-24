@@ -27,11 +27,8 @@
                         <li id="rssitem" ><a id="rss" href="atom.html" > <img  id="rssicon" src="img/rss.png" alt="Atom" title="Atom feeds"/></a></li>
                     </ul>
                 </nav>
-                <div id="login">
-                    <a id="login-register" href="#register">register</a>
-                    <a id="login-user" href="#user" style="display:none"></a><span>or</span>
-                    <a id="login-login" href="#login">login</a>            
-                    <a id="login-logout" href="#login" style="display:none;">logout</a>                    
+                <div id="login">                    
+                    <a id="login-login" href="#login">login</a>                                
                 </div>
             </header>
 
@@ -84,8 +81,17 @@
 
         <div id="login-form-overlay">
             <a href="#login" id="form-close-btn" rel="javascript" style="cursor: pointer;" title="close">close</a>
-
+            <div id="login-form">
+                <a href="/auth/google"><div>Login using Google OpenID</div></a>
+            </div>
+            
+<!--
             <form id="login-form">
+                <div>
+                    <label for="username">Username</label>
+                    <input type="text" id="username" autofocus="autofocus" autocomplete="on"  />
+                </div>
+                
                 <div>
                     <label for="username">Username</label>
                     <input type="text" id="username" autofocus="autofocus" autocomplete="on"  />
@@ -109,6 +115,7 @@
                     <a href="#registrace" title="Login" class="button register-field">Register</a>
                 </div>
             </form>
+-->
         </div>
 
 

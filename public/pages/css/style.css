@@ -252,18 +252,18 @@ header div#login a:hover {
     border-radius: 2px;
 }
 
-#login-form-overlay form#login-form{
+#login-form-overlay #login-form{
     color: #666;
-    padding: 10px;	
+    padding: 25px;	
     background: #F7F7F7; /*rgba(200,200,200,0.8);    */
 }
 
-#login-form-overlay form#login-form div{
+#login-form-overlay #login-form div{
     height: 50px;
     width: 100%;
 }
 
-#login-form-overlay form#login-form input{
+#login-form-overlay #login-form input{
     background: white;
     border: solid 1px #E5E5E5;
     font-weight: bold;
@@ -277,20 +277,20 @@ header div#login a:hover {
     width: auto;
 }
 
-#login-form-overlay form#login-form label{
+#login-form-overlay #login-form label{
     width: auto;
     padding: 9px 5px;    
 }
 
 
-#login-form-overlay form#login-form div.controls{
+#login-form-overlay #login-form div.controls{
     border-top: 1px solid #fff;
     margin-top: 10px;
     margin-bottom: 0px;
     padding-top: 5px;
     height: 35px;
 }
-#login-form-overlay form#login-form a.button{ 
+#login-form-overlay #login-form a.button{ 
     float:right;
     padding: 0px 10px;
 }
@@ -306,7 +306,7 @@ header div#login a:hover {
     right: -10px;
 }
 
-#login-form-overlay form#login-form .register-field {
+#login-form-overlay #login-form .register-field {
     display:none;
 
 }
