@@ -1,3 +1,8 @@
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
+ */
+
+
 function loadLayout(version){
 
     var url = "/api/template/"+version+"/editor";

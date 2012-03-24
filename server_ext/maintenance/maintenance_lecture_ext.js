@@ -1,3 +1,7 @@
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
+ */
+
 var mongoose = require("mongoose"); 
 var LectureToUpdate = mongoose.model("LectureToUpdate");
 var slideindex_ext =  require('../slideindex/slideindex_ext.js');

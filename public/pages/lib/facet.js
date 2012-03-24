@@ -1,3 +1,8 @@
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
+ */
+
+
 var ctrlDown = false;
 var container = new FacetedContainer();
 var LIMIT = 3600000;

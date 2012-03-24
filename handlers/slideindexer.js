@@ -1,3 +1,8 @@
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
+ */
+
+
 var querystring = require('querystring');
 var path = require('path');
 var defaults = require('./defaults');

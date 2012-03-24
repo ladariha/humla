@@ -1,3 +1,7 @@
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
+ */
+
 var mongoose = require("mongoose"); 
 var FacetRecord = mongoose.model("FacetRecord");
 var Slideid = mongoose.model("Slideid");
@@ -7,6 +11,13 @@ var thisType = "CodeSnippet/Algorithm";
 
 exports.type = thisType;
 
+/**
+ * Parses information from microdata item of type Algorithm. It parses big O and algorithm type
+ * @param mapping assoc array of mapping between data-slideid and _id values
+ * @param course course ID
+ * @param lecture lecture ID
+ * @param data all microdata items
+ */
 exports.parse = function(mapping, course, lecture, data){ 
     var toProcess =[];
     for(var j=0;j<data.items.length;j++){
@@ -16,7 +27,7 @@ exports.parse = function(mapping, course, lecture, data){
                     try{
                         toProcess.push(data.items[j]);
                     }catch(e){
-                        console.error("Problem parsing CodeSnippet_Language type "+e);
+                        console.error("Problem parsing Algorithm type "+e);
                     }
                 }                   
             }

@@ -1,3 +1,7 @@
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
+ */
+
 var microdata_ext =  require('../microdata/microdataparser_ext.js');
 var editor_ext =  require('../editor/editor_ext.js');
 var path = require('path');
@@ -14,7 +18,7 @@ var EXTRA_PARSERS_DIRECTORY = (path.join(path.dirname(__filename), './parsers'))
 // load extra parsers
 var types = new Array();
 
-fs.readdir( TYPE_PARSERS_DIRECTORY, function( err, files ) { // require() all js files in humla extensions directory
+fs.readdir( TYPE_PARSERS_DIRECTORY, function( err, files ) { // require() all js files in  extensions directory
     files.forEach(function(file) {
         if(endsWith(file, "js")){
             var req = require( TYPE_PARSERS_DIRECTORY+'/'+file );
@@ -27,7 +31,7 @@ fs.readdir( TYPE_PARSERS_DIRECTORY, function( err, files ) { // require() all js
 
 var extraParsers = new Array();
 
-fs.readdir(EXTRA_PARSERS_DIRECTORY, function( err, files ) { // require() all js files in humla extensions directory
+fs.readdir(EXTRA_PARSERS_DIRECTORY, function( err, files ) { // require() all js files in  extensions directory
     files.forEach(function(file) {
         if(endsWith(file, "js")){
             var req = require( EXTRA_PARSERS_DIRECTORY+'/'+file );
@@ -96,7 +100,7 @@ function processData(_mapping, course, lecture, data){
             console.error("Failed extra parser:"+extraParsers[j].name+" > " + e);         
         }
     }    
-};
+}
     
 exports.processData = processData;
     
@@ -136,7 +140,7 @@ function checkIDs(course, lecture, data,checkID){
             });          
         }
     }
-};
+}
     
 /**
  * Parses presentation given by course ID and lecture ID and searches for microdata for faceted purposes
@@ -165,7 +169,7 @@ function run(courseID, lectureID, checkID){
     }catch(error){
         console.error("Facetparser run error: "+error.toString());
     }
-};
+}
 
 exports.run  =run;
 

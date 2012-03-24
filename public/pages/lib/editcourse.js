@@ -1,6 +1,5 @@
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
  */
 
 var alreadyCheckedCourses = {};

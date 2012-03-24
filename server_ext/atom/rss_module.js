@@ -1,3 +1,7 @@
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
+ */
+
 /*
  * OBSOLETE IN FAVOUR OF ATOM FEED
  */

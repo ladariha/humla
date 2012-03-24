@@ -1,4 +1,12 @@
-//exports.parse =function parse($,slideIndex,response, _pathToCourse, _filename){
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
+ */
+
+/**
+ * Parses GitHub blocks
+ * @param $ jQuery
+ * @param slideIndex index container itself
+ */
 exports.parse =function parse($,slideIndex){
     try{
         var slide=1; 

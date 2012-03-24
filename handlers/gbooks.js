@@ -1,3 +1,7 @@
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
+ */
+
 var https = require('https');
 
 app.get('/api/gbooks/:id/:mode', function(req, res){

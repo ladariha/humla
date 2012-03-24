@@ -1,3 +1,7 @@
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
+ */
+
 var typePrefix =require("../facetengine_ext.js").prefix;
 var mongoose = require("mongoose"); 
 var FacetRecord = mongoose.model("FacetRecord");
@@ -6,7 +10,15 @@ var thisType = "Presentation";
 exports.type = thisType;
 
 
-
+/**
+ * Parses information from microdata item of type Presentation. This type is different than others
+ * because it is only once in each presentation and it affects all slide of the given presentation.
+ * Parsed properties are: language, author, organization, course ID, field
+ * @param mapping assoc array of mapping between data-slideid and _id values
+ * @param course course ID
+ * @param lecture lecture ID
+ * @param data all microdata items
+ */
 exports.parse = function(mapping, course, lecture, data){ 
     var toProcess =[];
     for(var j=0;j<data.items.length;j++){

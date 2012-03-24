@@ -1,7 +1,8 @@
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
  */
+
+
 var typePrefix =require("../facetengine_ext.js").prefix;
 var mongoose = require("mongoose"); 
 var FacetRecord = mongoose.model("FacetRecord");
@@ -12,6 +13,15 @@ var GBOOK_CATEGORY = "Slideindex_Gbook_Category";
 var GBOOK_AUTHOR = "Slideindex_Gbook_Author";
 var GDRAWING_TYPE = "Slideindex_Gdrawing";
 exports.name = "Slideindex parser";
+
+/**
+ * Parses information (Google Books, Google Drawings and GitHub blocks)  from Slideindex extension and stores them to the database. First it gets
+ * slide index and after it is received it starts to parse individual types.
+ * @param mapping assoc array of mapping between data-slideid and _id values
+ * @param course course ID
+ * @param lecture lecture ID
+ * @param data all microdata items
+ */
 exports.parse= function(mapping, course, lecture, data){
     require('../../slideindex/slideindex_ext.js').index(course, lecture, "jsobject", undefined, "", function(err, index){
         if(err)

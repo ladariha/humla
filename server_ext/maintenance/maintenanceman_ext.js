@@ -1,3 +1,6 @@
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
+ */
 
 /**
  * MaintenanceMan is a function ("class") designed to perform maintein operations on/with given object.
@@ -30,19 +33,7 @@ function MaintenanceMan(object, name, dispose){
             }
         }
     }
-    
-    //    this.maintenance_FOO = function(){
-    //        var _ref = this;
-    //        slideindex_ext.index(this.object.courseID, this.object.lectureID, "json", undefined, function(err, data){
-    //            if(err){
-    //                console.error("refreshIndexFiles: "+err);
-    //            }else{
-    //                _ref.notify();                          
-    //            }
-    //        }); 
-    //    }
-
-    
+   
     this.run = function(args){
         
         for(var key in this){ // to set number of called methods

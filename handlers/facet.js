@@ -1,3 +1,7 @@
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
+ */
+
 var facet_ext = require('../server_ext/facet/facetengine_ext.js');
 var querystring = require('querystring');
 

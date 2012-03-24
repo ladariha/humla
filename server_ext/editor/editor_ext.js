@@ -1,3 +1,7 @@
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
+ */
+
 var parseURL = require('url').parse;
 var path = require('path');
 var querystring = require('querystring');
@@ -864,7 +868,7 @@ function IDSyncLock(toDelete, toUpdate, toInsert, callback, lecture, course, ori
             callback(this.response, this.course, this.lecture, false, this.originalCallback);
         }
     };
-};
+}
 
 
 /**

@@ -1,3 +1,7 @@
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
+ */
+
 var defaults = require('../../handlers/defaults');
 var mongoose = require("mongoose"); 
 var fs     = require('fs');
@@ -41,6 +45,12 @@ exports.types = function(res, callback){
         returnThrowError(500, error, res, callback);
     }
 }
+/**
+ * Returns all distinct values of given property
+ * @param schemaproperty the property of which values are supposed to be found
+ * @param res HTTP response (if called via REST otherwise undefined)
+ * @param callback callback function (if called internally otherwise undefined)
+ */
 exports.total = function(schemaproperty, res, callback){
     var q = FacetRecord.distinct("slideid");
     q.where('type', typePrefix+schemaproperty);
@@ -53,6 +63,12 @@ exports.total = function(schemaproperty, res, callback){
     });
 }
 
+/**
+ * Returns 20 most common values of given property
+ * @param schemaproperty the property of which values are supposed to be found
+ * @param res HTTP response (if called via REST otherwise undefined)
+ * @param callback callback function (if called internally otherwise undefined)
+ */
 exports.topValues = function(schemaproperty, res, callback){
     // FacetRecord.group({key: {value:true},cond: {type:"Slideindex_Gbook_Category"},reduce: function(obj,prev) {prev.csum += 1;},initial: {csum: 0}});
     var tagReduce = function(previous, current) { 
@@ -142,6 +158,14 @@ exports.simpleQuery = function(schemaproperty, value, page, baseUrl,res,  callba
     }
 }
 
+/*
+*Perform complex query
+*@param query searched query, instance of Query
+*@param page offset
+*@param baseUrl base url for HATEOAS
+*@param res HTTP response (if called via REST otherwise undefined)
+*@param callback callback function (if called internally otherwise undefined)
+*/
 exports.complexQuery = function( query,page, baseUrl, res,callback ){
     recursiveQuery(0, query, page, baseUrl, res,callback );
 };
@@ -151,8 +175,8 @@ function recursiveQuery(depth, query, page, baseUrl, res, callback){
         addMapping(query.results, page, baseUrl, true, res,  callback);
     }else{
         var _query = FacetRecord.find();
-        if(query.results.length>0) // zatim nefunguje
-            _query.$or(query.results); // FIXME  need to check that it really works :)
+        if(query.results.length>0) 
+            _query.$or(query.results);
 
         if(query.valueQueries.length>0){ // run value queries first since they could significantly reduce total results
             var q = query.valueQueries.splice(0,1); // take 1st item from array
@@ -203,12 +227,25 @@ function Query(booleanQ, valueQ){
     };
 }
 
+/**
+ *Returns instance of Query
+ *@param booleanQ list of pairs property/value that is boolean based
+ *@param valueQ list of pairs property/value that is value based
+ */
 exports.query  = function(booleanQ, valueQ){
     return new Query(booleanQ, valueQ);
 };
 
-
-function addMapping(data, page, baseUrl, complex, res, callback){
+/**
+ * Adds mapping to the results. Results contain only _id value, this adds the data-slideid value and links for HATEOAS if needed
+*@param data array of found results
+*@param page offset
+*@param baseUrl base url for HATEOAS
+*@param isComplex true if called for complex query 
+*@param res HTTP response (if called via REST otherwise undefined)
+*@param callback callback function (if called internally otherwise undefined)
+ */
+function addMapping(data, page, baseUrl, isComplex, res, callback){
     
     var tmp = [];
     for(var j=0;j<data.length;j++){

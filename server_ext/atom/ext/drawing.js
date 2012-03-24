@@ -1,3 +1,11 @@
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
+ */
+
+/**
+ * Adds information about all Google Drawings to the feed
+ * @param index slideindex container
+ */
 exports.createFeedList = function(index){
     var ul = "<p>Google Drawings </p><ul >";
     for(var i in index.drawings){
