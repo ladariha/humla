@@ -1,3 +1,7 @@
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
+ */
+
 var fs = require("fs");
 var path = require("path");
 //var jquery = fs.readFileSync('./public/lib/jquery-1.6.3.min.js').toString();
@@ -616,9 +620,6 @@ function getCourseFullNameAndContinue(res, originalCallback, lecture, id, callba
     });
 }
 
-/**
- *
- */
 function returnThrowError(code, msg, res, callback){
     if(typeof res!="undefined")
         defaults.returnError(code, msg, res);

@@ -1,3 +1,12 @@
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
+ */
+
+/**
+ * Parses Google Books
+ * @param $ jQuery
+ * @param slideIndex index container itself
+ */
 exports.parse =function parse($,slideIndex){   
     try{
         var temporary = {};      

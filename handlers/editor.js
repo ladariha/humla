@@ -1,3 +1,7 @@
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
+ */
+
 var parseURL = require('url').parse;
 var path = require('path');
 var querystring = require('querystring');

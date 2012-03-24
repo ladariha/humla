@@ -1,3 +1,7 @@
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
+ */
+
 var fs = require("fs");
 var path = require("path");
 var richDataGenerator = require("./rich_data_generator");

@@ -1,3 +1,7 @@
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
+ */
+
 var extensions = new Array();
 var path = require("path");
 var EXTENSIONS_DIRECTORY = (path.join(path.dirname(__filename), './ext')).toString();

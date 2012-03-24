@@ -1,3 +1,7 @@
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
+ */
+
 var jsdom = require('jsdom');
 /**
  * Finds all microdata items (or only type restricted by <code>type</code> parameter) and after

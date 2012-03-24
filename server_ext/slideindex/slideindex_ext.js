@@ -1,3 +1,7 @@
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
+ */
+
 var parseURL = require('url').parse;
 var exec = require('child_process').exec;
 var querystring = require('querystring');

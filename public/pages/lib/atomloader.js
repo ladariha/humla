@@ -1,3 +1,6 @@
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
+ */
 
 var atomLoader = new AtomLoader();
 

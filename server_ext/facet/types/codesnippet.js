@@ -1,3 +1,7 @@
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
+ */
+
 var mongoose = require("mongoose"); 
 var FacetRecord = mongoose.model("FacetRecord");
 var Slideid = mongoose.model("Slideid");
@@ -8,6 +12,13 @@ var childType="CodeSnippet/Algorithm";
 exports.type = thisType;
 exports.childType=childType;
 
+/**
+ * Parses information from microdata item of type CodeSnippet and its child types. It parses language property
+ * @param mapping assoc array of mapping between data-slideid and _id values
+ * @param course course ID
+ * @param lecture lecture ID
+ * @param data all microdata items
+ */
 exports.parse = function(mapping, course, lecture, data){ 
     var toProcess =[];
     for(var j=0;j<data.items.length;j++){
@@ -86,7 +97,6 @@ function parseSnippetType(mapping, items, course, lecture){
                 
                     for(var a=0;a<items.length;a++){    // insert new records
                         if(typeof items[a].toInsert=="undefined"){
-                            console.log("JEDEN NOVY");
                             var tmp = new FacetRecord();
                             tmp.type =typePrefix+thisType;
                             tmp.value = items[a].properties.language[0];

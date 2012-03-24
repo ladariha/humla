@@ -1,14 +1,23 @@
+/**
+ * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
+ */
+
 var mongoose = require("mongoose"); 
 var FacetRecord = mongoose.model("FacetRecord");
 var Slideid = mongoose.model("Slideid");
-// slide bude parsovat i Presentation_keyword a konvertuje je na Slide_Keyword. Takze v parse() si ulozim do pole VSECHNA keywords (z prezentace i slide), 
-// pred clearRecords smazu vsechna keyword pro tuhle prezentaci a vlozim vsechna nova
 
 var typePrefix =require("../facetengine_ext.js").prefix;
 var thisType = "Slide";
 
 exports.type = thisType;
 
+/**
+ * Parses information from microdata item of type Slide. It parses slide type, keywords and importance
+ * @param mapping assoc array of mapping between data-slideid and _id values
+ * @param course course ID
+ * @param lecture lecture ID
+ * @param data all microdata items
+ */
 exports.parse = function(mapping, course, lecture, data){ 
     var notToDelete ={};
     for(var j=0;j<data.items.length;j++){
