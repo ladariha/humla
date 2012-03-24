@@ -84,7 +84,7 @@ function parseSnippetType(mapping, items, course, lecture){
                         }
                     }
                 
-                      for(var a=0;a<items.length;a++){    // insert new records
+                    for(var a=0;a<items.length;a++){    // insert new records
                         if(typeof items[a].toInsert=="undefined"){
                             console.log("JEDEN NOVY");
                             var tmp = new FacetRecord();
@@ -93,7 +93,7 @@ function parseSnippetType(mapping, items, course, lecture){
                             tmp.slideid = mapping[items[a].slideid];
                             tmp.save(function(err){
                                 if(err)
-                                    throw "Problem saving FacetRecord "+": "+err;
+                                   console.error("Problem saving FacetRecord: "+err);
                             });
                         }
                     }
@@ -113,7 +113,7 @@ function parseSnippetType(mapping, items, course, lecture){
                             tmp.slideid = mapping[items[j].slideid];
                             tmp.save(function(err){
                                 if(err)
-                                    throw "Problem saving FacetRecord "+": "+err;
+                                  console.error("Problem saving FacetRecord: "+err);
                             });
                         }    
                     }

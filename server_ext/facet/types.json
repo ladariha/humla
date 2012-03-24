@@ -5,67 +5,86 @@
         "property": "Slide: Importance",
         "shortName": "Slide_Importance",
         "type": "value",
-        "url_simple": "/api/facets/Slide_Importance"
     },
     {
         "property": "Slide: Keyword",
         "type": "value",
         "shortName": "Slide_Keyword",
-        "url_simple": "/api/facets/Slide_Keyword"
     },
     {
         "property": "Slide: Type",
         "type": "value",
         "shortName": "Slide_Type",
-        "url_simple": "/api/facets/Slide_Type"
     },
     {
         "property": "Google Books: Author",
         "type": "value",
         "shortName": "Slideindex_Gbook_Author",
-        "url_simple": "/api/facets/Slideindex_Gbook_Author"
     },
     {
         "property": "Google Books: Category",
         "type": "value",
         "shortName": "Slideindex_Gbook_Author",
-        "url_simple": "/api/facets/Slideindex_Gbook_Category"
     },
     {
         "property": "Google Drawing",
         "type": "boolean",
         "shortName": "Slideindex_Gdrawing",
-        "url_simple": "/api/facets/Slideindex_Gdrawing"
     },
     {
         "property": "Github Code Snippet",
         "type": "boolean",
         "shortName": "Slideindex_Github",
-        "url_simple": "/api/facets/Slideindex_Github"
     },
     {
         "property": "CodeSnippet language",
         "type": "value",
         "shortName": "CodeSnippet",
-        "url_simple": "/api/facets/CodeSnippet"
     },  
     {
         "property": "Algorithm type",
         "type": "value",
-        "shortName": "Algorithm_Type",
-        "url_simple": "/api/facets/Algorithm_Type"
+        "shortName": "CodeSnippet/Algorithm_Type",
     },
     {
         "property": "Algorithm BigO",
         "type": "value",
-        "shortName": "Algorithm_BigO",
-        "url_simple": "/api/facets/Algorithm_BigO"
+        "shortName": "CodeSnippet/Algorithm_BigO",
     },
     {
         "property": "Tasks",
         "type": "boolean",
         "shortName": "Tasks",
-        "url_simple": "/api/facets/Tasks"
+    },
+     {
+        "property": "Field",
+        "type": "value",
+        "shortName": "Presentation_Field",
+    },
+     {
+        "property": "Author",
+        "type": "value",
+        "shortName": "Presentation_Author",
+    },
+     {
+        "property": "Course",
+        "type": "value",
+        "shortName": "Presentation_Course",
+    },
+     {
+        "property": "Presentation Keywords",
+        "type": "value",
+        "shortName": "Presentation_Keyword",
+    },
+     {
+        "property": "Organization",
+        "type": "value",
+        "shortName": "Presentation_Organization",
+    },
+     {
+        "property": "FAQ",
+        "type": "boolean",
+        "shortName": "Faq",
     }
     ]
 }

@@ -19,7 +19,7 @@ exports.items = function(presentationURL, html, type, callback){
                     baseUrl=($(this).attr('href'));
             });
             var microdataParser = microdata($, baseUrl);
-        
+
             if(typeof type!="undefined"){
                 var microdataTyped = {};
                 microdataTyped.items = [];
@@ -268,12 +268,31 @@ function splitTokens(s) {
 function getItemsFaceted($, slideNumber){
     var items = [];
     var iterator = 0;
+    $('html').find('body').each(function(){
+        if($(this).attr('itemscope').length>0){ //  the entire div with class attribute "slide" is itemscope => it is the only top level item 
+            var item = {};
+            item.type = $(this).attr('itemtype')+"/dsdsdsd";
+            item.container = this;
+            item.properties = [];
+                  item.slideid = 123456789;
+            if($(this).attr('itemref').length)
+                item.refs = $(this).attr('itemref').split(" ");   
+            var a  = {};
+            a.item = $(this);
+            a.slideid=123456789;
+            items.push(a);
+        }          
+        //            }     
+        iterator++;
+    });
+    iterator = 0;
+    
     $('html').find('.slide').each(function(){
         if(typeof slideNumber=="undefined" || iterator === slideNumber)
         {
+    
             var slideid = $(this).attr('data-slideid');
-            
-            if($(this).attr('itemscope').length){ //  the entire div with class attribute "slide" is itemscope => it is the only top level item 
+            if($(this).attr('itemscope').length>0){ //  the entire div with class attribute "slide" is itemscope => it is the only top level item 
                 var item = {};
                 item.type = $(this).attr('itemtype')+"/dsdsdsd";
                 item.container = this;
@@ -285,24 +304,24 @@ function getItemsFaceted($, slideNumber){
                 a.slideid = slideid;
                 items.push(a);
             }          
-//            }else{ // any itemscope (note that it causes duplications - one nested itemscope (aka itemprop with itemscope) is returned as property of some item and also as a single item
+            //            }else{ // any itemscope (note that it causes duplications - one nested itemscope (aka itemprop with itemscope) is returned as property of some item and also as a single item
 
-                $(this).find('*[itemscope]').each(function(){ // because this returns EVERYTHING in jsdom :(
-                    if($(this).attr('itemscope').length) //&& (!$(this).attr('itemprop').length || $(this).parent().attr('data-slideid')=== slideid) 
-                    {        
-                        var item = {};
-                        item.type = $(this).attr('itemtype')+"/dsdsdsd";
-                        item.container = this;
-                        item.properties = [];
-                        if($(this).attr('itemref').length)
-                            item.refs = $(this).attr('itemref').split(" ");   
-                        var a  = {};
-                        a.item = $(this);
-                        a.slideid = slideid;
-                        items.push(a);
-                    }
-                });
-//            }     
+            $(this).find('*[itemscope]').each(function(){ // because this returns EVERYTHING in jsdom :(
+                if($(this).attr('itemscope').length) //&& (!$(this).attr('itemprop').length || $(this).parent().attr('data-slideid')=== slideid) 
+                {        
+                    var item = {};
+                    item.type = $(this).attr('itemtype')+"/dsdsdsd";
+                    item.container = this;
+                    item.properties = [];
+                    if($(this).attr('itemref').length)
+                        item.refs = $(this).attr('itemref').split(" ");   
+                    var a  = {};
+                    a.item = $(this);
+                    a.slideid = slideid;
+                    items.push(a);
+                }
+            });
+        //            }     
         }
         iterator++;
     });
@@ -394,7 +413,7 @@ function itemValue($, selector, baseUrl) {
 
 function properties($, selector,name) {
     var props = [];
-
+        
     function crawl(root) {
         
         var toTraverse = [root];
@@ -426,7 +445,7 @@ function properties($, selector,name) {
         var tokens = tokenList('itemref',$, root);
         for(var tk =0; tk< tokens.length;tk++){
             var $ref = $('#'+tokens[tk]);
-            if ($ref)
+            if ($ref && typeof $('#'+tokens[tk]).prop('tagName')!="undefined")
                 toTraverse.push($ref);
         }
 
@@ -478,7 +497,7 @@ function microdata($, baseUrl, extraTagName) {
 
 
     function getObject(item, memory) {
-        
+
         var result = {};  
         
         var types = tokenList('itemtype',$, item);
@@ -490,7 +509,7 @@ function microdata($, baseUrl, extraTagName) {
         if(typeof extraTagName!="undefined")
             result.propertiesTagNames = {};
         properties($, item).each(function(i, elem) {
-            
+    
             var value;
             if (itemScope($, elem)) {
                 if ($.inArray(elem, memory) != -1) {

@@ -60,9 +60,9 @@ function parseAlgorithmTypeType(mapping, items, course, lecture){
                 for(var i=0;i<data.length;i++){   
                     var foundMatch = false;
                     for(var j=0;j<items.length;j++){   
-                        if(data[i].slideid+'' === mapping[items[j].slideid]+'' && typeof items[j].properties.language!="undefined" 
-                            && items[j].properties.language.length>0 &&
-                            data[i].value === items[j].properties.language[0] && typeof items[j].properties.used=="undefined" 
+                        if(data[i].slideid+'' === mapping[items[j].slideid]+'' && typeof items[j].properties.type!="undefined" 
+                            && items[j].properties.type.length>0 &&
+                            data[i].value === items[j].properties.type[0] && typeof items[j].properties.used=="undefined" 
                             && !foundMatch){ // keep the untouched
                             items[j].properties.used = 1; // mark already processed microdata
                             items[j].toInsert = false;
@@ -82,7 +82,7 @@ function parseAlgorithmTypeType(mapping, items, course, lecture){
                         tmp.slideid = mapping[items[a].slideid];
                         tmp.save(function(err){
                             if(err)
-                                throw "Problem saving FacetRecord "+": "+err;
+                                console.error("Problem saving FacetRecord: "+err);
                         });
                     }
                 }
@@ -96,14 +96,14 @@ function parseAlgorithmTypeType(mapping, items, course, lecture){
                 
             }else{ //insert all new record (no existing )
                 for(var j=0;j<items.length;j++){   
-                    if(typeof items[j].properties.language!="undefined" && items[j].properties.language.length>0){
+                    if(typeof items[j].properties.type!="undefined" && items[j].properties.type.length>0){
                         var tmp = new FacetRecord();
                         tmp.type =typePrefix+thisType+"_Type";
                         tmp.value = items[j].properties.type[0];
                         tmp.slideid = mapping[items[j].slideid];
                         tmp.save(function(err){
                             if(err)
-                                throw "Problem saving FacetRecord "+": "+err;
+                                console.error("Problem saving FacetRecord: "+err);
                         });
                     }    
                 }
@@ -149,9 +149,9 @@ function parseAlgorithmBigOType(mapping, items, course, lecture){
                 for(var i=0;i<data.length;i++){   
                     var foundMatch = false;
                     for(var j=0;j<items.length;j++){   
-                        if(data[i].slideid+'' === mapping[items[j].slideid]+'' && typeof items[j].properties.language!="undefined" 
-                            && items[j].properties.language.length>0 &&
-                            data[i].value === items[j].properties.language[0] && typeof items[j].properties.used=="undefined" 
+                        if(data[i].slideid+'' === mapping[items[j].slideid]+'' && typeof items[j].properties.bigO!="undefined" 
+                            && items[j].properties.bigO.length>0 &&
+                            data[i].value === items[j].properties.bigO[0] && typeof items[j].properties.used=="undefined" 
                             && !foundMatch){ // keep the untouched
                             items[j].properties.used = 1; // mark already processed microdata
                             items[j].toInsert = false;
@@ -171,7 +171,7 @@ function parseAlgorithmBigOType(mapping, items, course, lecture){
                         tmp.slideid = mapping[items[a].slideid];
                         tmp.save(function(err){
                             if(err)
-                                throw "Problem saving FacetRecord "+": "+err;
+                                console.error("Problem saving FacetRecord: "+err);
                         });
                     }
                 }
@@ -185,14 +185,14 @@ function parseAlgorithmBigOType(mapping, items, course, lecture){
                 
             }else{ //insert all new record (no existing )
                 for(var j=0;j<items.length;j++){   
-                    if(typeof items[j].properties.language!="undefined" && items[j].properties.language.length>0){
+                    if(typeof items[j].properties.bigO!="undefined" && items[j].properties.bigO.length>0){
                         var tmp = new FacetRecord();
                         tmp.type =typePrefix+thisType+"_BigO";
                         tmp.value = items[j].properties.bigO[0];
                         tmp.slideid = mapping[items[j].slideid];
                         tmp.save(function(err){
                             if(err)
-                                throw "Problem saving FacetRecord "+": "+err;
+                                console.error("Problem saving FacetRecord: "+err);
                         });
                     }    
                 }

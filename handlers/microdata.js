@@ -188,7 +188,7 @@ function additionalInfo(data, req, course, lecture, itemtype){
             if(microitem.type){
                 for(var j=0; j<microitem.type.length;j++){ // iterate all itemtypes
                     var a  = {};
-                    a.url = container.url+encodeURIComponent(microitem.type[j]+"");
+                    a.url = container.url+"/"+encodeURIComponent(microitem.type[j]+"");
                     a.type = microitem.type[j]+"";   
                     if(tmpTypes.indexOf(a.type)<0)
                     {

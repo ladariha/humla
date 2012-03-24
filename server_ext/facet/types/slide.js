@@ -1,7 +1,8 @@
 var mongoose = require("mongoose"); 
 var FacetRecord = mongoose.model("FacetRecord");
 var Slideid = mongoose.model("Slideid");
-
+// slide bude parsovat i Presentation_keyword a konvertuje je na Slide_Keyword. Takze v parse() si ulozim do pole VSECHNA keywords (z prezentace i slide), 
+// pred clearRecords smazu vsechna keyword pro tuhle prezentaci a vlozim vsechna nova
 
 var typePrefix =require("../facetengine_ext.js").prefix;
 var thisType = "Slide";
@@ -77,7 +78,7 @@ function parseSlideType(mapping, item, course, lecture){
             slideid: _id
         }, function(err,crs){  // investigate all existing records
             if(err){
-                throw err;
+             console.error(err);
             }else{
                 if(crs.length >0){
                     
@@ -100,12 +101,12 @@ function parseSlideType(mapping, item, course, lecture){
                         if(crs[i].value.length>0){ // if there is a value, save it
                             crs[i].save(function (err){
                                 if(err)
-                                    throw "Problem saving FacetRecord "+_id+": "+err;
+                                 console.error("Problem saving FacetRecord: "+err);
                             });
                         }else{ // otherwise no reason to keep empty record
                             crs[i].remove(function (err){
                                 if(err)
-                                    throw "Problem removing FacetRecord "+_id+": "+err;
+                                  console.error("Problem saving FacetRecord: "+err);
                             });
                         } 
                     }
@@ -120,7 +121,7 @@ function parseSlideType(mapping, item, course, lecture){
                             a.slideid = _id;
                             a.save(function (err){
                                 if(err)
-                                    throw "Problem saving FacetRecord "+_id+": "+err;
+                                   console.error("Problem saving FacetRecord: "+err);
                             });   
                         }
                         
@@ -131,7 +132,7 @@ function parseSlideType(mapping, item, course, lecture){
                             a.slideid = _id;
                             a.save(function (err){
                                 if(err)
-                                    throw "Problem saving FacetRecord "+_id+": "+err;
+                                console.error("Problem saving FacetRecord: "+err);
                             });   
                         }
                         
@@ -145,7 +146,7 @@ function parseSlideType(mapping, item, course, lecture){
                             a.slideid = _id;
                             a.save(function (err){
                                 if(err)
-                                    throw "Problem saving FacetRecord "+_id+": "+err;
+                                   console.error("Problem saving FacetRecord: "+err);
                             });   
                         }
                         break;
@@ -158,7 +159,7 @@ function parseSlideType(mapping, item, course, lecture){
                             a.slideid = _id;
                             a.save(function (err){
                                 if(err)
-                                    throw "Problem saving FacetRecord "+_id+": "+err;
+                                    console.error("Problem saving FacetRecord: "+err);
                             });   
                         }
                         break;
@@ -182,7 +183,7 @@ function parseSlideType(mapping, item, course, lecture){
                             a.slideid = _id;
                             a.save(function (err){
                                 if(err)
-                                    throw "Problem saving FacetRecord "+_id+": "+err;
+                                console.error("Problem saving FacetRecord: "+err);
                             });
                         }else{ // if the keyword is in db, let it be there
                             delete keywordRecords[item.properties.keywords[j]]; // so the values left in keywordRecords are meant to be deleted
@@ -193,7 +194,7 @@ function parseSlideType(mapping, item, course, lecture){
                         if(typeof keywordRecords[k]!="undefined"){
                             keywordRecords[k].remove(function (err){
                                 if(err)
-                                    throw "Problem removing FacetRecord "+_id+": "+err;
+                                   console.error("Problem saving FacetRecord: "+err);
                             });
                         }
                     } 
@@ -207,7 +208,7 @@ function parseSlideType(mapping, item, course, lecture){
                             a.slideid = _id;
                             a.save(function (err){
                                 if(err)
-                                    throw "Problem saving FacetRecord "+_id+": "+err;
+                                     console.error("Problem saving FacetRecord: "+err);
                             });
                         }
                     }
@@ -217,7 +218,7 @@ function parseSlideType(mapping, item, course, lecture){
                         if(typeof keywordRecords[key]!="undefined"){
                             keywordRecords[key].remove(function (err){
                                 if(err)
-                                    throw "Problem removing FacetRecord "+_id+": "+err;
+                                   console.error("Problem saving FacetRecord: "+err);
                             });
                         }
                     }
