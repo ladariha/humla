@@ -17,7 +17,12 @@ fs.readdir( EXTENSIONS_DIRECTORY, function( err, files ) { // require() all js f
     });
 });
 
-
+/**
+ * Creates HTML content for lecure in atom parameter specified by iterator
+ * @param atom atom container (instance of AtomModule)
+ * @param iterator index of lecture in atom.lectures
+ * @param domain domain
+ */
 exports.create =  function(atom, iterator, domain){
     var port = 80;
     if(domain.indexOf(":",0)>-1){// contains port

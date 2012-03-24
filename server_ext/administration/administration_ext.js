@@ -17,7 +17,17 @@ var Lecture = mongoose.model("Lecture");
 var Slideid = mongoose.model("Slideid");
 var defaults = require('../../handlers/defaults');
 
-
+/**
+ * Creates new course
+ * @param courseID course ID
+ * @param authorID author secret identification
+ * @param longName course's long name
+ * @param isActive string if it's active
+ * @param owner public identification of author (name etc.)
+ * @param host domain
+ * @param res HTTP response (if called internally set to undefined!)
+ * @param callback callback function (if called via REST it could be omitted)
+ */
 exports.createCourse = function(courseID, authorID,  longName, isActive, owner, host, res, callback){
     Course.find({
         courseID: courseID
@@ -64,6 +74,16 @@ exports.createCourse = function(courseID, authorID,  longName, isActive, owner, 
     });
 };
 
+/**
+ * Updates course
+ * @param _id internal id of course in DB
+ * @param longName course's long name
+ * @param isActive string if it's active
+ * @param owner public identification of author (name etc.)
+ * @param host domain
+ * @param res HTTP response (if called internally set to undefined!)
+ * @param callback callback function (if called via REST it could be omitted)
+ */
 exports.editCourse = function(_id,longName, isActive, owner, host, res, callback){
     Course.find({
         _id: _id
@@ -101,12 +121,19 @@ exports.editCourse = function(_id,longName, isActive, owner, host, res, callback
     });
 };
 
+/**
+ * Returns course's information
+ * @param courseID course ID
+ * @param res HTTP response (if called internally set to undefined!)
+ * @param callback callback function (if called via REST it could be omitted)
+ */
 exports.getCourse = function(courseID, res, callback){
     Course.find({
         courseID:courseID
     }, function(err,crs){   
         if(!err) {
             if(crs.length > 0){
+                crs[0].authorID = null; // TODO verify it's hidden'
                 returnData(res, callback, crs[0]);
             } else {
                 returnThrowError(404, "Course not found", res, callback);
@@ -117,6 +144,13 @@ exports.getCourse = function(courseID, res, callback){
     });  
 };
 
+/**
+ * Returns lecture's information
+ * @param course course ID
+ * @param lecture lecture ID
+ * @param res HTTP response (if called internally set to undefined!)
+ * @param callback callback function (if called via REST it could be omitted)
+ */
 exports.getLecture= function(course, lecture, res, callback){
     Lecture.find({
         isActive:true,
@@ -126,6 +160,7 @@ exports.getLecture= function(course, lecture, res, callback){
     }, function(err,lectures){
         if(!err){
             if(lectures.length > 0) {
+                lectures[0].authorID = null; // TODO check is hidden
                 returnData(res, callback, lectures[0]);
             } else {
                 returnThrowError(404, "Lecture not found", res, callback);
@@ -159,6 +194,28 @@ function returnData(res, callback, data){
     }
 }
 
+/**
+ * Creates new lecture
+ * @param authorID author secret identification
+ * @param courseID course ID
+ * @param title lecture title
+ * @param order lecture order
+ * @param author public identification of author (name etc.)
+ * @param authorEmail author's email
+ * @param authorTwitter author's Twitter
+ * @param authorWeb author's web
+ * @param semester semester of the lecture
+ * @param org organization to which the lecture belongs to
+ * @param orgfac departament or faculty of the organization
+ * @param spec specialization (field) of the lecture
+ * @param web lecture's web site
+ * @param abs abstract
+ * @param isActive string if it's active
+ * @param keywords list of keywords (string comma separated)
+ * @param host domain
+ * @param res HTTP response (if called internally set to undefined!)
+ * @param callback callback function (if called via REST it could be omitted)
+ */
 exports.createLecture = function(authorID, courseID, title, order,author, authorEmail, authorTwitter, authorWeb, semester, org, orgfac, spec, web, abs, isActive, keywords, host, res, callback ){
     
     Lecture.find({
@@ -234,6 +291,28 @@ exports.createLecture = function(authorID, courseID, title, order,author, author
     });
 };
 
+
+/**
+ * Edits new lecture
+ * @param _id internal id of lecture in DB
+ * @param title lecture title
+ * @param order lecture order
+ * @param author public identification of author (name etc.)
+ * @param authorEmail author's email
+ * @param authorTwitter author's Twitter
+ * @param authorWeb author's web
+ * @param semester semester of the lecture
+ * @param org organization to which the lecture belongs to
+ * @param orgfac departament or faculty of the organization
+ * @param spec specialization (field) of the lecture
+ * @param web lecture's web site
+ * @param abs abstract
+ * @param isActive string if it's active
+ * @param keywords list of keywords (string comma separated)
+ * @param host domain
+ * @param res HTTP response (if called internally set to undefined!)
+ * @param callback callback function (if called via REST it could be omitted)
+ */
 exports.editLecture = function(_id, title, order,author, authorEmail, authorTwitter, authorWeb, semester, org, orgfac, spec, web, abs, isActive, keywords, host, res, callback){
  
     Lecture.find({
