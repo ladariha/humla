@@ -196,7 +196,7 @@ nav #presentations:hover {
     border-right: 1px solid #8C5D26;    
 
 }
-nav #editor:hover {
+nav #tools:hover {
     background: #3F9DCD;
     border-left: 1px solid #26698C;
     border-top: 1px solid #26698C;
@@ -472,6 +472,50 @@ header div#login a:hover {
 #buttons a{
     padding-left: 7px;
 }
+
+/* ------------ TOOLS ----------------------- */
+
+#menu {
+    
+    width:120px;
+    float:left;
+}
+
+#menu>div{
+color: black;
+width: 120px;
+border-left: 1px solid #D2D2D2;
+border-top: 1px solid #D2D2D2;
+border-down: 1px solid #D2D2D2;
+background-color: #fff;
+display: inline-block;
+height: 30px;
+padding: 5px 1.5em;
+text-decoration: none;
+border-top-left-radius: 2px;
+-moz-border-radius-topleft: 2px;
+-webkit-border-top-left-radius: 2px;
+border-top-right-radius: 2px;
+-moz-border-radius-topright: 2px;
+-webkit-border-top-right-radius: 2px;
+position: relative;
+z-index: 5;
+opacity: 0.5;
+    
+}
+#page  {
+width: 700px;
+float:right;
+    background: #F9F9F9;
+border: solid 1px #DDD;
+border-radius: 10px;
+-moz-border-radius: 10px;
+-webkit-border-radius: 10px;
+margin: 40px auto 40px auto;
+padding: 15px;
+    
+}
+
 
 /* ------------ SLIDEINDEX ------------------ */
 

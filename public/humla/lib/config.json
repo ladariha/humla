@@ -199,6 +199,13 @@
             "scripts" : [ {"src" : "ext/canvas/canvas.js"} ],
             "styles"  : [ {"src" : "ext/canvas/canvas.css", "media" : "screen, print"} ],
             "enabled" : true 
+        },
+        
+        {"id" : "tests",
+            "object" : "ex_tests",
+            "scripts" : [ {"src" : "ext/tests.js"} ],
+            "styles"  : [ {"src" : "ext/tests.css", "media" : "screen, print"} ],
+            "enabled" : true 
         }
         
         

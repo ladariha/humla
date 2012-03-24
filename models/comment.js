@@ -27,7 +27,7 @@ var CommentSchema = new Schema({
     body: String,
     state: {
         type:String, 
-        enum: ["draft","published","private"]
+        'enum': ["draft","published","private"]
     }, //, default: "draft"}
     author: {
         username: String,
