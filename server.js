@@ -20,8 +20,7 @@ exports.init = function(config_in) {
     var HANDLERS_DIRECTORY = (path.join(path.dirname(__filename), config.server.handlers_relative_path)).toString();
     var MODELS_DIRECTORY = (path.join(path.dirname(__filename), config.server.models_relative_path)).toString();
     handlers = loadFiles(HANDLERS_DIRECTORY);
-    models = loadFiles(MODELS_DIRECTORY);
-    
+    models = loadFiles(MODELS_DIRECTORY);    
 };
 
 

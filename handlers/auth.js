@@ -1,7 +1,7 @@
 /**
  * Authentication & Login
  * 
- * 
+ * @author Petr Mikota <bubersson> URL: https://github.com/bubersson
  */
 
 var mongoose = require("mongoose"); 
@@ -35,7 +35,7 @@ app.get('/auth/google', passport.authenticate('google'));
 app.get('/auth/google/return', 
     passport.authenticate('google', {
         successRedirect: '/',
-        failureRedirect: '/500',
+        failureRedirect: '/',
         failureFlash: true
     }));
 
@@ -52,7 +52,8 @@ app.get('/auth/user', function(req,res) {
     
 });
 
-app.get('/logout', function(req, res){
+// Delete user session entry
+app.all('/logout', function(req, res){
     req.logOut();  
     res.writeHead(200);    
     res.end();

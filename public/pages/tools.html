@@ -33,28 +33,45 @@
 
                 <section id="content" class="body"> 
                     <div id="menu">
-                        <div id="api">
+                        <div id="api" class="active">
                             <span>API</span>                        
                         </div>
-                        <div><span>API</span>                        
+                        <div id="statistics"><span>Statistics</span>                        
                         </div>
-                        <div><span>API</span>                        
+                        <div id="settings"><span>Settings</span>                        
                         </div>
                         <div><span>API</span>                        
                         </div>                        
                     </div>
 
                     <div id="page">
-                        <section class="page-api">
+                        <section id="page-api">
+                            <h2>Nadpis</h2>
                             Text 
-                            tesxt                            
+                            tesxt          
+                            <ul>
+                                <li>Jedna</li>
+                                <li>Dva</li>
+                            </ul>
                         </section>
-                            
-                        <div id="form-container">
-                            <h2>Tools</h2> 
-                            <div id="msg"></div>                       
-                        </div>
-
+                        <section id="page-statistics" style="display:none;">
+                            <h2>Statistics</h2>
+                            Text 
+                            tesxt          
+                            <ul>
+                                <li>Jedna</li>
+                                <li>Dva</li>
+                                <li>Dva</li>
+                            </ul>                      
+                        </section>                                                
+                       <section id="page-settings" style="display:none;">
+                            <h2>Settings</h2>
+                            Něco   
+                            <ul>
+                                <li>Jedna</li>
+                                <li>Dva</li>
+                            </ul>                      
+                        </section>                        
                     </div>
 
 
@@ -79,7 +96,7 @@
         <!-- ~~~~~~ Control Javascripts ~~~~~~~~~~~~ -->
         <script type="text/javascript" src="../lib/jquery-1.7.min.js"></script>
         <!-- TODO: přesunout vše do page-script? <script type="text/javascript" src="lib/page-script.js"></script> -->
-        <script type="text/javascript" src="lib/editcourse.js"></script>
+        <script type="text/javascript" src="lib/tools.js"></script>
 
     </body>
 

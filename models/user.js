@@ -7,10 +7,10 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
-var passport = require('passport');
 var crypto = require('crypto');
 
 var shasum = crypto.createHash('sha1'); // SHA1 password hash (sha1 from OpenSSL)
+
 
 var UserSchema = new Schema({
     userID: ObjectId,
@@ -68,10 +68,6 @@ UserSchema.static('authenticate', function(email, password, callback) {
         });
     });
 });
-
-
-
-
 
 
 mongoose.model('User', UserSchema);  

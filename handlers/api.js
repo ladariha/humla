@@ -7,16 +7,43 @@ var facet_use_fs = 1;
 var mongoose = require("mongoose"); 
 var Course = mongoose.model("Course");
 var Lecture = mongoose.model("Lecture");
+
+
+// TODO: make those methods accessible via Humla as a Framework
+exports.getAllCoursesList = function (callback){
+    Course.find({
+        isActive:true        
+    }, function(err,crs){   
+        if(!err && crs.length > 0) {
+            var courses = [];
+            crs.forEach(function(course){
+                var c = {};
+                c.courseID = course.courseID;
+                c.longName = course.longName;
+                c.lecturesURLPreffix = course.lecturesURLPreffix;
+                c.url=course.url;
+                c.owner = course.owner;
+                c.isActive = course.isActive;
+                courses.push(c);
+            });
+            callback(courses);
+        } else {
+            getCoursesFromFS(req, res);
+        }             
+    });
+    
+}
+
 /**
  * Returns all courses
  */
-app.get('/api/info/courses', function(req, res){ // TODO database timeout
+app.get('/api/info/courses', function(req, res){
     Course.find({
         isActive:true
         
     }, function(err,crs){   
         if(!err && crs.length > 0) {
-            var courses = new Array();
+            var courses = [];
             crs.forEach(function(course){
                 var c = {};
                 c.courseID = course.courseID;

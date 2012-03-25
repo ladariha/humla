@@ -2,7 +2,8 @@
  * AJAX Crawling handler
  * 
  * Only slides are AJAX Crawable
- * 
+ *
+ * @author Petr Mikota <bubersson> URL: https://github.com/bubersson 
  */
 
 

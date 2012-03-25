@@ -1,7 +1,7 @@
 /**
  * Comments handler
  * 
- * 
+ * @author Petr Mikota <bubersson> URL: https://github.com/bubersson
  */
 
 var mongoose = require("mongoose"); 

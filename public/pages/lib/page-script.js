@@ -315,7 +315,7 @@ function PageHandler(){
     ///////////////////////////////////////////////////////////////////////// well commented line
 
     // Filter selector items
-    this.filter = function filter(selector, query) { // by http://net.tutsplus.com/tutorials/javascript-ajax/using-jquery-to-manipulate-and-filter-data/
+    this.filter = function filter(selector, query) { 
         query = $.trim(query); //trim white space
         query = query.replace(/ /gi, '|'); //add OR for regex query ‪‬
         var regx = new RegExp(query, "i");
