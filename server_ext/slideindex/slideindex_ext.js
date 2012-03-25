@@ -418,7 +418,7 @@ function getDocumentFromFileSystem(res, pathToCourse, filename, lecture, course,
  * @param $ jQuery object
  */
 function parseTitles(slideIndex,$){
-
+  
     slideIndex.content.title = $('title').text();
     slideIndex.content.course = $('meta[name="course"]').attr('content');
     slideIndex.content.lecture = $('meta[name="lecture"]').attr('content');
