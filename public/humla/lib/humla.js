@@ -19,7 +19,12 @@ var humla = {
 
     // humla home directory
     home      : "",
+    
+    // humla api endpoint url
+    endpoint  : "",
+    
     online    : 1,
+    
     // humla helper functions 
     utils     : null,
     
@@ -34,6 +39,9 @@ var humla = {
     
     // menu
     menu   : null,
+    
+    // user
+    user   : null,
     
     // all slides in the presentation
     slides    : [],
@@ -78,6 +86,8 @@ var humla = {
         // create utils object
         humla.utils = new Utils(window);       
         
+        // get endpoint url of humla server TODO: setup in settings
+        humla.endpoint = humla.utils.window.location.origin;
            
         // get the base url of the humla directory
         var scripts = humla.utils.documentHead.getElementsByTagName("script");
@@ -177,6 +187,9 @@ var humla = {
             
             // create Menu object
             humla.menu = new Menu();        
+            
+            // create User object and do OpenID auth
+            humla.user = new User(true);        
             
             // create the root section and load the slides
             humla.root = new Section(humla.utils.documentBody, null);
@@ -313,6 +326,10 @@ var Utils = function(window) {
     
     this.msgbox = null;
 
+    this.$ = function(id) {
+        return this.document.getElementById(id);
+    };
+
     this.trim = function(str) {
         return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
     };
@@ -329,7 +346,7 @@ var Utils = function(window) {
             }
         }
         return s;
-    };
+    };   
     
     this.createScriptElement = function(src) {
         var script = this.document.createElement('script');
@@ -337,7 +354,7 @@ var Utils = function(window) {
         script.src = src;
         script.loaded = false;
         return script;
-    };
+    };    
 
     this.createStyleElement = function(src, media) {
         var style = this.document.createElement('link');

@@ -501,3 +501,37 @@ var Menu = function(config) {
 //this.hideMenu();
 };
 
+
+
+/**
+ * User Class
+ * @constructor
+ */
+var User = function(check) {
+    this.username = null;
+    this.email = null;
+    
+    // if true, then do user lookup
+    this.init = function(check) {
+        if (check) this.isLogged(null);        
+    }
+    
+    // Check if user is logged, calls cb(err,data)
+    this.isLogged = function (cb) {        
+        humla.utils.readJSONData(humla.endpoint+"/auth/user", function(data,status,err){
+            if(!err && status == 200) {                
+                this.email = data.email;
+                this.username = data.username;
+                if(cb) cb(null, data);
+            } else { //status == 401 or fail
+                this.email = null;
+                this.username = null;
+                if(cb) cb(err ? err : true);
+            }            
+        });
+    }       
+    
+    this.init(check);
+}
+    
+    

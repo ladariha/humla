@@ -10,8 +10,8 @@ as a tool for the Czech Technical University courses Middleware and Web Services
 
 Humla is easy extendable by client and/or server extensions (or plugins if you mind).
 
-To see Humla in action, see <a href="http://vitvar.com/courses/mdw/slides/lecture1.html">Lecture 1 of 
-Web Services and Middleware</a> course.
+To see Humla in action, see <a href="http://vitvar.com/courses/slides/mdw/lecture1.html">Lecture 1 of 
+Web Services and Middleware</a> or <a href="http://vitvar.com/courses/slides/w20/lecture1.html>Web 2.0</a>course.
 
 
 We are currently working on server API, IDE, semantic analyzers and other stuff.

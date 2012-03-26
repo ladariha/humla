@@ -55,6 +55,7 @@ function DataAccess() {
             dataAccess.displayLogin(user);
         });               
         $jqXHR.error(function(e) {
+            dataAccess.displayLogin();
             debug_elm.innerHTML=e.status+": "+e.statusText+"<br/>"+e.responseText;            
         });
     }

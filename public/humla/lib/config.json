@@ -170,14 +170,14 @@
         
         {"id" : "comments",
             "object" : "ex_comments",
-            "scripts" : [ {"src" : "ext/comments.js"} ],
-            "styles"  : [ {"src" : "ext/comments.css", "media" : "screen, print"} ],
+            "scripts" : [ {"src" : "ext/comments/comments.js"} ],
+            "styles"  : [ {"src" : "ext/comments/comments.css", "media" : "screen, print"} ],
             "enabled" : true 
         },
         {"id" : "likes",
             "object" : "ex_likes",
-            "scripts" : [ {"src" : "ext/likes.js"} ],
-            "styles"  : [ {"src" : "ext/likes.css", "media" : "screen, print"} ],
+            "scripts" : [ {"src" : "ext/likes/likes.js"} ],
+            "styles"  : [ {"src" : "ext/likes/likes.css", "media" : "screen, print"} ],
             "enabled" : true 
         },
         

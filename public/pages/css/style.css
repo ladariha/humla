@@ -533,6 +533,7 @@ header div#login a:hover {
 }
 
 #page>section {
+    display:block;
     height: 100%;
     padding: 15px 30px 30px 30px;
     /*background: #F9F9F9;*/

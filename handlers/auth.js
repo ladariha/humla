@@ -40,16 +40,20 @@ app.get('/auth/google/return',
     }));
 
 //Get User email //TODO: je to teď dost pitomé, udělat portál dynamicky
-app.get('/auth/user', function(req,res) {    
-    var user = {
-        'email': req.user && req.user.email
-    };
-    console.log(JSON.stringify(user));
-    //console.log("AUTH: " +req.isAuthenticated());    
-    res.writeHead(200);
-    res.write(JSON.stringify(user));
-    res.end();
-    
+app.get('/auth/user', function(req,res) {        
+    if (req.isAuthenticated()) { 
+        var user = {
+            'email': req.user && req.user.email
+        };        
+        res.writeHead(200);
+        res.write(JSON.stringify(user));
+        res.end();
+        console.log(JSON.stringify(user));
+    } else {
+        res.writeHead(401);        
+        res.end("User is not authenticated!");
+        console.log("User not logged");        
+    }    
 });
 
 // Delete user session entry

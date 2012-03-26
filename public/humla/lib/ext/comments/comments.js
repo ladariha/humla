@@ -8,7 +8,6 @@
 // Method Closure
 var addComment;
 var addCommentCallback;
-var toggleComments;
 var clearTextarea;
 
 var menu_link;
@@ -22,7 +21,8 @@ var ex_comments = {
             name:"Comments",
             show_layer:true,
             html:"<h1>Comments</h1>"
-        +"<div><p>First Comment</p><p>Second comment</p></div>"
+        +"<div id='comments-login'><a href=''>login with Google</a></div>"
+        +"<div id='comments-body'>Loading comments</div>"                
         });
         
 
@@ -30,6 +30,11 @@ var ex_comments = {
     },
     
     processSlide : function(slide) {
+    // TODO: create elements a až pak 
+        
+    },
+    
+    enterSlide : function(slide) {
         
         // ---------- init -------------
         var presentationUrl = window.location.href; // TODO: udělat univerzální funkci na parsování dat
@@ -40,6 +45,16 @@ var ex_comments = {
         var course = fields[5];//presentationUrl.substr(0, presentationUrl.indexOf("/"));
         var lecture= fields[6].substr(0, fields[6].indexOf("."));
         var slideNumber = slide.number;
+        
+        
+        humla.user.isLogged(function(err,data) {
+            if(!err) humla.utils.$("comments-login").addEventListener("click",function(){
+                // TODO: custom login
+                
+                });
+        });
+        
+        
         
         // ---------- functions ----------
         var showComments = function(slideNum) {
@@ -57,90 +72,84 @@ var ex_comments = {
                     var tmp = document.getElementById("comments")
                     if(tmp) tmp.outerHTML = "";
                 }*/
-                var s = '<div class="comments" style="display:none" >';
+                var s = '<div class="comments">';
                 if ( this.status == 200) {
                     var data = JSON.parse(this.responseText);
                     var date;
                     for(var i = 0; i < data.length; i++) {
-                        date = new Date(data[i].date);                    
+                        date = new Date(data[i].date);            
                         s+= '<div class="comment"><span class="date">'
-                        +date.getDate()+"."+date.getMonth()+". "
+                        + date.getDate()+'/'+(date.getMonth()+1)+'/'+date.getFullYear()+' '+date.getHours()+':'+date.getMinutes()
                         +' </span><span class="user">'
                         +data[i].author.username
                         +' </span><span class="text">'
                         +data[i].body
                         +' </span></div>';
                     }
+                } else {
+                    s += "<div>No comments yet</div>"                    
                 }
+                
                 var link = origin+"/api/"+course+"/"+lecture+"/"+slideNumber+"/comments";
-                s+='<div class="input"><textarea id="comment-body'+slideNumber+'"></textarea>'                
-                +'<a href="javascript:addComment(\''+link+'\','+slideNumber+');"  id="comment-add" class="button" >Comment</a>'
-                +'<a href="javascript:clearTextarea('+slideNumber+');" id="comment-clear" class="button">Clear</a></div>';
                 s+='</div>';
+                s+='<div class="input"><textarea id="comment-body'+slideNumber+'"></textarea>'                
+                +'<a href="javascript:clearTextarea('+slideNumber+');" id="comment-clear" class="link">Clear</a>'
+                +'<a href="javascript:addComment(\''+link+'\','+slideNumber+');"  id="comment-add" class="button" >Comment</a></div>';
+                                
+                humla.utils.$("comments-body").innerHTML = s;
                 
-                
-                /*
-                menu_link.addTab("comments",{
-                    name:"Comments",
-                    html:"<h1>Comments</h1>"+s
-                });
-                menu_link.show();
-        */
-        
-                
-                slide.element.innerHTML = slide.element.innerHTML + s;               
             }
             
         };
 
         // Add Comment do DB
         addComment = function (address, slide) {            
-            var data=  document.getElementById("comment-body"+slide).value;
+            var text= humla.utils.$("comment-body"+slide).value;
             //you have to write at least 1 char
-            if (data.length < 1) return;
+            if (text.length < 1) return;
     
             // send XHR to server REST comments api
             var xhr = new XMLHttpRequest();        
             xhr.open("POST", address, true);                
             xhr._slide = slide;
-            xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+            xhr.setRequestHeader('Content-type','application/json');
+            xhr.setRequestHeader('User-Agent','XMLHTTP/1.0');
+            xhr.setRequestHeader( "Content-Encoding", "utf-8");             
+            xhr.setRequestHeader("Connection", "close");
             xhr.onreadystatechange = addCommentCallback;
-            xhr.send(data);
+            var data = {
+                'author':'118',
+                'text':text
+            };
+            xhr.send(JSON.stringify(data));
             
         };
         
-        addCommentCallback = function () {            
-            if (this.readyState == 4 && this.status == 200) {
-                // clean textarea
-                document.getElementById("comment-body"+this._slide).value="";
-                //TODO: udělat refresh
-                //refresh page comments
-                showComments(this._slide);                
-                alert("Comment added");                
+        addCommentCallback = function() {
+            if (this.readyState == 4) {
+                if (this.status == 200) {
+                    // clean textarea                    
+                    clearTextarea(this._slide);
+                    //TODO: udělat refresh
+                    //refresh page comments
+                    showComments(this._slide);                
+                    alert("Comment added");                
+                } else if (this.status == 401) {
+                    alert("User unauthorized, please login!");                
+                    
+                }
             }
             
         };
         
-        toggleComments = function() {
-            var coms = document.getElementsByClassName("comments");                        
-            for(var i=0;i<coms.length;i++) {                                
-                coms[i].style.cssText = coms[i].style.cssText === "display: block; " ? "display: none; " : "display: block; ";
-            }
-            
-        }
+        
         clearTextarea = function(slideNum) {
-            document.getElementById("comment-body"+slideNum).value="";            
+            humla.utils.$("comment-body"+slideNum).value="";            
         }
         
         
         // ---------- execution ----------        
         showComments();
-            
-        var et = '<div id="comments-toolbar">';        
-        et+= '<a class="comments-link" href="javascript:toggleComments();" title="Comments"><img src="../../../humla/lib/ext/editor-edit.png" alt="Comments"/></a>';        
-        et += "</div>";
-        slide.element.innerHTML = slide.element.innerHTML+et;       
-        
         
     }
     
