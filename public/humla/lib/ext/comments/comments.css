@@ -2,6 +2,7 @@
 
 #comments-body {
     font-size: 18px;      
+    position:relative;
 }
 
 #comments-body .button {    
@@ -54,9 +55,9 @@
     font-size: 18px;     
     height:50px;
     background: rgba(230,230,230,0.8);
-    position: absolute;
-    bottom: 10px;
-    width: 95%;
+    /*position: absolute;
+    bottom: 10px;*/
+    width: 100%;
     border-radius: 0px 0px 8px 8px;
 }
 
@@ -77,29 +78,46 @@
 .comments {    
     /*min-height: 200px;*/
     min-width: 200px;
-    bottom: 22px;
-    background: rgba(255,255,255,0.6);
-
+    width: 400px;    
+    background: rgba(255,255,255,0.3);
     color: black;
+    position:relative;
+    /*margin-bottom: 55px;*/
+    overflow-y: auto;    
+    height: 280px;
 
 }
 
 .comments > div {
     background: rgba(230,230,230,0.8);
     margin: 2px auto;
+    padding: 3px;
+
 }
 
 .comment > .date {
     font-size: 12px;
     font-weight: bold;
-    color: #888;
+    color: #555;
+    display: block;
+    float: left;
 
 }
 
 .comment > .user {
     font-size: 12px;
     font-weight: bold;
-    color: #666;
+    color: #444;
+    display: block;
+    float: left;
+    padding-left: 5px;
+
+}
+
+.comment > .text {    
+
+    display: block;
+    clear: both;
 
 }
 

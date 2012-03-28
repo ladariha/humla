@@ -12,7 +12,7 @@ var User = mongoose.model("User");
 
 // SETUP GOOGLE OpenID strategy
 passport.use(new GoogleStrategy({
-    returnURL: config.server.domain+":"+config.server.port+'/auth/google/return', 
+    returnURL: config.server.domain+":"+config.server.port+'/auth/google', ///return', 
     realm: config.server.domain+":"+config.server.port+'/',
     profile: true
 },
@@ -27,7 +27,7 @@ function(identifier, profile, done) {
 // Redirect the user to Google for authentication.  When complete, Google
 // will redirect the user back to the application at
 // /auth/google/return
-app.get('/auth/google', passport.authenticate('google'));
+//app.get('/auth/google', passport.authenticate('google'));
 
 
 
@@ -35,7 +35,8 @@ app.get('/auth/google', passport.authenticate('google'));
 // Google will redirect the user to this URL after authentication.  Finish
 // the process by verifying the assertion.  If valid, the user will be
 // logged in.  Otherwise, authentication has failed.
-app.get('/auth/google/return', function(req,res,next) {
+//app.get('/auth/google/return', function(req,res,next) {
+app.get('/auth/google', function(req,res,next) {
     passport.authenticate('google', function(err, user, info) {                
         if (err || !user) {
             return res.redirect("back");
@@ -66,8 +67,9 @@ app.get('/auth/user', function(req,res) {
 // Delete user session entry
 app.all('/logout', function(req, res){
     req.logOut();  
+    console.log("Logged out");
     res.writeHead(200);    
-    res.end();
+    res.end("Logged out");
 });
     
 

@@ -9,6 +9,7 @@
 var addComment;
 var addCommentCallback;
 var clearTextarea;
+var logout;
 
 var menu_link;
 var comments_login;
@@ -54,7 +55,7 @@ var ex_comments = {
         
         humla.user.isLogged(function(err,data) {
             if(!err) {
-                comments_login.innerHTML = "logged as "+data.email;                
+                comments_login.innerHTML = data.email+" ( <a href='javascript:logout();'>logout</a> )";                
             } else {
                 comments_login.innerHTML = "<a href='/auth/google'>login with Google</a>";
                 
@@ -119,10 +120,8 @@ var ex_comments = {
             var xhr = new XMLHttpRequest();        
             xhr.open("POST", address, true);                
             xhr._slide = slide;
-            xhr.setRequestHeader('Content-type','application/json');
-            xhr.setRequestHeader('User-Agent','XMLHTTP/1.0');
-            xhr.setRequestHeader( "Content-Encoding", "utf-8");             
-            xhr.setRequestHeader("Connection", "close");
+            xhr.setRequestHeader('Content-type','application/json');            
+            xhr.setRequestHeader( "Content-Encoding", "utf-8");                         
             xhr.onreadystatechange = addCommentCallback;
             var data = {
                 'author':'118',
@@ -152,6 +151,19 @@ var ex_comments = {
         
         clearTextarea = function(slideNum) {
             humla.utils.$("comment-body"+slideNum).value="";            
+        }
+        
+        logout = function () {
+            var xhr = new XMLHttpRequest();
+            var url = origin+"/logout";
+            xhr.open("GET", url , true);                
+            xhr.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    comments_login.innerHTML = "<a href='/auth/google'>login with Google</a>";
+                    alert("Logged off");
+                }
+            };
+            xhr.send();
         }
         
         
