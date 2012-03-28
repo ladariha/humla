@@ -11,6 +11,7 @@ var addCommentCallback;
 var clearTextarea;
 
 var menu_link;
+var comments_login;
 
 var ex_comments = {    
     
@@ -20,17 +21,20 @@ var ex_comments = {
         menu.addTab("comments",{            
             name:"Comments",
             show_layer:true,
+            enable_login:true,
             html:"<h1>Comments</h1>"
-        +"<div id='comments-login'><a href=''>login with Google</a></div>"
+        +"<div id='comments-login'><a href='/auth/google'>login with Google</a></div>"
         +"<div id='comments-body'>Loading comments</div>"                
         });
+        
+        
         
 
         
     },
     
     processSlide : function(slide) {
-    // TODO: create elements a až pak 
+        
         
     },
     
@@ -46,12 +50,15 @@ var ex_comments = {
         var lecture= fields[6].substr(0, fields[6].indexOf("."));
         var slideNumber = slide.number;
         
+        comments_login = comments_login || humla.utils.$("comments-login");
         
         humla.user.isLogged(function(err,data) {
-            if(!err) humla.utils.$("comments-login").addEventListener("click",function(){
-                // TODO: custom login
+            if(!err) {
+                comments_login.innerHTML = "logged as "+data.email;                
+            } else {
+                comments_login.innerHTML = "<a href='/auth/google'>login with Google</a>";
                 
-                });
+            }
         });
         
         

@@ -510,6 +510,7 @@ var Menu = function(config) {
 var User = function(check) {
     this.username = null;
     this.email = null;
+    this.logged = false;
     
     // if true, then do user lookup
     this.init = function(check) {
@@ -517,15 +518,20 @@ var User = function(check) {
     }
     
     // Check if user is logged, calls cb(err,data)
+    // If no callback is provided return last checked
     this.isLogged = function (cb) {        
+        if(!cb) return this.logged;
+        // TODO: tu adresu vybrat dynamicky
         humla.utils.readJSONData(humla.endpoint+"/auth/user", function(data,status,err){
             if(!err && status == 200) {                
                 this.email = data.email;
                 this.username = data.username;
+                this.logged = true;
                 if(cb) cb(null, data);
             } else { //status == 401 or fail
                 this.email = null;
                 this.username = null;
+                this.logged = true;
                 if(cb) cb(err ? err : true);
             }            
         });
