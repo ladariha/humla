@@ -51,6 +51,11 @@
     border: 1px solid #777;       
 }
 
+#comments-body .button:hover {    
+    border: 1px solid #444;       
+}
+
+
 #comments-body .input {
     font-size: 18px;     
     height:50px;
@@ -83,13 +88,13 @@
     color: black;
     position:relative;
     /*margin-bottom: 55px;*/
-    overflow-y: auto;    
+    overflow: auto;    
     height: 280px;
 
 }
 
 .comments > div {
-    background: rgba(230,230,230,0.8);
+    background: rgba(230,230,230,0.9);
     margin: 2px auto;
     padding: 3px;
 

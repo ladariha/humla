@@ -29,9 +29,6 @@ var ex_comments = {
         });
         
         
-        
-
-        
     },
     
     processSlide : function(slide) {
@@ -87,12 +84,12 @@ var ex_comments = {
                     for(var i = 0; i < data.length; i++) {
                         date = new Date(data[i].date);            
                         s+= '<div class="comment"><span class="date">'
-                        + date.getDate()+'/'+(date.getMonth()+1)+'/'+date.getFullYear()+' '+date.getHours()+':'+date.getMinutes()
-                        +' </span><span class="user">'
-                        +data[i].author.username
-                        +' </span><span class="text">'
-                        +data[i].body
-                        +' </span></div>';
+                        s+= date.getDate()+'/'+(date.getMonth()+1)+'/'+date.getFullYear()+' '+date.getHours()+':'+date.getMinutes();
+                        s+=' </span><span class="user">';
+                        s+=data[i].author.username;
+                        s+=' </span><span class="text">';
+                        s+=data[i].body;
+                        s+=' </span></div>';
                     }
                 } else {
                     s += "<div>No comments yet</div>"                    
