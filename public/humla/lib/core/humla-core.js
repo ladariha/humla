@@ -300,7 +300,13 @@ var View = function(config, keys, baseDir) {
             
         else if (containsKey(event.keyCode, this.keys.prev))
             this.gotoPrevious();
+
+        else if (containsKey(event.keyCode, this.keys.start))
+            this.goto(1);
         
+        else if (containsKey(event.keyCode, this.keys.end))
+            this.goto(humla.slides.length);
+
         else if (containsKey(event.keyCode, this.keys.menu))
             humla.menu.toggle();
         
