@@ -57,7 +57,7 @@ function removeSlide(course, lecture, slideNumber){
             if(request.status==200){
                 window.location.reload();
             }else{
-                alert(request.status+": "+request.statusText);
+                alert(request.responseText);
             }
         }else{
             alert(request.responseText);

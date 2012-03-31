@@ -150,3 +150,120 @@ span.CodeMirror-selected {
     border-top-color: #5e5d5e;
     background: #5e5d5e;
 }
+
+/*LOGIN*/
+div#login {    
+    color: #607890;
+    float:right;
+    margin-top: 18px;
+    margin-right: 4px;
+}
+div#login a {
+    cursor:pointer;
+    color: #607890;
+    text-decoration: none;    
+    border-bottom: 1px dotted #bbb;    
+}
+div#login a:hover {
+    cursor:pointer;
+    border-bottom: 1px solid #bbb;    
+}
+
+/* OVERLAY LOGIN FORM */
+
+#login-form-overlay{
+    width:300px;
+    line-height:30px;
+    position:fixed;
+    color: #607890;
+    left:50%;
+    top:50%;
+    margin-top:-180px;
+    margin-left:-150px;
+    z-index:999;
+    position:absolute;	
+    border: 1px solid #D2D2D2;
+    display: none;    			
+    -webkit-box-shadow: 0px 0px 10px #ccc;
+    -moz-box-shadow: 0px 0px 10px #ccc;
+    box-shadow: 0px 0px 10px #ccc;    
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+}
+
+#login-form-overlay #login-form{
+    color: #666;
+    padding: 25px;	
+    background: #F7F7F7; /*rgba(200,200,200,0.8);    */
+}
+
+#login-form-overlay #login-form div{
+    height: 50px;
+    width: 100%;
+    color: #607890;
+}
+
+#login-form-overlay #login-form input{
+    background: white;
+    border: solid 1px #E5E5E5;
+    font-weight: bold;
+    color: #607890;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    height: 30px;
+    float:  right;
+    margin-top: 11px;
+    padding: 0px 0px;
+    width: auto;
+}
+
+#login-form-overlay #login-form label{
+    width: auto;
+    padding: 9px 5px;    
+    color: #607890;
+}
+
+
+#login-form-overlay #login-form div.controls{
+    border-top: 1px solid #fff;
+    margin-top: 10px;
+    margin-bottom: 0px;
+    padding-top: 5px;
+    height: 35px;
+}
+
+#login-form-overlay #login-form div a:hover, login-form-overlay #login-form a div:hover{
+    color:#036;
+    text-decoration: underline;
+}
+
+#login-form-overlay #login-form a:hover{
+    color:#036;
+    text-decoration: underline;
+}
+
+
+#login-form-overlay #login-form a.button{ 
+    float:right;
+    color: #607890;
+    padding: 0px 10px;
+}
+
+#login-form-overlay a#form-close-btn{
+    background: url(../../img/close_btn.png) no-repeat center center;
+    width: 26px;
+    height: 25px;
+    color: #607890;
+    text-indent: -9999px;
+    display: block;
+    position: absolute;
+    top: -15px;
+    right: -10px;
+}
+
+#login-form-overlay #login-form .register-field {
+    display:none;
+
+}

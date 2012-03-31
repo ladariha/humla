@@ -34,7 +34,8 @@ exports.parse = function(mapping, course, lecture, data){
             }
         }
     }
-    try{
+    if(toProcess.length>0){
+          try{
         parseField(mapping, toProcess, course ,lecture);        
     }catch(e){
         console.error(e);
@@ -59,6 +60,8 @@ exports.parse = function(mapping, course, lecture, data){
     }catch(e){
         console.error(e);
     }
+    }
+  
 }
 
 

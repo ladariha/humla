@@ -5,19 +5,19 @@
 var parseURL = require('url').parse;
 var path = require('path');
 var querystring = require('querystring');
-var fs     = require('fs');
+var fs = require('fs');
 var jsdom = require('jsdom');
 var http = require('http');
 var jquery = fs.readFileSync('./public/lib/jquery-1.7.min.js').toString();
 var RAW_SLIDES_DIRECTORY = '/data/slides';
 var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../../public/data/slides')).toString();
-var SLIDE_TEMPLATE = (path.join(path.dirname(__filename),'../../public/data/templates')).toString();
+var SLIDE_TEMPLATE = (path.join(path.dirname(__filename), '../../public/data/templates')).toString();
 var mongoose = require("mongoose");
 var Slideid = mongoose.model("Slideid");
 var defaults = require('../../handlers/defaults');
-
-var EventEmitter = require("events" ).EventEmitter;
-var editor_emitter  = new EventEmitter();
+var Lecture = mongoose.model("Lecture");
+var EventEmitter = require("events").EventEmitter;
+var editor_emitter = new EventEmitter();
 exports.emitter = editor_emitter;
 
 /**
@@ -33,12 +33,12 @@ exports.emitter = editor_emitter;
  * @param callback callback function (if called via REST it could be omitted)
  * @return if used via REST then JSON format of HTMLCode otherwise instance of HTMLCode
  */
-exports.getSlide = function(course, lecture, slide, host, res, callback){
-    try{
-        var htmlfile = SLIDES_DIRECTORY+ '/'+course+'/'+lecture+".html";
-        var resourceURL = host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html#!/"+slide;
-        getDocumentFromFileSystem(res, htmlfile, slide,resourceURL, callback);   
-    }catch(error){
+exports.getSlide = function(course, lecture, slide, host, res, callback) {
+    try {
+        var htmlfile = SLIDES_DIRECTORY + '/' + course + '/' + lecture + ".html";
+        var resourceURL = host + RAW_SLIDES_DIRECTORY + "/" + course + "/" + lecture + ".html#!/" + slide;
+        getDocumentFromFileSystem(res, htmlfile, slide, resourceURL, callback);
+    } catch (error) {
         returnThrowError(500, error, res, callback);
     }
 }
@@ -48,6 +48,7 @@ exports.getSlide = function(course, lecture, slide, host, res, callback){
  * If used via REST, parameter res has to be HTTP response object. If called internally
  * then callback function is called when the operation is over and 2 parameters are given to the callback: first one is null if no error
  * occured (otherwise it contains error msg) and the second one is retrieved object. 
+* @param user user ID
  * @param course course ID
  * @param lecture lecture ID (lecture1...)
  * @param slide slide number
@@ -56,14 +57,32 @@ exports.getSlide = function(course, lecture, slide, host, res, callback){
  * @param callback callback function (if called via REST it could be omitted)
  * @return if used via REST then JSON format of HTMLCode otherwise instance of HTMLCode
  */
-exports.removeSlide = function(course ,lecture, slide, host, res, callback){
-    try{
-        var htmlfile = SLIDES_DIRECTORY+'/'+course+'/'+lecture+".html";
-        var resourceURL = host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html#!/"+slide;
-        deleteSlide(res, htmlfile, slide, resourceURL, course, lecture, callback);
-    }catch(error){
-        returnThrowError(500, error, res, callback);
-    }
+exports.removeSlide = function(user, course, lecture, slide, host, res, callback) {
+    Lecture.find({
+        courseID: course,
+        lectureID: lecture
+    }, function(err, crs) {
+        if (!err) {
+            if (crs.length > 0) {
+                var c = crs[0];
+                if (user !== c.authorID) {
+                    returnThrowError(401, "Unauthorized - you have no permission  to edit this lecture", res, callback);
+                } else {
+                    try {
+                        var htmlfile = SLIDES_DIRECTORY + '/' + course + '/' + lecture + ".html";
+                        var resourceURL = host + RAW_SLIDES_DIRECTORY + "/" + course + "/" + lecture + ".html#!/" + slide;
+                        deleteSlide(res, htmlfile, slide, resourceURL, course, lecture, callback);
+                    } catch (error) {
+                        returnThrowError(500, error, res, callback);
+                    }
+                }
+            } else {
+                returnThrowError(404, "Lecture not found", res, callback);
+            }
+        } else {
+            returnThrowError(500, error, res, callback);
+        }
+    });
 }
 
 /**
@@ -80,12 +99,33 @@ exports.removeSlide = function(course ,lecture, slide, host, res, callback){
  * @param callback callback function (undefined if called via REST)
  * @return if used via REST then JSON format of HTMLCode otherwise instance of HTMLCode
  */
-exports.editSlide = function(course ,lecture, slide, host, res, content,callback){
-    try{
-        editSlideContent(course, lecture, slide, content, res, host, callback);  
-    }catch(error){
-        returnThrowError(500, error, res, callback);
-    }
+exports.editSlide = function(user, course, lecture, slide, host, res, content, callback) {
+
+    Lecture.find({
+        courseID: course,
+        lectureID: lecture
+    }, function(err, crs) {
+        if (!err) {
+            if (crs.length > 0) {
+                var c = crs[0];
+                if (user !== c.authorID) {
+                    returnThrowError(401, "Unauthorized - you have no permission  to edit this lecture", res, callback);
+                } else {
+                    try {
+                        editSlideContent(course, lecture, slide, content, res, host, callback);
+                    } catch (error) {
+                        returnThrowError(500, error, res, callback);
+                    }
+                }
+            } else {
+                returnThrowError(404, "Lecture not found", res, callback);
+            }
+        } else {
+            returnThrowError(500, error, res, callback);
+        }
+    });
+
+
 }
 
 /**
@@ -102,10 +142,10 @@ exports.editSlide = function(course ,lecture, slide, host, res, content,callback
  * @param callback callback function (undefined if called via REST)
  * @return if used via REST then JSON format of HTMLCode otherwise instance of HTMLCode
  */
-exports.appendSlide = function(course ,lecture, slide, host, res, content, callback){
-    try{
-        editSlideContentAppend(course, lecture, slide, content, res, host, callback);      
-    }catch(error){
+exports.appendSlide = function(course, lecture, slide, host, res, content, callback) {
+    try {
+        editSlideContentAppend(course, lecture, slide, content, res, host, callback);
+    } catch (error) {
         returnThrowError(500, error, res, callback);
     }
 }
@@ -120,18 +160,18 @@ exports.appendSlide = function(course ,lecture, slide, host, res, content, callb
  * @param callback callback function (if called via REST it could be omitted)
  * @return if used via REST then JSON format of HTMLCode otherwise instance of HTMLCode
  */
-exports.getTemplate = function(templateNumber, res, callback){
-    try{
-        fs.readFile(SLIDE_TEMPLATE+'/'+templateNumber+'.html', function (err, data) {
-            if (err){
+exports.getTemplate = function(templateNumber, res, callback) {
+    try {
+        fs.readFile(SLIDE_TEMPLATE + '/' + templateNumber + '.html', function(err, data) {
+            if (err) {
                 returnThrowError(500, err.message, res, callback);
-            }else{
+            } else {
                 var r = new HTMLContent('', data.toString());
-                r.html= data.toString();
+                r.html = data.toString();
                 returnData(res, callback, r);
             }
-        });    
-    }catch(error){
+        });
+    } catch (error) {
         returnThrowError(500, error, res, callback);
     }
 }
@@ -147,20 +187,20 @@ exports.getTemplate = function(templateNumber, res, callback){
  * @param callback callback function (if called via REST it could be omitted)
  * @return if used via REST then JSON format of HTMLCode otherwise instance of HTMLCode
  */
-exports.getLecture = function(course, lecture, res, callback){
-    try{
-        var htmlfile = SLIDES_DIRECTORY+ '/'+course+'/'+lecture+".html";
-        if(endsWith(lecture, ".html")){
-            htmlfile = SLIDES_DIRECTORY+ '/'+course+'/'+lecture;
+exports.getLecture = function(course, lecture, res, callback) {
+    try {
+        var htmlfile = SLIDES_DIRECTORY + '/' + course + '/' + lecture + ".html";
+        if (endsWith(lecture, ".html")) {
+            htmlfile = SLIDES_DIRECTORY + '/' + course + '/' + lecture;
         }
-        fs.readFile(htmlfile, function (err, data) {
-            if (err){
+        fs.readFile(htmlfile, function(err, data) {
+            if (err) {
                 returnThrowError(500, err.message, res, callback);
-            }else{
+            } else {
                 returnDataHTML(res, callback, data);
             }
         });
-    }catch(error){
+    } catch (error) {
         returnThrowError(500, error, res, callback);
     }
 }
@@ -170,6 +210,7 @@ exports.getLecture = function(course, lecture, res, callback){
  * If used via REST, parameter res has to be HTTP response object. If called internally
  * then callback function is called when the operation is over and 2 parameters are given to the callback: first one is null if no error
  * occured (otherwise it contains error msg) and the second one is retrieved object. 
+* @param user user ID
  * @param course course ID
  * @param lecture lecture ID (lecture1...)
  * @param host hostname
@@ -178,55 +219,73 @@ exports.getLecture = function(course, lecture, res, callback){
  * @param callback callback function (if called via REST set to undefined)
  * @return if used via REST then JSON format of HTMLCode otherwise instance of HTMLCode
  */
-exports.editLecture = function(course, lecture, host, res, content, callback){
-    try{
-        var htmlfile = SLIDES_DIRECTORY+ '/'+course+'/'+lecture+".html";
-        var resourceURL = host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html";
-        addIDsToSlidesAndWriteToFile(content, course, lecture, res, resourceURL, htmlfile, callback);      
-    }catch(error){
-        returnThrowError(500, error, res, callback);
-    }
+exports.editLecture = function(user, course, lecture, host, res, content, callback) {
+    Lecture.find({
+        courseID: course,
+        lectureID: lecture
+    }, function(err, crs) {
+        if (!err) {
+            if (crs.length > 0) {
+                var c = crs[0];
+                if (user !== c.authorID) {
+                    returnThrowError(401, "Unauthorized - you have no permission  to edit this lecture", res, callback);
+                } else {
+                    try {
+                        var htmlfile = SLIDES_DIRECTORY + '/' + course + '/' + lecture + ".html";
+                        var resourceURL = host + RAW_SLIDES_DIRECTORY + "/" + course + "/" + lecture + ".html";
+                        addIDsToSlidesAndWriteToFile(content, course, lecture, res, resourceURL, htmlfile, callback);
+                    } catch (error) {
+                        returnThrowError(500, error, res, callback);
+                    }
+                }
+            } else {
+                returnThrowError(404, "Lecture not found", res, callback);
+            }
+        } else {
+            returnThrowError(500, error, res, callback);
+        }
+    });
 }
 
-exports.editLectureViewMode = function(course, lecture, host,  res, data_slide, callback){
-    try{
-        var htmlfile = SLIDES_DIRECTORY+ '/'+course+'/'+lecture+".html";
-        fs.readFile(htmlfile, function (err, data) {
-            if (err){
+exports.editLectureViewMode = function(course, lecture, host, res, data_slide, callback) {
+    try {
+        var htmlfile = SLIDES_DIRECTORY + '/' + course + '/' + lecture + ".html";
+        fs.readFile(htmlfile, function(err, data) {
+            if (err) {
                 returnThrowError(500, err.message, res, callback);
-            }else{
+            } else {
                 jsdom.env({
                     html: htmlfile,
                     src: [
-                    jquery
-                    ],
+                            jquery
+                            ],
                     done: function(errors, window) {
-                        if(errors){
-                            defaults.returnError(500, 'Error while parsing document by jsdom '+err.message, res);
-                        }else{
-                            try{
+                        if (errors) {
+                            defaults.returnError(500, 'Error while parsing document by jsdom ' + err.message, res);
+                        } else {
+                            try {
                                 var $ = window.$;
-                                var resourceURL = host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html";
-                                var slideCounter=0;
+                                var resourceURL = host + RAW_SLIDES_DIRECTORY + "/" + course + "/" + lecture + ".html";
+                                var slideCounter = 0;
 
-                                $('body').find('.slide').each(function(){
-                                    if(data_slide.content[slideCounter]!=null){
-                                        $(this).replaceWith(data_slide.content[slideCounter]);    
+                                $('body').find('.slide').each(function() {
+                                    if (data_slide.content[slideCounter] != null) {
+                                        $(this).replaceWith(data_slide.content[slideCounter]);
                                     }
                                     slideCounter++;
-                                });   
-                                var newcontent= $("html").html();    
+                                });
+                                var newcontent = $("html").html();
                                 addIDsToSlidesAndWriteToFile(newcontent, course, lecture, res, resourceURL, htmlfile);
                             }
-                            catch(err){
-                                returnThrowErrorr(500, 'Error while parsing document: '+err.message, res, callback);
+                            catch (err) {
+                                returnThrowErrorr(500, 'Error while parsing document: ' + err.message, res, callback);
                             }
                         }
                     }
-                });   
+                });
             }
         });
-    }catch(error){
+    } catch (error) {
         returnThrowError(500, error, res, callback);
     }
 }
@@ -240,48 +299,48 @@ exports.editLectureViewMode = function(course, lecture, host,  res, data_slide, 
  * @param host hostname (domain)
  * @param callback callback function to be called
  */
-function editSlideContentAppend(course, lecture, slide, content, res, host, callback){
-    var pathToCourse = '/'+course+'/';
-    var htmlfile = SLIDES_DIRECTORY+pathToCourse+lecture+".html";
-    fs.readFile(htmlfile, function (err, data) {
-        if (err){
-            returnThrowError(500, err.message, res,callback);
-        }else{
-            slide  = parseInt(slide);
-            var slideSend=0;
+function editSlideContentAppend(course, lecture, slide, content, res, host, callback) {
+    var pathToCourse = '/' + course + '/';
+    var htmlfile = SLIDES_DIRECTORY + pathToCourse + lecture + ".html";
+    fs.readFile(htmlfile, function(err, data) {
+        if (err) {
+            returnThrowError(500, err.message, res, callback);
+        } else {
+            slide = parseInt(slide);
+            var slideSend = 0;
             jsdom.env({
                 html: htmlfile,
                 src: [
-                jquery
-                ],
+                        jquery
+                        ],
                 done: function(errors, window) {
-                    if(errors){
+                    if (errors) {
                         returnThrowError(500, 'Error while parsing document by jsdom ', res, callback);
-                    }else{
-                        try{
+                    } else {
+                        try {
                             var $ = window.$;
-                            var resourceURL = host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html#!/"+(slide+1);
-                            var slideCounter=1;
-                            $('body').find('.slide').each(function(){
-                                if(slideCounter === slide){                            
+                            var resourceURL = host + RAW_SLIDES_DIRECTORY + "/" + course + "/" + lecture + ".html#!/" + (slide + 1);
+                            var slideCounter = 1;
+                            $('body').find('.slide').each(function() {
+                                if (slideCounter === slide) {
                                     $(this).after(content);
                                     slideSend = 1;
                                 }
                                 slideCounter++;
-                            });   
-                            var newcontent= $("html").html();
-                            if(slideSend===0){
-                                returnThrowError(404, "Slide "+slide+" not found", res, callback);
-                            }else{
+                            });
+                            var newcontent = $("html").html();
+                            if (slideSend === 0) {
+                                returnThrowError(404, "Slide " + slide + " not found", res, callback);
+                            } else {
                                 addIDsToSlidesAndWriteToFile(newcontent, course, lecture, res, resourceURL, htmlfile, callback);
                             }
                         }
-                        catch(err){
-                            returnThrowError(500, 'Problem while parsing document: '+err.message, res, callback);
+                        catch (err) {
+                            returnThrowError(500, 'Problem while parsing document: ' + err.message, res, callback);
                         }
                     }
                 }
-            });   
+            });
         }
     });
 }
@@ -296,50 +355,50 @@ function editSlideContentAppend(course, lecture, slide, content, res, host, call
  * @param host hostname (domain)
  * @param callback callback function to be called
  */
-function editSlideContent(course, lecture, slide, content, res, host, callback){
-    var pathToCourse = '/'+course+'/';
-    var htmlfile = SLIDES_DIRECTORY+pathToCourse+lecture+".html";
-    fs.readFile(htmlfile, function (err, data) {
-        if (err){
+function editSlideContent(course, lecture, slide, content, res, host, callback) {
+    var pathToCourse = '/' + course + '/';
+    var htmlfile = SLIDES_DIRECTORY + pathToCourse + lecture + ".html";
+    fs.readFile(htmlfile, function(err, data) {
+        if (err) {
             returnThrowError(500, err.message, res, callback);
-        }else{
-            
-            slide  = parseInt(slide);
-            var slideSend=0;
+        } else {
+
+            slide = parseInt(slide);
+            var slideSend = 0;
             jsdom.env({
                 html: htmlfile,
                 src: [
-                jquery
-                ],
+                        jquery
+                        ],
                 done: function(errors, window) {
-                    if(errors){
+                    if (errors) {
                         returnThrowError(500, 'Problem while parsing document by jsdom ', res, callback);
-                    }else{
-                        try{
+                    } else {
+                        try {
                             var $ = window.$;
-                            var resourceURL = host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+".html#!/"+slide;
-                            var slideCounter=1;
-                            $('body').find('.slide').each(function(){
-                                if(slideCounter === slide){                            
+                            var resourceURL = host + RAW_SLIDES_DIRECTORY + "/" + course + "/" + lecture + ".html#!/" + slide;
+                            var slideCounter = 1;
+                            $('body').find('.slide').each(function() {
+                                if (slideCounter === slide) {
                                     $(this).replaceWith(content);
                                     slideSend = 1;
                                 }
                                 slideCounter++;
-                            });   
+                            });
 
-                            var newcontent= $("html").html();                
-                            if(slideSend===0){
-                                returnThrowError(404, "Slide "+slide+" not found", res, callback);
-                            }else{
+                            var newcontent = $("html").html();
+                            if (slideSend === 0) {
+                                returnThrowError(404, "Slide " + slide + " not found", res, callback);
+                            } else {
                                 addIDsToSlidesAndWriteToFile(newcontent, course, lecture, res, resourceURL, htmlfile);
                             }
                         }
-                        catch(err){
+                        catch (err) {
                             returnThrowError(500, 'Problem while parsing document ', res, callback);
                         }
                     }
                 }
-            });   
+            });
         }
     });
 }
@@ -347,51 +406,51 @@ function editSlideContent(course, lecture, slide, content, res, host, callback){
 /**
  * Removes given slide from presentation and update slide ids
  */
-function deleteSlide(res, htmlfile, slide, resourceURL, course, lecture, callback){
+function deleteSlide(res, htmlfile, slide, resourceURL, course, lecture, callback) {
 
-    fs.readFile(htmlfile, function (err, data) {
-        if (err){
-            returnThrowError(500, err.message,res, callback); 
-        }else{
-            slide  = parseInt(slide);
-            var slideSend=0;
+    fs.readFile(htmlfile, function(err, data) {
+        if (err) {
+            returnThrowError(500, err.message, res, callback);
+        } else {
+            slide = parseInt(slide);
+            var slideSend = 0;
             jsdom.env({
                 html: htmlfile,
                 src: [
-                jquery
-                ],
+                        jquery
+                        ],
                 done: function(errors, window) {
-                    if(errors){
-                        returnThrowError(500, "Error while parsing document by jsdom", res, callback);  
-                    }else{
-                        try{
+                    if (errors) {
+                        returnThrowError(500, "Error while parsing document by jsdom", res, callback);
+                    } else {
+                        try {
                             var $ = window.$;
-                            var slideCounter=1;
-                            $('body').find('.slide').each(function(){
-                                if(slideCounter === slide){                            
+                            var slideCounter = 1;
+                            $('body').find('.slide').each(function() {
+                                if (slideCounter === slide) {
                                     $(this).remove();
                                     slideSend = 1;
                                 }
                                 slideCounter++;
-                            });   
+                            });
 
-                            var newcontent= $("html").html();
-                            if(slideSend===0){
-                                returnThrowError(404, "Slide "+slide+" not found", res, callback);
-                            }else{
-                                addIDsToSlidesAndWriteToFile(newcontent, course, lecture, res, resourceURL, htmlfile,callback);
+                            var newcontent = $("html").html();
+                            if (slideSend === 0) {
+                                returnThrowError(404, "Slide " + slide + " not found", res, callback);
+                            } else {
+                                addIDsToSlidesAndWriteToFile(newcontent, course, lecture, res, resourceURL, htmlfile, callback);
                             }
                         }
-                        catch(err){    
-                            returnThrowError(500, 'Error while parsing document: '+err.message, res, callback);
+                        catch (err) {
+                            returnThrowError(500, 'Error while parsing document: ' + err.message, res, callback);
                         }
                     }
                 }
-            });   
+            });
         }
     });
-     
-    
+
+
 }
 
 /**
@@ -407,109 +466,109 @@ function deleteSlide(res, htmlfile, slide, resourceURL, course, lecture, callbac
  * @param callback
  * @param emitEvents if true or undefined emitter wil emit notifications about updated file and removed IDs
  */
-function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureURL, file,callback, emitEvents){
-    var prefix =new RegExp("^"+courseID+"_"+lecture+"_");
+function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureURL, file, callback, emitEvents) {
+    var prefix = new RegExp("^" + courseID + "_" + lecture + "_");
     Slideid.find({
         slideid: prefix
-    }, function(err,crs){   
-        if(!err) {
-            var slidesToDelete ={};
-            for(var i=0;i<crs.length;i++){
-                slidesToDelete[crs[i].slideid]=1;
+    }, function(err, crs) {
+        if (!err) {
+            var slidesToDelete = {};
+            for (var i = 0; i < crs.length; i++) {
+                slidesToDelete[crs[i].slideid] = 1;
             }
 
             jsdom.env({
                 html:content,
                 src: [
-                jquery
-                ],
+                        jquery
+                        ],
                 done : function(errors, window) {
-                    if(!errors){
+                    if (!errors) {
                         var $ = window.$;
                         var d = new Date().getTime();
                         var updatedid = {};
                         var newids = new Array();
                         var it = 0;
                         var counter = 0;
-                        
-                        $('body').find('.slide').each(function(){
+
+                        $('body').find('.slide').each(function() {
                             counter++;
                             if (!$(this).attr('data-slideid')) { // slide doesn't have ID => all following slideids have to be update
                                 var n = {};
-                                n.id= courseID+"_"+lecture+"_"+counter+"_"+(d+it);
+                                n.id = courseID + "_" + lecture + "_" + counter + "_" + (d + it);
                                 n.title = $(this).find("h1").eq(0).text();
                                 $(this).attr('data-slideid', n.id);
                                 newids.push(n);
                                 it++;
-                            }else{
+                            } else {
                                 var sec = $(this).attr('data-slideid');
-                                if($(this).attr('data-slideid').indexOf( courseID+"_"+lecture+"_"+counter+"_", 0)<0
-                                    || typeof crs[slidesToDelete[$(this).attr('data-slideid')]]=="undefined" || $(this).find("h1").eq(0).text()!==crs[slidesToDelete[$(this).attr('data-slideid')]].title
-                                    ){ // slide number is changed => update slideid
+                                if ($(this).attr('data-slideid').indexOf(courseID + "_" + lecture + "_" + counter + "_", 0) < 0
+                                        || typeof crs[slidesToDelete[$(this).attr('data-slideid')]] == "undefined" || $(this).find("h1").eq(0).text() !== crs[slidesToDelete[$(this).attr('data-slideid')]].title
+                                        ) { // slide number is changed => update slideid
                                     var parts = ($(this).attr('data-slideid')).split("_");
                                     var n = {};
-                                    n.id =parts[0]+"_"+parts[1]+"_"+counter+"_"+parts[3]; 
+                                    n.id = parts[0] + "_" + parts[1] + "_" + counter + "_" + parts[3];
                                     n.title = $(this).find("h1").eq(0).text();
-                                    updatedid[$(this).attr('data-slideid')] = n;    // counter is a new slide number
-                                    $(this).attr('data-slideid', parts[0]+"_"+parts[1]+"_"+counter+"_"+parts[3]);
-                                }            
+                                    updatedid[$(this).attr('data-slideid')] = n; // counter is a new slide number
+                                    $(this).attr('data-slideid', parts[0] + "_" + parts[1] + "_" + counter + "_" + parts[3]);
+                                }
                                 delete slidesToDelete[sec]; // this slideid is used, no need to delete it from db    
-                            } 
+                            }
                         });
-                        var newcontent= $("html").html();    
-                        newcontent = "<!DOCTYPE html><html>"+newcontent+"</html>";
+                        var newcontent = $("html").html();
+                        newcontent = "<!DOCTYPE html><html>" + newcontent + "</html>";
                         // delete slidesToDelete
-                        for(var key in slidesToDelete){
-                            for(var k = 0;k<crs.length;k++){
-                                if(typeof crs[k]!="undefined" && crs[k].slideid===key){
-                                    var _id= crs[k]._id;
-                                    crs[k].remove(function (err){
-                                        if(err){
-                                            returnThrowError(500, "Error removing slideid", res, callback);    
+                        for (var key in slidesToDelete) {
+                            for (var k = 0; k < crs.length; k++) {
+                                if (typeof crs[k] != "undefined" && crs[k].slideid === key) {
+                                    var _id = crs[k]._id;
+                                    crs[k].remove(function(err) {
+                                        if (err) {
+                                            returnThrowError(500, "Error removing slideid", res, callback);
                                         }
-                                        
-                                        if(typeof emitEvents=="undefined" || emitEvents===true)
+
+                                        if (typeof emitEvents == "undefined" || emitEvents === true)
                                             editor_emitter.emit("removedID", _id);
                                     });
                                 }
                             }
                         }
-                    
+
                         // update existingids (slideid is unique!)
-                        for(var key2 in updatedid){
-                            for(var h = 0;h<crs.length;h++){
-                                if(crs[h].slideid===key2){
-                                    crs[h].slideid=updatedid[key2].id;
-                                    crs[h].title=updatedid[key2].title;
+                        for (var key2 in updatedid) {
+                            for (var h = 0; h < crs.length; h++) {
+                                if (crs[h].slideid === key2) {
+                                    crs[h].slideid = updatedid[key2].id;
+                                    crs[h].title = updatedid[key2].title;
                                     crs[h].save(function(err) {
-                                        if(err) {
+                                        if (err) {
                                             returnThrowError(500, "Error updating slideid", res, callback);
                                         }
-                                    });   
+                                    });
                                 }
                             }
                         }
                         // insert new ids
-                        for(var key3 in newids){
+                        for (var key3 in newids) {
                             var sid = new Slideid();
                             sid.slideid = newids[key3].id;
                             sid.title = newids[key3].title;
                             sid.save(function(err) {
-                                if(err) {
+                                if (err) {
                                     returnThrowError(500, "Error saving new slideid", res, callback);
                                 }
-                            });   
+                            });
                         }
                         //write to file
                         writeToFile(courseID, lecture, res, file, lectureURL, newcontent, callback, emitEvents);
-                    }else{
+                    } else {
                         returnThrowError(500, errors, res, callback);
-                    } 
+                    }
                 }
             });
         } else {
-            returnThrowError(500, "Problems with database", res, callback); 
-        }             
+            returnThrowError(500, "Problems with database", res, callback);
+        }
     });
 }
 
@@ -529,151 +588,151 @@ function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureUR
  * @param callback callback function
  * @param originalCallback function that the callback function was called with
  */
-exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lecture, callback, originalCallback){
-    console.log("ZACINAME "+courseID+" LECTURE "+lecture);
-    try{
-        fs.readFile(SLIDES_DIRECTORY+ '/'+courseID+'/'+lecture+".html", function (err, data) {
-            if (err){
-                console.log("_addIDsToSlidesAndWriteToFileForFacets "+err.toString());
-            }else{
-    
-                var prefix =new RegExp("^"+courseID+"_"+lecture+"_");
+exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lecture, callback, originalCallback) {
+    console.log("ZACINAME " + courseID + " LECTURE " + lecture);
+    try {
+        fs.readFile(SLIDES_DIRECTORY + '/' + courseID + '/' + lecture + ".html", function(err, data) {
+            if (err) {
+                console.log("_addIDsToSlidesAndWriteToFileForFacets " + err.toString());
+            } else {
+
+                var prefix = new RegExp("^" + courseID + "_" + lecture + "_");
                 Slideid.find({
                     slideid: prefix
-                }, function(err,crs){   
-                    if(!err) {
+                }, function(err, crs) {
+                    if (!err) {
                         var slidesToDelete = {};
-                        for(var i=0;i<crs.length;i++){
-                            slidesToDelete[crs[i].slideid]=1;
+                        for (var i = 0; i < crs.length; i++) {
+                            slidesToDelete[crs[i].slideid] = 1;
                         }
 
                         jsdom.env({
                             html:data.toString(),
                             src: [
-                            jquery
-                            ],
+                                    jquery
+                                    ],
                             done : function(errors, window) {
-                                if(!errors){
+                                if (!errors) {
                                     var $ = window.$;
                                     var d = new Date().getTime();
                                     var updatedid = {};
                                     var newids = new Array();
                                     var it = 0;
                                     var counter = 0;
-            
-                                    $('body').find('.slide').each(function(){
+
+                                    $('body').find('.slide').each(function() {
                                         counter++;
                                         if (!$(this).attr('data-slideid')) { // slide doesn't have ID => all following slideids have to be update
                                             var n = {};
-                                            n.id= courseID+"_"+lecture+"_"+counter+"_"+(d+it);
+                                            n.id = courseID + "_" + lecture + "_" + counter + "_" + (d + it);
                                             n.title = $(this).find("h1").eq(0).text();
                                             $(this).attr('data-slideid', n.id);
                                             newids.push(n);
                                             it++;
-                                        }else{
+                                        } else {
                                             var sec = $(this).attr('data-slideid');
-                                            if($(this).attr('data-slideid').indexOf( courseID+"_"+lecture+"_"+counter+"_", 0)<0
-                                                || $(this).find("h1").eq(0).text()!==crs[slidesToDelete[$(this).attr('data-slideid')]].title
-                                                ){ // slide number is changed => update slideid
+                                            if ($(this).attr('data-slideid').indexOf(courseID + "_" + lecture + "_" + counter + "_", 0) < 0
+                                                    || $(this).find("h1").eq(0).text() !== crs[slidesToDelete[$(this).attr('data-slideid')]].title
+                                                    ) { // slide number is changed => update slideid
                                                 var parts = ($(this).attr('data-slideid')).split("_");
                                                 var n = {};
-                                                n.id =parts[0]+"_"+parts[1]+"_"+counter+"_"+parts[3]; 
+                                                n.id = parts[0] + "_" + parts[1] + "_" + counter + "_" + parts[3];
                                                 n.title = $(this).find("h1").eq(0).text();
-                                                updatedid[$(this).attr('data-slideid')] = n;    // counter is a new slide number
-                                                $(this).attr('data-slideid', parts[0]+"_"+parts[1]+"_"+counter+"_"+parts[3]);
-                                            }            
+                                                updatedid[$(this).attr('data-slideid')] = n; // counter is a new slide number
+                                                $(this).attr('data-slideid', parts[0] + "_" + parts[1] + "_" + counter + "_" + parts[3]);
+                                            }
                                             delete slidesToDelete[sec]; // this slideid is used, no need to delete it from db    
-                                        } 
+                                        }
                                     });
                                     var _count = 0;
-                                    for(var r in slidesToDelete){
+                                    for (var r in slidesToDelete) {
                                         _count++;
                                     }
                                     var _count2 = 0;
-                                    for(var s in updatedid){
+                                    for (var s in updatedid) {
                                         _count2++;
                                     }
                                     var lock = new IDSyncLock(_count, _count2, newids.length, callback, lecture, courseID, originalCallback, res);
-                                    var newcontent= $("html").html();    
-                                    newcontent = "<!DOCTYPE html><html>"+newcontent+"</html>";
-                                    fs.writeFile(SLIDES_DIRECTORY+ '/'+courseID+'/'+lecture+".html", newcontent, function (err) {
+                                    var newcontent = $("html").html();
+                                    newcontent = "<!DOCTYPE html><html>" + newcontent + "</html>";
+                                    fs.writeFile(SLIDES_DIRECTORY + '/' + courseID + '/' + lecture + ".html", newcontent, function(err) {
                                         if (err) {
-                                            throw "_addIDsToSlidesAndWriteToFileForFacets "+err.toString();
-                                        }else{
+                                            throw "_addIDsToSlidesAndWriteToFileForFacets " + err.toString();
+                                        } else {
                                             // editor_emitter.emit("fileUpdated",courseID, lecture); // again endless loop, look few lines below
-                                            for(var key in slidesToDelete){
-                                                for(var k = 0;k<crs.length;k++){
-                                                    if(crs[k].slideid===key){
-                                                        var _id= crs[k]._id;
-                                                        crs[k].remove(function (err){
-                                                            if(err)
-                                                                console.log("_addIDsToSlidesAndWriteToFileForFacets "+err.toString());
+                                            for (var key in slidesToDelete) {
+                                                for (var k = 0; k < crs.length; k++) {
+                                                    if (crs[k].slideid === key) {
+                                                        var _id = crs[k]._id;
+                                                        crs[k].remove(function(err) {
+                                                            if (err)
+                                                                console.log("_addIDsToSlidesAndWriteToFileForFacets " + err.toString());
                                                             //    editor_emitter.emit("removedID", _id); // no need to cause recursion - this is called using MMan but another emit causes endless loop (maintenance_ext catch it again and again save info about update for MMan...)
                                                             lock.notifyDeleted();
                                                         });
                                                     }
                                                 }
                                             }
-                    
+
                                             // update existingids (slideid is unique!)
-                                            for(var key2 in updatedid){
-                                                for(var h = 0;h<crs.length;h++){
-                                                    if(crs[h].slideid===key2){
-                                                        crs[h].slideid=updatedid[key2].id;
-                                                        crs[h].title=updatedid[key2].title;
+                                            for (var key2 in updatedid) {
+                                                for (var h = 0; h < crs.length; h++) {
+                                                    if (crs[h].slideid === key2) {
+                                                        crs[h].slideid = updatedid[key2].id;
+                                                        crs[h].title = updatedid[key2].title;
                                                         crs[h].save(function(err) {
-                                                
-                                                            if(err) {
-                                                                throw "_addIDsToSlidesAndWriteToFileForFacets "+err.toString();
+
+                                                            if (err) {
+                                                                throw "_addIDsToSlidesAndWriteToFileForFacets " + err.toString();
                                                             }
                                                             lock.notifyUpdated();
-                                                        });   
+                                                        });
                                                     }
                                                 }
                                             }
                                             // insert new ids
-                                            for(var key3 in newids){
+                                            for (var key3 in newids) {
                                                 var sid = new Slideid();
                                                 sid.slideid = newids[key3].id;
                                                 sid.title = newids[key3].title;
                                                 sid.save(function(err) {
-                                                    if(err) {
-                                                        throw "_addIDsToSlidesAndWriteToFileForFacets "+err.toString();
+                                                    if (err) {
+                                                        throw "_addIDsToSlidesAndWriteToFileForFacets " + err.toString();
                                                     }
                                                     lock.notifyInserted();
-                                                });   
+                                                });
                                             }
                                         }
-                                    });   
-                                }else{
-                                    throw "_addIDsToSlidesAndWriteToFileForFacets "+errors.toString();
-                                } 
+                                    });
+                                } else {
+                                    throw "_addIDsToSlidesAndWriteToFileForFacets " + errors.toString();
+                                }
                             }
                         });
                     } else {
-                        throw "_addIDsToSlidesAndWriteToFileForFacets "+err.toString();
-                    }             
+                        throw "_addIDsToSlidesAndWriteToFileForFacets " + err.toString();
+                    }
                 });
             }
         });
-    }catch(error){
-        throw "_addIDsToSlidesAndWriteToFileForFacets "+error.toString();
+    } catch (error) {
+        throw "_addIDsToSlidesAndWriteToFileForFacets " + error.toString();
     }
 }
 
 
-function writeToFile(course, lecture, res, file, lectureUrl, content, callback, emitEvents){
-    fs.writeFile(file, content, function (err) {
+function writeToFile(course, lecture, res, file, lectureUrl, content, callback, emitEvents) {
+    fs.writeFile(file, content, function(err) {
         if (err) {
-            returnThrowError(500, 'Problem with saving document: '+err.message, res, callback);
-        }else{
-            if(typeof emitEvents=="undefined" || emitEvents===true)
+            returnThrowError(500, 'Problem with saving document: ' + err.message, res, callback);
+        } else {
+            if (typeof emitEvents == "undefined" || emitEvents === true)
                 editor_emitter.emit("fileUpdated", course, lecture);
-            var t = new HTMLContent("http://"+lectureUrl, "Document updated, <a href=\"http://"+lectureUrl+"\">back to presentation</a>");
+            var t = new HTMLContent("http://" + lectureUrl, "Document updated, <a href=\"http://" + lectureUrl + "\">back to presentation</a>");
             returnData(res, callback, t);
 
         }
-    });   
+    });
 }
 
 /**
@@ -684,12 +743,12 @@ function writeToFile(course, lecture, res, file, lectureUrl, content, callback, 
  * @param resourceURL URL of the presentation
  * @param callback
  */
-function getDocumentFromFileSystem(res, htmlfile, slide,resourceURL, callback){
-    fs.readFile(htmlfile, function (err, data) {
-        if (err){
+function getDocumentFromFileSystem(res, htmlfile, slide, resourceURL, callback) {
+    fs.readFile(htmlfile, function(err, data) {
+        if (err) {
             returnThrowError(500, err.message, res, callback);
-        }else{
-            parseDocument(res, data, slide, resourceURL, callback);   
+        } else {
+            parseDocument(res, data, slide, resourceURL, callback);
         }
     });
 }
@@ -702,39 +761,39 @@ function getDocumentFromFileSystem(res, htmlfile, slide,resourceURL, callback){
  * @param resourceURL URL of the presentation
  * @param callback
  */
-function parseDocument(res, html, slide, resourceURL, callback){
-    slide  = parseInt(slide);
-    var slideSend=0;
+function parseDocument(res, html, slide, resourceURL, callback) {
+    slide = parseInt(slide);
+    var slideSend = 0;
     jsdom.env({
         html: html,
         src: [
-        jquery
-        ],
+                jquery
+                ],
         done: function(errors, window) {
-            if(errors){
-                returnThrowError(500,  'Error while parsing document by jsdom ', res, callback);
-            }else{
-                try{
+            if (errors) {
+                returnThrowError(500, 'Error while parsing document by jsdom ', res, callback);
+            } else {
+                try {
                     var $ = window.$;
-                    var slideCounter=1;
+                    var slideCounter = 1;
 
-                    $('body').find('.slide').each(function(){
-                        if(slideCounter === slide){
+                    $('body').find('.slide').each(function() {
+                        if (slideCounter === slide) {
                             var r = new HTMLContent(resourceURL, $("<div />").append($(this).clone()).html());
                             returnData(res, callback, r);
                             slideSend = 1;
                         }
                         slideCounter++;
-                    });   
-                    if(slideSend===0)
-                        returnThrowError(404, "Slide "+slide+" not found", res, callback);
+                    });
+                    if (slideSend === 0)
+                        returnThrowError(404, "Slide " + slide + " not found", res, callback);
                 }
-                catch(err){
-                    returnThrowError(500,'Error while parsing document: '+err, res, callback);
+                catch (err) {
+                    returnThrowError(500, 'Error while parsing document: ' + err, res, callback);
                 }
             }
         }
-    }); 
+    });
 }
 
 /**
@@ -743,19 +802,19 @@ function parseDocument(res, html, slide, resourceURL, callback){
  * @param callback callback function (if called via internal API)
  * @param data data to be retuned
  */
-function returnData(res, callback, data){
-    if(typeof res!="undefined"){
+function returnData(res, callback, data) {
+    if (typeof res != "undefined") {
         res.writeHead(200, {
             'Content-Type': 'application/json'
         });
-        res.write(JSON.stringify(data, null ,4));
+        res.write(JSON.stringify(data, null, 4));
         res.end();
-    }else{
-        if(typeof callback!="undefined")
+    } else {
+        if (typeof callback != "undefined")
             callback(null, data);
         else
             console.error("Nor HTTP Response or callback function defined!");
-    //            throw "Nor HTTP Response or callback function defined!";
+        //            throw "Nor HTTP Response or callback function defined!";
     }
 }
 
@@ -765,21 +824,21 @@ function returnData(res, callback, data){
  * @param callback callback function (if called via internal API)
  * @param data data to be retuned
  */
-function returnDataHTML(res, callback, data){
-    if(typeof res!="undefined"){
+function returnDataHTML(res, callback, data) {
+    if (typeof res != "undefined") {
         res.writeHead(200, {
             'Content-Type': 'text/html'
         });
         res.write(data);
         res.end();
-    }else{
-        if(typeof callback!="undefined"){
+    } else {
+        if (typeof callback != "undefined") {
             var o = {};
             o.html = data;
             callback(null, o);
-        }else
+        } else
             console.error("Nor HTTP Response or callback function defined!");
-    //            throw "Nor HTTP Response or callback function defined!";
+        //            throw "Nor HTTP Response or callback function defined!";
     }
 }
 
@@ -791,16 +850,16 @@ function returnDataHTML(res, callback, data){
  * @param res HTTP response
  * @param callback callback function
  */
-function returnThrowError(code, msg, res, callback){
-    if(typeof res!="undefined")
+function returnThrowError(code, msg, res, callback) {
+    if (typeof res != "undefined")
         defaults.returnError(code, msg, res);
-    else{
-        if(typeof callback!="undefined"){
+    else {
+        if (typeof callback != "undefined") {
             callback(msg, null);
-        }else{
+        } else {
             console.error(msg);
         }
-    }       
+    }
 }
 
 function endsWith(string, suffix) {
@@ -814,7 +873,7 @@ function endsWith(string, suffix) {
  * @param url URL address of given slide/lecture
  * @param htmlCode html source code of given item (or status message in HTML form)
  */
-function HTMLContent(url, htmlCode){
+function HTMLContent(url, htmlCode) {
     this.url = url;
     this.html = htmlCode;
 }
@@ -831,40 +890,40 @@ function HTMLContent(url, htmlCode){
  * @param originalCallback original callback that the original function in facetparser_ext (specified by the callback param) was called with
  * @param originalResponse original reponse that the original function in facetparser_ext (specified by the callback param) was called with
  */
-function IDSyncLock(toDelete, toUpdate, toInsert, callback, lecture, course, originalCallback, originalResponse){
-    
+function IDSyncLock(toDelete, toUpdate, toInsert, callback, lecture, course, originalCallback, originalResponse) {
+
     this.toDelete = toDelete;
     this.toUpdate = toUpdate;
     this.toInsert = toInsert;
     this.deleted = 0;
     this.updated = 0;
     this.inserted = 0;
-    this.content = ''; 
+    this.content = '';
     this.lecture = lecture;
     this.course = course;
     this.response = originalResponse;
     this.originalCallback = originalCallback;
-    
-    this.notifyDeleted = function(){
+
+    this.notifyDeleted = function() {
         this.deleted++;
-        if(this.deleted === this.toDelete)
+        if (this.deleted === this.toDelete)
             this.globalNotify();
     };
-    
-    this.notifyUpdated = function(){
+
+    this.notifyUpdated = function() {
         this.updated++;
-        if(this.updated === this.toUpdate)
+        if (this.updated === this.toUpdate)
             this.globalNotify();
     };
-    
-    this.notifyInserted = function(){
+
+    this.notifyInserted = function() {
         this.inserted++;
-        if(this.inserted === this.toInsert)
+        if (this.inserted === this.toInsert)
             this.globalNotify();
     };
-    
-    this.globalNotify = function(){
-        if(this.inserted === this.toInsert && this.updated === this.toUpdate && this.deleted === this.toDelete){
+
+    this.globalNotify = function() {
+        if (this.inserted === this.toInsert && this.updated === this.toUpdate && this.deleted === this.toDelete) {
             callback(this.response, this.course, this.lecture, false, this.originalCallback);
         }
     };
@@ -880,16 +939,16 @@ function IDSyncLock(toDelete, toUpdate, toInsert, callback, lecture, course, ori
  * @param callback callback function (internally)
  * @param emitEvents if true emiiter emits events about removed IDs and updated file
  */
-exports.makeindices = function(courseID, lectureID, host, res, callback, emitEvents){
-    var htmlfile = SLIDES_DIRECTORY+ '/'+courseID+'/'+lectureID+".html";
-    fs.readFile(htmlfile, function (err, data) {
-        if (err){
+exports.makeindices = function(courseID, lectureID, host, res, callback, emitEvents) {
+    var htmlfile = SLIDES_DIRECTORY + '/' + courseID + '/' + lectureID + ".html";
+    fs.readFile(htmlfile, function(err, data) {
+        if (err) {
             returnThrowError(500, err.message, res, callback);
-        }else{
-            try{
-                var resourceURL = host+ RAW_SLIDES_DIRECTORY+"/"+courseID+"/"+lectureID+".html";
-                addIDsToSlidesAndWriteToFile(data.toString(), courseID, lectureID, res, resourceURL, htmlfile, callback,emitEvents);      
-            }catch(error){
+        } else {
+            try {
+                var resourceURL = host + RAW_SLIDES_DIRECTORY + "/" + courseID + "/" + lectureID + ".html";
+                addIDsToSlidesAndWriteToFile(data.toString(), courseID, lectureID, res, resourceURL, htmlfile, callback, emitEvents);
+            } catch (error) {
                 returnThrowError(500, error, res, callback);
             }
         }

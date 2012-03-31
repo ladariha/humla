@@ -4,6 +4,11 @@ window.onload = loadPresentation();
 function loadPresentation(){
     var course = getParameterByName('course');
     var lecture = getParameterByName('lecture');
+    try{
+    localStorage.removeItem("editor-original-content-present");    
+    }catch(e){
+        
+    }
     
     if(course.length > 0 && lecture.length>0){
       
@@ -82,6 +87,11 @@ function sendData(){
     var c = {
         content:editor.getValue()
     }
+    try{
+        localStorage.setItem("editor-original-content-present",editor.getValue());
+    }catch(e){
+        
+    }
     var request = new XMLHttpRequest();
     request.open("PUT", url, true);
     request.setRequestHeader("Content-type", "application/json");
@@ -90,10 +100,18 @@ function sendData(){
             if(request.status==200){
                 var object = eval('(' + request.responseText + ')');
                 document.getElementById("msg").innerHTML=object.html;
+                localStorage.removeItem("editor-original-content-present");
+                loadPresentation();
             }else{
-                document.getElementById("msg").innerHTML=request.status+": "+request.statusText;    
+                document.getElementById("msg").innerHTML=request.responseText;    
+                  try{
+                    // try to restore previous content
+                  editor.setValue(localStorage.getItem("editor-original-content-present"));
+                }catch(e){
+                    
+                }
             }
-            loadPresentation();
+            
         }
     };
     request.send(JSON.stringify(c));

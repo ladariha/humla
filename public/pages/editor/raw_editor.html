@@ -1,21 +1,21 @@
 <!--/**
- * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
+* @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
  */-->
 
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Humla editor</title>
+        <head>
+<title>Humla editor</title>
         <meta charset=utf-8>
-        <script src="./lib/codemirror.js"></script>
-        <script src="./lib/customScriptsRaw.js"></script>
-        <script src="./mode/xml/xml.js"></script>
-        <script src="./mode/javascript/javascript.js"></script>
-        <script src="./mode/css/css.js"></script>
-        <script src="./mode/htmlmixed/htmlmixed.js"></script>
-        <link rel=stylesheet type="text/css" href="./lib/codemirror.css">
-        <link type="text/css" rel=stylesheet href="./theme/default.css">
-        <link type="text/css" rel=stylesheet href="./css/docs.css">
+<script src="./lib/codemirror.js"></script>
+<script src="./lib/customScriptsRaw.js"></script>
+<script src="./mode/xml/xml.js"></script>
+<script src="./mode/javascript/javascript.js"></script> 
+<script src="./mode/css/css.js"></script>
+<script src="./mode/htmlmixed/htmlmixed.js"></script>
+<link rel=stylesheet type="text/css" href="./lib/codemirror.css">
+<link type="text/css" rel=stylesheet href="./theme/default.css">
+<link type="text/css" rel=stylesheet href="./css/docs.css">
         <style type="text/css">
             .CodeMirror {
                 float: left;
@@ -28,6 +28,15 @@
     </head>
     <body>
         <h1 id="title"><span id="append">Edit</span> presentation for <span id="course">#course</span>: <span id="lecture">#lecture</span></h1>
+        <div id="login">                    
+            <a id="login-login" href="#login">login</a>                                
+        </div>
+        <div id="login-form-overlay">
+            <a href="#login" id="form-close-btn" rel="javascript" style="cursor: pointer;" title="close">close</a>
+            <div id="login-form">
+                <a href="/auth/google"><div>Login using Google OpenID</div></a>
+            </div>
+        </div>
         <div id="msg"></div>
         <div id="controlPanel">
             Insert slide:
@@ -80,12 +89,13 @@
         <div style="float: right; margin: 5px 0;">
             <a href="" id="cancelLink"><button type="button">Cancel</button> </a>
             <button type="button" onClick="sendData();">Save</button>
-            
+
         </div>
-           <div style="clear:both"></div>
+        <div style="clear:both"></div>
         <div class="restore-info">
             * Restoring original content works only if local storage is supported by the browser
         </div>
-
+        <script type="text/javascript" src="../../lib/jquery-1.7.min.js"></script>
+      <script type="text/javascript" src="../lib/auth.js"></script>
     </body>
 </html>

@@ -35,6 +35,15 @@
     </head>
     <body>
         <h1 id="title"><span id="append">Edit</span> slide  <span id="slide">#number</span> of <span id="course">#course</span>: <span id="lecture">#lecture</span></h1>
+       <div id="login">                    
+            <a id="login-login" href="#login">login</a>                                
+        </div>
+        <div id="login-form-overlay">
+            <a href="#login" id="form-close-btn" rel="javascript" style="cursor: pointer;" title="close">close</a>
+            <div id="login-form">
+                <a href="/auth/google"><div>Login using Google OpenID</div></a>
+            </div>
+        </div>
         <div id="msg"></div>
         <div id="controlPanel">
             Insert slide:
@@ -87,5 +96,7 @@
         <div class="restore-info">
         * Restoring original content works only if local storage is supported by the browser
         </div>
+      <script type="text/javascript" src="../../lib/jquery-1.7.min.js"></script>
+      <script type="text/javascript" src="../lib/auth.js"></script>
     </body>
 </html>

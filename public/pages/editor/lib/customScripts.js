@@ -5,6 +5,13 @@ function sendData(){
     var params={
         slide: editor.getValue()
     };
+    
+       try{
+        localStorage.setItem("editor-original-content-present",editor.getValue());
+    }catch(e){
+        
+    }
+    
     if(append.length > 0 && append==="true"){   
         params.append="true";
     }else{
@@ -18,10 +25,18 @@ function sendData(){
             if(request.status==200){
                 var object = eval('(' + request.responseText + ')');
                 document.getElementById("msg").innerHTML=object.html;
+                localStorage.removeItem("editor-original-content-present");
+                 loadSlide();
             }else{
-                document.getElementById("msg").innerHTML=request.status+": "+request.statusText;    
+                document.getElementById("msg").innerHTML=request.responseText;
+                 try{
+                    // try to restore previous content
+                  editor.setValue(localStorage.getItem("editor-original-content-present"));
+                }catch(e){
+                    
+                }    
             }
-            loadSlide();
+           
         }else{
             editor.setValue(request.responseText);
         }
@@ -46,6 +61,11 @@ window.onload = loadSlide();
        
     
 function loadSlide(){ 
+        try{
+    localStorage.removeItem("editor-original-content-present");    
+    }catch(e){
+        
+    }
     // http://127.0.0.1:1338/pages/editor/?course=mdw&lecture=lecture1&slide=2
     var course = getParameterByName('course');
     var lecture = getParameterByName('lecture');
