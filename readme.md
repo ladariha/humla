@@ -79,6 +79,8 @@ Use the following keys to navigate in the presentation:
   * `e` shows the last error if any
   * `d` toggles the debug mode
   * `i` shows presentation content
+  * `Home` takes you to the 1st slide
+  * `End` takes you to the last slide
 
 See <a href="http://vitvar.com/courses/mdw/slides/lecture1.html">Lecture 1 of Web Services and Middleware</a> 
 course for more information on how Humla can be used for making presentations.
