@@ -11,22 +11,20 @@ function DataAccess() {
     //save reference (for next generations)
     var that = this;
 
-
-    // TODO: Load info from localStorage - if not available return false
-    this.loadLocal = function() {
-        localStorage.get();
-        return false;
-    }
-
-
     this.displayLogin = function(user) {
+       
         var login = document.getElementById("login");
-        console.log(JSON.stringify(user));
         if (user && user.email) {
+            userEmail = user.email;
+            document.getElementById('msg').innerHTML = '';
             login.innerHTML = '<span>' + user.email + ' </span><a id="login-logout" href="#login">(logout)</a>';
         } else {
+            userEmail = undefined;
             login.innerHTML = '<a id="login-login" href="#login">login</a>';
         }
+        try {
+            refreshUserStatus();
+        } catch (e) {}
     }
 
     this.loadUser = function() {
@@ -40,6 +38,9 @@ function DataAccess() {
 
 }
 
+function isLoggedIn() {
+    return typeof userEmail != "undefined" && userEmail.length > 3;
+}
 
 
 ///////////////////////////////

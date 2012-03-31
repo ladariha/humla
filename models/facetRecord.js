@@ -18,8 +18,8 @@ var ObjectId = Schema.ObjectId;
 
 
 var FacetRecord = new Schema({
-    type: {type: String}, // mdw
-    value: {type: String}, // lecture1
+    type: {type: String}, 
+    value: {type: String}, 
     slideid: {type:String}
 });
 
