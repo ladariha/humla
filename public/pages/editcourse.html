@@ -1,8 +1,8 @@
-<!doctype html>  
+< !doctype html>  
 <html lang="en" manifest="####cache.manifest">
-    <head>
-        <meta charset="utf-8"/> 
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+        <head>
+<meta charset="utf-8"/> 
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
         <title>Humla - Server</title>
         <meta name="description" content="Application main page"/>
         <meta name="author" content="Petr Mikota"/>  
@@ -23,7 +23,7 @@
                 <nav>                    
                     <ul>
                         <li ><a id="presentations" href="index.html">Presentations</a></li>
-                       <li ><a id="tools" href="tools.html" class="active">Tools</a></li>
+                        <li ><a id="tools" href="tools.html" class="active">Tools</a></li>
                         <li ><a id="about" href="about.html"  >About</a></li>
                         <li id="rssitem" ><a id="rss" href="atom.html" > <img  id="rssicon" src="img/rss.png" alt="Atom" title="Atom feeds"/></a></li>
                     </ul>
@@ -94,7 +94,12 @@
                 v0.1 Humla &copy; 2011 
             </footer>
         </div> <!--! end of #container -->
-
+        <div id="login-form-overlay">
+            <a href="#login" id="form-close-btn" rel="javascript" style="cursor: pointer;" title="close">close</a>
+            <div id="login-form">
+                <a href="/auth/google"><div>Login using Google OpenID</div></a>
+            </div>
+        </div>
 
 
         <div id="debug">
@@ -113,7 +118,7 @@
         <script type="text/javascript" src="../lib/jquery-1.7.min.js"></script>
         <!-- TODO: přesunout vše do page-script? <script type="text/javascript" src="lib/page-script.js"></script> -->
         <script type="text/javascript" src="lib/editcourse.js"></script>
-
+        <script type="text/javascript" src="lib/auth.js"></script>
     </body>
 
 

@@ -27,7 +27,7 @@
                         <li id="rssitem" ><a id="rss" href="atom.html" class="active"> <img  id="rssicon" src="img/rss.png" alt="Atom" title="Atom feeds"/></a></li>
 
                     </ul>
-                    
+
                 </nav>
             </header>
             <div id="main" role="main">
@@ -52,7 +52,12 @@
                 v0.1 Humla &copy; 2011 
             </footer>
         </div> <!--! end of #container -->
-
+        <div id="login-form-overlay">
+            <a href="#login" id="form-close-btn" rel="javascript" style="cursor: pointer;" title="close">close</a>
+            <div id="login-form">
+                <a href="/auth/google"><div>Login using Google OpenID</div></a>
+            </div>
+        </div>
 
 
         <div id="debug">
@@ -67,6 +72,7 @@
         </div>
         <script type="text/javascript" src="../lib/jquery-1.7.min.js"></script>
         <script type="text/javascript" src="lib/rssloader.js"></script>
+        <script type="text/javascript" src="lib/auth.js"></script>
     </body>
 
 

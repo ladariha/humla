@@ -1,4 +1,4 @@
-<!doctype html>  
+<!DOCTYPE html>
 <html lang="en" manifest="####cache.manifest">
     <head>
         <meta charset="utf-8"/> 
@@ -28,29 +28,13 @@
                         <li id="rssitem" ><a id="rss" href="atom.html" > <img  id="rssicon" src="img/rss.png" alt="Atom" title="Atom feeds"/></a></li>
                     </ul>
                 </nav>
+                <div id="login">                    
+                    <a id="login-login" href="#login">login</a>                                
+                </div>
             </header>
             <div id="main" role="main">
 
-                <!--<!DOCTYPE html> 
-<html lang="en"> 
-    <head> 
-        <title>Humla</title> 
-        <meta charset="utf-8" /> 
-        <script type="text/javascript" src="../lib/jquery-1.6.3.min.js"></script> 
-        <link rel="shortcut icon" href="/favicon.ico"/>
-        <link rel="stylesheet" href="css/intro.css" type="text/css" /> 
-        <link rel="stylesheet" href="css/form.css" type="text/css" /> 
-        <script type="text/javascript" src="lib/newlecture.js"></script>
 
-    </head> 
-
-    <body id="index" class="home"> 
-
-        <header id="banner" class="body"> 
-            <h1><a href="/">Humla presentations</a></h1> 
-
-        </header>
-                -->
                 <section id="content" class="body"> 
                     <div id="form-container">
                         <h2>New Lecture</h2> 
@@ -142,7 +126,12 @@
                 v0.1 Humla &copy; 2011 
             </footer>
         </div> <!--! end of #container -->
-
+        <div id="login-form-overlay">
+            <a href="#login" id="form-close-btn" rel="javascript" style="cursor: pointer;" title="close">close</a>
+            <div id="login-form">
+                <a href="/auth/google"><div>Login using Google OpenID</div></a>
+            </div>
+        </div>
 
 
         <div id="debug">
@@ -161,7 +150,7 @@
         <script type="text/javascript" src="../lib/jquery-1.7.min.js"></script>
         <!-- TODO: přesunout vše do page-script? <script type="text/javascript" src="lib/page-script.js"></script> -->
         <script type="text/javascript" src="lib/newlecture.js"></script>
-
+        <script type="text/javascript" src="lib/auth.js"></script>
     </body>
 
 
