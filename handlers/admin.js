@@ -74,7 +74,7 @@ app.post('/api/:course/:lecture/lecture', function(req, res) { // TODO database 
             defaults.returnError(400, "Missing fields", res);
         } else {
             var author = req.user.email;
-            admin_ext.createLecture(author, req.body.courseID, req.body.title, req.body.order, req.body.author, req.body.authorEmail, req.body.authorTwitter, req.body.authorWeb, req.body.semester, req.body.org, req.body.orgfac, req.body.spec, req.body.web, req.body.abs, req.body.isActive, req.body.keywords, req.headers.host, res);
+            admin_ext.createLecture(author, req.body.courseID, req.body.title, req.body.order, req.body.author, req.body.authorEmail, req.body.authorTwitter, req.body.authorWeb, req.body.semester, req.body.org, req.body.orgfac, req.body.spec, req.body.web, req.body.abs, req.body.isActive, req.body.keywords,req.body.coauthors, req.headers.host, res);
         }
     }
 });
@@ -90,7 +90,7 @@ app.put('/api/:course/:lecture/lecture', function(req, res) { // TODO database t
         if (typeof req.body == "undefined") {
             defaults.returnError(400, "Missing fields", res);
         } else {
-            admin_ext.editLecture(req.user.email, req.body.id, req.body.title, req.body.order, req.body.author, req.body.authorEmail, req.body.authorTwitter, req.body.authorWeb, req.body.semester, req.body.org, req.body.orgfac, req.body.spec, req.body.web, req.body.abs, req.body.isActive, req.body.keywords, req.headers.host, res);
+            admin_ext.editLecture(req.user.email, req.body.id, req.body.title, req.body.order, req.body.author, req.body.authorEmail, req.body.authorTwitter, req.body.authorWeb, req.body.semester, req.body.org, req.body.orgfac, req.body.spec, req.body.web, req.body.abs, req.body.isActive, req.body.keywords, req.body.coauthors,req.headers.host, res);
         }
     }
 });

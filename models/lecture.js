@@ -33,6 +33,7 @@ var LectureSchema = new Schema({
     lastModified  :  {
         type: Date
     },
+    coauthors: [String],
     keywords: [String]
 });
 

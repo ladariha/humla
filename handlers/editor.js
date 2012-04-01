@@ -114,9 +114,9 @@ app.put('/api/:course/:lecture/raw/editor', function api(req, res) {
 app.put('/api/:course/:lecture/editor', function api(req, res) { // TODO check changes in url
     var course = decodeURIComponent(req.params.course); //RegExp.$1;
     var lecture = decodeURIComponent(req.params.lecture);
-    if (editor_auth_ext.canModifyLecture(req, res, course, lecture)) {
-        editor_ext.editLectureViewMode(course, lecture, req.headers.host, res, req.body);
+    if (!req.isAuthenticated()) {
+        defaults.returnError(401, "Unauthorized, log in first", res);
     } else {
-        defaults.returnError(401, "Unauthorized", res);
+        editor_ext.editLectureViewMode(req.user.email,course, lecture, req.headers.host, res, req.body);
     }
 });

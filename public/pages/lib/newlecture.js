@@ -20,6 +20,7 @@ function submitNewLectureForm() {
         lecture.org = encodeURIComponent(document.getElementById('org').value);
         lecture.orgfac = encodeURIComponent(document.getElementById('orgfac').value);
         lecture.spec = encodeURIComponent(document.getElementById('spec').value);
+        lecture.coauthors = encodeURIComponent(document.getElementById('coauthors').value);
         lecture.abs = encodeURIComponent(document.getElementById('abs').value);
         lecture.web = encodeURIComponent(document.getElementById('web').value);
         var request = new XMLHttpRequest();
