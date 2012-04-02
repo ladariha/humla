@@ -1,0 +1,58 @@
+
+
+.test .button {
+width: 116px;
+font-size: 140%;
+text-align: center;
+    cursor: pointer;
+    background: white;
+    background: -webkit-gradient(linear, left top, left bottom, from(white), to(#DDD));
+    color: #444;
+    float: right;
+    margin: 12px 4px;
+    padding: 2px 5px;
+    border: 1px solid #888;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+}
+
+
+.test .button:active {
+    background: #eee;
+    background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#fff));
+    border: 1px solid #777;       
+}
+
+.test .button:hover {    
+    border: 1px solid #444;       
+}
+
+.test .question {
+    display: block;
+    font-size:120%;
+    
+}
+
+
+.test .answers {
+    display: block;
+    
+}
+
+.test .answers>li {    
+    margin: 0;        
+    list-style-type:none;
+    cursor: pointer;
+}
+
+.test .answers>li:before {
+    content: "\25FB   ";
+}
+
+.test .answers>li.checked {    
+    color:blue;
+}
+
+.test .answers>li.checked:before {
+    content: "\2713   ";
+}

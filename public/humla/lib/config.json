@@ -203,8 +203,8 @@
         
         {"id" : "tests",
             "object" : "ex_tests",
-            "scripts" : [ {"src" : "ext/tests.js"} ],
-            "styles"  : [ {"src" : "ext/tests.css", "media" : "screen, print"} ],
+            "scripts" : [ {"src" : "ext/tests/tests.js"} ],
+            "styles"  : [ {"src" : "ext/tests/tests.css", "media" : "screen, print"} ],
             "enabled" : true 
         }
         
