@@ -1,19 +1,22 @@
 
 
 .test .button {
-width: 116px;
-font-size: 140%;
-text-align: center;
+    width: 116px;
+    font-size: 140%;
+    text-align: center;
     cursor: pointer;
     background: white;
     background: -webkit-gradient(linear, left top, left bottom, from(white), to(#DDD));
     color: #444;
-    float: right;
+    /*float: right;*/
     margin: 12px 4px;
     padding: 2px 5px;
     border: 1px solid #888;
     -webkit-border-radius: 5px;
     border-radius: 5px;
+    position: absolute;
+    bottom: 40px;
+    left: 20px;
 }
 
 
@@ -29,14 +32,27 @@ text-align: center;
 
 .test .question {
     display: block;
-    font-size:120%;
-    
+    font-size: 120%;
+    text-shadow: 1px 1px 2px #CCC;
+    padding: 0px 10px;
+    float: left;
+    border: 1px solid #EEE;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    margin: 2px;
+    background: #FAFAFA;
 }
 
+.text .question h2 {    
+    max-width: 350px;
+    font-size: 90%;
+    margin: 10px 0;
+}
 
 .test .answers {
     display: block;
-    
+    padding-left: 10px;
+
 }
 
 .test .answers>li {    
@@ -45,8 +61,16 @@ text-align: center;
     cursor: pointer;
 }
 
+.test .answers>li:first-letter {
+    font-size: 130%;
+    padding-right: 10px;    
+    text-shadow: 1px 1px 2px #999;
+}
+
 .test .answers>li:before {
-    content: "\25FB   ";
+    content: "\25EF   ";
+    padding-right: 3px;
+    /*25FB*/
 }
 
 .test .answers>li.checked {    
@@ -55,4 +79,30 @@ text-align: center;
 
 .test .answers>li.checked:before {
     content: "\2713   ";
+    padding-right: 0px;
 }
+.test .green {   color:green !important; }
+.test .red {  color:red !important;  }
+
+.test #tests-result {
+    font-size:200%;
+    position: absolute;
+    bottom: 50px;
+    left: 240px;
+}
+.test #tests-result .percent {
+    font-size: 140%;
+    text-align: center;
+    color: #FF3;
+    cursor: pointer;
+    background: black;
+    background: -webkit-gradient(linear, left top, left bottom, from(#750), to(#500));
+    margin: 12px 4px;
+    padding: 2px 5px;
+    border: 1px solid black;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px black;
+}
+

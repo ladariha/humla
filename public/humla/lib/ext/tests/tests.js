@@ -3,6 +3,7 @@
  * ~~~~~~~~~~~~~~~~~~
  * get test data from slide and return answers.
  * Format:
+ * Inside <div class="slide test"> put:
  *<div class="question">
  *  <h2>Do you like this test?</h2>
  *  <ul class="answers">
@@ -10,26 +11,22 @@
  *    <li class="false">I hate it</li>                   
  *  </ul>
  *</div> 
+ *<div class="question">.... </div>
  */
-
-
-// function
-var testsClick;
-var testsConfirm ;
-
 
 var ex_tests =  {
     // My variables
     results: [],   
+    // Functions
+    testsClick: null,
+    testsConfirm: null,
     
     
     processSlide : function(slide) {
     
         // create test slide from its data
         if (slide.element.className.indexOf("test") != -1) {
-            var hg = slide.element.getElementsByTagName("hgroup"),
-            h = (hg.length === 0 ? 
-                "<hgroup><h1>Test</h1></hgroup>" : "<hgroup>"+hg[0].innerHTML+"</hgroup>");           
+                  
                        
             
             console.log("RESULTS: "+this.results);
@@ -72,87 +69,91 @@ var ex_tests =  {
                 }
             }            
             
-            //console.log(JSON.stringify(this.results));
-            
-            
-            /*            results = [{
-                num:1,
-                question:"Is it really ok?",
-                answers:[{
-                    text:"It is",
-                    right:true
-                },{
-                    text:"It is",
-                    right:true
-                }]  
-            },
-            {
-                num:2,
-                question:"Is it really ok?",
-                answers:[{
-                    text:"It is",
-                    right:true
-                },{
-                    text:"It is",
-                    right:true
-                }]  
-            }                
-            ];*/
-            
-            // Generate questions html
-            for(i = 0; i<this.results.length;i++) {
-                var res = this.results[i];
-                h+='<div class="question"><h2>';
-                h+= res.question;
-                h+='</h2><ul class="answers">'
-                for(j=0;j<res.answers.length;j++) {
-                    h+='<li class="'+(res.answers[j].selected?'checked':'')+'"onclick="testsClick(this);" title="'+i+';'+j+'" data-test-question="'+i+'" data-test-answer="'+j+'">'; 
-                    h+= res.answers[j].text;
-                    h+='</li>';                        
-                }
-                h+="</ul></div>";
-                
-            }
-            
-            // Add button
-            h+='Confirm and <div class="button" onclick="testsConfirm(this);">show answers</div>'            
-
-            
             // switch the state of answer
-            testsClick = function(elm) {
-                var checked = elm.className === "checked" ;
+            this.testsClick = function(elm) {
+                var checked = elm.className.indexOf("checked") != -1 ;
                 var val = elm.title.split(";");
-                elm.className = checked ? "" : "checked";                
+                elm.className = checked ? humla.utils.trim(elm.className.replace("checked","")) : elm.className+" checked";                
                 ex_tests.results[val[0]].answers[val[1]].selected = !checked;                  
             }
             
             // listener čeká na zmáčknutí ohodnocení           
-            testsConfirm = function() {
+            this.testsConfirm = function() {
                 var text = "";
-               for(var i=0;i<ex_tests.results.length;i++) {
-                   for(var j=0;j<ex_tests.results[i].answers.length;j++) {
-                       text+="<div>"+(ex_tests.results[i].answers[j].selected == ex_tests.results[i].answers[j].right)+"</div>";
-                   }
-               }
-               humla.utils.$("tests-result").innerHTML = text;
+                var ans_count = 0;
+                var right_count = 0;
+                var right = false;
+                
+                for(i = 0; i<this.results.length;i++) {
+                    var res = this.results[i];
+                    text+='<div class="question"><h2>';
+                    text+= res.question;
+                    text+='</h2><ul class="answers">'
+                    for(j=0;j<res.answers.length;j++) {
+                        right = ex_tests.results[i].answers[j].selected == ex_tests.results[i].answers[j].right;
+                        text+='<li class="'+(res.answers[j].selected?'checked':'')+' '+(right?"green":"red") +'"onclick="ex_tests.testsClick(this);" title="'+i+';'+j+'" data-test-question="'+i+'" data-test-answer="'+j+'">'; 
+                        text+= res.answers[j].text ;
+                        text+='</li>';               
+                        right_count += right ? 1 : 0;
+                    }
+                    ans_count += res.answers.length;
+                    text+="</ul></div>";
+                
+                }                
+                
+                
+                humla.utils.$("tests-questions").innerHTML = text;
+                
+                var r = 'Your result: <span class="percent">'+Math.round(100*right_count/ans_count)+'%</span> ';
+                r+='(<span class="green">'+right_count+'</span> of <span>'+ans_count+'</span> right!)';
+                humla.utils.$("tests-result").innerHTML = r
             }
             
             
-            // checkne, které odpovědi jsou správně a výsledky pošle na server
-            
+            // checkne, které odpovědi jsou správně a výsledky pošle na server            
             // vypíše result
             // otázky a správné odpovědi zaškrtne
             // červeně ty co byly špatně a zeleně ty dobrě
             // počet celkových bodů
-            h+="<div id='tests-result'></div>";
+            
            
-            var ft = slide.element.getElementsByTagName("footer");
-            h+= "<footer>"+ft[0].innerHTML+"</footer>";           
-           
-            //traverse(humla.root, false);
-            slide.element.innerHTML = h;
+            this.showQuestions(slide, false)
         
             
         }
+    },
+    
+    showQuestions: function (slide, showAns) {
+        var hg = slide.element.getElementsByTagName("hgroup"),
+        h = (hg.length === 0 ? "<hgroup><h1>Test</h1></hgroup>" : "<hgroup>"+hg[0].innerHTML+"</hgroup>");    
+        
+        h+= "<div id='tests-questions'>";
+        // Generate questions html
+        for(i = 0; i<this.results.length;i++) {
+            var res = this.results[i];
+            h+='<div class="question"><h2>';
+            h+= res.question;
+            h+='</h2><ul class="answers">'
+            for(j=0;j<res.answers.length;j++) {
+                h+='<li class="'+(res.answers[j].selected?'checked':'')+'"onclick="ex_tests.testsClick(this);" title="'+i+';'+j+'" data-test-question="'+i+'" data-test-answer="'+j+'">'; 
+                h+= res.answers[j].text;
+                h+='</li>';                        
+            }
+            h+="</ul></div>";
+                
+        }
+        h+="</div>";
+        
+        // Add button
+        h+='<div class="button" onclick="ex_tests.testsConfirm(this);">Show answers</div>'            
+        
+        h+="<div id='tests-result'></div>";
+        
+        var ft = slide.element.getElementsByTagName("footer");
+        h+= "<footer>"+ft[0].innerHTML+"</footer>";                      
+        //traverse(humla.root, false);
+        slide.element.innerHTML = h;
+        
     }
+    
 };  
