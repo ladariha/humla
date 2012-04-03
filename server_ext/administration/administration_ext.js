@@ -217,11 +217,12 @@ function returnData(res, callback, data) {
  * @param abs abstract
  * @param isActive string if it's active
  * @param keywords list of keywords (string comma separated)
+* @param coauthors list of coauthors (string comma separated)
  * @param host domain
  * @param res HTTP response (if called internally set to undefined!)
  * @param callback callback function (if called via REST it could be omitted)
  */
-exports.createLecture = function(authorID, courseID, title, order, author, authorEmail, authorTwitter, authorWeb, semester, org, orgfac, spec, web, abs, isActive, keywords, host, res, callback) {
+exports.createLecture = function(authorID, courseID, title, order, author, authorEmail, authorTwitter, authorWeb, semester, org, orgfac, spec, web, abs, isActive, keywords, coauthors, host, res, callback) {
 
     Course.find({
         courseID: courseID
@@ -274,6 +275,20 @@ exports.createLecture = function(authorID, courseID, title, order, author, autho
 
                             });
                             c.keywords = k1;
+
+                            coauthors += "";
+                            k = (decodeURIComponent(coauthors)).split(",");
+                            k1 = new Array();
+                            k.forEach(function(i) {
+                                var i1 = i.replace(/^\s*/, "").replace(/\s*$/, "");
+                                if (i1.length > 0) {
+                                    k1.push(i1);
+                                }
+
+                            });
+                            c.coauthors = k1;
+
+
                             c.save(function(err) {
                                 if (err) {
                                     returnThrowError(500, "Problems with database", res, callback);
@@ -328,11 +343,12 @@ exports.createLecture = function(authorID, courseID, title, order, author, autho
  * @param abs abstract
  * @param isActive string if it's active
  * @param keywords list of keywords (string comma separated)
+*@param coauthors listf of coauthors (string comma seprarated)
  * @param host domain
  * @param res HTTP response (if called internally set to undefined!)
  * @param callback callback function (if called via REST it could be omitted)
  */
-exports.editLecture = function(user, _id, title, order, author, authorEmail, authorTwitter, authorWeb, semester, org, orgfac, spec, web, abs, isActive, keywords, host, res, callback) {
+exports.editLecture = function(user, _id, title, order, author, authorEmail, authorTwitter, authorWeb, semester, org, orgfac, spec, web, abs, isActive, keywords, coauthors, host, res, callback) {
 
     Lecture.find({
         _id: decodeURIComponent(_id)
@@ -388,6 +404,24 @@ exports.editLecture = function(user, _id, title, order, author, authorEmail, aut
                     } else {
                         c.keywords = [];
                     }
+
+                      coauthors += "";
+                    if (coauthors.length > 0) {
+                         k = (decodeURIComponent(coauthors)).split(",");
+                        k1 = new Array();
+                        k.forEach(function(i) {
+                            var i1 = i.replace(/^\s*/, "").replace(/\s*$/, "");
+
+                            if (i1.length > 0) {
+                                k1.push(i1);
+                            }
+
+                        });
+                        c.coauthors = k1;
+
+                    } else {
+                        c.coauthors = [];
+                    }   
 
                     c.save(function(err) {
                         if (err) {

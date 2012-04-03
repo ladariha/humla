@@ -5,7 +5,7 @@
 var protect = "";
 window.onload = function() {
 
-   refreshUserStatus();
+    refreshUserStatus();
 
     var request = new XMLHttpRequest();
     request.open("GET", "/api/" + getParameterByName('course') + "/" + getParameterByName('lecture') + "/lecture", true);
@@ -28,6 +28,7 @@ window.onload = function() {
                 document.getElementById('authorEmail').value = object.authorEmail;
                 document.getElementById('authorWeb').value = object.authorWeb;
                 document.getElementById('authorTwitter').value = object.authorTwitter;
+                document.getElementById('coauthors').value = object.coauthors;
                 document.getElementById('org').value = object.organization;
                 document.getElementById('orgfac').value = object.organizationFac;
                 document.getElementById('spec').value = object.field;
@@ -76,6 +77,7 @@ function submitEditLectureForm() {
         lecture.authorTwitter = encodeURIComponent(document.getElementById('authorTwitter').value);
         lecture.authorWeb = encodeURIComponent(document.getElementById('authorWeb').value);
         lecture.org = encodeURIComponent(document.getElementById('org').value);
+        lecture.coauthors = encodeURIComponent(document.getElementById('coauthors').value);
         lecture.orgfac = encodeURIComponent(document.getElementById('orgfac').value);
         lecture.spec = encodeURIComponent(document.getElementById('spec').value);
         lecture.abs = encodeURIComponent(document.getElementById('abs').value);

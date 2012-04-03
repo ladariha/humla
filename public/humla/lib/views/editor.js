@@ -178,7 +178,7 @@ var view_editor = {
     removeContainer: function(){
         humla.utils.window.localStorage.removeItem('editorview_container');
     },
-    
+        
     storeSlide : function(slide){
         var contentFromLeavingSlide = humla.controler.window.frames[0].window.codemirror_editor.getValue();
         if(humla.utils.window.localStorage){

@@ -65,7 +65,7 @@ exports.removeSlide = function(user, course, lecture, slide, host, res, callback
         if (!err) {
             if (crs.length > 0) {
                 var c = crs[0];
-                if (user !== c.authorID) {
+                if (user !== c.authorID && !isCoAuthor(c.coauthors, user)) {
                     returnThrowError(401, "Unauthorized - you have no permission  to edit this lecture", res, callback);
                 } else {
                     try {
@@ -108,7 +108,7 @@ exports.editSlide = function(user, course, lecture, slide, host, res, content, c
         if (!err) {
             if (crs.length > 0) {
                 var c = crs[0];
-                if (user !== c.authorID) {
+                if (user !== c.authorID && !isCoAuthor(c.coauthors, user)) {
                     returnThrowError(401, "Unauthorized - you have no permission  to edit this lecture", res, callback);
                 } else {
                     try {
@@ -227,7 +227,7 @@ exports.editLecture = function(user, course, lecture, host, res, content, callba
         if (!err) {
             if (crs.length > 0) {
                 var c = crs[0];
-                if (user !== c.authorID) {
+                if (user !== c.authorID && !isCoAuthor(c.coauthors, user)) {
                     returnThrowError(401, "Unauthorized - you have no permission  to edit this lecture", res, callback);
                 } else {
                     try {
@@ -247,47 +247,67 @@ exports.editLecture = function(user, course, lecture, host, res, content, callba
     });
 }
 
-exports.editLectureViewMode = function(course, lecture, host, res, data_slide, callback) {
-    try {
-        var htmlfile = SLIDES_DIRECTORY + '/' + course + '/' + lecture + ".html";
-        fs.readFile(htmlfile, function(err, data) {
-            if (err) {
-                returnThrowError(500, err.message, res, callback);
-            } else {
-                jsdom.env({
-                    html: htmlfile,
-                    src: [
-                            jquery
-                            ],
-                    done: function(errors, window) {
-                        if (errors) {
-                            defaults.returnError(500, 'Error while parsing document by jsdom ' + err.message, res);
-                        } else {
-                            try {
-                                var $ = window.$;
-                                var resourceURL = host + RAW_SLIDES_DIRECTORY + "/" + course + "/" + lecture + ".html";
-                                var slideCounter = 0;
+exports.editLectureViewMode = function(user, course, lecture, host, res, data_slide, callback) {
 
-                                $('body').find('.slide').each(function() {
-                                    if (data_slide.content[slideCounter] != null) {
-                                        $(this).replaceWith(data_slide.content[slideCounter]);
+    Lecture.find({
+        courseID: course,
+        lectureID: lecture
+    }, function(err, crs) {
+        if (!err) {
+            if (crs.length > 0) {
+                var c = crs[0];
+                if (user !== c.authorID && !isCoAuthor(c.coauthors, user)) {
+                    returnThrowError(401, "Unauthorized - you have no permission  to edit this lecture", res, callback);
+                } else {
+                    try {
+                        var htmlfile = SLIDES_DIRECTORY + '/' + course + '/' + lecture + ".html";
+                        fs.readFile(htmlfile, function(err, data) {
+                            if (err) {
+                                returnThrowError(500, err.message, res, callback);
+                            } else {
+                                jsdom.env({
+                                    html: htmlfile,
+                                    src: [
+                                            jquery
+                                            ],
+                                    done: function(errors, window) {
+                                        if (errors) {
+                                            defaults.returnError(500, 'Error while parsing document by jsdom ' + err.message, res);
+                                        } else {
+                                            try {
+                                                var $ = window.$;
+                                                var resourceURL = host + RAW_SLIDES_DIRECTORY + "/" + course + "/" + lecture + ".html";
+                                                var slideCounter = 0;
+
+                                                $('body').find('.slide').each(function() {
+                                                    if (data_slide.content[slideCounter] != null) {
+                                                        $(this).replaceWith(data_slide.content[slideCounter]);
+                                                    }
+                                                    slideCounter++;
+                                                });
+                                                var newcontent = $("html").html();
+                                                addIDsToSlidesAndWriteToFile(newcontent, course, lecture, res, resourceURL, htmlfile);
+                                            }
+                                            catch (err) {
+                                                returnThrowErrorr(500, 'Error while parsing document: ' + err.message, res, callback);
+                                            }
+                                        }
                                     }
-                                    slideCounter++;
                                 });
-                                var newcontent = $("html").html();
-                                addIDsToSlidesAndWriteToFile(newcontent, course, lecture, res, resourceURL, htmlfile);
                             }
-                            catch (err) {
-                                returnThrowErrorr(500, 'Error while parsing document: ' + err.message, res, callback);
-                            }
-                        }
+                        });
+                    } catch (error) {
+                        returnThrowError(500, error, res, callback);
                     }
-                });
+                }
+            } else {
+                returnThrowError(404, "Lecture not found", res, callback);
             }
-        });
-    } catch (error) {
-        returnThrowError(500, error, res, callback);
+        } else {
+            returnThrowError(500, error, res, callback);
+        }
     }
+    );
 }
 /**
  * Performs the actual appending
@@ -954,3 +974,15 @@ exports.makeindices = function(courseID, lectureID, host, res, callback, emitEve
         }
     });
 };
+
+
+function isCoAuthor(coauthors, user) {
+    if (typeof coauthors != "undefined" && coauthors.length > 0) {
+        for (var i = 0; i < coauthors.length; i++) {
+            if (coauthors[i] === user)
+                return true;
+        }
+        return false;
+    }
+    return false;
+}
