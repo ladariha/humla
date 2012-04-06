@@ -41,7 +41,7 @@ window.onload = function(){
 
 function loadMenu(){
     var request = new XMLHttpRequest();
-    request.open("GET", "/api/facets", true);
+    request.open("GET", "/search/facets", true);
     request.onreadystatechange = function(){
         if (request.readyState==4) {
             if(request.status==200){
@@ -167,7 +167,7 @@ function FacetedContainer(){
         }
 
         var request = new XMLHttpRequest();
-        request.open("POST", '/api/complexQuery/facets?page='+facet_page, true);
+        request.open("POST", '/search/complexquery?page='+facet_page, true);
         request.setRequestHeader("Content-type", "application/json");
         request.onreadystatechange = function(){
             if (request.readyState==4) {
@@ -325,7 +325,7 @@ function renderData(object, data, index){
 
 function loadValueReq(object, index){
     var request = new XMLHttpRequest();
-    request.open("GET", "/api/facets/top/"+encodeURIComponent(object.shortName), true);
+    request.open("GET", "/search/top/"+encodeURIComponent(object.shortName), true);
     request.onreadystatechange = function(){
         if (request.readyState==4) {
             if(request.status==200){

@@ -9,16 +9,17 @@ var http = require('http');
 var https = require('https');
 var jsdom = require('jsdom');
 var fs     = require('fs');
-//var jquery = fs.readFileSync('./public/lib/jquery-1.6.3.min.js').toString();
 var jquery = fs.readFileSync('./public/lib/jquery-1.7.min.js').toString();
 var path = require('path');
+
+var defaults = require('../../handlers/defaults');
 var RAW_SLIDES_DIRECTORY = '/data/slides';
 var JSON_DIRECTORY = (path.join(path.dirname(__filename), '../../cache/index')).toString();
 var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../../public/data/slides')).toString();
 var EXTENSIONS_DIRECTORY = (path.join(path.dirname(__filename), './ext')).toString();
 var GENERAL_LECTURE_NAME = 'lecture';
+
 var extensions = new Array();
-var defaults = require('../../handlers/defaults');
 
 fs.readdir( EXTENSIONS_DIRECTORY, function( err, files ) { // require() all js files in humla extensions directory
     files.forEach(function(file) {
@@ -107,6 +108,12 @@ exports.indexRest = getIndex;
  * @param callback if index is retrieving via internal API, the callback parameter is a function that will be called when index is constructed (if called via REST should be omitted OR undefined)
  */
 function getIndex(res, course, lecture, alt, url, host, refresh, callback){
+    console.log(JSON_DIRECTORY);
+    console.log(SLIDES_DIRECTORY);
+    console.log(EXTENSIONS_DIRECTORY);
+    console.log(JSON_DIRECTORY);
+    console.log(JSON_DIRECTORY);
+
     try{
         var pathToCourse = '/'+course+'/';
         var filename = lecture;

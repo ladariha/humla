@@ -153,8 +153,8 @@
         
          {"id" : "gbooks",
             "object" : "ex_gbooks",
-            "scripts" : [ {"src" : "ext/gbooks.js"} ],
-             "styles"  : [ {"src" : "ext/gbooks.css", "media" : "screen, print"} ],
+            "scripts" : [ {"src" : "ext/gbooks/gbooks.js"} ],
+             "styles"  : [ {"src" : "ext/gbooks/gbooks.css", "media" : "screen, print"} ],
             "enabled" : true 
         },
          {"id" : "items",
@@ -185,14 +185,14 @@
         
         {"id" : "editor",
             "object" : "ex_editor",
-            "scripts" : [ {"src" : "ext/editor.js"} ],
-            "styles"  : [ {"src" : "ext/editor.css", "media" : "screen, print"} ],
+            "scripts" : [ {"src" : "ext/editor/editor.js"} ],
+            "styles"  : [ {"src" : "ext/editor/editor.css", "media" : "screen, print"} ],
             "enabled" : true 
         },
         {"id" : "slideindex",
             "object" : "ex_slideindex",
-            "scripts" : [ {"src" : "ext/slideindex.js"} ],
-            "styles"  : [ {"src" : "ext/slideindex.css", "media" : "screen, print"} ],
+            "scripts" : [ {"src" : "ext/slideindex/slideindex.js"} ],
+            "styles"  : [ {"src" : "ext/slideindex/slideindex.css", "media" : "screen, print"} ],
             "enabled" : true 
         },
         
