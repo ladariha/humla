@@ -5,8 +5,8 @@
 var fs = require("fs");
 var path = require("path");
 var richDataGenerator = require("./rich_data_generator");
-var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../../public/data/slides')).toString();
-var SLIDES_DIRECTORY_RAW = "/data/slides/"
+var RAW_SLIDES_DIRECTORY = config.server.slides_raw_path;
+var SLIDES_DIRECTORY =config.server.slides_relative_path;
 var mongoose = require("mongoose"); 
 var Lecture = mongoose.model("Lecture");
 var Course = mongoose.model("Course");
@@ -23,7 +23,7 @@ exports.updateAllFeed =function updateAllFeed(domain){
 
 function updateHumlaFeed(domain){
     
-    var atom = new AtomModule("Humla Atom Feed", "Feed of all lectures", domain, domain+SLIDES_DIRECTORY_RAW+"atom.xml", SLIDES_DIRECTORY+"/atom.xml");
+    var atom = new AtomModule("Humla Atom Feed", "Feed of all lectures", domain, domain+SLIDES_DIRECTORY_RAW+"atom.xml", SLIDES_DIRECTORY+"atom.xml");
     
     Lecture.find({
         isActive:true
@@ -56,7 +56,7 @@ function updateCoursesFeed(domain){
 
 function updateCourseFeed(domain, courseID){
    
-    var atom = new AtomModule(courseID.toUpperCase()+" Atom Feed", "Feed of all lectures for course "+courseID.toUpperCase(), domain, domain+SLIDES_DIRECTORY_RAW+courseID+"/atom.xml", SLIDES_DIRECTORY+"/"+courseID+"/atom.xml");
+    var atom = new AtomModule(courseID.toUpperCase()+" Atom Feed", "Feed of all lectures for course "+courseID.toUpperCase(), domain, domain+SLIDES_DIRECTORY_RAW+courseID+"/atom.xml", SLIDES_DIRECTORY+courseID+"/atom.xml");
     Lecture.find({
         isActive:true,
         courseID: courseID

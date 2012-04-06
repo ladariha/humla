@@ -5,6 +5,11 @@
         "webroot":"public",
         "domain":"http://localhost",
         "port" :1338,        
+       "jquery_relative_path": "./public/lib/jquery-1.7.min.js",
+       "cache_relative_path":"./cache/",
+       "slides_relative_path":"./public/data/slides/",
+       "slides_raw_path":"/data/slides/",
+       "templates_relative_path":"./public/data/templates/",
         "db_uri": "mongodb://localhost/humla",
         "handlers_relative_path":"./handlers/",
         "models_relative_path":"./models/"

@@ -2,7 +2,6 @@
  * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
  */
 
-var defaults = require('../../handlers/defaults');
 var mongoose = require("mongoose"); 
 var fs     = require('fs');
 var FacetRecord = mongoose.model("FacetRecord");
@@ -279,7 +278,11 @@ function addMapping(data, page, baseUrl, isComplex, res, callback){
 
 function returnThrowError(code, msg, res, callback){
     if(typeof res!="undefined")
-        defaults.returnError(code, msg, res);
+       {    res.writeHead(code, {
+            'Content-Type': 'text/plain'
+        });
+        res.write(msg);
+        res.end(); }
     else{
         if(typeof callback!="undefined"){
             callback(msg, null);

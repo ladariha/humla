@@ -8,13 +8,12 @@ var querystring = require('querystring');
 var fs = require('fs');
 var jsdom = require('jsdom');
 var http = require('http');
-var jquery = fs.readFileSync('./public/lib/jquery-1.7.min.js').toString();
-var RAW_SLIDES_DIRECTORY = '/data/slides';
-var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../../public/data/slides')).toString();
-var SLIDE_TEMPLATE = (path.join(path.dirname(__filename), '../../public/data/templates')).toString();
+var jquery = fs.readFileSync(config.server.jquery_relative_path).toString();
+var RAW_SLIDES_DIRECTORY = config.server.slides_raw_path;
+var SLIDES_DIRECTORY = config.server.slides_relative_path;
+var SLIDE_TEMPLATE = config.server.templates_relative_path;
 var mongoose = require("mongoose");
 var Slideid = mongoose.model("Slideid");
-var defaults = require('../../handlers/defaults');
 var Lecture = mongoose.model("Lecture");
 var EventEmitter = require("events").EventEmitter;
 var editor_emitter = new EventEmitter();
@@ -35,8 +34,8 @@ exports.emitter = editor_emitter;
  */
 exports.getSlide = function(course, lecture, slide, host, res, callback) {
     try {
-        var htmlfile = SLIDES_DIRECTORY + '/' + course + '/' + lecture + ".html";
-        var resourceURL = host + RAW_SLIDES_DIRECTORY + "/" + course + "/" + lecture + ".html#!/" + slide;
+        var htmlfile = SLIDES_DIRECTORY + course + '/' + lecture + ".html";
+        var resourceURL = host + RAW_SLIDES_DIRECTORY + course + "/" + lecture + ".html#!/" + slide;
         getDocumentFromFileSystem(res, htmlfile, slide, resourceURL, callback);
     } catch (error) {
         returnThrowError(500, error, res, callback);
@@ -69,8 +68,8 @@ exports.removeSlide = function(user, course, lecture, slide, host, res, callback
                     returnThrowError(401, "Unauthorized - you have no permission  to edit this lecture", res, callback);
                 } else {
                     try {
-                        var htmlfile = SLIDES_DIRECTORY + '/' + course + '/' + lecture + ".html";
-                        var resourceURL = host + RAW_SLIDES_DIRECTORY + "/" + course + "/" + lecture + ".html#!/" + slide;
+                        var htmlfile = SLIDES_DIRECTORY + course + '/' + lecture + ".html";
+                        var resourceURL = host + RAW_SLIDES_DIRECTORY + course + "/" + lecture + ".html#!/" + slide;
                         deleteSlide(res, htmlfile, slide, resourceURL, course, lecture, callback);
                     } catch (error) {
                         returnThrowError(500, error, res, callback);
@@ -162,7 +161,7 @@ exports.appendSlide = function(course, lecture, slide, host, res, content, callb
  */
 exports.getTemplate = function(templateNumber, res, callback) {
     try {
-        fs.readFile(SLIDE_TEMPLATE + '/' + templateNumber + '.html', function(err, data) {
+        fs.readFile(SLIDE_TEMPLATE + templateNumber + '.html', function(err, data) {
             if (err) {
                 returnThrowError(500, err.message, res, callback);
             } else {
@@ -189,9 +188,9 @@ exports.getTemplate = function(templateNumber, res, callback) {
  */
 exports.getLecture = function(course, lecture, res, callback) {
     try {
-        var htmlfile = SLIDES_DIRECTORY + '/' + course + '/' + lecture + ".html";
+        var htmlfile = SLIDES_DIRECTORY + course + '/' + lecture + ".html";
         if (endsWith(lecture, ".html")) {
-            htmlfile = SLIDES_DIRECTORY + '/' + course + '/' + lecture;
+            htmlfile = SLIDES_DIRECTORY + course + '/' + lecture;
         }
         fs.readFile(htmlfile, function(err, data) {
             if (err) {
@@ -231,8 +230,8 @@ exports.editLecture = function(user, course, lecture, host, res, content, callba
                     returnThrowError(401, "Unauthorized - you have no permission  to edit this lecture", res, callback);
                 } else {
                     try {
-                        var htmlfile = SLIDES_DIRECTORY + '/' + course + '/' + lecture + ".html";
-                        var resourceURL = host + RAW_SLIDES_DIRECTORY + "/" + course + "/" + lecture + ".html";
+                        var htmlfile = SLIDES_DIRECTORY + course + '/' + lecture + ".html";
+                        var resourceURL = host + RAW_SLIDES_DIRECTORY + course + "/" + lecture + ".html";
                         addIDsToSlidesAndWriteToFile(content, course, lecture, res, resourceURL, htmlfile, callback);
                     } catch (error) {
                         returnThrowError(500, error, res, callback);
@@ -260,7 +259,7 @@ exports.editLectureViewMode = function(user, course, lecture, host, res, data_sl
                     returnThrowError(401, "Unauthorized - you have no permission  to edit this lecture", res, callback);
                 } else {
                     try {
-                        var htmlfile = SLIDES_DIRECTORY + '/' + course + '/' + lecture + ".html";
+                        var htmlfile = SLIDES_DIRECTORY + course + '/' + lecture + ".html";
                         fs.readFile(htmlfile, function(err, data) {
                             if (err) {
                                 returnThrowError(500, err.message, res, callback);
@@ -272,11 +271,11 @@ exports.editLectureViewMode = function(user, course, lecture, host, res, data_sl
                                             ],
                                     done: function(errors, window) {
                                         if (errors) {
-                                            defaults.returnError(500, 'Error while parsing document by jsdom ' + err.message, res);
+                                            returnThrowError(500,'Error while parsing document by jsdom ' + err.message, res, callback);
                                         } else {
                                             try {
                                                 var $ = window.$;
-                                                var resourceURL = host + RAW_SLIDES_DIRECTORY + "/" + course + "/" + lecture + ".html";
+                                                var resourceURL = host + RAW_SLIDES_DIRECTORY + course + "/" + lecture + ".html";
                                                 var slideCounter = 0;
 
                                                 $('body').find('.slide').each(function() {
@@ -320,7 +319,7 @@ exports.editLectureViewMode = function(user, course, lecture, host, res, data_sl
  * @param callback callback function to be called
  */
 function editSlideContentAppend(course, lecture, slide, content, res, host, callback) {
-    var pathToCourse = '/' + course + '/';
+    var pathToCourse = course + '/';
     var htmlfile = SLIDES_DIRECTORY + pathToCourse + lecture + ".html";
     fs.readFile(htmlfile, function(err, data) {
         if (err) {
@@ -339,7 +338,7 @@ function editSlideContentAppend(course, lecture, slide, content, res, host, call
                     } else {
                         try {
                             var $ = window.$;
-                            var resourceURL = host + RAW_SLIDES_DIRECTORY + "/" + course + "/" + lecture + ".html#!/" + (slide + 1);
+                            var resourceURL = host + RAW_SLIDES_DIRECTORY + course + "/" + lecture + ".html#!/" + (slide + 1);
                             var slideCounter = 1;
                             $('body').find('.slide').each(function() {
                                 if (slideCounter === slide) {
@@ -376,7 +375,7 @@ function editSlideContentAppend(course, lecture, slide, content, res, host, call
  * @param callback callback function to be called
  */
 function editSlideContent(course, lecture, slide, content, res, host, callback) {
-    var pathToCourse = '/' + course + '/';
+    var pathToCourse = course + '/';
     var htmlfile = SLIDES_DIRECTORY + pathToCourse + lecture + ".html";
     fs.readFile(htmlfile, function(err, data) {
         if (err) {
@@ -396,7 +395,7 @@ function editSlideContent(course, lecture, slide, content, res, host, callback) 
                     } else {
                         try {
                             var $ = window.$;
-                            var resourceURL = host + RAW_SLIDES_DIRECTORY + "/" + course + "/" + lecture + ".html#!/" + slide;
+                            var resourceURL = host + RAW_SLIDES_DIRECTORY + course + "/" + lecture + ".html#!/" + slide;
                             var slideCounter = 1;
                             $('body').find('.slide').each(function() {
                                 if (slideCounter === slide) {
@@ -609,9 +608,8 @@ function addIDsToSlidesAndWriteToFile(content, courseID, lecture, res, lectureUR
  * @param originalCallback function that the callback function was called with
  */
 exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lecture, callback, originalCallback) {
-    console.log("ZACINAME " + courseID + " LECTURE " + lecture);
     try {
-        fs.readFile(SLIDES_DIRECTORY + '/' + courseID + '/' + lecture + ".html", function(err, data) {
+        fs.readFile(SLIDES_DIRECTORY + courseID + '/' + lecture + ".html", function(err, data) {
             if (err) {
                 console.log("_addIDsToSlidesAndWriteToFileForFacets " + err.toString());
             } else {
@@ -675,7 +673,7 @@ exports. _addIDsToSlidesAndWriteToFileForFacets = function(courseID, res, lectur
                                     var lock = new IDSyncLock(_count, _count2, newids.length, callback, lecture, courseID, originalCallback, res);
                                     var newcontent = $("html").html();
                                     newcontent = "<!DOCTYPE html><html>" + newcontent + "</html>";
-                                    fs.writeFile(SLIDES_DIRECTORY + '/' + courseID + '/' + lecture + ".html", newcontent, function(err) {
+                                    fs.writeFile(SLIDES_DIRECTORY + courseID + '/' + lecture + ".html", newcontent, function(err) {
                                         if (err) {
                                             throw "_addIDsToSlidesAndWriteToFileForFacets " + err.toString();
                                         } else {
@@ -872,7 +870,11 @@ function returnDataHTML(res, callback, data) {
  */
 function returnThrowError(code, msg, res, callback) {
     if (typeof res != "undefined")
-        defaults.returnError(code, msg, res);
+    {    res.writeHead(code, {
+            'Content-Type': 'text/plain'
+        });
+        res.write(msg);
+        res.end(); }
     else {
         if (typeof callback != "undefined") {
             callback(msg, null);
@@ -960,13 +962,13 @@ function IDSyncLock(toDelete, toUpdate, toInsert, callback, lecture, course, ori
  * @param emitEvents if true emiiter emits events about removed IDs and updated file
  */
 exports.makeindices = function(courseID, lectureID, host, res, callback, emitEvents) {
-    var htmlfile = SLIDES_DIRECTORY + '/' + courseID + '/' + lectureID + ".html";
+    var htmlfile = SLIDES_DIRECTORY + courseID + '/' + lectureID + ".html";
     fs.readFile(htmlfile, function(err, data) {
         if (err) {
             returnThrowError(500, err.message, res, callback);
         } else {
             try {
-                var resourceURL = host + RAW_SLIDES_DIRECTORY + "/" + courseID + "/" + lectureID + ".html";
+                var resourceURL = host + RAW_SLIDES_DIRECTORY + courseID + "/" + lectureID + ".html";
                 addIDsToSlidesAndWriteToFile(data.toString(), courseID, lectureID, res, resourceURL, htmlfile, callback, emitEvents);
             } catch (error) {
                 returnThrowError(500, error, res, callback);
@@ -986,3 +988,7 @@ function isCoAuthor(coauthors, user) {
     }
     return false;
 }
+
+//var RAW_SLIDES_DIRECTORY = '/data/slides';
+//var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../../public/data/slides')).toString();
+//var SLIDE_TEMPLATE = (path.join(path.dirname(__filename), '../../public/data/templates')).toString();

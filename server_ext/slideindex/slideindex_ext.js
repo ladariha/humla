@@ -9,13 +9,11 @@ var http = require('http');
 var https = require('https');
 var jsdom = require('jsdom');
 var fs     = require('fs');
-var jquery = fs.readFileSync('./public/lib/jquery-1.7.min.js').toString();
+var jquery = fs.readFileSync(config.server.jquery_relative_path).toString(); ////var jquery = fs.readFileSync('./public/lib/jquery-1.7.min.js').toString();
 var path = require('path');
-
-var defaults = require('../../handlers/defaults');
-var RAW_SLIDES_DIRECTORY = '/data/slides';
-var JSON_DIRECTORY = (path.join(path.dirname(__filename), '../../cache/index')).toString();
-var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../../public/data/slides')).toString();
+var RAW_SLIDES_DIRECTORY = config.server.slides_raw_path;
+var JSON_DIRECTORY = config.server.cache_relative_path+'index/';
+var SLIDES_DIRECTORY =config.server.slides_relative_path;
 var EXTENSIONS_DIRECTORY = (path.join(path.dirname(__filename), './ext')).toString();
 var GENERAL_LECTURE_NAME = 'lecture';
 
@@ -108,14 +106,8 @@ exports.indexRest = getIndex;
  * @param callback if index is retrieving via internal API, the callback parameter is a function that will be called when index is constructed (if called via REST should be omitted OR undefined)
  */
 function getIndex(res, course, lecture, alt, url, host, refresh, callback){
-    console.log(JSON_DIRECTORY);
-    console.log(SLIDES_DIRECTORY);
-    console.log(EXTENSIONS_DIRECTORY);
-    console.log(JSON_DIRECTORY);
-    console.log(JSON_DIRECTORY);
-
     try{
-        var pathToCourse = '/'+course+'/';
+        var pathToCourse =course+'/';
         var filename = lecture;
         var indexfile = JSON_DIRECTORY+pathToCourse+filename+"."+alt;
         if(!refresh){
@@ -191,7 +183,11 @@ function returnData(res, contentType, callback, data){
  */
 function returnThrowError(code, msg, res, callback){
     if(typeof res!="undefined")
-        defaults.returnError(code, msg, res);
+         {    res.writeHead(code, {
+            'Content-Type': 'text/plain'
+        });
+        res.write(msg);
+        res.end(); }
     else{
         if(typeof callback!="undefined"){
             callback(msg, null);
@@ -387,7 +383,7 @@ function getDocumentFromUrl(res, url, pathToCourse, filename, lecture, course, a
             if(res.statusCode === 200){
                 parseDocument(res, content, pathToCourse, filename,lecture, course, alt, host, callback);
             }else{
-                defaults.returnError(res.statusCode, content, res);
+                 returnThrowError(res.statusCode, e.message, res, callback);
             }   
         }); 
     });
@@ -410,6 +406,7 @@ function getDocumentFromUrl(res, url, pathToCourse, filename, lecture, course, a
  * @param callback if index is retrieving via internal API, the callback parameter is a function that will be called when index is constructed
  */
 function getDocumentFromFileSystem(res, pathToCourse, filename, lecture, course, alt,host, callback){
+    console.log(SLIDES_DIRECTORY+pathToCourse+filename);
     fs.readFile(SLIDES_DIRECTORY+pathToCourse+filename+".html", function (err, data) {
         if (err){
             returnThrowError(500, err.message, res, callback);  
@@ -617,7 +614,7 @@ function makeStructureHierarchical(slideIndex){
     }
     var sections = {};
     var newcontent = new Array();
-    var baseURL = slideIndex.host+ RAW_SLIDES_DIRECTORY+"/"+slideIndex.course+"/"+slideIndex.lecture+".html"; //GENERAL_LECTURE_NAME+
+    var baseURL = slideIndex.host+ RAW_SLIDES_DIRECTORY+slideIndex.course+"/"+slideIndex.lecture+".html"; //GENERAL_LECTURE_NAME+
     var counter = 1;
     slideIndex.baseURL = baseURL;
     baseURL = baseURL + "#!/";
@@ -673,9 +670,69 @@ function makeStructureHierarchical(slideIndex){
  *@param url value of url attribute of xml root element
  *@return xml representation of slideIndexer
  */
-function createXMLIndex(slideIndexer, root, url){
-    return defaults.objectToXML(slideIndexer.content, root, url);
+function createXMLIndex(object,root, url){
+    if(typeof root!="undefined"){
+    return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<"+root+" url=\""+url+" \">"+parseObjectToXML(object, 0)+"</"+root+">";
+    }else{
+    return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<data>"+parseObjectToXML(object, 0)+"</data>";    
+    }
 }
+
+function parseObjectToXML(object, ind){
+    var indentation = "";
+    var toReturn = '';
+    for (var i = 0;  i < ind*3;  i++) {
+        indentation = indentation+" ";
+    }
+    for (var key in object) {
+        if (object.hasOwnProperty(key)) {
+            toReturn = toReturn + indentation+'<'+escapeToXML(key)+'>'+"\n";
+            if(typeof(object[key])=='object'){
+                var t_ind = ind+1;
+                if(object[key].length){
+                    toReturn = toReturn+parseArrayToXML(object[key], t_ind ,key);
+                }else{
+                    toReturn = toReturn+parseObjectToXML(object[key], t_ind);    
+                }
+                
+            }else{
+                toReturn = toReturn+indentation+escapeToXML(object[key])+"\n";
+            }
+            toReturn = toReturn + indentation+'</'+escapeToXML(key)+'>'+"\n";
+        }
+    }
+    return toReturn;   
+}
+
+function parseArrayToXML(array, ind, string){
+    var indentation = "";
+    var toReturn = '';
+    for (var i = 0;  i < ind*3;  i++) {
+        indentation = indentation+" ";
+    }
+    var t_ind = ind+1;
+    for(var object in array){
+        toReturn = toReturn+indentation+'<'+escapeToXML(string)+'_'+object+'>'+"\n";
+        if(typeof(array[object])=='object'){
+            if(array[object].length){
+                toReturn = toReturn+parseArrayToXML(array[object], t_ind, string);
+            }else{
+                toReturn = toReturn+parseObjectToXML(array[object], t_ind);
+            }
+        }else{
+            toReturn = toReturn+indentation+escapeToXML(array[object])+"\n";
+        }
+        toReturn = toReturn + indentation+'</'+escapeToXML(string)+'_'+object+'>'+"\n";
+    }
+    return toReturn;
+}
+
+
+function escapeToXML(string){
+    string = encodeURIComponent(string);
+    return string;
+}
+
 
 /**
  * Tests if string ends with given suffix
@@ -684,3 +741,6 @@ function endsWith(string, suffix) {
     return string.indexOf(suffix, string.length - suffix.length) !== -1;
 }
 
+//var RAW_SLIDES_DIRECTORY = '/data/slides';
+//var JSON_DIRECTORY = (path.join(path.dirname(__filename), '../../cache/index')).toString();
+//var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../../public/data/slides')).toString();

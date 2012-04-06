@@ -6,9 +6,9 @@ var parseURL = require('url').parse;
 var path = require('path');
 var fs     = require('fs');
 var querystring = require('querystring');
-var RAW_SLIDES_DIRECTORY = '/data/slides';
-var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../public/data/slides')).toString();
-var SLIDE_TEMPLATE = (path.join(path.dirname(__filename),'../public/data/templates')).toString();
+var RAW_SLIDES_DIRECTORY = config.server.slides_raw_path;
+var SLIDES_DIRECTORY =config.server.slides_relative_path;
+var SLIDE_TEMPLATE = config.server.templates_relative_path;
 var defaults = require('./defaults');
 var microdataParser = require('../server_ext/microdata/microdataparser_ext');
 
@@ -40,12 +40,12 @@ app.get('/api/:course/:lecture/microdata', function api(req, res) {
     var lecture = req.params.lecture;
     var alt = querystring.parse(require('url').parse(req.url).query)['alt'];
     var negotiation = negotiateContent(alt, req.headers.accept);
-    var presentationUrl = req.headers.host+RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+'.html';
+    var presentationUrl = req.headers.host+RAW_SLIDES_DIRECTORY+course+"/"+lecture+'.html';
     if(typeof negotiation=="undefined"){
         defaults.returnError(406, "Not Acceptable format: Try application/json or application/xml or text/xml or  */*", res);
     }else{
 
-        fs.readFile(SLIDES_DIRECTORY+ '/'+course+'/'+lecture+".html", function (err, data) {
+        fs.readFile(SLIDES_DIRECTORY+course+'/'+lecture+".html", function (err, data) {
             if (err){
                 defaults.returnError(404, err.message, res);
             }else{
@@ -85,7 +85,7 @@ app.get('/api/:course/:lecture/microdata/:itemtype', function api(req, res) {
         defaults.returnError(406, "Not Acceptable format: Try application/json or application/xml or text/xml or  */*", res);
     }else{
         
-        fs.readFile(SLIDES_DIRECTORY+ '/'+course+'/'+lecture+".html", function (err, data) {
+        fs.readFile(SLIDES_DIRECTORY+course+'/'+lecture+".html", function (err, data) {
             if (err){
                 defaults.returnError(404, err.message, res);
             }else{
@@ -103,7 +103,7 @@ app.get('/api/:course/:lecture/microdata/:itemtype', function api(req, res) {
                         container.course = course;
                         container.lecture = lecture;
                         container.allmicrodataUrl = req.headers.host+"/api"+"/"+course+"/"+lecture+"/microdata"
-                        container.presentationUrl = req.headers.host+RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+'.html';
+                        container.presentationUrl = req.headers.host+RAW_SLIDES_DIRECTORY+course+"/"+lecture+'.html';
                         container.items =data.items;
                     
                         res.writeHead(200, {
@@ -173,7 +173,7 @@ function additionalInfo(data, req, course, lecture, itemtype){
         container.url = req.headers.host+"/api"+"/"+course+"/"+lecture+"/microdata"
         container.course = course;
         container.lecture = lecture;
-        container.presentationUrl = req.headers.host+RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+'.html';
+        container.presentationUrl = req.headers.host+RAW_SLIDES_DIRECTORY+course+"/"+lecture+'.html';
         container.itemtypes = new Array();
         container.items = data.items;
         var tmpTypes = [];
@@ -209,7 +209,7 @@ function additionalInfo(data, req, course, lecture, itemtype){
         container.course = course;
         container.lecture = lecture;
         container.allmicrodataUrl = req.headers.host+"/api"+"/"+course+"/"+lecture+"/microdata"
-        container.presentationUrl = req.headers.host+RAW_SLIDES_DIRECTORY+"/"+course+"/"+lecture+'.html';
+        container.presentationUrl = req.headers.host+RAW_SLIDES_DIRECTORY+course+"/"+lecture+'.html';
         container.items =data.items;
         return container;
     } 

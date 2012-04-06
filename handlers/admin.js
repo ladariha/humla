@@ -5,11 +5,7 @@
 var fs = require("fs");
 var path = require("path");
 //var jquery = fs.readFileSync('./public/lib/jquery-1.6.3.min.js').toString();
-var jquery = fs.readFileSync('./public/lib/jquery-1.7.min.js').toString();
 var jsdom = require('jsdom');
-var RAW_SLIDES_DIRECTORY = '/data/slides';
-var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../public/data/slides')).toString();
-var LECTURE_TEMPLATE = (path.join(path.dirname(__filename), '../public/data/templates')).toString();
 var facet_use_fs = 1;
 var mongoose = require("mongoose");
 var Course = mongoose.model("Course");

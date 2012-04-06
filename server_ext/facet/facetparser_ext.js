@@ -6,12 +6,11 @@ var microdata_ext =  require('../microdata/microdataparser_ext.js');
 var editor_ext =  require('../editor/editor_ext.js');
 var path = require('path');
 var fs     = require('fs');
-var defaults = require('../../handlers/defaults');
 var mongoose = require("mongoose"); 
 var FacetRecord = mongoose.model("FacetRecord");
 var Slideid = mongoose.model("Slideid");
-var JSON_DIRECTORY = (path.join(path.dirname(__filename), '../../cache/index')).toString();
-var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../../public/data/slides')).toString();
+//var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../../public/data/slides')).toString();
+var SLIDES_DIRECTORY =config.server.slides_relative_path;
 var typePrefix =require("./facetengine_ext.js").prefix;
 var TYPE_PARSERS_DIRECTORY = (path.join(path.dirname(__filename), './types')).toString();
 var EXTRA_PARSERS_DIRECTORY = (path.join(path.dirname(__filename), './parsers')).toString();
@@ -150,7 +149,7 @@ function checkIDs(course, lecture, data,checkID){
  */
 function run(courseID, lectureID, checkID){
     try{
-        fs.readFile(SLIDES_DIRECTORY+ '/'+courseID+'/'+lectureID+".html", function (err, data) {
+        fs.readFile(SLIDES_DIRECTORY+ courseID+'/'+lectureID+".html", function (err, data) {
             if (err){
                 console.error("Facetparser run error: "+err.toString());
             }else{

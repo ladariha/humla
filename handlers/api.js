@@ -1,8 +1,8 @@
 var fs = require("fs");
 var path = require("path");
-var RAW_SLIDES_DIRECTORY = '/data/slides';
-var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../public/data/slides')).toString();
-var SLIDE_TEMPLATE = (path.join(path.dirname(__filename),'../public/data/templates')).toString();
+var RAW_SLIDES_DIRECTORY = config.server.slides_raw_path;
+var SLIDES_DIRECTORY =config.server.slides_relative_path;
+var SLIDE_TEMPLATE = config.server.templates_relative_path;
 var facet_use_fs = 1;
 var mongoose = require("mongoose"); 
 var Course = mongoose.model("Course");
@@ -117,7 +117,7 @@ function saveCoursesToDB(req,courses){
         c.longName = course; // fallback, this way courses are not supposed to be created => UI needed for it
         c.isActive = true;
         c.url = '';
-        c.lecturesURLPreffix = req.headers.host+'/data/slides/'+course;
+        c.lecturesURLPreffix = req.headers.host+RAW_SLIDES_DIRECTORY+course;
         c.courseID = course;
         c.owner = "";
         c.save(function(err) {
@@ -136,7 +136,7 @@ function saveLecturesToDB(req, lectures, course){
         c.lectureID = lec; 
         c.url = ''; 
         c.isActive = true;
-        c.presentationURL = req.headers.host+ RAW_SLIDES_DIRECTORY+"/"+course+"/"+lec;
+        c.presentationURL = req.headers.host+ RAW_SLIDES_DIRECTORY+course+"/"+lec;
         c.save(function(err) {
             if(err) {
                 console.log("ERR "+err);
@@ -147,7 +147,7 @@ function saveLecturesToDB(req, lectures, course){
 
 function getLecturesFromFS(req, res, course){
     var files2 = new Array();
-    fs.readdir(SLIDES_DIRECTORY+'/'+course, function(err, list) {
+    fs.readdir(SLIDES_DIRECTORY+course, function(err, list) {
         
         if(err){
             res.writeHead(404, {

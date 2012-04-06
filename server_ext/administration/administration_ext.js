@@ -4,18 +4,17 @@
 
 var fs = require("fs");
 var path = require("path");
-//var jquery = fs.readFileSync('./public/lib/jquery-1.6.3.min.js').toString();
 var jquery = fs.readFileSync('./public/lib/jquery-1.7.min.js').toString();
+//var jquery = fs.readFileSync('./public/lib/jquery-1.7.min.js').toString();
 var jsdom = require('jsdom');
-var RAW_SLIDES_DIRECTORY = '/data/slides';
-var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../../public/data/slides')).toString();
-var LECTURE_TEMPLATE = (path.join(path.dirname(__filename), '../../public/data/templates')).toString();
+var RAW_SLIDES_DIRECTORY = config.server.slides_raw_path;
+var SLIDES_DIRECTORY = config.server.slides_relative_path;
+var LECTURE_TEMPLATE = config.server.templates_relative_path;
 var facet_use_fs = 1;
 var mongoose = require("mongoose");
 var Course = mongoose.model("Course");
 var Lecture = mongoose.model("Lecture");
 var Slideid = mongoose.model("Slideid");
-var defaults = require('../../handlers/defaults');
 
 /**
  * Creates new course
@@ -52,9 +51,9 @@ exports.createCourse = function(courseID, authorID, longName, isActive, owner, h
                     if (err) {
                         returnThrowError(500, "Problem with database", res, callback);
                     } else {
-                        fs.mkdir(SLIDES_DIRECTORY + '/' + c.courseID, 0777, function(e) {
+                        fs.mkdir(SLIDES_DIRECTORY + c.courseID, 0777, function(e) {
                             if (!e) {
-                                fs.mkdir(SLIDES_DIRECTORY + '/' + c.courseID + '/css', 0777, function(e) {
+                                fs.mkdir(SLIDES_DIRECTORY + c.courseID + '/css', 0777, function(e) {
                                     if (!e) {
                                         returnData(res, callback, c);
                                     } else {
@@ -293,12 +292,12 @@ exports.createLecture = function(authorID, courseID, title, order, author, autho
                                 if (err) {
                                     returnThrowError(500, "Problems with database", res, callback);
                                 } else {
-                                    path.exists(SLIDES_DIRECTORY + '/' + c.courseID, function(exists) {
+                                    path.exists(SLIDES_DIRECTORY + c.courseID, function(exists) {
                                         if (exists) { // course dir exists
                                             copyTemplateHTML(res, callback, c, decodeURIComponent(order), decodeURIComponent(keywords));
                                         } else { // create dir
 
-                                            fs.mkdir(SLIDES_DIRECTORY + '/' + c.courseID, 0777, function(e) {
+                                            fs.mkdir(SLIDES_DIRECTORY + c.courseID, 0777, function(e) {
                                                 if (!e) {
                                                     copyTemplateHTML(res, callback, c, decodeURIComponent(order), decodeURIComponent(keywords));
                                                 } else { // copy template
@@ -405,9 +404,9 @@ exports.editLecture = function(user, _id, title, order, author, authorEmail, aut
                         c.keywords = [];
                     }
 
-                      coauthors += "";
+                    coauthors += "";
                     if (coauthors.length > 0) {
-                         k = (decodeURIComponent(coauthors)).split(",");
+                        k = (decodeURIComponent(coauthors)).split(",");
                         k1 = new Array();
                         k.forEach(function(i) {
                             var i1 = i.replace(/^\s*/, "").replace(/\s*$/, "");
@@ -421,19 +420,19 @@ exports.editLecture = function(user, _id, title, order, author, authorEmail, aut
 
                     } else {
                         c.coauthors = [];
-                    }   
+                    }
 
                     c.save(function(err) {
                         if (err) {
                             returnThrowError(500, "Problems with database", res, callback);
                         } else {
                             if (prev === c.lectureID) { // if lectureX => lectureY
-                                path.exists(SLIDES_DIRECTORY + '/' + c.courseID, function(exists) {
+                                path.exists(SLIDES_DIRECTORY + c.courseID, function(exists) {
                                     if (exists) { // course dir exists
                                         editTemplateHTML(res, callback, c, decodeURIComponent(order), decodeURIComponent(keywords));
                                     } else { // create dir
 
-                                        fs.mkdir(SLIDES_DIRECTORY + '/' + c.courseID, 0777, function(e) {
+                                        fs.mkdir(SLIDES_DIRECTORY + c.courseID, 0777, function(e) {
                                             if (e) {
                                                 returnThrowError(500, 'Problem with creating course folder' + e, res, callback);
                                             } else { // copy template
@@ -443,12 +442,12 @@ exports.editLecture = function(user, _id, title, order, author, authorEmail, aut
                                     }
                                 });
                             } else {// need to also change slideid!!!
-                                path.exists(SLIDES_DIRECTORY + '/' + c.courseID, function(exists) {
+                                path.exists(SLIDES_DIRECTORY + c.courseID, function(exists) {
                                     if (exists) { // course dir exists
                                         editTemplateMoveHTML(prev, res, callback, c, decodeURIComponent(order), decodeURIComponent(keywords));
                                     } else { // create dir
 
-                                        fs.mkdir(SLIDES_DIRECTORY + '/' + c.courseID, 0777, function(e) {
+                                        fs.mkdir(SLIDES_DIRECTORY + c.courseID, 0777, function(e) {
                                             if (e) {
                                                 returnThrowError(500, 'Problem with creating course folder' + e, res, callback);
                                             } else { // copy template
@@ -471,13 +470,13 @@ exports.editLecture = function(user, _id, title, order, author, authorEmail, aut
 }
 
 function editTemplateHTML(res, callback, lecture, order, keywords) {
-    fs.readFile(SLIDES_DIRECTORY + '/' + lecture.courseID + '/' + lecture.lectureID + '.html', function(err, data) {
+    fs.readFile(SLIDES_DIRECTORY + lecture.courseID + '/' + lecture.lectureID + '.html', function(err, data) {
         if (err) {
             returnThrowError(500, 'Cannot load presentation file', res, callback);
         } else {
             var content = data.toString();
             jsdom.env({
-                html: SLIDES_DIRECTORY + '/' + lecture.courseID + '/' + lecture.lectureID + '.html',
+                html: SLIDES_DIRECTORY + lecture.courseID + '/' + lecture.lectureID + '.html',
                 src: [
                         jquery
                         ],
@@ -503,7 +502,7 @@ function editTemplateHTML(res, callback, lecture, order, keywords) {
                                     newcontent = newcontent.replace("metaXXX", "meta_" + lecture.lectureID);
                                     newcontent = newcontent.replace(/\&amp;/g, '&');
                                     newcontent = "<!DOCTYPE html><html>" + newcontent + "</html>";
-                                    fs.writeFile(SLIDES_DIRECTORY + '/' + lecture.courseID + '/' + lecture.lectureID + '.html', newcontent, function(err) {
+                                    fs.writeFile(SLIDES_DIRECTORY + lecture.courseID + '/' + lecture.lectureID + '.html', newcontent, function(err) {
                                         if (err) {
                                             returnThrowError(500, 'Problem with saving lecture file: ' + err, res, callback);
                                         } else {
@@ -527,13 +526,13 @@ function editTemplateHTML(res, callback, lecture, order, keywords) {
 
 function editTemplateMoveHTML(prevFile, res, callback, lecture, order, keywords) {
 
-    fs.readFile(SLIDES_DIRECTORY + '/' + lecture.courseID + '/' + prevFile + '.html', function(err, data) {
+    fs.readFile(SLIDES_DIRECTORY + lecture.courseID + '/' + prevFile + '.html', function(err, data) {
         if (err) {
             returnThrowError(500, 'Cannot load presentation template ', res, callback);
         } else {
             var content = data.toString();
             jsdom.env({
-                html: SLIDES_DIRECTORY + '/' + lecture.courseID + '/' + prevFile + '.html',
+                html: SLIDES_DIRECTORY + lecture.courseID + '/' + prevFile + '.html',
                 src: [
                         jquery
                         ],
@@ -568,11 +567,11 @@ function editTemplateMoveHTML(prevFile, res, callback, lecture, order, keywords)
                                     newcontent = newcontent.replace("meta_" + prevFile + ".css", "meta_" + lecture.lectureID + ".css");
                                     newcontent = newcontent.replace(/\&amp;/g, '&');
                                     newcontent = "<!DOCTYPE html><html>" + newcontent + "</html>";
-                                    fs.writeFile(SLIDES_DIRECTORY + '/' + lecture.courseID + '/' + prevFile + '.html', newcontent, function(err) {
+                                    fs.writeFile(SLIDES_DIRECTORY + lecture.courseID + '/' + prevFile + '.html', newcontent, function(err) {
                                         if (err) {
                                             returnThrowError(500, 'Problem with saving lecture file ' + err, res, callback);
                                         } else {
-                                            fs.rename(SLIDES_DIRECTORY + '/' + lecture.courseID + '/' + prevFile + '.html', SLIDES_DIRECTORY + '/' + lecture.courseID + '/' + lecture.lectureID + '.html', function(err) {
+                                            fs.rename(SLIDES_DIRECTORY + lecture.courseID + '/' + prevFile + '.html', SLIDES_DIRECTORY + lecture.courseID + '/' + lecture.lectureID + '.html', function(err) {
                                                 if (err) {
                                                     returnThrowError(500, 'Problem with saving lecture file ' + err, res, callback);
                                                 } else {
@@ -620,9 +619,9 @@ function changeSlideidsInDatabase(oldLectureID, lecture, res, callback) {
 
 function moveTemplateCSS(res, callback, lecture, prevFile, longName) {
 
-    fs.readFile(SLIDES_DIRECTORY + '/' + lecture.courseID + '/css/meta_' + prevFile + '.css', function(err, data) {
+    fs.readFile(SLIDES_DIRECTORY + lecture.courseID + '/css/meta_' + prevFile + '.css', function(err, data) {
         if (err) {
-            returnThrowError(500, "Cannot load presentation css template " + SLIDES_DIRECTORY + '/' + lecture.courseID + '/css/meta_' + prevFile + '.css  ' + err, res, callback);
+            returnThrowError(500, "Cannot load presentation css template " + SLIDES_DIRECTORY + lecture.courseID + '/css/meta_' + prevFile + '.css  ' + err, res, callback);
         } else {
             var content = data.toString();
             content = content.replace("##author", lecture.author);
@@ -635,11 +634,11 @@ function moveTemplateCSS(res, callback, lecture, prevFile, longName) {
             content = content.replace("##field", lecture.field);
             content = content.replace("##orgweb", lecture.web);
             content = content.replace("##coursename", longName);
-            fs.writeFile(SLIDES_DIRECTORY + '/' + lecture.courseID + '/css/meta_' + lecture.lectureID + '.css', content, function(err) {
+            fs.writeFile(SLIDES_DIRECTORY + lecture.courseID + '/css/meta_' + lecture.lectureID + '.css', content, function(err) {
                 if (err) {
                     returnThrowError(500, 'Problem with saving lecture css file: ' + err, res, callback);
                 } else {
-                    fs.rename(SLIDES_DIRECTORY + '/' + lecture.courseID + '/css/meta_' + prevFile + '.css', SLIDES_DIRECTORY + '/' + lecture.courseID + '/css/meta_' + lecture.lectureID + '.css', function(err) {
+                    fs.rename(SLIDES_DIRECTORY + lecture.courseID + '/css/meta_' + prevFile + '.css', SLIDES_DIRECTORY + lecture.courseID + '/css/meta_' + lecture.lectureID + '.css', function(err) {
                         if (err) {
                             returnThrowError(500, 'Problem with saving lecture css file: ' + err, res, callback);
                         } else {
@@ -654,13 +653,13 @@ function moveTemplateCSS(res, callback, lecture, prevFile, longName) {
 }
 
 function copyTemplateHTML(res, callback, lecture, order, keywords) {
-    fs.readFile(LECTURE_TEMPLATE + '/presentation.html', function(err, data) {
+    fs.readFile(LECTURE_TEMPLATE + 'presentation.html', function(err, data) {
         if (err) {
             returnThrowError(500, "Problems with file system", res, callback);
         } else {
             var content = data.toString();
             jsdom.env({
-                html: LECTURE_TEMPLATE + '/presentation.html',
+                html: LECTURE_TEMPLATE + 'presentation.html',
                 src: [
                         jquery
                         ],
@@ -686,7 +685,7 @@ function copyTemplateHTML(res, callback, lecture, order, keywords) {
                                     newcontent = newcontent.replace("metaXXX", "meta_" + lecture.lectureID);
                                     newcontent = newcontent.replace(/\&amp;/g, '&');
                                     newcontent = "<!DOCTYPE html><html>" + newcontent + "</html>";
-                                    fs.writeFile(SLIDES_DIRECTORY + '/' + lecture.courseID + '/' + lecture.lectureID + '.html', newcontent, function(err) {
+                                    fs.writeFile(SLIDES_DIRECTORY + lecture.courseID + '/' + lecture.lectureID + '.html', newcontent, function(err) {
                                         if (err) {
                                             returnThrowError(500, 'Problem with saving lecture file: ' + err, res, callback);
                                         } else {
@@ -711,7 +710,7 @@ function copyTemplateHTML(res, callback, lecture, order, keywords) {
 
 
 function copyTemplateCSS(res, callback, lecture, prevFile, longName) {
-    fs.readFile(LECTURE_TEMPLATE + '/meta.css', function(err, data) {
+    fs.readFile(LECTURE_TEMPLATE + 'meta.css', function(err, data) {
         if (err) {
             returnThrowError(500, "Cannot load presentation css template", res, callback);
         } else {
@@ -726,7 +725,7 @@ function copyTemplateCSS(res, callback, lecture, prevFile, longName) {
             content = content.replace("##field", lecture.field);
             content = content.replace("##orgweb", lecture.web);
             content = content.replace("##coursename", longName);
-            fs.writeFile(SLIDES_DIRECTORY + '/' + lecture.courseID + '/css/meta_' + lecture.lectureID + '.css', content, function(err) {
+            fs.writeFile(SLIDES_DIRECTORY + lecture.courseID + '/css/meta_' + lecture.lectureID + '.css', content, function(err) {
                 if (err) {
                     returnThrowError(500, 'Problem with saving lecture css file: ' + err, res, callback);
                 } else {
@@ -758,7 +757,11 @@ function getCourseFullNameAndContinue(res, originalCallback, lecture, id, callba
 
 function returnThrowError(code, msg, res, callback) {
     if (typeof res != "undefined")
-        defaults.returnError(code, msg, res);
+    {    res.writeHead(code, {
+            'Content-Type': 'text/plain'
+        });
+        res.write(msg);
+        res.end(); }
     else {
         if (typeof callback != "undefined") {
             callback(msg, null);
@@ -767,3 +770,8 @@ function returnThrowError(code, msg, res, callback) {
         }
     }
 }
+
+
+//var RAW_SLIDES_DIRECTORY = '/data/slides';
+//var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../../public/data/slides')).toString();
+//var LECTURE_TEMPLATE = (path.join(path.dirname(__filename), '../../public/data/templates')).toString();

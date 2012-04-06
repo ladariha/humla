@@ -3,7 +3,6 @@
  */
 
 var https = require('https');
-var defaults = require('../../handlers/defaults');
 
 /**
  * Returns information about Google Book specified by bookid in form specified by mode
@@ -217,7 +216,11 @@ function returnData(res,callback, data){
 
 function returnThrowError(code, msg, res, callback){
     if(typeof res!="undefined")
-        defaults.returnError(code, msg, res);
+        {    res.writeHead(code, {
+            'Content-Type': 'text/plain'
+        });
+        res.write(msg);
+        res.end(); }
     else{
         if(typeof callback!="undefined"){
             callback(msg, null);
