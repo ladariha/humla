@@ -81,6 +81,11 @@ app.get('/api/info/:course/lectures', function(req, res){
             res.writeHead(200, {
                 "Content-Type": "application/json"
             });
+            for(var j=0;j<lectures.length;j++){
+                lectures[j].authorID = null; // TODO check is hidden
+                lectures[j].coauthors = null;
+            }
+            
             res.write(JSON.stringify(lectures, null, 4));
             res.end();  
         } else {

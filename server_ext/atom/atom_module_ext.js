@@ -5,7 +5,7 @@
 var fs = require("fs");
 var path = require("path");
 var richDataGenerator = require("./rich_data_generator");
-var RAW_SLIDES_DIRECTORY = config.server.slides_raw_path;
+var SLIDES_DIRECTORY_RAW = config.server.slides_raw_path;
 var SLIDES_DIRECTORY =config.server.slides_relative_path;
 var mongoose = require("mongoose"); 
 var Lecture = mongoose.model("Lecture");

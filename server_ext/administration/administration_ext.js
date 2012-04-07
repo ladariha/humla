@@ -164,7 +164,7 @@ exports.getLecture = function(course, lecture, res, callback) {
     }, function(err, lectures) {
         if (!err) {
             if (lectures.length > 0) {
-                lectures[0].authorID = null; // TODO check is hidden
+                lectures[0].authorID = null;
                 returnData(res, callback, lectures[0]);
             } else {
                 returnThrowError(404, "Lecture not found", res, callback);
@@ -276,17 +276,19 @@ exports.createLecture = function(authorID, courseID, title, order, author, autho
                             c.keywords = k1;
 
                             coauthors += "";
-                            k = (decodeURIComponent(coauthors)).split(",");
-                            k1 = new Array();
-                            k.forEach(function(i) {
-                                var i1 = i.replace(/^\s*/, "").replace(/\s*$/, "");
-                                if (i1.length > 0) {
-                                    k1.push(i1);
-                                }
-
-                            });
-                            c.coauthors = k1;
-
+                            if (coauthors.length > 0) {
+                                k = (decodeURIComponent(coauthors)).split(",");
+                                k1 = new Array();
+                                k.forEach(function(i) {
+                                    var i1 = i.replace(/^\s*/, "").replace(/\s*$/, "");
+                                    if (i1.length > 0) {
+                                        k1.push(i1);
+                                    }
+                                });
+                                c.coauthors = k1;
+                            } else {
+                                c.coauthors = [];
+                            }
 
                             c.save(function(err) {
                                 if (err) {
