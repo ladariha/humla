@@ -142,7 +142,6 @@ Controler = function(window) {
     this.updateFullscreenWindow = function(event) {
         if (this._fullscreen) {
             var newZoom = 1;
-            document.body.webkitRequestFullScreen();
             if (this.window.innerHeight < this.window.innerWidth)
                 newZoom = this.window.innerHeight / SLIDE_HEIGHT;
                 //newZoom = (screen.height-10) / SLIDE_HEIGHT;
@@ -163,7 +162,7 @@ Controler = function(window) {
                 for (var i = 0; i < humla.slides.length; i++)
                     humla.slides[i].element.removeAttribute("style");
                 
-                document.webkitCancelFullScreen();
+                
             }
             else
                 this.updateFullscreenWindow();

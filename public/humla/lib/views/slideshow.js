@@ -8,6 +8,12 @@ var view_slideshow = {
         humla.controler.toBuild = false;  
         document.webkitCancelFullScreen();
     },
+    goFullscreen : function(){      
+        document.body.webkitRequestFullScreen();  
+    },
+    cancelFullscreen : function(){
+        document.webkitCancelFullScreen();
+    },
     enterSlide : function(slide) {
         var inx = slide.number - 1;        
         if (inx - 1 >= 0) humla.slides[inx - 1].addClass("previous");
