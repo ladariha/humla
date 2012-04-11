@@ -1,8 +1,73 @@
+function CanvasDBStructure (){
+    this.id = 0;
+    this.htmlID = "";
+    this.clickX = [];
+    this.clickY = [];
+    this.clickDrag = [];
+    this.clickColor = [];
+    this.clickWidth = [];
+    this.initializeFromCanvas = function(canvas){
+        this.id = canvas.dbID; 
+        this.htmlID = canvas.element.id; 
+        this.clickX = canvas.clickX.slice(0); 
+        this.clickY = canvas.clickY.slice(0); 
+        this.clickDrag = canvas.clickDrag.slice(0); 
+        this.clickColor = canvas.clickColor.slice(0); 
+        this.clickWidth = canvas.clickWidth.slice(0);
+        if (canvas.clickX.length > 0 || canvas.clickY.length > 0 || canvas.clickDrag.length > 0 || canvas.clickColor.length > 0 || canvas.clickWidth.length > 0 ){
+            return true;
+        } else {
+            return false;
+        }
+    };
+    this.isClear = function(){
+        if (this.clickX.length > 0 || this.clickY.length > 0 || this.clickDrag.length > 0 || this.clickColor.length > 0 || this.clickWidth.length > 0 ){
+            return false;
+        } else {
+            return true;
+        }
+
+    };
+    this.getAddJSON = function(){
+        var json = {
+            htmlID : this.htmlID,
+            clickX : this.clickX,
+            clickY : this.clickY,
+            clickDrag : this.clickDrag,
+            clickColor : this.clickColor,
+            clickWidth : this.clickWidth
+        }
+        return json;
+    };
+    this.getUpdateJSON = function(){
+        var json = {
+            id : this.id,
+            htmlID : this.htmlID,
+            clickX : this.clickX,
+            clickY : this.clickY,
+            clickDrag : this.clickDrag,
+            clickColor : this.clickColor,
+            clickWidth : this.clickWidth
+        }
+        return json;
+    };
+    this.initialize = function(id, htmlID, arrayX, arrayY, arrayDrag, arrayColor, arrayWidth){
+        if(id > 0) this.id = id;
+        this.htmlID = htmlID;
+        this.clickX = arrayX;
+        this.clickY = arrayY;
+        this.clickColor = arrayColor;
+        this.clickDrag = arrayDrag;
+        this.clickWidth = arrayWidth;
+    };
+}
+
 var ex_canvas = {
     loaded : false,
     canvasArray : [],
     currentSlide : null,
     strokeColor : "#000000",
+    table : "CANVAS",
     strokeWidth : 5,
     zoom : 1,
     processMenu: function(menu) {                        
@@ -13,7 +78,104 @@ var ex_canvas = {
             }, // callback function, třeba provolá humla.neco.neco();
             show_layer:false
         });
+        menu.addTab("saveDB",{
+            name:"Save",
+            cb: function() {
+                ex_canvas.saveStateToDB();
+            //ex_canvas.loadStateFromDB();
+            }, // callback function, třeba provolá humla.neco.neco();
+            show_layer:false
+        });
+        menu.addTab("loadDB",{
+            name:"Load",
+            cb: function() {
+                //ex_canvas.saveStateToDB();
+                ex_canvas.loadStateFromDB();
+            }, // callback function, třeba provolá humla.neco.neco();
+            show_layer:false
+        });
         
+    },
+    loadStateFromDB : function(){
+        ext_indexeddb.indexedDB.get("CANVAS", function(e){
+            var result = e.result;
+            if(!!result == false)
+                return;
+
+            ex_canvas.addFromDB(result.value);
+            result.continue();
+        }, function(){
+            console.log("Loading from the DB was not successful");
+        });
+            
+        
+    },
+    getFromDB : function(key){
+        ext_indexeddb.indexedDB.getItem("CANVAS", "htmlID", key, function(e){
+            var result = e.target.result;
+            console.log("Nalezen element: "+result.id);
+        }, function(){
+            console.log("Loading from the DB was not successful");
+        });
+    },
+    setID : function(htmlID, id){
+        for (var i = 0; i < ex_canvas.canvasArray.length; i++){
+            if (htmlID == ex_canvas.canvasArray[i].element.id){
+                ex_canvas.canvasArray[i].dbID = id;
+            }
+        }
+    },
+    saveStateToDB : function(){
+        for (var i = 0; i < ex_canvas.canvasArray.length; i++){
+            var canvas = new CanvasDBStructure();
+            if (canvas.initializeFromCanvas(ex_canvas.canvasArray[i])){  
+                //console.log("Vypis: "+canvas.id);
+                var data = {
+                    "htmlID" : "canvasID"                    
+                }
+                if (canvas.id == 0){
+                    ext_indexeddb.indexedDB.add(canvas.getAddJSON(), "CANVAS", function(event){
+                        console.log("Canvas succesfully saved into DB");
+                        console.log(event);
+                        ex_canvas.getFromDB(canvas.htmlID);
+                    }, function(){
+                        console.log("Loading from the DB was not successful");
+                    });
+                } else {
+                    ext_indexeddb.indexedDB.update(canvas.getUpdateJSON(), "CANVAS", function(){
+                        console.log("Canvas succesfully saved into DB");
+                    }, function(){
+                        console.log("Loading from the DB was not successful");
+                    });
+                } 
+            } else if (canvas.id != 0){
+                ext_indexeddb.indexedDB.deleteItem(canvas.id, ex_canvas.table, function(){
+                    console.log("Canvas succesfully removed from DB");
+                }, function(){
+                    console.log("Delete was not successful");
+                });
+            }
+        }
+    },
+    addFromDB : function(item){
+        for (var i = 0; i < ex_canvas.canvasArray.length; i++){
+            if (item.htmlID == ex_canvas.canvasArray[i].element.id){
+                var canvas = ex_canvas.canvasArray[i];
+                console.log("Loading from DB: "+item.id);
+                if (canvas.clickX.length > 0 || canvas.clickY.length > 0 || canvas.clickDrag.length > 0 || canvas.clickColor.length > 0 || canvas.clickWidth.length > 0 ){
+                    canvas.dbID = item.id;
+                    
+                } else {
+                    canvas.dbID = item.id;
+                    canvas.clickX = item.clickX;
+                    canvas.clickY = item.clickY;
+                    canvas.clickDrag = item.clickDrag;
+                    canvas.clickColor = item.clickColor;
+                    canvas.clickWidth = item.clickWidth;
+                    canvas.redraw();
+                }
+            }
+        }
     },
     setColor : function(color){
         this.strokeColor = color;
@@ -46,24 +208,24 @@ var ex_canvas = {
         this.loaded = true;
         this.zoom = slide.element.style.zoom;
         var resizeCanvas = function(){
-            console.log(slide.element.style.zoom);
-            var zoom = slide.element.style.zoom;
-            var array = slide.element.getElementsByClassName("paintingCanvas");
+            //console.log(ex_canvas.currentSlide.element.style.zoom);
+            var zoom = ex_canvas.currentSlide.element.style.zoom;
+            var array = ex_canvas.currentSlide.element.getElementsByClassName("paintingCanvas");
             if (zoom != null && zoom != 0)
                 for (var i = 0; i < array.length; i++){
                 
                     array[i].width = SLIDE_WIDTH * zoom;
-                     array[i].height = SLIDE_HEIGHT * zoom;
-                    /*
+                    array[i].height = SLIDE_HEIGHT * zoom;
+                /*
                 for (var j = 0; j < ex_canvas.canvasArray.length; j++){
                     if (array[i].id == ex_canvas.canvasArray[j].element.id){
                         ex_canvas.canvasArray[j].countOffset();
                     }
                 }
                 */
-                    //array[i].style.width = SLIDE_WIDTH * 0.9;
-                    //array[i].style.height = SLIDE_HEIGHT * 0.9;
-                    }
+                //array[i].style.width = SLIDE_WIDTH * 0.9;
+                //array[i].style.height = SLIDE_HEIGHT * 0.9;
+                }
         }
         resizeCanvas();
         
@@ -91,6 +253,7 @@ var ex_canvas = {
         function Canvas(element, arrayX, arrayY, arrayDrag, arrayColor, arrayWidth){
         {
             //this.parentSlide = slide;
+            
             this.element = element;
             this.context = element.getContext("2d");
             this.paint = false;
@@ -102,6 +265,7 @@ var ex_canvas = {
             this.offsetLeft = 0;
             this.offsetTop = 0;
             this.active = true;
+            this.dbID = 0;
             this.initialize = function(){
                 this.context = this.element.getContext("2d");
             };
@@ -151,7 +315,17 @@ var ex_canvas = {
                     
                 this.paint = false;
             };                 
-                      
+            this.touchStart = function(e){                
+                var touch = e.touches[0];
+                if (touch != null) this.mouseDown(touch);
+            };  
+            this.touchMove = function(e){                
+                var touch = e.touches[0];
+                if (touch != null) this.mouseMove(touch);
+            };  
+            this.touchEnd = function(e){         
+                this.mouseUp();
+            };          
             this.addClick =  function(x, y, dragging)
             {
                 console.log("klik: "+x+" - "+y);
@@ -297,6 +471,13 @@ var ex_canvas = {
         element.addEventListener ("mousemove", ex_canvas.mouseMove, false);
         element.addEventListener ("mouseup", ex_canvas.mouseUp, false);
         element.addEventListener ("mouseleave", ex_canvas.mouseUp, false);
+        
+        
+        element.addEventListener ("touchstart", ex_canvas.touchStart, false);
+        element.addEventListener ("touchmove", ex_canvas.touchMove, false);
+        element.addEventListener ("touchend", ex_canvas.touchEnd, false);
+        element.addEventListener ("touchleave", ex_canvas.touchEnd, false);
+        element.addEventListener ("touchcancel", ex_canvas.touchEnd, false);
     },
     removeListeners : function (element){
         //console.log("Odstranuju event listenery");
@@ -305,6 +486,13 @@ var ex_canvas = {
             element.removeEventListener("mousemove", ex_canvas.mouseMove, false);
             element.removeEventListener("mouseup", ex_canvas.mouseUp, false);
             element.removeEventListener("mouseleave", ex_canvas.mouseUp, false);
+            
+            
+            element.removeEventListener ("touchstart", ex_canvas.touchStart, false);
+            element.removeEventListener ("touchmove", ex_canvas.touchMove, false);
+            element.removeEventListener ("touchend", ex_canvas.touchEnd, false);
+            element.removeEventListener ("touchleave", ex_canvas.touchEnd, false);
+            element.removeEventListener ("touchcancel", ex_canvas.touchEnd, false);
         } catch (e){
             console.log("Nepovedlo se kvuli: "+e);
         }
@@ -327,6 +515,27 @@ var ex_canvas = {
         for (var i = 0; i < ex_canvas.canvasArray.length; i++){
             if (this.id == ex_canvas.canvasArray[i].element.id){
                 ex_canvas.canvasArray[i].mouseUp();
+            }
+        }
+    },
+    touchStart : function (event){
+        for (var i = 0; i < ex_canvas.canvasArray.length; i++){
+            if (this.id == ex_canvas.canvasArray[i].element.id){
+                ex_canvas.canvasArray[i].touchStart(event);
+            }
+        }
+    },
+    touchMove : function (event){
+        for (var i = 0; i < ex_canvas.canvasArray.length; i++){
+            if (this.id == ex_canvas.canvasArray[i].element.id){
+                ex_canvas.canvasArray[i].touchMove(event);
+            }
+        }
+    },
+    touchEnd : function (){
+        for (var i = 0; i < ex_canvas.canvasArray.length; i++){
+            if (this.id == ex_canvas.canvasArray[i].element.id){
+                ex_canvas.canvasArray[i].touchEnd();
             }
         }
     },
