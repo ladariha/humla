@@ -26,189 +26,412 @@
     },
 
     "views": [
-        {"id"     : "1",
-            "object" : "view_browser",
-            "script" : {"src" : "views/browser.js"}, 
-            "style"  : {"src" : "views/browser.css", "media" : "screen"}
+    {
+        "id"     : "1",
+        "object" : "view_browser",
+        "script" : {
+            "src" : "views/browser.js"
         }, 
-
-        {"id"     : "2", 
-            "object" : "view_slideshow",
-            "script" : {"src" : "views/slideshow.js"}, 
-            "style"  : {"src" : "views/slideshow.css", "media" : "screen"}  
-        }, 
-
-        {"id"     : "3", 
-            "object" : "view_grid",
-            "script" : {"src" : "views/grid.js"}, 
-            "style"  : {"src" : "views/grid.css", "media" : "screen"},  
-            "keys_disabled" : ["prev", "next", "first", "last", "goto"]             
-        }, 
-
-        {"id"     : "4", 
-            "object" : "view_print",        
-            "script" : {"src" : "views/print.js"}, 
-            "style"  : {"src" : "views/print.css", "media" : "screen, print"},  
-            "keys_disabled" : ["prev", "next", "first", "last", "goto"]             
-        },
-        {"id"     : "5", 
-            "object" : "view_editor",        
-            "script" : {"src" : "views/editor.js"}, 
-            "style"  : {"src" : "views/editor_view.css", "media" : "screen"}
-        },
-        {"id"     : "6", 
-            "object" : "view_items",        
-            "script" : {"src" : "views/items.js"}, 
-            "style"  : {"src" : "views/items.css", "media" : "screen"}
-        },
-        {"id"     : "7", 
-            "object" : "view_smartphone",        
-            "script" : {"src" : "views/smartphone/phone_script.js"}, 
-            "style"  : {"src" : "views/smartphone/phone_style.css", "media" : "screen"}
+        "style"  : {
+            "src" : "views/browser.css", 
+            "media" : "screen"
         }
+    }, 
+
+    {
+        "id"     : "2", 
+        "object" : "view_slideshow",
+        "script" : {
+            "src" : "views/slideshow.js"
+        }, 
+        "style"  : {
+            "src" : "views/slideshow.css", 
+            "media" : "screen"
+        }  
+    }, 
+
+    {
+        "id"     : "3", 
+        "object" : "view_grid",
+        "script" : {
+            "src" : "views/grid.js"
+        }, 
+        "style"  : {
+            "src" : "views/grid.css", 
+            "media" : "screen"
+        },  
+        "keys_disabled" : ["prev", "next", "first", "last", "goto"]             
+    }, 
+
+    {
+        "id"     : "4", 
+        "object" : "view_print",        
+        "script" : {
+            "src" : "views/print.js"
+        }, 
+        "style"  : {
+            "src" : "views/print.css", 
+            "media" : "screen, print"
+        },  
+        "keys_disabled" : ["prev", "next", "first", "last", "goto"]             
+    },
+    {
+        "id"     : "5", 
+        "object" : "view_editor",        
+        "script" : {
+            "src" : "views/editor.js"
+        }, 
+        "style"  : {
+            "src" : "views/editor_view.css", 
+            "media" : "screen"
+        }
+    },
+    {
+        "id"     : "6", 
+        "object" : "view_pretty",        
+        "script" : {
+            "src" : "views/pretty/pretty.js"
+        }, 
+        "style"  : {
+            "src" : "views/pretty/pretty.css", 
+            "media" : "screen"
+        }
+    },
+    {
+        "id"     : "7", 
+        "object" : "view_smartphone",        
+        "script" : {
+            "src" : "views/smartphone/phone_script.js"
+        }, 
+        "style"  : {
+            "src" : "views/smartphone/phone_style.css", 
+            "media" : "screen"
+        }
+    },
+    {
+        "id"     : "8", 
+        "object" : "view_camera",        
+        "script" : {
+            "src" : "views/camera/camera.js"
+        }, 
+        "style"  : {
+            "src" : "views/camera/camera.css", 
+            "media" : "screen"
+        }
+    }
         
         
     ],
     
     "extensions": [
-        {"id" : "outline",
-            "object" : "ex_outline",
-            "scripts"  : [ {"src" : "ext/outline.js"} ],  
-            "styles"   : [ {"src" : "ext/outline.css", "media" : "screen, print"} ], 
-            "enabled" : true 
+    {
+        "id" : "outline",
+        "object" : "ex_outline",
+        "scripts"  : [ {
+            "src" : "ext/outline.js"
+        } ],  
+        "styles"   : [ {
+            "src" : "ext/outline.css", 
+            "media" : "screen, print"
+        } ], 
+        "enabled" : true 
+    },
+        
+    {
+        "id" : "params",
+        "object" : "ex_params",
+        "scripts"  : [ {
+            "src" : "ext/params.js"
+        } ], 
+        "enabled" : true
+    },
+        
+    {
+        "id" : "latex",
+        "object" : "ex_latex",
+        "scripts"  : [ {
+            "src" : "ext/latex.js"
+        } ],    
+        "styles"   : [ {
+            "src" : "ext/latex.css", 
+            "media" : "screen, print"
+        } ],
+        "params"   : {
+            "mathtex" : "your_mathtex_url_here"
         },
+        "enabled" : true 
+    },        
         
-        {"id" : "params",
-            "object" : "ex_params",
-            "scripts"  : [ {"src" : "ext/params.js"} ], 
-            "enabled" : true
+    {
+        "id" : "drawing",
+        "object" : "ex_drawing",
+        "scripts"  : [ {
+            "src" : "ext/drawing.js"
+        } ],  
+        "styles"   : [ {
+            "src" : "ext/drawing.css", 
+            "media" : "screen, print"
+        } ],
+        "params"   : {
+            "format" : "svg"
         },
+        "enabled" : true 
+    }, 
         
-        {"id" : "latex",
-            "object" : "ex_latex",
-            "scripts"  : [ {"src" : "ext/latex.js"} ],    
-            "styles"   : [ {"src" : "ext/latex.css", "media" : "screen, print"} ],
-            "params"   : {
-                "mathtex" : "your_mathtex_url_here"
-            },
-            "enabled" : true 
-        },        
-        
-        {"id" : "drawing",
-            "object" : "ex_drawing",
-            "scripts"  : [ {"src" : "ext/drawing.js"} ],  
-            "styles"   : [ {"src" : "ext/drawing.css", "media" : "screen, print"} ],
-            "params"   : {
-                "format" : "svg"
-            },
-            "enabled" : true 
-        }, 
-        
-        {"id" : "syntaxhighlighter",
-            "object" : "ex_syntaxhighlighter",
-            "scripts" : [ {"src" : "../support/SyntaxHighlighter/scripts/XRegExp.js"},
-                {"src" : "../support/SyntaxHighlighter/scripts/shCore.js", "g" : 1},
-                {"src" : "../support/SyntaxHighlighter/scripts/shBrushJScript.js", "g" : 2},
-                {"src" : "../support/SyntaxHighlighter/scripts/shBrushXml.js", "g" : 2},
-                {"src" : "../support/SyntaxHighlighter/scripts/shBrushPlain.js", "g" : 2},
-                {"src" : "../support/SyntaxHighlighter/scripts/shBrushJava.js", "g" : 2},
-                {"src" : "../support/SyntaxHighlighter/scripts/shBrushBash.js", "g" : 2},                          
-                {"src" : "ext/syntaxhighlighter.js", "g" : 2} ],
-            "styles"  : [ {"src" : "../support/SyntaxHighlighter/styles/shCoreDefault.css",  "media" : "screen, print"},
-                {"src" : "ext/syntaxhighlighter.css", "media" : "screen, print"} ],               
-            "params"  : {
-                "defaults" : [
-                    {"key" : "toolbar", "value" : "false"}
-                ]
-            },
-            "enabled" : true
+    {
+        "id" : "syntaxhighlighter",
+        "object" : "ex_syntaxhighlighter",
+        "scripts" : [ {
+            "src" : "../support/SyntaxHighlighter/scripts/XRegExp.js"
         },
 
-        {"id" : "github",
-            "object" : "ex_github",
-            "scripts" : [ {"src" : "ext/github.js"} ],
-            "styles"  : [ {"src" : "ext/github.css", "media" : "screen, print"} ],
-            "params"  : {
-                "url"  : "http://proxy.vitvar.com/raw.github",
-                "user-repo" : "tomvit/mdw-examples"
-            },
-            "enabled" : true 
+        {
+            "src" : "../support/SyntaxHighlighter/scripts/shCore.js", 
+            "g" : 1
         },
 
-        {"id" : "rssfeed",
-            "object" : "ex_rssfeed",
-            "scripts" : [ {"src" : "ext/rssfeed.js"} ],
-            "enabled" : true 
+        {
+            "src" : "../support/SyntaxHighlighter/scripts/shBrushJScript.js", 
+            "g" : 2
         },
+
+        {
+            "src" : "../support/SyntaxHighlighter/scripts/shBrushXml.js", 
+            "g" : 2
+        },
+
+
+        {
+            "src" : "../support/SyntaxHighlighter/scripts/shBrushPlain.js", 
+            "g" : 2
+        },
+
+        {
+            "src" : "../support/SyntaxHighlighter/scripts/shBrushJava.js", 
+            "g" : 2
+        },
+
+        {
+            "src" : "../support/SyntaxHighlighter/scripts/shBrushBash.js", 
+            "g" : 2
+        },                          
+
+        {
+            "src" : "ext/syntaxhighlighter.js", 
+            "g" : 2
+        } ],
+        "styles"  : [ {
+            "src" : "../support/SyntaxHighlighter/styles/shCoreDefault.css",  
+            "media" : "screen, print"
+        },
+        {
+            "src" : "ext/syntaxhighlighter.css", 
+            "media" : "screen, print"
+        } ],               
+        "params"  : {
+            "defaults" : [
+            {
+                "key" : "toolbar", 
+                "value" : "false"
+            }
+            ]
+        },
+        "enabled" : true
+    },
+
+    {
+        "id" : "github",
+        "object" : "ex_github",
+        "scripts" : [ {
+            "src" : "ext/github.js"
+        } ],
+        "styles"  : [ {
+            "src" : "ext/github.css", 
+            "media" : "screen, print"
+        } ],
+        "params"  : {
+            "url"  : "http://proxy.vitvar.com/raw.github",
+            "user-repo" : "tomvit/mdw-examples"
+
+        },
+        "enabled" : true 
+    },
+
+    {
+        "id" : "rssfeed",
+        "object" : "ex_rssfeed",
+        "scripts" : [ {
+            "src" : "ext/rssfeed.js"
+        } ],
+        "enabled" : true 
+    },
+
+    {
+        "id" : "ga",
+        "object" : "ex_ga",
+        "scripts" : [ {
+            "src" : "ext/ga.js"
+        } ],
+        "params"  : {
+            "account" : "UA-27319772-1",
+            "gifPath": "http://wa.vse.cz/listener"
+
+        },
+        "enabled" : true 
+    },
         
-        {"id" : "ga",
-            "object" : "ex_ga",
-            "scripts" : [ {"src" : "ext/ga.js"} ],
-            "params"  : {
-                "account" : "UA-27319772-1",
-                "gifPath": "http://wa.vse.cz/listener"
-            },
-            "enabled" : true 
-        },
+
+    {
+        "id" : "canvas",
+        "object" : "ex_canvas",
+        "scripts" : [ {
+            "src" : "ext/canvas/canvas.js"
+        } ],
+        "styles"  : [ {
+            "src" : "ext/canvas/canvas.css", 
+            "media" : "screen, print"
+        } ],
+        "enabled" : true 
+    },
         
-         {"id" : "gbooks",
-            "object" : "ex_gbooks",
-            "scripts" : [ {"src" : "ext/gbooks/gbooks.js"} ],
-             "styles"  : [ {"src" : "ext/gbooks/gbooks.css", "media" : "screen, print"} ],
-            "enabled" : true 
-        },
-         {"id" : "items",
-            "object" : "items",
-            "scripts" : [ {"src" : "ext/items.js"} ],
-             "styles"  : [ {"src" : "ext/items.css", "media" : "screen"} ],
-            "enabled" : true 
-        },
-         {"id" : "multitouch",
-            "object" : "multitouch",
-            "scripts" : [ {"src" : "ext/multitouch/multitouch.js"} ],
-             "styles"  : [ {"src" : "ext/multitouch/multitouch.css", "media" : "screen"} ],
-            "enabled" : true 
-        },
+    {
+        "id" : "tests",
+        "object" : "ex_tests",
+        "scripts" : [ {
+            "src" : "ext/tests/tests.js"
+        } ],
+        "styles"  : [ {
+            "src" : "ext/tests/tests.css", 
+            "media" : "screen, print"
+        } ],
+        "enabled" : true 
+    },
+
+
+    {
+        "id" : "gbooks",
+        "object" : "ex_gbooks",
+        "scripts" : [ {
+            "src" : "ext/gbooks/gbooks.js"
+        } ],
+        "styles"  : [ {
+            "src" : "ext/gbooks/gbooks.css", 
+            "media" : "screen, print"
+        } ],
+        "enabled" : true 
+    },
+    {
+        "id" : "items",
+        "object" : "items",
+        "scripts" : [ {
+            "src" : "ext/items.js"
+        } ],
+        "styles"  : [ {
+            "src" : "ext/items.css", 
+            "media" : "screen"
+        } ],
+        "enabled" : true 
+    },
+    {
+        "id" : "multitouch",
+        "object" : "multitouch",
+        "scripts" : [ {
+            "src" : "ext/multitouch/multitouch.js"
+        } ],
+        "styles"  : [ {
+            "src" : "ext/multitouch/multitouch.css", 
+            "media" : "screen"
+        } ],
+        "enabled" : true 
+    },
         
-        {"id" : "comments",
-            "object" : "ex_comments",
-            "scripts" : [ {"src" : "ext/comments/comments.js"} ],
-            "styles"  : [ {"src" : "ext/comments/comments.css", "media" : "screen, print"} ],
-            "enabled" : true 
-        },
-        {"id" : "likes",
-            "object" : "ex_likes",
-            "scripts" : [ {"src" : "ext/likes/likes.js"} ],
-            "styles"  : [ {"src" : "ext/likes/likes.css", "media" : "screen, print"} ],
-            "enabled" : true 
-        },
+          
+    {
+        "id" : "comments",
+        "object" : "ex_comments",
+        "scripts" : [ {
+            "src" : "ext/comments/comments.js"
+        } ],
+        "styles"  : [ {
+            "src" : "ext/comments/comments.css", 
+            "media" : "screen, print"
+        } ],
+        "enabled" : true 
+    },
+    {
+        "id" : "likes",
+        "object" : "ex_likes",
+        "scripts" : [ {
+            "src" : "ext/likes/likes.js"
+        } ],
+        "styles"  : [ {
+            "src" : "ext/likes/likes.css", 
+            "media" : "screen, print"
+        } ],
+        "enabled" : true 
+    },
         
-        {"id" : "editor",
-            "object" : "ex_editor",
-            "scripts" : [ {"src" : "ext/editor/editor.js"} ],
-            "styles"  : [ {"src" : "ext/editor/editor.css", "media" : "screen, print"} ],
-            "enabled" : true 
-        },
-        {"id" : "slideindex",
-            "object" : "ex_slideindex",
-            "scripts" : [ {"src" : "ext/slideindex/slideindex.js"} ],
-            "styles"  : [ {"src" : "ext/slideindex/slideindex.css", "media" : "screen, print"} ],
-            "enabled" : true 
-        },
+    {
+        "id" : "editor",
+        "object" : "ex_editor",
+        "scripts" : [ {
+            "src" : "ext/editor/editor.js"
+        } ],
+        "styles"  : [ {
+            "src" : "ext/editor/editor.css", 
+            "media" : "screen, print"
+        } ],
+        "enabled" : true 
+    },
+    {
+        "id" : "slideindex",
+        "object" : "ex_slideindex",
+        "scripts" : [ {
+            "src" : "ext/slideindex/slideindex.js"
+        } ],
+        "styles"  : [ {
+            "src" : "ext/slideindex/slideindex.css", 
+            "media" : "screen, print"
+        } ],
+        "enabled" : true  
+    },
         
-        {"id" : "canvas",
-            "object" : "ex_canvas",
-            "scripts" : [ {"src" : "ext/canvas/canvas.js"} ],
-            "styles"  : [ {"src" : "ext/canvas/canvas.css", "media" : "screen, print"} ],
-            "enabled" : true 
-        },
-        
-        {"id" : "tests",
-            "object" : "ex_tests",
-            "scripts" : [ {"src" : "ext/tests/tests.js"} ],
-            "styles"  : [ {"src" : "ext/tests/tests.css", "media" : "screen, print"} ],
-            "enabled" : true 
-        }
+    {
+        "id" : "canvas",
+        "object" : "ex_canvas",
+        "scripts" : [ {
+            "src" : "ext/canvas/canvas.js"
+        } ],
+        "styles"  : [ {
+            "src" : "ext/canvas/canvas.css", 
+            "media" : "screen, print"
+        } ],
+        "enabled" : true 
+    },
+    
+    {
+        "id" : "charts",
+        "object" : "charts",
+        "scripts" : [ {
+            "src" : "ext/charts/charts.js"
+        } ],
+        "styles"  : [ {
+            "src" : "ext/charts/charts.css", 
+            "media" : "screen, print"
+        } ],
+        "enabled" : true 
+    }
+    ,
+    
+    {
+        "id" : "database",
+        "object" : "ext_indexeddb",
+        "scripts" : [ {
+            "src" : "ext/database/indexeddb.js"
+        } ],
+        "enabled" : true 
+    }
+
         
         
         
