@@ -1,8 +1,10 @@
 
-//var script = false; 
-//var firstSlide = true;
-//var previousSlide = -1;
-//var actualMode = "";
+var ga = document.createElement('script');
+ga.type = 'text/javascript';
+ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0];
+s.parentNode.insertBefore(ga, s);
 var ex_ga = {
     script : false,
     firstSlide : true,
@@ -25,7 +27,7 @@ var ex_ga = {
         }
     },
     processSlide : function(slide){
-        if (!this.script){
+        if (false){
             (function() {
                 //console.log("Pridavam skript");
 
@@ -70,11 +72,11 @@ var ex_ga = {
                 _gaq.push(['_trackEvent', course+' - lecture '+lecture, "slide left", slide]);
                 //console.log("Posilam: "+course+' - lecture '+lecture+" - slide left - "+slide);
                 this.previousSlide = slide;
-        } 
+            } 
         }
         //_gaq.push(['_trackEvent', course+' - lecture '+lecture, viewMode, slide]);
         _gaq.push(['_trackPageview']);
-        //console.log("Odesilam: "+course+' - lecture '+lecture+'. ViewMode: '+viewMode+' a slide: '+slide);
+    //console.log("Odesilam: "+course+' - lecture '+lecture+'. ViewMode: '+viewMode+' a slide: '+slide);
     }
 }
 

@@ -176,15 +176,6 @@ var multitouch = {
             } catch(err){
                 alert("Chyba: "+err.description);
             }
-            //var delka = multitouch.touches1.length;
-            //var normalizedX = (prubehXright-prubehXleft)/delka;
-            //var normalizedY = (prubehYright-prubehYleft)/delka;
-            //var changeX = firstStepX - stepX;
-            //if (changeX < 0) changeX*=-1;
-            //var changeY = firstStepY - stepY;
-            //if (changeY < 0) changeY*=-1;
-            //var length = Math.sqrt(changeX*changeX + changeY*changeY);
-            //newT = document.createTextNode("Vypis: X-n: "+normalizedX+", Y-n: "+normalizedY+", X-ch: "+changeX+", Y-ch: "+changeY+", delka: "+length);
             var right = false;
             var left = false;
             var up = false;
