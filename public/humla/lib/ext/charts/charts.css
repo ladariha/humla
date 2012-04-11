@@ -1,0 +1,13 @@
+/* 
+    Document   : charts
+    Created on : 24.3.2012, 14:47:24
+    Author     : Vojta
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+.pieChart{
+    margin: 10px;
+    border: 1px solid #343434;
+}
+
