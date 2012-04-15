@@ -6,7 +6,7 @@ var mongoose = require("mongoose");
 var fs     = require('fs');
 var FacetRecord = mongoose.model("FacetRecord");
 var Slideid = mongoose.model("Slideid");
-var typePrefix = "";//http://humla.org/microdata/"; // TODO fix sample URL
+var typePrefix = "Humla/";//http://humla.org/microdata/"; // TODO fix sample URL
 exports.prefix = typePrefix;
 var PAGE_SIZE = 100;
 // List of all types. Instead of selecting distinct values from DB it's less expensive to use array'
@@ -78,7 +78,7 @@ exports.topValues = function(schemaproperty, res, callback){
         return count; 
     }; 
 
-    mongoose.connect('mongodb://localhost/humla'); 
+    mongoose.connect(config.server.db_uri); 
 
     var command = { 
         mapreduce: "facetrecords",
@@ -128,7 +128,7 @@ exports.simpleQuery = function(schemaproperty, value, page, baseUrl,res,  callba
     try{
         if(value.length ===0){
             var q = FacetRecord.find({});
-            q.where('type', typePrefix+schemaproperty);
+            q.where('type', schemaproperty);
             q.skip((parseInt(page)-1)*PAGE_SIZE);
             q.limit(page*PAGE_SIZE);
             q.run(function(err,crs){  
@@ -140,7 +140,7 @@ exports.simpleQuery = function(schemaproperty, value, page, baseUrl,res,  callba
             });
         }else{
             var q = FacetRecord.find({});
-            q.where('type', typePrefix+schemaproperty);
+            q.where('type', schemaproperty);
             q.where('value', value);
             q.skip((parseInt(page)-1)*PAGE_SIZE);
             q.limit(PAGE_SIZE);
@@ -179,11 +179,11 @@ function recursiveQuery(depth, query, page, baseUrl, res, callback){
 
         if(query.valueQueries.length>0){ // run value queries first since they could significantly reduce total results
             var q = query.valueQueries.splice(0,1); // take 1st item from array
-            _query.where('type', typePrefix+q[0].type);
+            _query.where('type', q[0].type);
             _query.where('value',q[0].value);
         }else if(query.booleanQueries.length>0){
             var q = query.booleanQueries.splice(0,1); // take 1st item from array        
-            _query.where('type', typePrefix+q[0].type);
+            _query.where('type', q[0].type);
             if(typeof q[0].value=="boolean" && q[0].value===true){
                 _query.where('value',"true");
             }else if(typeof q[0].value=="boolean" && q[0].value===false){

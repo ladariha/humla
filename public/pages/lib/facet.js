@@ -208,6 +208,7 @@ function FacetedContainer(){
                 }
             }
         };
+        console.log(JSON.stringify(q));
         request.send(JSON.stringify(q));
     };
     

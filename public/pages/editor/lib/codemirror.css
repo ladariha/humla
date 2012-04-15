@@ -102,55 +102,6 @@ span.CodeMirror-selected {
     color:#aaa;
 }
 
-.annotation_panel{
-    float:left;
-    width:100px;
-    height: 400px;
-    margin: 0 5px 0 0;
-}
-
-.editor_right{
-    float:left;
-}
-
-.annotation_list{
-    margin:0;
-    list-style: none;
-    padding: 0;
-}
-
-.ann_button {
-    opacity: 0.8;
-    filter:alpha(opacity=80); /* For IE8 and earlier */
-    margin: 0;
-    border-top: 1px solid #d2d8db;
-    margin: 2px 0 2px 0;
-    background: #f5ebf5;
-    background: -webkit-gradient(linear, left top, left bottom, from(#fafdff), to(#f5ebf5));
-    background: -webkit-linear-gradient(top, #fafdff, #f5ebf5);
-    background: -moz-linear-gradient(top, #fafdff, #f5ebf5);
-    background: -ms-linear-gradient(top, #fafdff, #f5ebf5);
-    background: -o-linear-gradient(top, #fafdff, #f5ebf5);
-    padding: 5px 10px;
-    -webkit-border-radius: 2px;
-    -moz-border-radius: 2px;
-    border-radius: 2px;
-    color: #1c1c1c;
-    font-size: 12px;
-    text-decoration: none;
-    vertical-align: middle;
-}
-.ann_button:hover {
-    border-top-color: #5e5d5e;
-    background: #5e5d5e;
-    cursor: pointer;
-    color: #ccc;
-}
-.ann_button:active {
-    border-top-color: #5e5d5e;
-    background: #5e5d5e;
-}
-
 /*LOGIN*/
 div#login {    
     color: #607890;

@@ -16,7 +16,7 @@ var ex_slideindex = {
         var lecture= fields[6].substr(0, fields[6].indexOf("."));
         var slideIndexKey = "slideindex_"+course+"_"+lecture;
         if (humla.utils.window.localStorage && humla.utils.window.localStorage.getItem(slideIndexKey)){
-            alert(humla.utils.window.localStorage.getItem(slideIndexKey), 20000, "Content <img src=\"../../../humla/lib/ext/refresh.png\" class=\"slideindex-clearImg\" onClick=\"clearIndexFromLocalStorage('"+presentationUrl+"');\" title=\"Clear index from cache\" alt=\"Clear index from cache\"/>");
+            alert(humla.utils.window.localStorage.getItem(slideIndexKey), 20000, "Content <img src=\"../../../humla/lib/ext/slideindex/refresh.png\" class=\"slideindex-clearImg\" onClick=\"clearIndexFromLocalStorage('"+presentationUrl+"');\" title=\"Clear index from cache\" alt=\"Clear index from cache\"/>");
         }else{
             
             var ext = this;
@@ -63,15 +63,15 @@ var ex_slideindex = {
             humla.utils.window.localStorage.removeItem(slideIndexKey);
             humla.utils.window.localStorage.setItem(slideIndexKey,finalContent);
         }
-        alert(finalContent, 20000, "Content <img src=\"../../../humla/lib/ext/refresh.png\" class=\"slideindex-clearImg\" onClick=\"clearIndexFromLocalStorage('"+presentationUrl+"');\" title=\"Clear index from cache\" alt=\"Clear index from cache\"/>");
+        alert(finalContent, 20000, "Content <img src=\"../../../humla/lib/ext/slideindex/refresh.png\" class=\"slideindex-clearImg\" onClick=\"clearIndexFromLocalStorage('"+presentationUrl+"');\" title=\"Clear index from cache\" alt=\"Clear index from cache\"/>");
     },
     
     gbooksToHtml : function(index){
-        var ul = "<p>Google Books:   <img src=\"../../../humla/lib/ext/slideindex-left.png\"  class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-gbooks-top');\" title=\"Show content\" alt=\"Show content\"/></p><ul id=\"slideindex-gbooks-top"+"\" class=\"slideindex-hidden\" >";
+        var ul = "<p>Google Books:   <img src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\"  class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-gbooks-top');\" title=\"Show content\" alt=\"Show content\"/></p><ul id=\"slideindex-gbooks-top"+"\" class=\"slideindex-hidden\" >";
         for(var i in index.gbooks){
             var d = index.gbooks[i];
             ul+="<li class=\"slideindex-li\">"+d.title;
-            ul+="<img src=\"../../../humla/lib/ext/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-gbooks"+i+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-gbooks"+i+"\" class=\"slideindex-hidden\" >\n";
+            ul+="<img src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-gbooks"+i+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-gbooks"+i+"\" class=\"slideindex-hidden\" >\n";
             ul+="<li class=\"slideindex-li\">Slide: <a href=\"http://"+d.slide+"\">"+d.slide+"</a> </li>"
             var t = "";
             for(var j in d.author){
@@ -96,7 +96,7 @@ var ex_slideindex = {
     
     
     imagesToHtml : function(index){
-        var ul = "<p>Images:   <img class=\"slideindex-img-pointer\" src=\"../../../humla/lib/ext/slideindex-left.png\" onClick=\"dropdown(this, 'slideindex-images-top');\" title=\"Show content\" alt=\"Show content\"/></p><ul id=\"slideindex-images-top"+"\" class=\"slideindex-hidden\" >";
+        var ul = "<p>Images:   <img class=\"slideindex-img-pointer\" src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" onClick=\"dropdown(this, 'slideindex-images-top');\" title=\"Show content\" alt=\"Show content\"/></p><ul id=\"slideindex-images-top"+"\" class=\"slideindex-hidden\" >";
         for(var i in index.images){
             var d = index.images[i];
             ul+="<li class=\"slideindex-li\">";
@@ -106,7 +106,7 @@ var ex_slideindex = {
             }else{
                 ul+=d.filename;
             }
-            ul+="<img src=\"../../../humla/lib/ext/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-images"+i+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-images"+i+"\" class=\"slideindex-hidden\" >\n";
+            ul+="<img src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-images"+i+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-images"+i+"\" class=\"slideindex-hidden\" >\n";
             ul+="<li class=\"slideindex-li\">Slide: <a href=\"http://"+d.slideURL+"\">"+d.slideURL+"</a> </li>"
             ul+="<li class=\"slideindex-li\">Filename: "+d.filename+"</li>"
             ul+="</ul></li>";
@@ -117,7 +117,7 @@ var ex_slideindex = {
     },
     
     drawingsToHtml : function(index){
-        var ul = "<p>Google Drawings:   <img class=\"slideindex-img-pointer\" src=\"../../../humla/lib/ext/slideindex-left.png\" onClick=\"dropdown(this, 'slideindex-drawings-top');\" title=\"Show content\" alt=\"Show content\"/></p><ul id=\"slideindex-drawings-top"+"\" class=\"slideindex-hidden\" >";
+        var ul = "<p>Google Drawings:   <img class=\"slideindex-img-pointer\" src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" onClick=\"dropdown(this, 'slideindex-drawings-top');\" title=\"Show content\" alt=\"Show content\"/></p><ul id=\"slideindex-drawings-top"+"\" class=\"slideindex-hidden\" >";
         for(var i in index.drawings){
             var d = index.drawings[i];
             ul+="<li class=\"slideindex-li\">";
@@ -127,7 +127,7 @@ var ex_slideindex = {
             }else{
                 ul+=d.filename;
             }
-            ul+="<img src=\"../../../humla/lib/ext/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-drawings"+i+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-drawings"+i+"\" class=\"slideindex-hidden\" >\n";
+            ul+="<img src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-drawings"+i+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-drawings"+i+"\" class=\"slideindex-hidden\" >\n";
             ul+="<li class=\"slideindex-li\">Slide: <a href=\"http://"+d.slide+"\">"+d.slide+"</a> </li>"
             ul+="<li class=\"slideindex-li\">Filename: "+d.filename+"</li>"
             ul+="<li class=\"slideindex-li\">ID: "+d.id+"</li>"
@@ -140,7 +140,7 @@ var ex_slideindex = {
     },
     
     githubToHtml : function(index){
-        var ul = "<p>Github code blocks:   <img class=\"slideindex-img-pointer\" src=\"../../../humla/lib/ext/slideindex-left.png\" onClick=\"dropdown(this, 'slideindex-github-top');\" title=\"Show content\" alt=\"Show content\"/></p><ul id=\"slideindex-github-top"+"\" class=\"slideindex-hidden\" >";
+        var ul = "<p>Github code blocks:   <img class=\"slideindex-img-pointer\" src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" onClick=\"dropdown(this, 'slideindex-github-top');\" title=\"Show content\" alt=\"Show content\"/></p><ul id=\"slideindex-github-top"+"\" class=\"slideindex-hidden\" >";
         for(var i in index.github){
             var d = index.github[i];
             ul+="<li class=\"slideindex-li\">";
@@ -150,7 +150,7 @@ var ex_slideindex = {
             }else{
                 ul+=d.file;
             }
-            ul+="<img src=\"../../../humla/lib/ext/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-github"+i+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-github"+i+"\" class=\"slideindex-hidden\" >\n";
+            ul+="<img src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-github"+i+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-github"+i+"\" class=\"slideindex-hidden\" >\n";
             ul+="<li class=\"slideindex-li\">Slide: <a href=\"http://"+d.slide+"\">"+d.slide+"</a> </li>"
             ul+="<li class=\"slideindex-li\">Filename: "+d.file+"</li>"
             if(d.owner.length>0){
@@ -164,14 +164,14 @@ var ex_slideindex = {
     },
     
     codeBlocksToHtml : function(index){
-        var ul = "<p>Code blocks:   <img class=\"slideindex-img-pointer\" src=\"../../../humla/lib/ext/slideindex-left.png\" onClick=\"dropdown(this, 'slideindex-codes-top');\" title=\"Show content\" alt=\"Show content\"/></p><ul id=\"slideindex-codes-top"+"\" class=\"slideindex-hidden\" >";
+        var ul = "<p>Code blocks:   <img class=\"slideindex-img-pointer\" src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" onClick=\"dropdown(this, 'slideindex-codes-top');\" title=\"Show content\" alt=\"Show content\"/></p><ul id=\"slideindex-codes-top"+"\" class=\"slideindex-hidden\" >";
         for(var i in index.codeBlocks){
             var d = index.codeBlocks[i];
             ul+="<li class=\"slideindex-li\">";
             
             ul+=d.title;
             
-            ul+="<img src=\"../../../humla/lib/ext/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-codes"+i+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-codes"+i+"\" class=\"slideindex-hidden\" >\n";
+            ul+="<img src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-codes"+i+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-codes"+i+"\" class=\"slideindex-hidden\" >\n";
             ul+="<li class=\"slideindex-li\">Slide: <a href=\"http://"+d.slideURL+"\">"+d.slideURL+"</a> </li>"
             ul+="<li class=\"slideindex-li\">Language: "+d.language+"</li>"
             ul+="</ul></li>";
@@ -188,12 +188,12 @@ var ex_slideindex = {
             ul +="<li class=\"slideindex-li\"><a class=\"slideindex-structure-top\" href=\"http://"+t.url+"\">"+t.title+"</a>\n"
             
             if(t.chapters && t.chapters.length>0){
-                ul+="<img src=\"../../../humla/lib/ext/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-structure-secondLevel"+item+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-structure-secondLevel"+item+"\" class=\"slideindex-hidden\" >\n";
+                ul+="<img src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-structure-secondLevel"+item+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-structure-secondLevel"+item+"\" class=\"slideindex-hidden\" >\n";
                 for(var chapter in t.chapters){
                     var ch = t.chapters[chapter];
                     ul +="<li class=\"slideindex-li\"><a class=\"slideindex-structure-chapter\" href=\"http://"+ch.url+"\">"+ch.title+"</a>\n"
                     if(ch.slides && ch.slides.length>0){
-                        ul+="<img src=\"../../../humla/lib/ext/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-structure-thirdLevel"+chapter+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-structure-thirdLevel"+chapter+"\" class=\"slideindex-hidden\" >\n";
+                        ul+="<img src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-structure-thirdLevel"+chapter+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-structure-thirdLevel"+chapter+"\" class=\"slideindex-hidden\" >\n";
                         for(var s in ch.slides){
                             var simpleSlide = ch.slides[s];
                             ul +="<li class=\"slideindex-li\"><a class=\"slideindex-structure-slide\" href=\"http://"+simpleSlide.url+"\">"+simpleSlide.title+"</a>\n"
@@ -214,12 +214,12 @@ var ex_slideindex = {
 
 function dropdown(img, idOflist){
     if(img.src.indexOf("left")>0){
-        img.src="../../../humla/lib/ext/slideindex-down.png";
+        img.src="../../../humla/lib/ext/slideindex/slideindex-down.png";
         img.title = "Hide content";
         img.alt="Hide content";
         document.getElementById(idOflist).setAttribute("class", 'slideindex-visible');
     }else{
-        img.src="../../../humla/lib/ext/slideindex-left.png";  
+        img.src="../../../humla/lib/ext/slideindex/slideindex-left.png";  
         document.getElementById(idOflist).setAttribute("class", 'slideindex-hidden');
         img.title = "Show content";
         img.alt="Show content";

@@ -37,10 +37,10 @@ var ex_editor = {
             //            et += "</div>";
             
             var menuT  ="<ul style=\"list-style: none;\">";
-            menuT+="<li><a href=\""+link+"\" title=\"Edit slide\"><img src=\"../../../humla/lib/ext/editor-edit.png\" alt=\"Edit\"/>Edit slide</a></li>";
-            menuT+="<li><a href=\"javascript:removeSlide('"+course+"','"+lecture+"','"+slideNumber+"');\" title=\"Delete slide\"><img src=\"../../../humla/lib/ext/editor-delete.png\" alt=\"Delete\"/>Delete slide</a></li>";
+            menuT+="<li><a href=\""+link+"\" title=\"Edit slide\"><img src=\"../../../humla/lib/ext/editor/editor-edit.png\" alt=\"Edit\"/>Edit slide</a></li>";
+            menuT+="<li><a href=\"javascript:removeSlide('"+course+"','"+lecture+"','"+slideNumber+"');\" title=\"Delete slide\"><img src=\"../../../humla/lib/ext/editor/editor-delete.png\" alt=\"Delete\"/>Delete slide</a></li>";
             link = baseLink+"?lecture="+lecture+"&course="+course+"&append=true&slide="+slideNumber;
-            menuT+="<li><a  href=\""+link+"\" title=\"Append new slide after this\"><img src=\"../../../humla/lib/ext/editor-add.png\" alt=\"Append\"/>Append new slide</a></li>";
+            menuT+="<li><a  href=\""+link+"\" title=\"Append new slide after this\"><img src=\"../../../humla/lib/ext/editor/editor-add.png\" alt=\"Append\"/>Append new slide</a></li>";
             menuT+="</ul>";
             document.getElementById('menu-editor').innerHTML = "<span class='menu-close-button' onclick='humla.menu.showLayer(\"\",true);'>X</span><h1>Edit slide "+slide.number+"</h1>"+menuT;            
         }                   

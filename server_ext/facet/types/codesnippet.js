@@ -24,7 +24,7 @@ exports.parse = function(mapping, course, lecture, data){
     for(var j=0;j<data.items.length;j++){
         if(typeof data.items[j].type!="undefined"){// should be always true since microdataparser returns only typed items
             for(var i=0; i< data.items[j].type.length;i++){
-                if(data.items[j].type[i] === typePrefix+thisType ||  data.items[j].type[i] === typePrefix+childType+"/"+childType ){
+                if(data.items[j].type[i] === typePrefix+thisType ||  data.items[j].type[i] === typePrefix+childType ){
                     try{
                         toProcess.push(data.items[j]);
                     }catch(e){

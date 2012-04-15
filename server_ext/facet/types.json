@@ -7,88 +7,88 @@
     [
     {
         "property": "Slide: Importance",
-        "shortName": "Slide_Importance",
+        "shortName": "Humla/Slide_Importance",
         "type": "value",
     },
     {
         "property": "Slide: Keyword",
         "type": "value",
-        "shortName": "Slide_Keyword",
+        "shortName": "Humla/Slide_Keyword",
     },
     {
         "property": "Slide: Type",
         "type": "value",
-        "shortName": "Slide_Type",
+        "shortName": "Humla/Slide_Type",
     },
     {
         "property": "Google Books: Author",
         "type": "value",
-        "shortName": "Slideindex_Gbook_Author",
+        "shortName": "Humla/Slideindex_Gbook_Author",
     },
     {
         "property": "Google Books: Category",
         "type": "value",
-        "shortName": "Slideindex_Gbook_Author",
+        "shortName": "Humla/Slideindex_Gbook_Author",
     },
     {
         "property": "Google Drawing",
         "type": "boolean",
-        "shortName": "Slideindex_Gdrawing",
+        "shortName": "Humla/Slideindex_Gdrawing",
     },
     {
         "property": "Github Code Snippet",
         "type": "boolean",
-        "shortName": "Slideindex_Github",
+        "shortName": "Humla/Slideindex_Github",
     },
     {
         "property": "CodeSnippet language",
         "type": "value",
-        "shortName": "CodeSnippet",
+        "shortName": "Humla/CodeSnippet",
     },  
     {
         "property": "Algorithm type",
         "type": "value",
-        "shortName": "CodeSnippet/Algorithm_Type",
+        "shortName": "Humla/CodeSnippet/Algorithm_Type",
     },
     {
         "property": "Algorithm BigO",
         "type": "value",
-        "shortName": "CodeSnippet/Algorithm_BigO",
+        "shortName": "Humla/CodeSnippet/Algorithm_BigO",
     },
     {
         "property": "Tasks",
         "type": "boolean",
-        "shortName": "Tasks",
+        "shortName": "Humla/Tasks",
     },
      {
         "property": "Field",
         "type": "value",
-        "shortName": "Presentation_Field",
+        "shortName": "Humla/Presentation_Field",
     },
      {
         "property": "Author",
         "type": "value",
-        "shortName": "Presentation_Author",
+        "shortName": "Humla/Presentation_Author",
     },
      {
         "property": "Course",
         "type": "value",
-        "shortName": "Presentation_Course",
+        "shortName": "Humla/Presentation_Course",
     },
      {
         "property": "Presentation Keywords",
         "type": "value",
-        "shortName": "Presentation_Keyword",
+        "shortName": "Humla/Presentation_Keyword",
     },
      {
         "property": "Organization",
         "type": "value",
-        "shortName": "Presentation_Organization",
+        "shortName": "Humla/Presentation_Organization",
     },
      {
         "property": "FAQ",
         "type": "boolean",
-        "shortName": "Faq",
+        "shortName": "Humla/Faq",
     }
     ]
 }
