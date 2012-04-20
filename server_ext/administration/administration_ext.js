@@ -263,32 +263,51 @@ exports.createLecture = function(authorID, courseID, title, order, author, autho
                             }
 
                             c.author = decodeURIComponent(author);
-                            keywords += "";
-                            var k = (decodeURIComponent(keywords)).split(",");
-                            var k1 = new Array();
-                            k.forEach(function(i) {
-                                var i1 = i.replace(/^\s*/, "").replace(/\s*$/, "");
-                                if (i1.length > 0) {
-                                    k1.push(i1);
+//                            keywords += "";
+//                            var k = (decodeURIComponent(keywords)).split(",");
+//                            var k1 = new Array();
+//                            k.forEach(function(i) {
+//                                var i1 = i.replace(/^\s*/, "").replace(/\s*$/, "");
+//                                if (i1.length > 0) {
+//                                    k1.push(i1);
+//                                }
+//
+//                            });
+//                            c.keywords = k1;
+                            if (typeof keywords != "undefined" && keywords.length > 0) {
+                                var tmpA = new Array();
+                                for (var ww = 0; ww < keywords.length; ww++) {
+                                    tmpA.push(keywords[ww]);
                                 }
-
-                            });
-                            c.keywords = k1;
-
-                            coauthors += "";
-                            if (coauthors.length > 0) {
-                                k = (decodeURIComponent(coauthors)).split(",");
-                                k1 = new Array();
-                                k.forEach(function(i) {
-                                    var i1 = i.replace(/^\s*/, "").replace(/\s*$/, "");
-                                    if (i1.length > 0) {
-                                        k1.push(i1);
-                                    }
-                                });
-                                c.coauthors = k1;
+                                c.keywords = tmpA;
                             } else {
-                                c.coauthors = [];
+                                c.keywords = new Array();
                             }
+
+                            if (typeof coauthors != "undefined" && coauthors.length > 0) {
+                                var tmpA = new Array();
+                                for (var ww = 0; ww < coauthors.length; ww++) {
+                                    tmpA.push(coauthors[ww]);
+                                }
+                                c.coauthors = tmpA;
+                            } else {
+                                c.coauthors = new Array();
+                            }
+
+//                            coauthors += "";
+//                            if (coauthors.length > 0) {
+//                                k = (decodeURIComponent(coauthors)).split(",");
+//                                k1 = new Array();
+//                                k.forEach(function(i) {
+//                                    var i1 = i.replace(/^\s*/, "").replace(/\s*$/, "");
+//                                    if (i1.length > 0) {
+//                                        k1.push(i1);
+//                                    }
+//                                });
+//                                c.coauthors = k1;
+//                            } else {
+//                                c.coauthors = [];
+//                            }
 
                             c.save(function(err) {
                                 if (err) {
@@ -388,40 +407,60 @@ exports.editLecture = function(user, _id, title, order, author, authorEmail, aut
                     c.lectureAbstract = (typeof abs == "undefined") ? '' : decodeURIComponent(abs);
                     c.lastModified = new Date();
                     c.author = (typeof author == "undefined") ? c.author : decodeURIComponent(author);
-                    keywords += "";
-                    if (keywords.length > 0) {
-                        var k = (decodeURIComponent(keywords)).split(",");
-                        var k1 = new Array();
-                        k.forEach(function(i) {
-                            var i1 = i.replace(/^\s*/, "").replace(/\s*$/, "");
+//                    keywords += "";
+//                    if (keywords.length > 0) {
+//                        var k = (decodeURIComponent(keywords)).split(",");
+//                        var k1 = new Array();
+//                        k.forEach(function(i) {
+//                            var i1 = i.replace(/^\s*/, "").replace(/\s*$/, "");
+//
+//                            if (i1.length > 0) {
+//                                k1.push(i1);
+//                            }
+//
+//                        });
+//                        c.keywords = k1;
+//
+//                    } else {
+//                        c.keywords = [];
+//                    }
 
-                            if (i1.length > 0) {
-                                k1.push(i1);
-                            }
-
-                        });
-                        c.keywords = k1;
-
+                    if (typeof keywords != "undefined" && keywords.length > 0) {
+                        var tmpA = new Array();
+                        for (var ww = 0; ww < keywords.length; ww++) {
+                            tmpA.push(keywords[ww]);
+                        }
+                        c.keywords = tmpA;
                     } else {
-                        c.keywords = [];
+                        c.keywords = new Array();
                     }
 
-                    coauthors += "";
-                    if (coauthors.length > 0) {
-                        k = (decodeURIComponent(coauthors)).split(",");
-                        k1 = new Array();
-                        k.forEach(function(i) {
-                            var i1 = i.replace(/^\s*/, "").replace(/\s*$/, "");
+//                    coauthors += "";
+//                    if (coauthors.length > 0) {
+//                        k = (decodeURIComponent(coauthors)).split(",");
+//                        k1 = new Array();
+//                        k.forEach(function(i) {
+//                            var i1 = i.replace(/^\s*/, "").replace(/\s*$/, "");
+//
+//                            if (i1.length > 0) {
+//                                k1.push(i1);
+//                            }
+//
+//                        });
+//                        c.coauthors = k1;
+//
+//                    } else {
+//                        c.coauthors = [];
+//                    }
 
-                            if (i1.length > 0) {
-                                k1.push(i1);
-                            }
-
-                        });
-                        c.coauthors = k1;
-
+                    if (typeof coauthors != "undefined" && coauthors.length > 0) {
+                        var tmpA = new Array();
+                        for (var ww = 0; ww < coauthors.length; ww++) {
+                            tmpA.push(coauthors[ww]);
+                        }
+                        c.coauthors = tmpA;
                     } else {
-                        c.coauthors = [];
+                        c.coauthors = new Array();
                     }
 
                     c.save(function(err) {

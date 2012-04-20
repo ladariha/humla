@@ -9,7 +9,19 @@ function submitNewLectureForm() {
         lecture.courseID = encodeURIComponent(document.getElementById('course').value);
         lecture.title = encodeURIComponent(document.getElementById('title').value);
         lecture.author = encodeURIComponent(document.getElementById('author').value);
-        lecture.keywords = encodeURIComponent(document.getElementById('keywords').value);
+
+        var k1 = new Array();
+        var k = ((document.getElementById('keywords').value + "")).split(",");
+        for (var l = 0; l < k.length;l++) {
+            var i1 = k[l].replace(/^\s*/, "").replace(/\s*$/, "");
+            if (i1.length > 0) {
+                k1.push(i1);
+            }
+        }
+        lecture.keywords=k1;
+        
+        
+
         lecture.order = encodeURIComponent(document.getElementById('order').value);
         lecture.isActive = encodeURIComponent(document.getElementById('visible').value);
         var url = '/api/' + lecture.courseID + "/lecture" + lecture.order + "/lecture";
@@ -17,17 +29,30 @@ function submitNewLectureForm() {
         lecture.authorEmail = encodeURIComponent(document.getElementById('authorEmail').value);
         lecture.authorTwitter = encodeURIComponent(document.getElementById('authorTwitter').value);
         lecture.authorWeb = encodeURIComponent(document.getElementById('authorWeb').value);
-        lecture.org = encodeURIComponent(document.getElementById('org').value);
-        lecture.orgfac = encodeURIComponent(document.getElementById('orgfac').value);
-        lecture.spec = encodeURIComponent(document.getElementById('spec').value);
-        lecture.coauthors = encodeURIComponent(document.getElementById('coauthors').value);
-        lecture.abs = encodeURIComponent(document.getElementById('abs').value);
+        lecture.organization = encodeURIComponent(document.getElementById('org').value);
+        lecture.organizationFac = encodeURIComponent(document.getElementById('orgfac').value);
+        lecture.field = encodeURIComponent(document.getElementById('spec').value);
+
+        var k2 = new Array();
+        k = ((document.getElementById('coauthors').value + "")).split(",");
+        for (var l = 0; l < k.length;l++) {
+            var i1 = k[l].replace(/^\s*/, "").replace(/\s*$/, "");
+            if (i1.length > 0) {
+                k2.push(i1);
+            }
+        }
+        lecture.coauthors=k2;
+        
+        lecture.lectureAbstract = encodeURIComponent(document.getElementById('abs').value);
         lecture.web = encodeURIComponent(document.getElementById('web').value);
         var request = new XMLHttpRequest();
         request.open("POST", url, true);
         request.setRequestHeader("Content-type", "application/json");
         request.onreadystatechange = function() {
             if (request.readyState == 4) {
+                $("html, body").animate({
+                        scrollTop: 0
+                    }, "slow");
                 if (request.status == 200) {
                     var object = eval('(' + request.responseText + ')');
                     document.getElementById('msg').innerHTML = 'Lecture ' + object.title + ' created';
