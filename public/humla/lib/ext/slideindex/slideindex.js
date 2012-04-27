@@ -69,25 +69,28 @@ var ex_slideindex = {
     gbooksToHtml : function(index){
         var ul = "<p>Google Books:   <img src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\"  class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-gbooks-top');\" title=\"Show content\" alt=\"Show content\"/></p><ul id=\"slideindex-gbooks-top"+"\" class=\"slideindex-hidden\" >";
         for(var i in index.gbooks){
-            var d = index.gbooks[i];
-            ul+="<li class=\"slideindex-li\">"+d.title;
-            ul+="<img src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-gbooks"+i+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-gbooks"+i+"\" class=\"slideindex-hidden\" >\n";
-            ul+="<li class=\"slideindex-li\">Slide: <a href=\"http://"+d.slide+"\">"+d.slide+"</a> </li>"
-            var t = "";
-            for(var j in d.author){
-                t +=d.author[j]+",";
-            }
+            try{
+                var d = index.gbooks[i];
+                ul+="<li class=\"slideindex-li\">"+d.title;
+                ul+="<img src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-gbooks"+i+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-gbooks"+i+"\" class=\"slideindex-hidden\" >\n";
+                ul+="<li class=\"slideindex-li\">Slide: <a href=\"http://"+d.slide+"\">"+d.slide+"</a> </li>"
+                var t = "";
+                for(var j in d.author){
+                    t +=d.author[j]+",";
+                }
                
-            ul+="<li class=\"slideindex-li\">Author: "+t.substr(0, t.length-1)+"</li>"
-            t = "";
-            for(var j in d.category){
-                t +=d.category[j]+", ";
-            }
+                ul+="<li class=\"slideindex-li\">Author: "+t.substr(0, t.length-1)+"</li>"
+                t = "";
+                for(var j in d.category){
+                    t +=d.category[j]+", ";
+                }
                
-            ul+="<li class=\"slideindex-li\">Category: "+t.substr(0, t.length-1)+"</li>"
-            ul+="<li class=\"slideindex-li\">ID: "+d.id+"</li>";
-            ul+="<li class=\"slideindex-li\">URL: <a href=\""+d.url+"\">Google Books</a></li>";
-            ul+="</ul></li>";
+                ul+="<li class=\"slideindex-li\">Category: "+t.substr(0, t.length-1)+"</li>"
+                ul+="<li class=\"slideindex-li\">ID: "+d.id+"</li>";
+                ul+="<li class=\"slideindex-li\">URL: <a href=\""+d.url+"\">Google Books</a></li>";
+                ul+="</ul></li>"; 
+            }catch(e){}
+            
         }
         
         ul+="</ul>"
@@ -98,18 +101,21 @@ var ex_slideindex = {
     imagesToHtml : function(index){
         var ul = "<p>Images:   <img class=\"slideindex-img-pointer\" src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" onClick=\"dropdown(this, 'slideindex-images-top');\" title=\"Show content\" alt=\"Show content\"/></p><ul id=\"slideindex-images-top"+"\" class=\"slideindex-hidden\" >";
         for(var i in index.images){
-            var d = index.images[i];
-            ul+="<li class=\"slideindex-li\">";
+            try{
+                var d = index.images[i];
+                ul+="<li class=\"slideindex-li\">";
             
-            if(d.alt.length>0){
-                ul+=d.alt;
-            }else{
-                ul+=d.filename;
+                if(typeof d.alt!="undefined" && d.alt.length>0){
+                    ul+=d.alt;
+                }else{
+                    ul+=d.filename;
+                }
+                ul+="<img src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-images"+i+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-images"+i+"\" class=\"slideindex-hidden\" >\n";
+                ul+="<li class=\"slideindex-li\">Slide: <a href=\"http://"+d.slideURL+"\">"+d.slideURL+"</a> </li>"
+                ul+="<li class=\"slideindex-li\">Filename: "+d.filename+"</li>"
+                ul+="</ul></li>"; 
+            }catch(e){   
             }
-            ul+="<img src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-images"+i+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-images"+i+"\" class=\"slideindex-hidden\" >\n";
-            ul+="<li class=\"slideindex-li\">Slide: <a href=\"http://"+d.slideURL+"\">"+d.slideURL+"</a> </li>"
-            ul+="<li class=\"slideindex-li\">Filename: "+d.filename+"</li>"
-            ul+="</ul></li>";
         }
         
         ul+="</ul>"
@@ -119,20 +125,25 @@ var ex_slideindex = {
     drawingsToHtml : function(index){
         var ul = "<p>Google Drawings:   <img class=\"slideindex-img-pointer\" src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" onClick=\"dropdown(this, 'slideindex-drawings-top');\" title=\"Show content\" alt=\"Show content\"/></p><ul id=\"slideindex-drawings-top"+"\" class=\"slideindex-hidden\" >";
         for(var i in index.drawings){
-            var d = index.drawings[i];
-            ul+="<li class=\"slideindex-li\">";
+            try{
+                var d = index.drawings[i];
+                ul+="<li class=\"slideindex-li\">";
             
-            if(d.alt.length>0){
-                ul+=d.alt;
-            }else{
-                ul+=d.filename;
+                if(typeof d.alt!="undefined" && d.alt.length>0){
+                    ul+=d.alt;
+                }else{
+                    ul+=d.filename;
+                }
+                ul+="<img src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-drawings"+i+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-drawings"+i+"\" class=\"slideindex-hidden\" >\n";
+                ul+="<li class=\"slideindex-li\">Slide: <a href=\"http://"+d.slide+"\">"+d.slide+"</a> </li>"
+                ul+="<li class=\"slideindex-li\">Filename: "+d.filename+"</li>"
+                ul+="<li class=\"slideindex-li\">ID: "+d.id+"</li>"
+                ul+="<li class=\"slideindex-li\">Export URL: <a href=\""+d.exportURL+"\">Google Drawings</a> </li>";
+                ul+="</ul></li>"; 
+            }catch(e){
+                
             }
-            ul+="<img src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-drawings"+i+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-drawings"+i+"\" class=\"slideindex-hidden\" >\n";
-            ul+="<li class=\"slideindex-li\">Slide: <a href=\"http://"+d.slide+"\">"+d.slide+"</a> </li>"
-            ul+="<li class=\"slideindex-li\">Filename: "+d.filename+"</li>"
-            ul+="<li class=\"slideindex-li\">ID: "+d.id+"</li>"
-            ul+="<li class=\"slideindex-li\">Export URL: <a href=\""+d.exportURL+"\">Google Drawings</a> </li>";
-            ul+="</ul></li>";
+           
         }
         
         ul+="</ul>"
@@ -142,21 +153,26 @@ var ex_slideindex = {
     githubToHtml : function(index){
         var ul = "<p>Github code blocks:   <img class=\"slideindex-img-pointer\" src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" onClick=\"dropdown(this, 'slideindex-github-top');\" title=\"Show content\" alt=\"Show content\"/></p><ul id=\"slideindex-github-top"+"\" class=\"slideindex-hidden\" >";
         for(var i in index.github){
-            var d = index.github[i];
-            ul+="<li class=\"slideindex-li\">";
+            try{
+                var d = index.github[i];
+                ul+="<li class=\"slideindex-li\">";
             
-            if(d.title.length>0){
-                ul+=d.slide_title;
-            }else{
-                ul+=d.file;
+                if(typeof d.title!="undefined" && d.title.length>0){
+                    ul+=d.slide_title;
+                }else{
+                    ul+=d.file;
+                }
+                ul+="<img src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-github"+i+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-github"+i+"\" class=\"slideindex-hidden\" >\n";
+                ul+="<li class=\"slideindex-li\">Slide: <a href=\"http://"+d.slide+"\">"+d.slide+"</a> </li>"
+                ul+="<li class=\"slideindex-li\">Filename: "+d.file+"</li>"
+                if(d.owner.length>0){
+                    ul+="<li class=\"slideindex-li\">Owner: "+d.owner+"</li>"
+                }
+                ul+="</ul></li>"; 
+            }catch(e){
+                
             }
-            ul+="<img src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-github"+i+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-github"+i+"\" class=\"slideindex-hidden\" >\n";
-            ul+="<li class=\"slideindex-li\">Slide: <a href=\"http://"+d.slide+"\">"+d.slide+"</a> </li>"
-            ul+="<li class=\"slideindex-li\">Filename: "+d.file+"</li>"
-            if(d.owner.length>0){
-                ul+="<li class=\"slideindex-li\">Owner: "+d.owner+"</li>"
-            }
-            ul+="</ul></li>";
+           
         }
         
         ul+="</ul>"
@@ -166,15 +182,19 @@ var ex_slideindex = {
     codeBlocksToHtml : function(index){
         var ul = "<p>Code blocks:   <img class=\"slideindex-img-pointer\" src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" onClick=\"dropdown(this, 'slideindex-codes-top');\" title=\"Show content\" alt=\"Show content\"/></p><ul id=\"slideindex-codes-top"+"\" class=\"slideindex-hidden\" >";
         for(var i in index.codeBlocks){
-            var d = index.codeBlocks[i];
-            ul+="<li class=\"slideindex-li\">";
+            try{
+                var d = index.codeBlocks[i];
+                ul+="<li class=\"slideindex-li\">";
+                ul+=d.title;
             
-            ul+=d.title;
-            
-            ul+="<img src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-codes"+i+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-codes"+i+"\" class=\"slideindex-hidden\" >\n";
-            ul+="<li class=\"slideindex-li\">Slide: <a href=\"http://"+d.slideURL+"\">"+d.slideURL+"</a> </li>"
-            ul+="<li class=\"slideindex-li\">Language: "+d.language+"</li>"
-            ul+="</ul></li>";
+                ul+="<img src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-codes"+i+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-codes"+i+"\" class=\"slideindex-hidden\" >\n";
+                ul+="<li class=\"slideindex-li\">Slide: <a href=\"http://"+d.slideURL+"\">"+d.slideURL+"</a> </li>"
+                ul+="<li class=\"slideindex-li\">Language: "+d.language+"</li>"
+                ul+="</ul></li>"; 
+            }catch(e){
+                
+            }
+           
         }
         
         ul+="</ul>"
@@ -184,27 +204,33 @@ var ex_slideindex = {
     structureToHtml : function(index){
         var ul = "<p>Slides:</p><ul class=\"slideindex-ul\">\n";
         for(var item in index.structure.index){
-            var t = index.structure.index[item]; 
-            ul +="<li class=\"slideindex-li\"><a class=\"slideindex-structure-top\" href=\"http://"+t.url+"\">"+t.title+"</a>\n"
             
-            if(t.chapters && t.chapters.length>0){
-                ul+="<img src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-structure-secondLevel"+item+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-structure-secondLevel"+item+"\" class=\"slideindex-hidden\" >\n";
-                for(var chapter in t.chapters){
-                    var ch = t.chapters[chapter];
-                    ul +="<li class=\"slideindex-li\"><a class=\"slideindex-structure-chapter\" href=\"http://"+ch.url+"\">"+ch.title+"</a>\n"
-                    if(ch.slides && ch.slides.length>0){
-                        ul+="<img src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-structure-thirdLevel"+chapter+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-structure-thirdLevel"+chapter+"\" class=\"slideindex-hidden\" >\n";
-                        for(var s in ch.slides){
-                            var simpleSlide = ch.slides[s];
-                            ul +="<li class=\"slideindex-li\"><a class=\"slideindex-structure-slide\" href=\"http://"+simpleSlide.url+"\">"+simpleSlide.title+"</a>\n"
+            try{
+                var t = index.structure.index[item]; 
+                ul +="<li class=\"slideindex-li\"><a class=\"slideindex-structure-top\" href=\"http://"+t.url+"\">"+t.title+"</a>\n"
+            
+                if(t.chapters && t.chapters.length>0){
+                    ul+="<img src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-structure-secondLevel"+item+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-structure-secondLevel"+item+"\" class=\"slideindex-hidden\" >\n";
+                    for(var chapter in t.chapters){
+                        var ch = t.chapters[chapter];
+                        ul +="<li class=\"slideindex-li\"><a class=\"slideindex-structure-chapter\" href=\"http://"+ch.url+"\">"+ch.title+"</a>\n"
+                        if(ch.slides && ch.slides.length>0){
+                            ul+="<img src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" class=\"slideindex-img-pointer\" onClick=\"dropdown(this, 'slideindex-structure-thirdLevel"+chapter+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-structure-thirdLevel"+chapter+"\" class=\"slideindex-hidden\" >\n";
+                            for(var s in ch.slides){
+                                var simpleSlide = ch.slides[s];
+                                ul +="<li class=\"slideindex-li\"><a class=\"slideindex-structure-slide\" href=\"http://"+simpleSlide.url+"\">"+simpleSlide.title+"</a>\n"
                      
+                            }
+                            ul +="</ul>\n"
                         }
-                        ul +="</ul>\n"
                     }
+                    ul +="</ul>\n"
                 }
-                ul +="</ul>\n"
+                ul += "</li>"; 
+            }catch(e){
+                
             }
-            ul += "</li>";
+            
         }
         ul+="</ul>"
         return ul;

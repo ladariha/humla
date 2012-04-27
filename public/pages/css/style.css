@@ -196,6 +196,15 @@ nav #presentations:hover {
     border-right: 1px solid #8C5D26;    
 
 }
+
+nav #facet:hover {
+    background: #3cb90e ;
+    border-left: 1px solid #8C5D26;
+    border-top: 1px solid #8C5D26;
+    border-right: 1px solid #8C5D26;    
+
+}
+
 nav #tools:hover {
     background: #3F9DCD;
     border-left: 1px solid #26698C;
