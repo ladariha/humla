@@ -24,13 +24,13 @@ server.run();
 // cron patterns http://help.sap.com/saphelp_xmii120/helpdata/en/44/89a17188cc6fb5e10000000a155369/content.htm
 
 // ATOM UPDATE EVERY 2 HOURS
-cronJob('0 0 */2 * * *',  function(){ 
+cronJob(config.server.atom_refresh_interval,  function(){ 
     var atom = require((path.join(path.dirname(__filename), './server_ext/atom')).toString()+"/atom_module_ext.js");    
     atom.updateAllFeed(config.server.domain+":"+config.server.port); // TODO 
 });
 
 // REFRESHING INDEX FILES AND FACET RECORDS
-cronJob('0 * * * * *',function(){
+cronJob(config.server.mm_lectures_interval,function(){
     var maintenance = require((path.join(path.dirname(__filename), './server_ext/maintenance')).toString()+"/maintenance_lecture_ext.js");    
     maintenance.refreshLectures();
 });

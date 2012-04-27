@@ -5,6 +5,7 @@
 var mongoose = require("mongoose"); 
 var FacetRecord = mongoose.model("FacetRecord");
 var Slideid = mongoose.model("Slideid");
+var ObjectId = require('mongoose').Types.ObjectId; 
 
 var typePrefix =require("../facetengine_ext.js").prefix;
 var thisType = "Slide";
@@ -34,7 +35,7 @@ exports.parse = function(mapping, course, lecture, data){
             }
         }
     }
-    clearRecords(notToDelete, mapping);
+  clearRecords(notToDelete, mapping);
 }
 
 function clearRecords(notToDelete, mapping){
@@ -44,24 +45,32 @@ function clearRecords(notToDelete, mapping){
     
     // slides to delete are mapping\notToDelete
     
-    var toDelete = [];
     for(var j in mapping){
         if(typeof notToDelete[j]!="undefined"){// so it was already taken care of => nothing to do
         }else{ // remove the record
-            var a = {};
-            a._id = mapping[j];
-            toDelete.push(mapping[j]);
+            
+            try{
+            var query =  FacetRecord.remove({});
+            var prefix =new RegExp("^"+typePrefix+thisType+"_");
+            query.where('type',prefix);
+            query.where('id_',mapping[j]);
+            query.exec(function(a){
+            });
+            }catch(e){
+                console.log(e);
+            }
+            
         }
     }
     // toDelete contains _id values
     
-    if(toDelete.length>0){
-        var query =  FacetRecord.remove({});
-        query.or(toDelete);
-        var prefix =new RegExp("^"+typePrefix+thisType+"_");
-        query.where('type',prefix);
-        query.exec(function(a){});
-    }
+//    if(toDelete.length>0){
+//        var query =  FacetRecord.remove({});
+//        query.or(toDelete);
+//        var prefix =new RegExp("^"+typePrefix+thisType+"_");
+//        query.where('type',prefix);
+//        query.exec(function(a){});
+//    }
 }
 
 
@@ -87,7 +96,7 @@ function parseSlideType(mapping, item, course, lecture){
             slideid: _id
         }, function(err,crs){  // investigate all existing records
             if(err){
-             console.error(err);
+                console.error(err);
             }else{
                 if(crs.length >0){
                     
@@ -110,12 +119,12 @@ function parseSlideType(mapping, item, course, lecture){
                         if(crs[i].value.length>0){ // if there is a value, save it
                             crs[i].save(function (err){
                                 if(err)
-                                 console.error("Problem saving FacetRecord: "+err);
+                                    console.error("Problem saving FacetRecord: "+err);
                             });
                         }else{ // otherwise no reason to keep empty record
                             crs[i].remove(function (err){
                                 if(err)
-                                  console.error("Problem saving FacetRecord: "+err);
+                                    console.error("Problem saving FacetRecord: "+err);
                             });
                         } 
                     }
@@ -130,7 +139,7 @@ function parseSlideType(mapping, item, course, lecture){
                             a.slideid = _id;
                             a.save(function (err){
                                 if(err)
-                                   console.error("Problem saving FacetRecord: "+err);
+                                    console.error("Problem saving FacetRecord: "+err);
                             });   
                         }
                         
@@ -141,7 +150,7 @@ function parseSlideType(mapping, item, course, lecture){
                             a.slideid = _id;
                             a.save(function (err){
                                 if(err)
-                                console.error("Problem saving FacetRecord: "+err);
+                                    console.error("Problem saving FacetRecord: "+err);
                             });   
                         }
                         
@@ -155,7 +164,7 @@ function parseSlideType(mapping, item, course, lecture){
                             a.slideid = _id;
                             a.save(function (err){
                                 if(err)
-                                   console.error("Problem saving FacetRecord: "+err);
+                                    console.error("Problem saving FacetRecord: "+err);
                             });   
                         }
                         break;
@@ -192,7 +201,7 @@ function parseSlideType(mapping, item, course, lecture){
                             a.slideid = _id;
                             a.save(function (err){
                                 if(err)
-                                console.error("Problem saving FacetRecord: "+err);
+                                    console.error("Problem saving FacetRecord: "+err);
                             });
                         }else{ // if the keyword is in db, let it be there
                             delete keywordRecords[item.properties.keywords[j]]; // so the values left in keywordRecords are meant to be deleted
@@ -203,7 +212,7 @@ function parseSlideType(mapping, item, course, lecture){
                         if(typeof keywordRecords[k]!="undefined"){
                             keywordRecords[k].remove(function (err){
                                 if(err)
-                                   console.error("Problem saving FacetRecord: "+err);
+                                    console.error("Problem saving FacetRecord: "+err);
                             });
                         }
                     } 
@@ -217,7 +226,7 @@ function parseSlideType(mapping, item, course, lecture){
                             a.slideid = _id;
                             a.save(function (err){
                                 if(err)
-                                     console.error("Problem saving FacetRecord: "+err);
+                                    console.error("Problem saving FacetRecord: "+err);
                             });
                         }
                     }
@@ -227,7 +236,7 @@ function parseSlideType(mapping, item, course, lecture){
                         if(typeof keywordRecords[key]!="undefined"){
                             keywordRecords[key].remove(function (err){
                                 if(err)
-                                   console.error("Problem saving FacetRecord: "+err);
+                                    console.error("Problem saving FacetRecord: "+err);
                             });
                         }
                     }

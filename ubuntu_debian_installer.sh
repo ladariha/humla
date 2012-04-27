@@ -128,10 +128,10 @@ if command -v npm >/dev/null 2>&1; then
 	rm mongo.tgz
 	
 	## data directory
-	sudo mkdir -p ./humladb/
-	sudo chown `id -u` ./humladb
+	sudo mkdir -p ./db/humla/
+	sudo chown `id -u` ./db/humla
 
-	echo "MongoDB ready, to start it run './mongo/bin/mongod --dbpath ~/$1/humladb --oplogSize 200 --smallfiles'"
+	echo "MongoDB ready, to start it run './mongo/bin/mongod --dbpath ~/$1/db/humla --oplogSize 200 --smallfiles'"
 
 USERNAME=`logname`
 GROUP=`id -g -n $USERNAME`
