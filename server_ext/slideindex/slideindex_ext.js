@@ -106,6 +106,7 @@ exports.indexRest = getIndex;
  * @param callback if index is retrieving via internal API, the callback parameter is a function that will be called when index is constructed (if called via REST should be omitted OR undefined)
  */
 function getIndex(res, course, lecture, alt, url, host, refresh, callback){
+    console.log("HOST  "+host);
     try{
         var pathToCourse =course+'/';
         var filename = lecture;
@@ -173,8 +174,8 @@ function returnData(res, contentType, callback, data){
         if(typeof callback!="undefined")
             callback(null, data);
         else
-              console.error("Nor HTTP Response or callback function defined! - Slideindex");
-//            throw "Nor HTTP Response or callback function defined!";
+            console.error("Nor HTTP Response or callback function defined! - Slideindex");
+    //            throw "Nor HTTP Response or callback function defined!";
     }
 }
 
@@ -183,16 +184,18 @@ function returnData(res, contentType, callback, data){
  */
 function returnThrowError(code, msg, res, callback){
     if(typeof res!="undefined")
-         {    res.writeHead(code, {
+    {
+        res.writeHead(code, {
             'Content-Type': 'text/plain'
         });
         res.write(msg);
-        res.end(); }
+        res.end();
+    }
     else{
         if(typeof callback!="undefined"){
             callback(msg, null);
         }else{
-           console.error(msg);
+            console.error(msg);
         }
     }       
 }
@@ -307,6 +310,9 @@ function parseDocument(res, body, pathToCourse, filename, lecture, course, alt, 
                             }
                         }  
                     };
+                    
+                    var baseURL = slideIndex.host+ RAW_SLIDES_DIRECTORY+slideIndex.course+"/"+slideIndex.lecture+".html"; //GENERAL_LECTURE_NAME+
+                    slideIndex.baseURL = baseURL;
                     slideIndex.response = res;
                     try{
                         parseTitles(slideIndex, $);
@@ -383,7 +389,7 @@ function getDocumentFromUrl(res, url, pathToCourse, filename, lecture, course, a
             if(res.statusCode === 200){
                 parseDocument(res, content, pathToCourse, filename,lecture, course, alt, host, callback);
             }else{
-                 returnThrowError(res.statusCode, e.message, res, callback);
+                returnThrowError(res.statusCode, e.message, res, callback);
             }   
         }); 
     });
@@ -477,8 +483,8 @@ function parseTitles(slideIndex,$){
                                 sec=decodeURI($(this).text()).trim();
                                 var tmp = {
                                     parentSection: parent,
-                                    title: sec,
-                                    ro:pointerP[parent]
+                                    title: sec
+                                //                                    ro:pointerP[parent]
                                 };
                                 pointerP[parent]++;
                                 slideIndex.content.slides.chapterSlide.push(tmp);
@@ -493,8 +499,8 @@ function parseTitles(slideIndex,$){
                                             sec=decodeURI($(this).text()).trim();
                                             var tmp = {
                                                 parentChapter: chapterParent,
-                                                title: sec,
-                                                ro:pointerP[parent]
+                                                title: sec
+                                            //                                                ro:pointerP[parent]
                                             };
                                             pointerP[parent]++;
                                             slideIndex.content.slides.simpleSlide.push(tmp);
@@ -508,8 +514,8 @@ function parseTitles(slideIndex,$){
                                             sec = decodeURI($(this).text()).trim();
                                             var tmp = {
                                                 parentSection: parent,
-                                                title: sec,
-                                                ro:pointerP[parent]
+                                                title: sec
+                                            //                                                ro:pointerP[parent]
                                             };
                                             pointerP[parent]++;
                                             chapterParent++;
@@ -607,21 +613,18 @@ function parseImagesAndCodeBlocks(slideIndex,$){
  *@return hiararchical structure
  */
 function makeStructureHierarchical(slideIndex){
-    
+
     var _arr = {};
     for(var a=0;a<slideIndex.content.slides.titles.length;a++){
         _arr[slideIndex.content.slides.titles[a].order] = slideIndex.content.slides.titles[a];
     }
     var sections = {};
     var newcontent = new Array();
-    var baseURL = slideIndex.host+ RAW_SLIDES_DIRECTORY+slideIndex.course+"/"+slideIndex.lecture+".html"; //GENERAL_LECTURE_NAME+
     var counter = 1;
-    slideIndex.baseURL = baseURL;
-    baseURL = baseURL + "#!/";
+    var baseURL = slideIndex.baseURL + "#!/";
     for(var section in slideIndex.content.slides.sectionSlide){
         counter++;
         var tmp = {};
-        //        tmp.chapters = new Array();
         tmp.title  = slideIndex.content.slides.sectionSlide[section];
         tmp.url = baseURL+counter;
         if(typeof _arr[counter]!="undefined")
@@ -651,14 +654,43 @@ function makeStructureHierarchical(slideIndex){
                             slide.slideid = _arr[counter].slideid;
                         
                         slide.url = baseURL+counter;
-                        chapter.slides.push(slide);
+                        chapter.slides.push(slide);     
                     }         
-                }   
+                }       
                 tmp.chapters.push(chapter);    
             }     
         }
         newcontent.push(tmp);    
     } 
+    
+    var c = 1;
+    var sec =1;
+    var first = true;
+    for(var q in newcontent){
+        first = true;
+        c++;
+        sec = c;
+        newcontent[q].url = baseURL+c;
+        for(var qq in newcontent[q].chapters){
+            if(typeof newcontent[q].chapters[qq].slides!="undefined" && newcontent[q].chapters[qq].slides.length>0){
+                if(first){
+                    newcontent[q].chapters[qq].url = baseURL+sec;
+                }else{
+                    c++;
+                    newcontent[q].chapters[qq].url = baseURL+c;
+                }
+                for(var qqq in newcontent[q].chapters[qq].slides){
+                    c++;
+                    newcontent[q].chapters[qq].slides[qqq].url = baseURL+c;
+                }
+            }else{
+                c++;
+                newcontent[q].chapters[qq].url = baseURL+c;
+            }
+            first = false;    
+        }
+        
+    }  
     sections.index = newcontent;
     return sections;
 }
@@ -672,9 +704,9 @@ function makeStructureHierarchical(slideIndex){
  */
 function createXMLIndex(object,root, url){
     if(typeof root!="undefined"){
-    return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<"+root+" url=\""+url+" \">"+parseObjectToXML(object, 0)+"</"+root+">";
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<"+root+" url=\""+url+" \">"+parseObjectToXML(object, 0)+"</"+root+">";
     }else{
-    return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<data>"+parseObjectToXML(object, 0)+"</data>";    
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<data>"+parseObjectToXML(object, 0)+"</data>";    
     }
 }
 
