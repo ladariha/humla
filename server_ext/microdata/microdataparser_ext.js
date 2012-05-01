@@ -1,7 +1,7 @@
 /**
  * @author Vladimir Riha <rihavla1> URL: https://github.com/ladariha
  */
-
+var RELATIVE_PATH_TO_JQUERY = "../../public/lib/jquery-1.7.min.js";
 var jsdom = require('jsdom');
 /**
  * Finds all microdata items (or only type restricted by <code>type</code> parameter) and after
@@ -14,7 +14,7 @@ var jsdom = require('jsdom');
 exports.items = function(presentationURL, html, type, callback){
     try{
         var    window = jsdom.jsdom().createWindow();
-        jsdom.jQueryify(window, "../../public/lib/jquery-1.7.min.js", function() {
+        jsdom.jQueryify(window, RELATIVE_PATH_TO_JQUERY, function() {
             window.jQuery('html').append(html);
             var  $ = window.jQuery;
             var baseUrl='';
@@ -72,7 +72,7 @@ exports.items = function(presentationURL, html, type, callback){
 exports.vcards = function(presentationURL, html, type,callback){
     try{
         var    window = jsdom.jsdom().createWindow();
-        jsdom.jQueryify(window, "../../public/lib/jquery-1.7.min.js", function() {
+        jsdom.jQueryify(window, RELATIVE_PATH_TO_JQUERY, function() {
             window.jQuery('html').append(html);
             var  $ = window.jQuery;
             var baseUrl='';
@@ -125,7 +125,7 @@ exports.vcards = function(presentationURL, html, type,callback){
 exports.itemsFaceted = function(html, type, callback, slideNumber){
     try{
         var    window = jsdom.jsdom().createWindow();
-        jsdom.jQueryify(window, "../../public/lib/jquery-1.7.min.js", function() {
+        jsdom.jQueryify(window, RELATIVE_PATH_TO_JQUERY, function() {
             window.jQuery('html').append(html);
             var  $ = window.jQuery;
             var baseUrl='';

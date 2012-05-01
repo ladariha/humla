@@ -42,6 +42,7 @@ app.get('/api/info/courses', function(req, res){
         isActive:true
         
     }, function(err,crs){   
+        //        if(false){
         if(!err && crs.length > 0) {
             var courses = [];
             crs.forEach(function(course){
@@ -105,7 +106,16 @@ function getCoursesFromFS(req, res){
             res.write('404 Not found');
             res.end();
         }else{  
+            var list2 = [];
+            for(var a in list){
+                if(list[a].indexOf(".xml")<0){
+                    list2.push(list[a]);
+                }
+            }
+        
+        
             saveCoursesToDB(req,list);
+        
             res.writeHead(200, {
                 'Content-Type': 'application/json'
             });

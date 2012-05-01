@@ -5,8 +5,7 @@
 
 var ctrlDown = false;
 var container = new FacetedContainer();
-var LIMIT = 3600000;
-LIMIT = 1;
+var LIMIT = 5*3600000;
 window.onload = function(){
     
     $(document).keydown(function(e)
@@ -208,7 +207,6 @@ function FacetedContainer(){
                 }
             }
         };
-        console.log(JSON.stringify(q));
         request.send(JSON.stringify(q));
     };
     
