@@ -112,8 +112,8 @@ function DataAccess() {
                 console.log("_"+c.presentationURL);
                 new_element.setAttribute('data-link', c.presentationURL);        
                 new_element.setAttribute('data-id', c._id);        
-                new_element.setAttribute('id', c.courseID+';'+c.lectureID);  
-                new_element.setAttribute('title', c.presentationURL); // kvulit IE
+                new_element.setAttribute('id', c.courseID+';'+c.lectureID+';'+c._id);  
+                new_element.setAttribute('title', c.presentationURL); 
                 lectures_ul.insertBefore(new_element, lectures_ul.firstChild);
             }
 
@@ -147,8 +147,8 @@ function DataAccess() {
     // First fill all available info about slide and then send request to index API
     this.loadInfo = function (elm) { //(course_id,lect_id) {          
         var url = elm.dataset ? elm.dataset.link : elm.title;
-        var lecture = this.findLecture(elm.dataset ? elm.dataset.id : -1);           
         var t = ($(elm).attr('id')).split(';');       
+        var lecture = this.findLecture(elm.dataset ? elm.dataset.id : t[2]); // hack kvuli IE    
 
         var a = '<h2 id="lecturename">'+lecture.title+'</h2>';
         a+= '<div id="buttons"><a href="http://'+url+'" target="_blank" class="button" tabindex="3">Open</a>';
@@ -184,12 +184,12 @@ function DataAccess() {
                 var t = index.structure.index[item]; 
                 ul.push('<li class="slideindex-li"><a class="slideindex-structure-top" href="http://'+t.url+'">'+t.title+'</a>');            
                 if(t.chapters && t.chapters.length>0){ // TODO: zarovnat všechny podle šipky
-                    ul.push("<img src=\"../../../humla/lib/ext/slideindex-left.png\" onClick=\"pageHandler.dropdown(this, 'slideindex-structure-secondLevel"+item+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-structure-secondLevel"+item+"\" class=\"slideindex-hidden\" >");
+                    ul.push("<img src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" onClick=\"pageHandler.dropdown(this, 'slideindex-structure-secondLevel"+item+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-structure-secondLevel"+item+"\" class=\"slideindex-hidden\" >");
                     for(var chapter in t.chapters){
                         var ch = t.chapters[chapter];
                         ul.push("<li class=\"slideindex-li\"><a class=\"slideindex-structure-chapter\" href=\"http://"+ch.url+"\">"+ch.title+"</a>");
                         if(ch.slides && ch.slides.length>0){
-                            ul.push("<img src=\"../../../humla/lib/ext/slideindex-left.png\" onClick=\"pageHandler.dropdown(this, 'slideindex-structure-thirdLevel"+chapter+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-structure-thirdLevel"+chapter+"\" class=\"slideindex-hidden\" >");
+                            ul.push("<img src=\"../../../humla/lib/ext/slideindex/slideindex-left.png\" onClick=\"pageHandler.dropdown(this, 'slideindex-structure-thirdLevel"+chapter+"');\" title=\"Show content\" alt=\"Show content\"/><ul id=\"slideindex-structure-thirdLevel"+chapter+"\" class=\"slideindex-hidden\" >");
                             for(var s in ch.slides){
                                 var simpleSlide = ch.slides[s];
                                 ul.push("<li class=\"slideindex-li\"><a class=\"slideindex-structure-slide\" href=\"http://"+simpleSlide.url+"\">"+simpleSlide.title+"</a>");
@@ -343,12 +343,12 @@ function PageHandler(){
     // Make dropdown clicks
     this.dropdown = function (img,idOflist) {        
         if(img.src.indexOf("left")>0){
-            img.src="../../../humla/lib/ext/slideindex-down.png";
+            img.src="../../../humla/lib/ext/slideindex/slideindex-down.png";
             img.title = "Hide content";
             img.alt="Hide content";
             document.getElementById(idOflist).setAttribute("class", 'slideindex-visible');
         }else{
-            img.src="../../../humla/lib/ext/slideindex-left.png";  
+            img.src="../../../humla/lib/ext/slideindex/slideindex-left.png";  
             document.getElementById(idOflist).setAttribute("class", 'slideindex-hidden');
             img.title = "Show content";
             img.alt="Show content";

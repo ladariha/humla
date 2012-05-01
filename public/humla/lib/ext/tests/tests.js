@@ -20,7 +20,7 @@ var ex_tests =  {
     // Functions
     testsClick: null,
     testsConfirm: null,
-    
+    testsClear: null,
     
     processSlide : function(slide) {
     
@@ -77,6 +77,17 @@ var ex_tests =  {
                 ex_tests.results[val[0]].answers[val[1]].selected = !checked;                  
             }
             
+            // Clear answers
+            this.testsClear = function() {
+                // clear all clicked
+                for(i = 0; i<this.results.length;i++) {                    
+                    for(j=0;j<this.results[i].answers.length;j++) {
+                        this.results[i].answers[j].selected= false;
+                    }
+                }
+                this.showQuestions(slide, false)
+            }
+            
             // listener čeká na zmáčknutí ohodnocení           
             this.testsConfirm = function() {
                 var text = "";
@@ -117,14 +128,14 @@ var ex_tests =  {
             // počet celkových bodů
             
            
-            this.showQuestions(slide, false)
+            this.showQuestions(slide, true)
         
             
         }
     },
     
     showQuestions: function (slide, showAns) {
-        var hg = slide.element.getElementsByTagName("hgroup"),
+        var hg = slide.element.getElementsByTagName("hgroup"),        
         h = (hg.length === 0 ? "<hgroup><h1>Test</h1></hgroup>" : "<hgroup>"+hg[0].innerHTML+"</hgroup>");    
         
         h+= "<div id='tests-questions'>";
@@ -135,7 +146,8 @@ var ex_tests =  {
             h+= res.question;
             h+='</h2><ul class="answers">'
             for(j=0;j<res.answers.length;j++) {
-                h+='<li class="'+(res.answers[j].selected?'checked':'')+'"onclick="ex_tests.testsClick(this);" title="'+i+';'+j+'" data-test-question="'+i+'" data-test-answer="'+j+'">'; 
+                
+                h+='<li class="'+(res.answers[j].selected && showAns ?'checked':'')+'"onclick="ex_tests.testsClick(this);" title="'+i+';'+j+'" data-test-question="'+i+'" data-test-answer="'+j+'">'; 
                 h+= res.answers[j].text;
                 h+='</li>';                        
             }
@@ -144,8 +156,9 @@ var ex_tests =  {
         }
         h+="</div>";
         
-        // Add button
-        h+='<div class="button" onclick="ex_tests.testsConfirm(this);">Show answers</div>'            
+        // Add buttons
+        h+='<div class="buttons"><div class="button" onclick="ex_tests.testsConfirm(this);">Show answers</div>'            
+        h+='<div class="button" onclick="ex_tests.testsClear(this);">Clear</div></div>'            
         
         h+="<div id='tests-result'></div>";
         

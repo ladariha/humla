@@ -370,6 +370,18 @@
         } ],
         "enabled" : true 
     },
+        {
+        "id" : "social",
+        "object" : "ex_social",
+        "scripts" : [ {
+            "src" : "ext/social/social.js"
+        } ],
+        "styles"  : [ {
+            "src" : "ext/social/social.css", 
+            "media" : "screen, print"
+        } ],
+        "enabled" : true 
+    },
         
     {
         "id" : "editor",

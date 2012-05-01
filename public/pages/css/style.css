@@ -194,22 +194,30 @@ nav #presentations:hover {
     border-left: 1px solid #8C5D26;
     border-top: 1px solid #8C5D26;
     border-right: 1px solid #8C5D26;    
-
 }
+
 nav #tools:hover {
     background: #3F9DCD;
     border-left: 1px solid #26698C;
     border-top: 1px solid #26698C;
     border-right: 1px solid #26698C;    
-
 }
+
 nav #about:hover {
     background: #CE4079;
     border-left: 1px solid #8C2664;
     border-top: 1px solid #8C2664;
     border-right: 1px solid #8C2664;    
-
 }
+
+nav #facet:hover {
+    background: #53CF3F;
+    border-left: 1px solid #2D8C26;
+    border-top: 1px solid #2D8C26;
+    border-right: 1px solid #2D8C26;    
+}
+
+
 
 nav li > a.active {
     opacity: 1;

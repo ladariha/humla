@@ -15,12 +15,6 @@ var SLIDES_DIRECTORY = (path.join(path.dirname(__filename), '../public/data/slid
 var jquery = fs.readFileSync('./public/lib/jquery-1.7.min.js').toString();
 var jsdom = require('jsdom');
 
-/** ---- WINDOWS SAVING FILES:
- var pathSep=process.platform =='win32' ? '\\' : '/';  
- path.replace('/',pathSep)]
- *
- **/
-
 
 /** Make slides AJAX Crawable
  *  -  get one slide HTML

@@ -30,6 +30,7 @@ var ext_indexeddb = {
             console.log(e);
         },
         open : function(callback){
+            if(!indexedDB) return; // Opera doesn't have indexedDB a fails on this one, TODO: edit
             var request = indexedDB.open(ext_indexeddb.dbName);
 
             request.onsuccess = function(e) {

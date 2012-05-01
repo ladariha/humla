@@ -1,22 +1,24 @@
 
 
-.test .button {
-    width: 116px;
+.test .buttons{
+    position: absolute;
+    bottom: 40px;
+    left: 20px;    
+}
+
+.test .button {    
     font-size: 140%;
     text-align: center;
     cursor: pointer;
     background: white;
     background: -webkit-gradient(linear, left top, left bottom, from(white), to(#DDD));
     color: #444;
-    /*float: right;*/
     margin: 12px 4px;
-    padding: 2px 5px;
+    padding: 2px 16px;
     border: 1px solid #888;
     -webkit-border-radius: 5px;
     border-radius: 5px;
-    position: absolute;
-    bottom: 40px;
-    left: 20px;
+    float: left;
 }
 
 
@@ -32,6 +34,7 @@
 
 .test .question {
     display: block;
+    max-width: 246px;
     font-size: 120%;
     text-shadow: 1px 1px 2px #CCC;
     padding: 0px 10px;
@@ -88,7 +91,8 @@
     font-size:200%;
     position: absolute;
     bottom: 50px;
-    left: 240px;
+    right: 20px;
+    width: 400px;
 }
 .test #tests-result .percent {
     font-size: 140%;

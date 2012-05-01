@@ -537,7 +537,7 @@ var User = function(check) {
             } else { //status == 401 or fail
                 this.email = null;
                 this.username = null;
-                this.logged = true;
+                this.logged = false;
                 if(cb) cb(err ? err : true);
             }            
         });

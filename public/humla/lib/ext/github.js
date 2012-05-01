@@ -19,33 +19,8 @@ var ex_github = {
                 return;
             }
             
-            var updateCode = function(code) {
-                var fc = code ? code : "";
-                if (fc === "") {
-                    // create empty code with the same size as the resulting code
-                    for (var i = 0; i < this.lineTo - this.lineFrom + 2; i++)
-                        fc += " \n";
-                    this.element.style.opacity = "0.3";
-                } else {
-                    var s = fc.split("\n"), fc = "";
-                    for (var i = this.lineFrom - 1; i < this.lineTo; i++)
-                        if (i < s.length)
-                            fc += s[i] + "\n";
-                    this.element.style.opacity = "1";   
-                }
-                this.pre.innerHTML = fc.replace(/</g, "&lt;");
-                this.element.innerHTML = "";
-                this.element.appendChild(this.pre);
-                SyntaxHighlighter.highlight(null, this.pre);
-                
-                var shl = this.element.getElementsByClassName("syntaxhighlighter");
-                if (shl && shl.length > 0) {
-                    shl[0].tb = config.tb;
-                    shl[0].setAttribute("onmouseover", "this.tb.className = 'toolbar2-visible'");
-                    shl[0].setAttribute("onmouseout",  "this.tb.className = 'toolbar2'");
-                    shl[0].appendChild(config.tb);
-                }                
-            };
+         
+         
 
             var refreshCode = function() {
                 var xhr = new XMLHttpRequest();
@@ -62,7 +37,7 @@ var ex_github = {
                 xhr.send();            
             };
             
-            for (var i = 0; i < el.length; i++) {
+            for (i = 0; i < el.length; i++) {
                 // get attributes
                 var config = {
                     element : el[i],

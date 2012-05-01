@@ -390,7 +390,7 @@ var Utils = function(window) {
             this.firstUserStyle = "";
         
         // style has not been found - add it
-        if (this.firstUserStyle == "")
+        if (this.firstUserStyle == "" || this.browser == "Opera" || this.browser == "Firefox") // opera, ff hack
             this.documentHead.appendChild(this.createStyleElement(style, media));
         else
             this.documentHead.insertBefore(this.createStyleElement(style, media), this.firstUserStyle);            
@@ -568,7 +568,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (navigator.userAgent == "no-ga-tv" ||
         (browser.browser == "Chrome" && browser.version >= 13) ||
         (browser.browser == "Firefox" && browser.version >= 4) ||
-        (browser.browser == "Safari" && browser.version >= 5.1) || 
+        (browser.browser == "Safari" && browser.version >= 5.1) ||         
         (browser.browser == "Opera") || 
         browser.browser == "wkhtmltopdf") {
         document.getElementsByTagName("body")[0].style.visibility = "hidden";

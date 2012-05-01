@@ -19,7 +19,7 @@ app.get('/api/:course/:lecture/:slide/comments', function(req, res) {
         slideID: p.slide
     });
     query.asc('date');    
-    query.limit(10);
+    query.limit(10); // TODO: vymyslet listování po deseti!!!
     
 
     query.exec(function (err, com) {  
@@ -47,7 +47,7 @@ app.post('/api/:course/:lecture/:slide/comments', function(req, res, next){
     console.log("REQ-body "+JSON.stringify(req.body));
     console.log("REQ-user "+JSON.stringify(req.user));
     if (!req.isAuthenticated()) {
-        res.writeHead(401); //BAD_REQUEST
+        res.writeHead(401); //UNAUTHORIZED
         res.write("You ain't no logged, bro!");
         res.end();
         return;
@@ -68,7 +68,7 @@ app.post('/api/:course/:lecture/:slide/comments', function(req, res, next){
     com.author = {
         username:req.user.email, 
         email:req.user.email
-    }; // TODO: implementovat ověřování
+    }; 
     com.save(function(err) {
         if(err) {
             console.log("ERR");
@@ -83,6 +83,6 @@ app.post('/api/:course/:lecture/:slide/comments', function(req, res, next){
 });
 
 
-app.del('/api/:course/:lecture/:slide/comments', function(req, res, next){ 
+app.put('/api/:course/:lecture/:slide/comments', function(req, res, next){ 
     //TODO: napsat buď jako DELETE, nebo jako PUT
     });
