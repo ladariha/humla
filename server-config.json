@@ -17,6 +17,7 @@
         "models_relative_path":"./models/"
     },
     "plugins": [
+        {"id":"administration","enable":true,"src":"./server_ext/administration/administration_ext.js"},
         {"id":"slideindex","enable":true,"src":"./server_ext/slideindex/slideindex_ext.js"},
         {"id":"atom","enable":true,"src":"./server_ext/atom/atom_module_ext.js"},
         {"id":"editor","enable":true,"src":"./server_ext/editor/editor_ext.js"},
