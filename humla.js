@@ -1,11 +1,11 @@
 /** 
- * Humla Server
+ * Humla Module
  * ~~~~~~~~~~~~
  * usage:
  * var humla = require("./humla");
- * humla.init(config);
+ * humla.init(config,false);
  * 
- * -- Full usage example at the bottom of this file
+ * -- Full usage example is at the bottom of this file
  *
  */
 
@@ -31,11 +31,11 @@ exports.init = function(plugins, usedb){
     config=loadConfig('./server-config.json') || {};
     
     
-    // load plugins from confi if no plugins param is provided
-    if(!c_in) {
+    // load plugins from config if no plugins param is provided
+    if(typeof c_in !== "object") {
         c_in = {};
         for(var i = 0; i<config.plugins.length;i++) {
-            c_in[config.plugins[i].id] = config.plugins[i];
+            if (config.plugins[i].enable) c_in[config.plugins[i].id] = config.plugins[i];
         }
     }
     
@@ -61,7 +61,7 @@ exports.init = function(plugins, usedb){
                 src = getPluginConfig(p,config).src;
                 if(!src) {
                     //console.log("ERR: Plugin with name '"+p+"' is not in server-config.json");
-                    throw new Error("Plugin with name '"+p+"' is not in server-config.json");
+                    throw new Error("Plugin with name '"+p+"' is not in server-config.json. Please provide 'src' attribute!");
                 }
             }                        
             if(plugin.enable) {
@@ -141,14 +141,14 @@ if(!module.parent) {
     var humla = this;               // only for example usage    
     
     // Either load default plugins by:
-    // humla.init(false,true); // OR list them as following
+    // humla.init(null,true); // OR list them as following
     
     // load plugins and enable db
     humla.init({
             "administration":{"enable":true},
             "atom":{"enable":true},
             "editor":{"enable":true},
-            "facetparser":{"enable":true},
+            "facetparser":{"enable":true}, 
             "facet":{"enable":true},
             "maintenance":{"enable":true},
             "gbooks":{"enable":true},
@@ -168,14 +168,7 @@ if(!module.parent) {
         if(!err) console.log(JSON.stringify(data));        
         else console.log("MI-MDW not found");
     });
-    
-    
-    humla.administration.getCourse("MI-MDW",undefined,function(err,data){        
-        console.log(JSON.stringify(data));        
-    });
-    
-    
-    
+          
 }
 
 

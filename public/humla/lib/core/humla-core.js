@@ -424,8 +424,9 @@ var Menu = function(config) {
         +"<div class='button' onclick='humla.controler.activateView(2);humla.menu.showLayer(\"menu-views\",true);'>Overview</div>"
         +"<div class='button' onclick='humla.controler.activateView(3);humla.menu.showLayer(\"menu-views\",true);'>Print</div></div>"
         }        
-    };
+    };    
 
+    this.tabs_count=0;
     
     
     // Class initialization   
@@ -453,12 +454,14 @@ var Menu = function(config) {
             this.nav_menu.style.display = "none";
             this.nav_close.style.display = "none";
             this.nav.className = "lower";
+            this.nav.style.marginLeft = null;
         //this.showMenu(true);
-        } else {
+        } else {            
             this.nav_menu.style.display = "block";
             this.nav_close.style.display = "block";
             this.nav.className = "";
-        //this.hideMenu();
+            // center menu (nav element) (1tab == 70px)
+            this.nav.style.marginLeft = (-35*this.tabs_count)+"px";        
         }
     }
     
@@ -471,8 +474,10 @@ var Menu = function(config) {
     // Called after all extensions loaded and their processMenu called
     this.show = function() {        
         var menu_items="",layer_items="";
+        this.tabs_count = 0;
         for(var tab in this.tabs) {
             if(this.tabs.hasOwnProperty(tab)) {
+                this.tabs_count+=1;
                 if (this.tabs[tab].show_layer) {
                     menu_items+="<li id='menu-item-"+tab+"' title='"+this.tabs[tab].name+"' onclick='humla.menu.showLayer(\"menu-"+tab+"\");'>"+this.tabs[tab].name+"</li>";
                     layer_items+="<div id='menu-"+tab+"' class='menu-layer' style='display:none;'>"
@@ -484,9 +489,11 @@ var Menu = function(config) {
             }
         }
         this.nav_menu.innerHTML = menu_items;
-        this.layer.innerHTML = layer_items;        
+        this.layer.innerHTML = layer_items;
+        
+        
     }
-     
+         
     // Hide all layers and show one with id
     this.showLayer= function(id, hide) {        
         var layers = this.layer.childNodes;            
