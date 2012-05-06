@@ -4,7 +4,7 @@
 
 var fs = require("fs");
 var path = require("path");
-var jquery = fs.readFileSync('./public/lib/jquery-1.7.min.js').toString();
+var jquery = fs.readFileSync(config.server.jquery_relative_path).toString();
 //var jquery = fs.readFileSync('./public/lib/jquery-1.7.min.js').toString();
 var jsdom = require('jsdom');
 var RAW_SLIDES_DIRECTORY = config.server.slides_raw_path;
