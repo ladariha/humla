@@ -84,9 +84,10 @@ exports.run = function run() {
     // Static route - after our routes to make AJAX Crawling and request on our slides possible
     app.configure( function() {
         var oneYear = 31557600000;     
-        //var oneYear = 1;      // testing: nocache
+        var oneDay = 86400000;
+        var oneMs = 1;        
         app.use(express["static"](path.join(path.dirname(__filename), config.server.webroot), {    //__dirname + '/public', {
-            maxAge: oneYear
+            maxAge: oneDay
         }));
     });    
     

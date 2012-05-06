@@ -29,7 +29,7 @@ var ex_tests =  {
                   
                        
             
-            console.log("RESULTS: "+this.results);
+            //console.log("RESULTS: "+this.results);
             
             // Parse Questions and Answers
             var qs = slide.element.getElementsByClassName("question");

@@ -141,6 +141,14 @@ nav #menu-item-editor {
     margin-left: -200px;
 }
 
+.menu-layer.max {
+    margin: auto;
+    min-width: 90%;
+    min-height: 90%;
+    top:5%;
+    left:5%;    
+}
+
 #menu-views .button {
     width:64px;
     height: 64px;
@@ -160,6 +168,7 @@ nav #menu-item-editor {
     float: right;
     cursor: pointer;
     border-radius: 20px;
+    margin-left:4px;
 
 }
 

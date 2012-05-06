@@ -20,8 +20,11 @@ var ex_social = {
     
         +'<div>Facebook: <a name="fb_share" type="button_count" href="http://www.facebook.com/sharer.php"><img src="http://www.siamcomm.com/wp-content/uploads/2011/05/facebook.png"  /></a><script src="http://static.ak.fbcdn.net/connect.php/js/FB.Share" type="text/javascript"></script></div>'
         +"<div>Google+</div>"
-        +"<div>Twitter: <a href='http://twitter.com/home?status=Check this slides: ' title='Click to share this post on Twitter'><img src='ADD_IMAGE_URL_HERE” alt=”Share on Twitter'></a></div>"
-        +'<div>Twitter: <a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="humla">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>'
+        +"<div>Twitter: <a href='http://twitter.com/home?status=Check this slides: ' title='Click to share this post on Twitter'><img src='ADD_IMAGE_URL_HERE' alt='Share on Twitter'></a></div>"
+        +'<div>Twitter: <a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="humla">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script></div>'
+        +'<div>Twitter: <a href="https://twitter.com/share" class="twitter-share-button" data-via="bubersson" data-size="large">Tweet</a></div>'
+        +'<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></div>'
+        +""        
         +"</div>"        
         });        
     

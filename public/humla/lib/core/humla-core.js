@@ -436,7 +436,7 @@ var Menu = function(config) {
         
         this.nav.innerHTML = "<div class='toggle' onclick='humla.menu.toggle()'>Menu"
         //this.nav.innerHTML = "<div style='width:100%;text-align:center; color:white;' class='toggle'>Menu"
-        +"<span id='menu-close' class='menu-close-button' style='display:none'>X</span></div>"
+        +"<span id='menu-close' class='menu-close-button' style='display:none'>X</span></div>"        
         +"<ul id='menu' style='display:none; height:0px'></ul>";    
         this.nav.className = "lower";
         humla.utils.documentBody.insertBefore(this.nav, humla.utils.documentBody.childNodes[0]);
@@ -482,6 +482,7 @@ var Menu = function(config) {
                     menu_items+="<li id='menu-item-"+tab+"' title='"+this.tabs[tab].name+"' onclick='humla.menu.showLayer(\"menu-"+tab+"\");'>"+this.tabs[tab].name+"</li>";
                     layer_items+="<div id='menu-"+tab+"' class='menu-layer' style='display:none;'>"
                     +"<span class='menu-close-button' onclick='humla.menu.showLayer(\"\",true);'>X</span>"
+                    +"<span class='menu-close-button' onclick='humla.menu.maximizeLayer(\"\",true);'>&#x2610;</span>"
                     +this.tabs[tab].html+"</div>";
                 } else{
                     menu_items+="<li id='menu-item-"+tab+"' title='"+this.tabs[tab].name+"' onclick='humla.menu.callCallback(\""+tab+"\");'>"+this.tabs[tab].name+"</li>";
@@ -498,8 +499,15 @@ var Menu = function(config) {
     this.showLayer= function(id, hide) {        
         var layers = this.layer.childNodes;            
         for(var i = 0;i<layers.length;i++) {            
-            layers[i].style.display = !hide && id == layers[i].id ? "block" : "none";                           
-            
+            layers[i].style.display = !hide && id == layers[i].id ? "block" : "none";                                       
+        }                
+    }   
+        
+    // Hide all layers and show one with id
+    this.maximizeLayer= function(id, hide) {        
+        var layers = this.layer.childNodes;            
+        for(var i = 0;i<layers.length;i++) {            
+            layers[i].className = "menu-layer" === layers[i].className ? "menu-layer max" : "menu-layer";
         }                
     }   
     
