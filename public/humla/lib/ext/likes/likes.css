@@ -1,4 +1,8 @@
 
+nav #menu-item-likes {
+    background-image: url("./m-likes.png");
+}
+
 
 /* -------- Toolbar ------------*/
 #likes-toolbar{

@@ -87,7 +87,7 @@ exports.run = function run() {
         var oneDay = 86400000;
         var oneMs = 1;        
         app.use(express["static"](path.join(path.dirname(__filename), config.server.webroot), {    //__dirname + '/public', {
-            maxAge: oneDay
+            maxAge: oneMs
         }));
     });    
     

@@ -1,5 +1,23 @@
 
 
 nav #menu-item-social {
-    background-image: url("../../../icons/m-facebook.png");
+    background-image: url("./m-social.png");
+}
+
+#menu-social .icon {
+    width: 64px;
+    height: 64px;
+    float: left;
+    margin: 32px 32px;
+}
+
+#google.icon {
+    background-image: url("./google+.png");
+}
+
+#facebook.icon {
+    background-image: url("./facebook.png");
+}
+#twitter.icon {
+    background-image: url("./twitter.png");
 }

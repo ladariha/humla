@@ -113,9 +113,7 @@ nav #menu-item-views {
 nav #menu-item-comments {
     background-image: url("../../icons/m-comments.png");
 }
-nav #menu-item-rating {
-    background-image: url("../../icons/m-rating.png");
-}
+
 nav #menu-item-editor {
     background-image: url("../../icons/m-settings.png");
 }

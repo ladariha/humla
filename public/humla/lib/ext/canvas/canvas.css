@@ -1,3 +1,8 @@
+
+nav #menu-item-draw {
+    background-image: url("./m-canvas.png");
+}
+
 .paintingCanvas{
     width: 800px;
     height: 600px;
