@@ -1,6 +1,6 @@
 <!doctype html>
 <html>   
-<head>
+<head manifest="../slides/MI-MDW/lecture1/manifest.mf">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
     <meta id="md_course" itemprop="course" name="course" content="Middleware and Web Services"/>
     <meta id="md_lang" itemprop="language" content="eng"/>
@@ -16,7 +16,8 @@
 	<link type="text/css" rel="stylesheet" href="css/meta.css">   
     <link type="text/css" rel="stylesheet" href="../../styles/ctu-fit.css">   
     <script type="text/javascript" src="../../../humla/lib/humla.js"></script>
-    <link type="text/css" rel="stylesheet" href="../../../humla/lib/core/humla.css"> 
+    <link type="text/css" class="main_style" rel="stylesheet" href="../../../humla/lib/core/humla.css"> 
+    <link type="text/css" class="alternative_style" rel="stylesheet" href="../../../humla/lib/ext/styles/humla_dark.css"> 
     
 </head>
 <body itemscope itemtype="Humla/Presentation" itemref="md_course md_keyword md_lang md_title md_field md_lecture"> 
@@ -28,7 +29,7 @@
             <p><b>&#8210; #SLIDE_NO# &#8210;</b></p>
         </footer>
 
-        <div class="slide intro">
+    <div class="slide intro" data-x="-500" data-y="100" data-rotation="15" data-scale="3"> 
             <hgroup>
                 <h1 itemprop="title"><span class="meta_course"/></h1>
                 <h2>#META_LECTURE#: #TITLE#</h2>
@@ -73,31 +74,31 @@
             <hgroup>
                 <h1 itemprop="title">Hellos</h1>
             </hgroup>
-            <ul class="small spacing">
-                <li>Tomáš Vitvar</li> 
+           <ul class="small spacing to-build" id="pokus">
+            <li tabindex="2">Tomáš Vitvar</li> 
+            <ul tabindex="4">
+                <li>Technical Architect at Oracle</li>
                 <ul>
-                    <li>Technical Architect at Oracle</li>
-                    <ul>
-                        <li>SOA and Oracle Integration Architectures</li>
-                    </ul>
-                    <li>Researcher, developer, software architect</li>
-                    <ul>
-                        <li>Have worked in Austria, Ireland, Germany, Czech rep.</li> 
-                        <li>Universities and companies, ProgrammableWeb</li>
-                        <li>member of W3C Advisory Committee</li>
-                        <li>EU research and development projects, evaluator</li>
-                    </ul>
+                    <li>SOA and Oracle Integration Architectures</li>
                 </ul>
-                <li>Jaroslav Kuchař</li>
+                <li>Researcher, developer, software architect</li>
                 <ul>
-                    <li>CTU FIT research assistant, Ph.D. at CTU FEL</li>
-                    <li>Web services, data mining, analytics, Web technologies</li>
-                </ul>
-                <li>Milan Dojchinovski</li>
-                <ul>
-                    <li>Ph.D. at CTU FIT, web services</li>
+                    <li>Have worked in Austria, Ireland, Germany, Czech rep.</li> 
+                    <li>Universities and companies, ProgrammableWeb</li>
+                    <li>member of W3C Advisory Committee</li>
+                    <li>EU research and development projects, evaluator</li>
                 </ul>
             </ul>
+            <li tabindex="1">Jaroslav Kuchař</li>
+            <ul tabindex="3">
+                <li>CTU FIT research assistant, Ph.D. at CTU FEL</li>
+                <li>Web services, data mining, analytics, Web technologies</li>
+            </ul>
+            <li tabindex="5">Milan Dojchinovski</li>
+            <ul tabindex="6">
+                <li>Ph.D. at CTU FIT, web services</li>
+            </ul>
+        </ul>
         </div>
 
         <div class="slide outline">
@@ -116,23 +117,23 @@
                 <hgroup>
                     <h1 itemprop="title">Web Engineering Curricula</h1>
                 </hgroup>
-                <ul class="small">
-                    <li>Web engineering</li> 
-                    <ul>
-                        <li>Part of Software and Web Engineering Curriculum</li>
-                        <li>Started winter 2010 (accreditation in 04/2010, CZ, EN)</li>
-                        <li>Designed from scratch, no "backward-compatibility problem"</li>
-                    </ul>
-                    <li>Key people</li>
-                    <ul>
-                        <li>Well-established researchers, community work<br/>
-                        &rarr; coming from ČVUT, MFF UK, VŠE, intl. experience</li>
-                        <li class="x-space-before">doc. Ing. Tomáš Vitvar, Ph.D. &ndash; Web services, Web 2.0
-                        <li>doc. RNDr. Tomáš Skopal, Ph.D. &ndash; Media, Search</li>
-                        <li>prof. RNDr. Peter Vojtáš, CSc. &ndash; Semantic Web</li>
-                        <li>doc. Ing. Vojtěch Svátek, Ph.D. &ndash; Data Mining, Semantic Web</li>
-                    </ul>
+                <ul class="small to-build">
+                <li>Web engineering</li> 
+                <ul>
+                    <li>Part of <strong>Software</strong> and Web Engineering Curriculum</li>
+                    <li>Started winter 2010 (accreditation in 04/2010, CZ, EN)</li>
+                    <li>Designed from scratch, no &quot;backward-compatibility problem&quot;</li>
                 </ul>
+                <li>Key people</li>
+                <ul>
+                    <li>Well-established researchers, community work<br>
+                        &rarr; coming from ČVUT, MFF UK, VŠE, intl. experience</li>
+                    <li class="x-space-before">doc. Ing. Tomáš Vitvar, Ph.D. &ndash; Web services, Web 2.0
+                    <li>doc. RNDr. Tomáš Skopal, Ph.D. &ndash; Media, Search</li>
+                    <li>prof. RNDr. Peter Vojtáš, CSc. &ndash; Semantic Web</li>
+                    <li>doc. Ing. Vojtěch Svátek, Ph.D. &ndash; Data Mining, Semantic Web</li>
+                    </li></ul>
+            </ul>
             </div>
 
             <div class="slide" itemscope itemprop="slide" itemtype="Humla/Slide">
@@ -196,6 +197,126 @@
                     </ul>
                 </div>
 
+        <div class="slide">
+            <hgroup>
+                <h1>Graph chart</h1>                
+            </hgroup>
+            <table 
+                data-width="500" 
+                data-height="250" 
+                data-chart="graph"
+                data-oriented="true">                
+                <tr>
+                    <td data-row="label">A</td>
+                    <td>B</td>
+                    <td>C</td>
+                </tr>
+                <tr>
+                    <td data-row="label">B</td>
+                    <td>C</td>
+                </tr>
+                <tr>
+                    <td data-row="label">C</td>
+                    <td>A</td>
+                    <td>B</td>
+                </tr>
+            </table>
+
+        </div> 
+        <div class="slide">
+            <hgroup>
+                <h1>Bar chart</h1>                
+            </hgroup>
+            <table data-title="Title of a bar chart" 
+                   data-width="500" 
+                   data-height="250" 
+                   data-min="0"
+                   data-max="10"
+                   data-vAxis="Vertical" 
+                   data-hAxis="Horizontal" 
+                   data-chart="bar"
+                   data-orientation="vertical"
+                   data-stacked="false"
+                   data-textColor="000000"
+                   data-showLabels="true">
+                <tr>
+                    <th data-column="description">Months</th>
+                    <th data-column="data">January</th>
+                    <th data-column="data" >February</th>
+                    <th data-column="data" >March</th>
+                </tr>
+                <tr>
+                    <td data-row="label" data-color="0022DD">Data set 1</td>
+                    <td>5</td>
+                    <td>6</td>
+                    <td>7</td>
+                </tr>
+                <tr>
+                    <td data-row="label" data-color="22DD00">Data set 2</td>
+                    <td>3</td>
+                    <td>4</td>
+                    <td>5</td>
+                </tr>
+            </table>
+
+        </div> <div class="slide">
+            <hgroup>
+                <h1>Line chart</h1>                
+            </hgroup>
+            <table data-title="Title of a line chart" 
+                   data-width="500" 
+                   data-height="250" 
+                   data-min="0"
+                   data-max="10"
+                   data-vAxis="Vertical" 
+                   data-hAxis="Horizontal" 
+                   data-chart="line"
+                   data-textColor="000000"
+                   data-showLabels="true">
+                <tr>
+                    <th data-column="description">Months</th>
+                    <th data-column="data">Label 1</th>
+                    <th data-column="data" >Label 2</th>
+                    <th data-column="data" >Label 3</th>
+                </tr>
+                <tr>
+                    <td data-row="label" data-color="0022DD">Item 1</td>
+                    <td>5</td>
+                    <td>10</td>
+                    <td>2</td>
+                </tr>
+                <tr>
+                    <td data-row="label" data-color="22DD00">Item 2</td>
+                    <td>7</td>
+                    <td>1</td>
+                    <td>7</td>
+                </tr>
+            </table>
+
+        </div> 
+        <div class="slide">
+            <hgroup>
+                <h1>Pie chart</h1>                
+            </hgroup>
+            <table data-title="Title" 
+                   data-width="500" 
+                   data-height="250"  
+                   data-chart="pie"
+                   data-foregroundColor="121212"
+                   data-backgroundColor="EEEEEE"
+                   data-textColor="000000"
+                   data-showLabels="true">
+                <tr>
+                    <td data-row="label" data-color="DD2222">Item 1</td>
+                    <td>5</td>
+                </tr>
+                <tr>
+                    <td data-row="label" data-color="22DD22">Item 2</td>
+                    <td>3</td>
+                </tr>
+            </table>
+
+        </div> 
                 <div class="slide" id="spaghetti">
                     <meta itemprop="type" content="text">
                 <meta itemprop="keywords" content="integration">
