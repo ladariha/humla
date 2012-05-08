@@ -93,9 +93,11 @@ Controler = function(window) {
     /* calls a method of all extensions if exist */
     this.callExtensionsInterface = function(method, params, onSuccess, onError) {
         var toContinue = true;
+        console.log("Volam metodu: "+method+" delka: "+this.extensions.list.length);
         try {
             
             for (var i = 0; i < this.extensions.list.length; i++){
+                //console.log("Extension: "+this.extensions.list[i].config["object"]);
                 var returned = this.extensions.list[i].callExtensionInterface(method, params);
                 if (returned != null && returned == false) toContinue = false;
             }

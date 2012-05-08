@@ -1,10 +1,14 @@
-
-
-
+/**
+ * An experimental view that show a camera stream and slides next to each other.  
+ * @author Vojtech Smrcek
+ */
 var view_camera = {
+    /**
+     * A function that creates the video element on entering the view. 
+     * It sets its basic attributes and inserts it in the body.
+     * It uses the function getUserMedia which is supported only by Chromium browser and latest Opera 12
+     */
     enterView : function() {
-        //    <video autoplay controls></video>
-
         var video = document.createElement("video");
         video.setAttribute("autoplay");
         video.setAttribute("controls");
@@ -21,11 +25,9 @@ var view_camera = {
             var successCallback = function(stream) {
                 localMediaStream = stream;
                 localMediaStream.onended = function(e) {
-                //stopButton.disabled = true;
-                //startButton.disabled = false;
+                    console.log("The video stream has ended");
                 };
                 console.log(localMediaStream, localMediaStream.tracks);
-                //startButton.disabled = true;
                 video.src = window.URL.createObjectURL(localMediaStream);
                 video.onerror = function(e) {
                     localMediaStream.stop();
@@ -35,11 +37,15 @@ var view_camera = {
                 console.log(e);
             };
             navigator.getUserMedia('video,audio', successCallback, errorCallback);
-        //navigator.webkitGetUserMedia({audio: false, video: true}, successCallback, errorCallback);
         }
         
         
     },            
+    /**
+     * Function that resizes slides and video stream to match the browsers width while preserving their width/height ratio (4:3)
+     * This function uses the CSS3 zoom to resize elements.
+     * @param slide to be resized
+     */
     enterSlide : function(slide) {
         
         var inx = slide.number - 1;
@@ -67,7 +73,11 @@ var view_camera = {
         }
         resizeVideo();
         
-    },        
+    },    
+    /**
+     * Function that is triggered on windows resize, resizes slides and video
+     * @param event
+     */    
     resizeVideo : function(event){
         console.log("resize");
         var widthZoom = this.window.innerWidth / (2*SLIDE_WIDTH);
@@ -80,6 +90,10 @@ var view_camera = {
         video.setAttribute('style', "zoom: "+zoom);
         slide.element.setAttribute('style', "zoom: "+zoom);
     },
+    /**
+     * Function that removes style from the current slide.
+     * @param slide leaved
+     */
     leaveSlide : function(slide) {
         //window.onresize = "";
         var inx = slide.number - 1;

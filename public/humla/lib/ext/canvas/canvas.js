@@ -1,3 +1,11 @@
+/**
+ * @author Vojtech Smrcek <smrcevoj> URL: https://github.com/planarvoid
+ */
+
+/**
+ *  Class representing canvas to be saved into database
+ */
+
 function CanvasDBStructure (){
     this.id = 0;
     this.htmlID = "";
@@ -6,6 +14,10 @@ function CanvasDBStructure (){
     this.clickDrag = [];
     this.clickColor = [];
     this.clickWidth = [];
+    /**
+     * Initializes database object from drawn canvas
+     * @param canvas
+     */
     this.initializeFromCanvas = function(canvas){
         this.id = canvas.dbID; 
         this.htmlID = canvas.element.id; 
@@ -20,6 +32,9 @@ function CanvasDBStructure (){
             return false;
         }
     };
+    /**
+     * Returns true if the database object is empty
+     */
     this.isClear = function(){
         if (this.clickX.length > 0 || this.clickY.length > 0 || this.clickDrag.length > 0 || this.clickColor.length > 0 || this.clickWidth.length > 0 ){
             return false;
@@ -28,6 +43,10 @@ function CanvasDBStructure (){
         }
 
     };
+    /**
+     * Converts canvas into JSON object to be stored into database as a new item (database insert function)
+     * @return json
+     */
     this.getAddJSON = function(){
         var json = {
             htmlID : this.htmlID,
@@ -39,6 +58,10 @@ function CanvasDBStructure (){
         }
         return json;
     };
+    /**
+     * Converts canvas into JSON object to update item in database
+     * @return json
+     */
     this.getUpdateJSON = function(){
         var json = {
             id : this.id,
@@ -51,6 +74,16 @@ function CanvasDBStructure (){
         }
         return json;
     };
+    /**
+     * Initializes database object from given parameters
+     * @param id in database
+     * @param htmlID id of html element
+     * @param arrayX array of X coords of touches
+     * @param arrayY array of Y coords of touches
+     * @param arrayDrag array with values if the gesture was dragged between points
+     * @param arrayColor array with colors of lines
+     * @param arrayWidth array with width of the painting brush
+     */
     this.initialize = function(id, htmlID, arrayX, arrayY, arrayDrag, arrayColor, arrayWidth){
         if(id > 0) this.id = id;
         this.htmlID = htmlID;
@@ -62,6 +95,10 @@ function CanvasDBStructure (){
     };
 }
 
+/**
+ *  Singleton object representing the drawing canvas extension
+ */
+
 var ex_canvas = {
     loaded : false,
     canvasArray : [],
@@ -70,6 +107,10 @@ var ex_canvas = {
     table : "CANVAS",
     strokeWidth : 5,
     zoom : 1,
+    /**
+     * Function called when the menu is loaded fills it with buttons to save and load canvas from database and buttons to add canvas to the current slide
+     * @param menu to be altered
+     */
     processMenu: function(menu) {                        
         menu.addTab("draw",{
             name:"Draw",
@@ -78,8 +119,10 @@ var ex_canvas = {
             }, // callback function, třeba provolá humla.neco.neco();
             show_layer:false
         });
+       
+    
         menu.addTab("saveDB",{
-            name:"Save",
+            name:"Save drawings",
             cb: function() {
                 ex_canvas.saveStateToDB();
             //ex_canvas.loadStateFromDB();
@@ -87,7 +130,7 @@ var ex_canvas = {
             show_layer:false
         });
         menu.addTab("loadDB",{
-            name:"Load",
+            name:"Load drawings",
             cb: function() {
                 //ex_canvas.saveStateToDB();
                 ex_canvas.loadStateFromDB();
@@ -96,11 +139,18 @@ var ex_canvas = {
         });
         
     },
+    /**
+     * Function that calls database function to load canvases from the database. 
+     */
     loadStateFromDB : function(){
+        
         ext_indexeddb.indexedDB.get("CANVAS", function(e){
-            var result = e.result;
-            if(!!result == false)
+            var result = e.target.result;
+            console.log("Loading from the DB");
+            if(!!result == false){
+                console.log(result);
                 return;
+            } 
 
             ex_canvas.addFromDB(result.value);
             result.continue();
@@ -110,14 +160,19 @@ var ex_canvas = {
             
         
     },
+    /**
+     * Function that loads a canvas with given key from  the database. 
+     */
     getFromDB : function(key){
         ext_indexeddb.indexedDB.getItem("CANVAS", "htmlID", key, function(e){
             var result = e.target.result;
-            console.log("Nalezen element: "+result.id);
         }, function(){
             console.log("Loading from the DB was not successful");
         });
     },
+    /**
+     * Function that finds the canvas with given html id and sets its database id
+     */
     setID : function(htmlID, id){
         for (var i = 0; i < ex_canvas.canvasArray.length; i++){
             if (htmlID == ex_canvas.canvasArray[i].element.id){
@@ -125,6 +180,9 @@ var ex_canvas = {
             }
         }
     },
+    /**
+     * Function that saves all modified canvases to the database
+     */ 
     saveStateToDB : function(){
         for (var i = 0; i < ex_canvas.canvasArray.length; i++){
             var canvas = new CanvasDBStructure();
@@ -139,13 +197,13 @@ var ex_canvas = {
                         console.log(event);
                         ex_canvas.getFromDB(canvas.htmlID);
                     }, function(){
-                        console.log("Loading from the DB was not successful");
+                        console.log("Saving canvas to DB was not successful");
                     });
                 } else {
                     ext_indexeddb.indexedDB.update(canvas.getUpdateJSON(), "CANVAS", function(){
                         console.log("Canvas succesfully saved into DB");
                     }, function(){
-                        console.log("Loading from the DB was not successful");
+                        console.log("Updating canvas in DB was not successful");
                     });
                 } 
             } else if (canvas.id != 0){
@@ -157,6 +215,9 @@ var ex_canvas = {
             }
         }
     },
+    /**
+     * Function used to process loaded objects from the database. Loads canvas content if the target canvas is empty, otherwise sets the canvas's id.
+     */
     addFromDB : function(item){
         for (var i = 0; i < ex_canvas.canvasArray.length; i++){
             if (item.htmlID == ex_canvas.canvasArray[i].element.id){
@@ -177,15 +238,31 @@ var ex_canvas = {
             }
         }
     },
+    /**
+     * Sets color of the stroke
+     * @param color of the stroke
+     */
     setColor : function(color){
         this.strokeColor = color;
     },
+    /**
+     * Listener function that changes the stroke color
+     * @param e triggered event
+     */
     colorListener : function(e){        
         ex_canvas.strokeColor = "#"+this.id;
     },
+    /**
+     * Listener function that changes the stroke size
+     * @param e triggered event
+     */
     sizeListener : function(e){
         ex_canvas.strokeWidth = this.id;
     },
+    /**
+     * Listener function to clear current canvas
+     * @param e triggered event
+     */
     clearListener : function(e){
         if (ex_canvas.currentSlide != null){
             var array = ex_canvas.currentSlide.element.getElementsByClassName("paintingCanvas");
@@ -199,16 +276,22 @@ var ex_canvas = {
             }
         }
     },
+    /**
+     * Sets the stroke width
+     * @param width of the stroke
+     */
     setWidth : function(width){
         this.strokeWidth = width;
     },
+    /**
+     * Function processed on entering slide, locates canvas and resizes it according to the zoom of the slide.
+     * @param slide to be entered
+     */
     enterSlide : function(slide){
         this.currentSlide = slide;
-        //if (!this.loaded){
         this.loaded = true;
         this.zoom = slide.element.style.zoom;
         var resizeCanvas = function(){
-            //console.log(ex_canvas.currentSlide.element.style.zoom);
             var zoom = ex_canvas.currentSlide.element.style.zoom;
             var array = ex_canvas.currentSlide.element.getElementsByClassName("paintingCanvas");
             if (zoom != null && zoom != 0)
@@ -216,15 +299,6 @@ var ex_canvas = {
                 
                     array[i].width = SLIDE_WIDTH * zoom;
                     array[i].height = SLIDE_HEIGHT * zoom;
-                /*
-                for (var j = 0; j < ex_canvas.canvasArray.length; j++){
-                    if (array[i].id == ex_canvas.canvasArray[j].element.id){
-                        ex_canvas.canvasArray[j].countOffset();
-                    }
-                }
-                */
-                //array[i].style.width = SLIDE_WIDTH * 0.9;
-                //array[i].style.height = SLIDE_HEIGHT * 0.9;
                 }
         }
         resizeCanvas();
@@ -233,27 +307,37 @@ var ex_canvas = {
         window.onresize = resizeCanvas;
         
         
-    //}
-    },//
+    },
+    /**
+     * Function processed on leaving slide, removes the control panel and listeners
+     * @param slide to be leaved
+     */
     leaveSlide : function(slide){
         
         var array = slide.element.getElementsByClassName("paintingCanvas");
         for (var i = 0; i < array.length; i++){
-            console.log("Odebiram listenery");
             this.removeListeners(array[i]);
         }        
         this.removeControlPanel();
         
     },
+    /**
+     * Function that loads all child canvases of the current slide and creates appropriate objects in the array.
+     */
     findCanvases : function (){
         
         var array = this.currentSlide.element.getElementsByClassName("paintingCanvas");
-        //console.log("Pocet platen: "+array.length);
-        //console.log("prochazim");
+        /**
+        * Class representing the canvas HTML object and all drawings it contains.
+        * @param element 
+        * @param arrayX array of X coords of touches
+        * @param arrayY array of Y coords of touches
+        * @param arrayDrag array with values if the gesture was dragged between points
+        * @param arrayColor array with colors of lines
+        * @param arrayWidth array with width of the painting brush
+        */
         function Canvas(element, arrayX, arrayY, arrayDrag, arrayColor, arrayWidth){
         {
-            //this.parentSlide = slide;
-            
             this.element = element;
             this.context = element.getContext("2d");
             this.paint = false;
@@ -266,9 +350,15 @@ var ex_canvas = {
             this.offsetTop = 0;
             this.active = true;
             this.dbID = 0;
+            /**
+             * Function to initialize 2D context
+             */
             this.initialize = function(){
                 this.context = this.element.getContext("2d");
             };
+            /**
+             * Function to count the canvas offset according to the current position and zoom of the slide.
+             */
             this.countOffset = function () {
                 
                 this.offsetLeft = 0;
@@ -293,17 +383,23 @@ var ex_canvas = {
                 }
                 
             }
+            /**
+             * Function triggered when the mouse is clicked
+             * param e triggered event
+             */
             this.mouseDown = function(e){
                 
                 this.countOffset();
-                console.log("X: "+e.pageX+" a "+this.offsetLeft);
-                console.log("X: "+e.pageY+" a "+this.offsetTop);
                 var mouseX = e.pageX - this.offsetLeft;
                 var mouseY = e.pageY - this.offsetTop;		
                 this.paint = true;
                 this.addClick(mouseX, mouseY, false);
                 this.redraw();
             };
+            /**
+             * Function triggered when the mouse is moved
+             * param e triggered event
+             */
             this.mouseMove = function(e){
                 if(this.paint){
                     this.countOffset();
@@ -311,24 +407,45 @@ var ex_canvas = {
                     this.redraw();
                 }   
             };
+            /**
+             * Function triggered when the mouse button is stopped being pressed (or the finger leaves the screen or the canvas)
+             * param e triggered event
+             */
             this.mouseUp = function(){
                     
                 this.paint = false;
-            };                 
+            };     
+            /**
+             * Function triggered when the finger touches the screen
+             * param e triggered event
+             */            
             this.touchStart = function(e){                
                 var touch = e.touches[0];
                 if (touch != null) this.mouseDown(touch);
             };  
+            /**
+             * Function triggered when the finger moves when touching the screen
+             * param e triggered event
+             */
             this.touchMove = function(e){                
                 var touch = e.touches[0];
                 if (touch != null) this.mouseMove(touch);
             };  
+            /**
+             * Function triggered when the finger stops touching the screen or leaves the canvas
+             * param e triggered event
+             */
             this.touchEnd = function(e){         
                 this.mouseUp();
-            };          
+            };  
+            /**
+             * Function called to add click to the right array (its X and Y coords are added to appropriate arrays)
+             * param x coord
+             * param y coord
+             * param dragging boolean true if the movement is continual
+             */
             this.addClick =  function(x, y, dragging)
             {
-                console.log("klik: "+x+" - "+y);
                 this.clickX.push(x);
                 this.clickY.push(y);
                 
@@ -336,11 +453,17 @@ var ex_canvas = {
                 this.clickColor.push(ex_canvas.strokeColor);
                 this.clickWidth.push(ex_canvas.strokeWidth);
             };
+            /**
+             * Function that clears the canvas;
+             */
             this.clear = function(){
                 this.context.fillStyle = '#252525'; // Work around for Chrome
                 //this.context.fillRect(0, 0, 750, 500); // Fill in the canvas with white
                 this.element.width = this.element.width; // clears the canvas   
             };
+            /**
+             * Function that clears the history of moves (and allows the canvas to be loaded from the database
+             */
             this.clearHistory = function(){                
                 this.clickColor = new Array();
                 this.clickDrag = new Array();
@@ -348,16 +471,16 @@ var ex_canvas = {
                 this.clickX = new Array();
                 this.clickY = new Array();
             };
+            /**
+             * Function called to redraw the canvas with the new click
+             */
             this.redraw = function(){
-                //this.element.width = this.element.width; // Clears the canvas
                 this.clear();
                 this.context.strokeStyle = "#df4b26";
                 this.context.lineJoin = "round";
                 this.context.lineWidth = 5;
                 for(var i=0; i < this.clickX.length; i++)
-                {		
-                    //console.log("redrawing");
-                    //console.log("prekresuluju: "+this.context);
+                {	
                     this.context.beginPath();
                     if(this.clickDrag[i] && i){
                         this.context.moveTo(this.clickX[i-1], this.clickY[i-1]);
@@ -373,17 +496,12 @@ var ex_canvas = {
             };
         };
         }
-        var prvek = 0;
-        //console.log("Delka pole: "+this.canvasArray.length);
+        var prvek = 0
         for (var i = 0; i < array.length; i++){
-            //console.log("krok: "+i+" a "+array[i].id);
-            //console.log("Pridavam: "+array[i].id);
             var newCanvas = true;
             for (var j=0; j<this.canvasArray.length; j++){
-                //console.log("Porovnavam: "+array[i].id+" a "+this.canvasArray[j].element.id);
                 if (array[i].id == this.canvasArray[j].element.id){
                     newCanvas = false;
-                    //console.log("Inicializace: "+this.canvasArray[j].element.id);
                     try {
                         var active = this.canvasArray[j].active;
                         this.canvasArray[j] = new Canvas(array[i], this.canvasArray[j].clickX, this.canvasArray[j].clickY, this.canvasArray[j].clickDrag, this.canvasArray[j].clickColor, this.canvasArray[j].clickWidth);
@@ -393,28 +511,24 @@ var ex_canvas = {
                             this.addListeners(array[i]);
                             this.addControlPanel(array[i]);
                         }
-                    //console.log("inicializuju");
                     } catch (e){
-                        console.log("chyba: "+e);
+                        console.log("Error: "+e);
                     }
-                
-                //prvek++;
-                //this.addListeners(this.canvasArray[j].element);
                 }
             }
             if (newCanvas){
-                //console.log("pridano");
-                //this.addListeners(array[i]);
                 this.canvasArray.push(new Canvas(array[i], new Array(), new Array(), new Array(), new Array(), new Array()));
                 this.addListeners(array[i]);
                 this.addControlPanel(array[i]);
             }
-            //console.log("Pridavam event listener: "+array[i].id);
             prvek++;
-        //this.canvasArray[i].initialize(array[i]);
                 
         }
     },
+    /**
+     * Function that creates a control panel on the given slide
+     * @param element current slide 
+     */
     addControlPanel : function (element){
         if (this.currentSlide != null && document.getElementById("controlCanvasPanel") == null){
             
@@ -422,8 +536,6 @@ var ex_canvas = {
             controlPanel.setAttribute('class',"controlPanel");
             controlPanel.setAttribute('id',"controlCanvasPanel");
             var list = document.createElement("ul");
-            //var item1 = document.createElement("li");
-            //item1.textContent = "R";
             list.appendChild(this.createColorController("FF0000", "R"));
             list.appendChild(this.createColorController("000000", "K"));
             list.appendChild(this.createColorController("00FF00", "G"));
@@ -433,10 +545,14 @@ var ex_canvas = {
             list.appendChild(this.createSizeController(5));
             list.appendChild(this.createClearController("Cl"));
             controlPanel.appendChild(list);
-            //this.currentSlide.element.childNodes[0].insertBefore(controlPanel);
             this.currentSlide.element.insertBefore(controlPanel, element);
         }
     },
+    /**
+     * Function to create a button to change stroke color
+     * @param color of the stroke
+     * @param text to be displayed in the button
+     */
     createColorController : function (color, text){
         var item = document.createElement("li");
         item.setAttribute("id", color);
@@ -445,6 +561,10 @@ var ex_canvas = {
         item.addEventListener("click", ex_canvas.colorListener, false)
         return item;
     },
+    /**
+     * Function to create a button to change stroke size
+     * @param size of the stroke
+     */
     createSizeController : function (size){
         var item = document.createElement("li");
         item.setAttribute("id", size);
@@ -452,6 +572,10 @@ var ex_canvas = {
         item.addEventListener("click", ex_canvas.sizeListener, false)
         return item;
     },
+    /**
+     * Function to create a button to clear the canvas
+     * @param name of the button
+     */
     createClearController : function(name){
         var item = document.createElement("li");
         item.setAttribute("id", name);
@@ -459,12 +583,19 @@ var ex_canvas = {
         item.addEventListener("click", ex_canvas.clearListener, false)
         return item;
     },
+    /**
+     * Function to remove the control panel
+     */
     removeControlPanel : function (){
         if (this.currentSlide != null){            
             var controlPanel = document.getElementById("controlCanvasPanel");     
             this.currentSlide.element.removeChild(controlPanel);
         }
     },
+    /**
+     * Function to add listeners to mouse and touch events
+     * @param element to which the listeners are added
+     */
     addListeners : function (element){
         
         element.addEventListener ("mousedown", ex_canvas.mouseDown, false);
@@ -479,8 +610,11 @@ var ex_canvas = {
         element.addEventListener ("touchleave", ex_canvas.touchEnd, false);
         element.addEventListener ("touchcancel", ex_canvas.touchEnd, false);
     },
+    /**
+     * Function to remove listeners to mouse and touch events
+     * @param element from which the listeners are removed
+     */
     removeListeners : function (element){
-        //console.log("Odstranuju event listenery");
         try {
             element.removeEventListener("mousedown", ex_canvas.mouseDown, false);
             element.removeEventListener("mousemove", ex_canvas.mouseMove, false);
@@ -494,9 +628,13 @@ var ex_canvas = {
             element.removeEventListener ("touchleave", ex_canvas.touchEnd, false);
             element.removeEventListener ("touchcancel", ex_canvas.touchEnd, false);
         } catch (e){
-            console.log("Nepovedlo se kvuli: "+e);
+            console.log("Error while removing listeners: "+e);
         }
     },
+    /**
+     * Handles the mouse click
+     * @param event
+     */
     mouseDown : function (event){
         for (var i = 0; i < ex_canvas.canvasArray.length; i++){
             if (this.id == ex_canvas.canvasArray[i].element.id){
@@ -504,6 +642,10 @@ var ex_canvas = {
             }
         }
     },
+    /**
+     * Handles the mouse move
+     * @param event
+     */
     mouseMove : function (event){
         for (var i = 0; i < ex_canvas.canvasArray.length; i++){
             if (this.id == ex_canvas.canvasArray[i].element.id){
@@ -511,6 +653,9 @@ var ex_canvas = {
             }
         }
     },
+    /**
+     * Handles the mouse button release
+     */
     mouseUp : function (){
         for (var i = 0; i < ex_canvas.canvasArray.length; i++){
             if (this.id == ex_canvas.canvasArray[i].element.id){
@@ -518,6 +663,10 @@ var ex_canvas = {
             }
         }
     },
+    /**
+     * Handles the touch
+     * @param event
+     */
     touchStart : function (event){
         for (var i = 0; i < ex_canvas.canvasArray.length; i++){
             if (this.id == ex_canvas.canvasArray[i].element.id){
@@ -525,6 +674,10 @@ var ex_canvas = {
             }
         }
     },
+    /**
+     * Handles the touch move
+     * @param event
+     */
     touchMove : function (event){
         for (var i = 0; i < ex_canvas.canvasArray.length; i++){
             if (this.id == ex_canvas.canvasArray[i].element.id){
@@ -532,6 +685,10 @@ var ex_canvas = {
             }
         }
     },
+    /**
+     * Handles the touch
+     * @param event
+     */
     touchEnd : function (){
         for (var i = 0; i < ex_canvas.canvasArray.length; i++){
             if (this.id == ex_canvas.canvasArray[i].element.id){
@@ -539,19 +696,15 @@ var ex_canvas = {
             }
         }
     },
+    /**
+     * Called on click to add painting canvas to the current element or to toggle the current painting canvas visible (or invisible)
+     */
     addCanvas : function (){
         if (this.currentSlide != null){
-            console.log("funkce zavolana");
             var create = true;
             var array = this.currentSlide.element.getElementsByClassName("paintingCanvas");
             var element;
             if (array.length > 0) create = false;
-            /* for (var i = 0; i < ex_canvas.canvasArray.length; i++){
-                if (ex_canvas.canvasArray[i].element.id == "generatedCanvas"+this.currentSlide.number){
-                    create = false;
-                    element = ex_canvas.canvasArray[i].element;
-                }
-            }*/
             if (create){
                 var newCanvas = document.createElement("canvas");           
                 newCanvas.setAttribute('class',"paintingCanvas");
@@ -580,160 +733,5 @@ var ex_canvas = {
             }
         }
         
-    },
-    clear : function (){
-        
-    },
-    processSlide : function(){
-    /**
-        var button = document.getElementById("buttonDraw");
-        button.addEventListener("click", function(e){
-            console.log("clicked");
-        }, false)
-        **/
-    /**
-        if (false){
-            
-            var array = document.getElementsByClassName("paintingCanvas");
-            console.log("Pocet platen: "+array.length);
-            for (var i = 0; i < array.length; i++){
-                console.log("krok: "+i+" a "+array[i].id);
-                
-                document.getElementById("paintingCanvas1").addEventListener ("mousedown", function () {
-                    console.log("mousedown");
-                }, true);
-                
-                this.canvasArray[i] = {
-                    element : null,
-                    context : null,
-                    paint : false,
-                    clickX : new Array(),
-                    clickY : new Array(),
-                    clickDrag : new Array(),
-                    initialize : function (element){
-                        this.element = element;
-                        console.log("vypis: "+this.element.id);
-                        //this.context = this.element.getContext("2d");
-                        this.element.addEventListener ("mousedown", function (e) {
-                            console.log("mousedown");
-                        //var mouseX = e.pageX - this.offsetLeft;
-                        //var mouseY = e.pageY - this.offsetTop;		
-                        //ex_canvas.paint(this, true);
-                        //ex_canvas.addClick(this, e.pageX - this.offsetLeft, e.pageY - this.offsetTop);
-                        //ex_canvas.redraw(this);
-                        }, false);
-                        
-                    
-                        this.element.addEventListener ("mousemove", function (e) {
-                            console.log("mousemove");
-                            
-                            if(ex_canvas.getPaint(this)){
-                                ex_canvas.addClick(this, e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
-                                ex_canvas.redraw(this);
-                            }
-                            
-                        }, false);
-                        this.element.addEventListener ("mouseup", function (e) {
-                            console.log("mouseup");
-                            //ex_canvas.paint(this, false);
-                        }, false);
-                        this.element.addEventListener ("mouseleave", function (e) {
-                            console.log("mouseleave");
-                            //ex_canvas.paint(this, false);
-                        }, false);
-                        
-                    },
-                    addClick : function(x, y, dragging)
-                    {
-                        this.clickX.push(x);
-                        this.clickY.push(y);
-                        this.clickDrag.push(dragging);
-                    },
-                    redraw : function(){
-                        this.element.width = this.element.width; // Clears the canvas
-  
-                        this.context.strokeStyle = "#df4b26";
-                        this.context.lineJoin = "round";
-                        this.context.lineWidth = 5;
-			
-                        for(var i=0; i < this.clickX.length; i++)
-                        {		
-                            this.context.beginPath();
-                            if(this.clickDrag[i] && i){
-                                this.context.moveTo(this.clickX[i-1], this.clickY[i-1]);
-                            }else{
-                                this.context.moveTo(this.clickX[i]-1, this.clickY[i]);
-                            }
-                            this.context.lineTo(this.clickX[i], this.clickY[i]);
-                            this.context.closePath();
-                            this.context.stroke();
-                        }
-                    }
-                };
-                this.canvasArray[i].initialize(array[i]);
-            }
-            
-        //this.loaded = true;
-        }
-    **/
     }
 };
-/*
-var canvas = {
-    element : null,
-    context : null,
-    paint : false,
-    clickX : new Array(),
-    clickY : new Array(),
-    clickDrag : new Array(),
-    initialize : function (element){
-        this.element = element;
-        this.context = this.element.getContext("2d");
-        this.element.mousedown(function(e){
-            var mouseX = e.pageX - this.offsetLeft;
-            var mouseY = e.pageY - this.offsetTop;		
-            this.paint = true;
-            addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop);
-            redraw();
-        });
-        this.element.mousemove(function(e){
-            if(this.paint){
-                addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
-                redraw();
-            }
-        });
-        this.element.mouseup(function(e){
-            this.paint = false;
-        });
-        this.element.mouseleave(function(e){
-            this.paint = false;
-        });
-    },
-    addClick : function(x, y, dragging)
-    {
-        this.clickX.push(x);
-        this.clickY.push(y);
-        this.clickDrag.push(dragging);
-    },
-    redraw : function(){
-        this.element.width = this.element.width; // Clears the canvas
-  
-        this.context.strokeStyle = "#df4b26";
-        this.context.lineJoin = "round";
-        this.context.lineWidth = 5;
-			
-        for(var i=0; i < this.clickX.length; i++)
-        {		
-            this.context.beginPath();
-            if(this.clickDrag[i] && i){
-                this.context.moveTo(this.clickX[i-1], this.clickY[i-1]);
-            }else{
-                this.context.moveTo(this.clickX[i]-1, this.clickY[i]);
-            }
-            this.context.lineTo(this.clickX[i], this.clickY[i]);
-            this.context.closePath();
-            this.context.stroke();
-        }
-    }
-}
-*/

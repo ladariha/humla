@@ -6,13 +6,13 @@ var view_slideshow = {
     },            
     leaveView : function(){
         humla.controler.toBuild = false;  
-        document.webkitCancelFullScreen();
+        humla.controler.fullscreen = false;
     },
     goFullscreen : function(){      
-        document.body.webkitRequestFullScreen();  
+        //document.body.webkitRequestFullScreen();  
     },
     cancelFullscreen : function(){
-        document.webkitCancelFullScreen();
+        //document.webkitCancelFullScreen();
     },
     enterSlide : function(slide) {
         var inx = slide.number - 1;        

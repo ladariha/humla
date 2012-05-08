@@ -24,7 +24,7 @@ fs.readFile(CONFIG_DIRECTORY, function (err, data) {
 
 
 /**
- * Returns created manifest file about the selected lecture.
+ * Runs an asynchronous function to handle the request and load manifest
  * @param course Selected course
  * @param lecture Selected lecture
  * @param res HTTP response (if called internally set to undefined!)
@@ -38,7 +38,12 @@ exports.manifest = function(course, lecture, res, url, req_url){
     //loadSlides(course, lecture, res, "");
     
 }
-
+/**
+ * Loads the json file with data about the lecture and handles files includes in this json. Calls a function to load other data.
+ * @param course Selected course
+ * @param lecture Selected lecture
+ * @param res HTTP response (if called internally set to undefined!)
+ */
 function run(course, lecture, res){
     lecture = removeHTML(lecture);
     try{
@@ -52,22 +57,26 @@ function run(course, lecture, res){
                     var json_data = processJSON(data.toString(), res);
                     loadSlides(course, lecture, res, json_data);
                 }catch(errs){
-                    console.error("Manifest run error1: "+errs);
+                    console.error("Manifest run error: "+errs);
                     sendError("Manifest error: "+errs.toString(), res);
                 }
             }
         }); 
     }catch(error){
-        console.error("Soubor neni zpracovan "+error.toString());
-        //TODO: Zavolat zpracovani souboru slide indexeru
+        console.error("File is not loaded: "+error.toString());
         defaults.returnError(500, error.toString(), res);
     }
     
-//returnThrowError(500, err.message, res);
 }
+/**
+ * Loads the lecture html file and finds all scripts and styles to be stored offline.
+ * @param course Selected course
+ * @param lecture Selected lecture
+ * @param res HTTP response (if called internally set to undefined!)
+ * @param loaded_data data already loaded into manifest
+ */
 function loadSlides(course, lecture, res, loaded_data){
     try{
-        console.log("Nacitam slidy: "+course+" a "+lecture);
         fs.readFile(SLIDES_DIRECTORY+ '/'+course+'/'+lecture+".html", function (err, data) {
             if (err){
                 console.error("Manifest not created with error: "+err.toString());
@@ -97,6 +106,12 @@ function offline(){
     var offline = "\nhttps://chart.googleapis.com"
     return offline;
 }
+/**
+ * Processed a json string and finds all images stored in it.
+ * @param json
+ * @param res respons to send an error
+ * @return data processed 
+ */
 function processJSON(json, res){
     var data = "";
     if (config_data != null && config_data != ""){
@@ -110,6 +125,10 @@ function processJSON(json, res){
     //sendManifest(data, res);
       return data;        
 }
+/**
+ * Processed a html string and finds all images stored in it.
+ * @param html
+ */
 function processHTML(html){
     var links = "\n#linky: ";
     try {
@@ -136,7 +155,11 @@ function processHTML(html){
     }
     return links;       
 }
-
+/**
+ * Sends a server error
+ * @param data
+ * @param res respons to send an error
+ */
 function sendError(data, res){
     res.writeHead(500, {
         'Content-Type': 'text/plain'
@@ -144,6 +167,13 @@ function sendError(data, res){
     res.write(data);
     res.end();
 }
+/**
+ * Sends a server error
+ * @param code
+ * @param msg
+ * @param callback
+ * @param res respons to send an error
+ */
 function returnThrowError(code, msg, res, callback){
     if(typeof res!="undefined")
         defaults.returnError(code, msg, res);
@@ -155,13 +185,16 @@ function returnThrowError(code, msg, res, callback){
         }
     }       
 }
+/**
+ * Sends a manifest file back to the user
+ * @param data
+ * @param res respons to send an error
+ */
 function sendManifest(data, res){
     
     var body = 'CACHE MANIFEST\n#'+(new Date());
-    //body += "\nManifest: "
     
     if (data != ""){
-        //console.log(data);
         body += data;        
     }
     res.writeHead(200, {
@@ -170,6 +203,10 @@ function sendManifest(data, res){
     res.write(body);
     res.end();
 }
+/**
+ * Loads configuration file independently on the user calls, it is loaded only once.
+ * @param json 
+ */
 function loadConfig(json){
     if (json != null){
         for (var i = 0; i < json.views.length; i++){            
@@ -183,12 +220,9 @@ function loadConfig(json){
             }
         }
         for (var k = 0; k < json.extensions.length; k++){ 
-            //console.log(json.extensions);
-            //console.log(json.extensions[k].scripts[0].src)
             if (json.extensions[k].scripts != null){
                 for (var j = 0; j < json.extensions[k].scripts.length; j++){            
                     config_data += "\n"+HUMLA_URL+"/";
-                    //console.log("Vypis: "+k+" a "+j+": "+json.extensions[k].scripts[j].src);
                     config_data += json.extensions[k].scripts[j].src;
                 }
             }
@@ -203,23 +237,24 @@ function loadConfig(json){
     }
 }
 
-function endsWith(string, suffix) {
-    //console.log(string+" vs "+suffix);
-        
+function endsWith(string, suffix) {        
     return string.indexOf(suffix, string.length - suffix.length) !== -1;
 }
+/**
+ * Removes the ".html" suffix from the lecture name in URL
+ */
 function removeHTML(string){
     if (endsWith(string, ".html")){
-        //var newLength = (string.length-5);
-        //console.log("Od 0 do "+newLength);
         string = string.substring(0, (string.length - 5));
-    //console.log("Vypis OK: "+string);
-    }else {
-    //console.log("Vypis KO: "+string);
-    }
-        
+    }   
     return string;
 }
+/**
+ * Returns appropriate result data
+ * @param data
+ * @param res respons to send an error
+ * @param callback function
+ */
 function returnData(res, callback, data){
     if(typeof res!="undefined"){
         res.writeHead(200, {
@@ -232,6 +267,5 @@ function returnData(res, callback, data){
             callback(null, data);
         else
             console.error("Nor HTTP Response or callback function defined!");
-    //            throw "Nor HTTP Response or callback function defined!";
     }
 }

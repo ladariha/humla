@@ -161,7 +161,18 @@
         },
         "enabled" : true 
     },        
-        
+    {
+        "id" : "items",
+        "object" : "items",
+        "scripts" : [ {
+            "src" : "ext/items/items.js"
+        } ],
+        "styles"  : [ {
+            "src" : "ext/items/items.css", 
+            "media" : "screen"
+        } ],
+        "enabled" : true 
+    },    
     {
         "id" : "drawing",
         "object" : "ex_drawing",
@@ -319,19 +330,7 @@
             "media" : "screen, print"
         } ],
         "enabled" : true 
-    },
-    {
-        "id" : "items",
-        "object" : "items",
-        "scripts" : [ {
-            "src" : "ext/items.js"
-        } ],
-        "styles"  : [ {
-            "src" : "ext/items.css", 
-            "media" : "screen"
-        } ],
-        "enabled" : true 
-    },
+    },    
     {
         "id" : "multitouch",
         "object" : "multitouch",
@@ -440,6 +439,16 @@
         "object" : "ext_indexeddb",
         "scripts" : [ {
             "src" : "ext/database/indexeddb.js"
+        } ],
+        "enabled" : true 
+    }
+,
+    
+    {
+        "id" : "styles",
+        "object" : "ext_styles",
+        "scripts" : [ {
+            "src" : "ext/styles/styles.js"
         } ],
         "enabled" : true 
     }

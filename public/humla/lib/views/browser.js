@@ -1,5 +1,11 @@
 
 var view_browser = {
+    enterView : function() {
+        humla.controler.toBuild = true;
+    },            
+    leaveView : function(){
+        humla.controler.toBuild = false;  
+    },
     enterSlide : function(slide) {
         var inx = slide.number - 1;
         

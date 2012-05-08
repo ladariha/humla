@@ -2,7 +2,39 @@
 nav #menu-item-draw {
     background-image: url("./m-canvas.png");
 }
-
+nav #menu-item-saveDB {
+    background-image: url("./m-save.png");
+}
+nav #menu-item-loadDB {
+    background-image: url("./m-load.png");
+}
+#database_menu{
+    
+}
+.database_button{
+    width: 80px;
+    height: 30px;
+    margin: 10px;
+    float: left;
+    padding: 20px;
+    color: white;
+    
+    background: rgba(255, 255, 255, 0.5);
+    text-align: center;
+}
+.database_button a{
+    color: white;
+    font-size: 25px;
+}
+.database_button:hover{
+    background: rgba(255, 255, 255, 1.0);
+    color: black;
+    cursor: pointer;
+}
+.database_button:hover a{
+    color: black;
+    font-size: 25px;
+}
 .paintingCanvas{
     width: 800px;
     height: 600px;

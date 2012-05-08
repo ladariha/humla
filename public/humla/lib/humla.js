@@ -565,7 +565,7 @@ var MessageBox = function(message) {
 
 document.addEventListener("DOMContentLoaded", function() {
     // check the browser version
-    if (navigator.userAgent == "no-ga-tv" ||
+    if (true || navigator.userAgent == "no-ga-tv" ||
         (browser.browser == "Chrome" && browser.version >= 13) ||
         (browser.browser == "Firefox" && browser.version >= 4) ||
         (browser.browser == "Safari" && browser.version >= 5.1) ||         

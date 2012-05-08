@@ -1,24 +1,29 @@
-
 /**
-function addScript(){
-    var ga = document.createElement('script');
-    ga.type = 'text/javascript';
-    ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google.com/jsapi';
-    var s = document.getElementsByTagName('script')[0];
-    s.parentNode.insertBefore(ga, s);
-}
-addScript();
- **/
-
+* Singleton object that locates tables with chart data given bz user and converts them into charts.
+*/
 var charts = {
+    /**
+     * True if the script has been already added to the header
+     */
     script : false,
-    charts : [],
-    google : null,
+    /**
+     * An array containing all charts in the presentation
+     */
+    charts : [],    
+    /**
+     * Server to be used to load the graph
+     */
+    server : 0,
+    /**
+     * Loads all charts in the slide on processing 
+     */
+    
     processSlide : function(slide){ 
-        this.loadElements(slide);      
-    //this.drawChart();
+        this.loadElements(slide);   
     },
+    /**
+     * Adds script to the header
+     */
     addScript : function(){
         this.script = true;
         var ga = document.createElement('script');
@@ -29,26 +34,35 @@ var charts = {
         s.parentNode.insertBefore(ga, s);
 
     },
-    enterSlide : function(slide){
+    //enterSlide : function(slide){
     //this.drawChart();
-    },
+    //},
+    /**
+     * Locates all appropriate data tables and converts them into charts. Then displays these charts.
+     * @param slide that is entered
+     */
     loadElements : function(slide){
         try {
             var lists = slide.element.getElementsByTagName("table");
             for (var i = 0; i < lists.length; i++){
-                //console.log("Vypis: "+lists[i].tagName+" a "+lists[i].getAttribute("data-graph"));
                 if (lists[i].getAttribute("data-chart")!= null){
-                    
                     var img = this.loadGraph(lists[i]);
-                    //slide.element.insertBefore(div, lists[i]);
                     slide.element.replaceChild(img, lists[i]);
                 }
             }
         } catch (err){
-            console.log("Chyba v loadu: "+err);
+            console.log("Load error: "+err);
         }
     },
+    /**
+     * Loads graph from the fiven table element
+     * @param element
+     */
     loadGraph : function(element){
+        /**
+        * Class representing a chart.
+        * @param element
+        */
         function Chart(element){
             this.title = "";
             this.width = "400";
@@ -70,6 +84,9 @@ var charts = {
             this.oriented = "true";
             this.orientation = "horizontal";
             this.stacked="false";
+            /**
+            * Initializes the chart from attributes of the element.
+            */
             this.initialize = function(){
                 try{
                     if (this.element.getAttribute("data-title") != null){
@@ -113,7 +130,6 @@ var charts = {
                     }
                     if (this.element.getAttribute("data-stacked") != null){
                         this.stacked = this.element.getAttribute("data-stacked");
-                        console.log("Vypis"+this.element.getAttribute("data-stacked"));
                     }
                     if (this.element.getAttribute("id") != null){
                         this.id = this.element.getAttribute("id");
@@ -121,7 +137,7 @@ var charts = {
                         this.id = "chart"+charts.charts.length;
                     }
                 } catch(err){
-                    console.log("Chyba je tu1: "+err);
+                    console.log("Attribute error: "+err);
                 }
                 try {
                     for (var i = 0, row; row = this.element.rows[i]; i++) {
@@ -141,28 +157,13 @@ var charts = {
                     }
                     this.encode();
                 } catch(err){
-                    console.log("Chyba v tabulce: "+err);
-                }
-            /**
-                try {
-                    for (var i = 0; i < this.element.childNodes.length; i++){
-                        //console.log("Element: "+this.element.tagName);
-                        if (this.element.childNodes[i] != undefined && this.element.childNodes[i] != null && this.element.childNodes[i].nodeType == 1){
-                            
-                            //console.log("Element dite: "+this.element.childNodes[i].nodeType);
-                            if (this.element.childNodes[i].getAttribute("data-column") != null){
-                                this.addColumn(this.element.childNodes[i]);
-                            } else if (this.element.childNodes[i].getAttribute("data-row") != null){
-                                this.addRow(this.element.childNodes[i]);
-                            }
-                        }
-                    }
-                    this.encode();
-                } catch(err){
-                    console.log("Chyba je tu2: "+err);
-                }
-                 **/
+                    console.log("Data error: "+err);
+                }         
             }
+            /**
+            * Takes a table header and processes it as a set of columns
+            * @param row
+            */
             this.addHeader = function(row){
                 for (var j = 0, col; col = row.cells[j]; j++) {
                     if (col.getAttribute("data-column") != null){
@@ -170,24 +171,29 @@ var charts = {
                     }
                 }
             }
+            /**
+            * Takes a table column and stores it into an array
+            * @param element
+            */
             this.addColumn = function(element){
                 try{
                     var column = new Array();
                     column.push(element.getAttribute("data-column"));
                     column.push(element.innerHTML);
-                    //console.log("Hlavicka: "+element.getAttribute("data-column")+" a "+element.innerHTML);
                     this.columns.push(column);
                 } catch(err){
-                    console.log("Chyba je tu3: "+err);
+                    console.log("Error when adding a column: "+err);
                 }
             }
+            /**
+            * Takes a row and stores it into an array
+            * @param row
+            */
             this.addRow = function(row){
                 var header = new Array();
                 for (var j = 0, col; col = row.cells[j]; j++) {
                     header.push(col.innerHTML);
-                    if (col.getAttribute("data-row") != "label"){
-                    //if (col.innerHTML > this.max) this.max = col.innerHTML;                    
-                    //if (col.innerHTML < this.min) this.min = col.innerHTML;                            
+                    if (col.getAttribute("data-row") != "label"){                         
                     } else {
                         if (col.getAttribute("data-color")!= null)
                             this.colors.push(col.getAttribute("data-color"));
@@ -197,10 +203,12 @@ var charts = {
                             
                     }
                 }
-                //console.log("Radek: "+header[0]+" a "+header[1]);
                 this.rows.push(header);
                 
             }
+            /**
+            * Transfroms the data into desired format and returns in encoded form
+            */
             this.encode = function(){
                 var toEncode = new Array();
                 this.label = "";
@@ -213,23 +221,23 @@ var charts = {
                 }
                 this.encodedData = extendedEncode(toEncode, max);
             }
+            /**
+            * Returns a row in encoded form
+            * @param row
+            * @return encoded data
+            */
             this.encodeLine = function(row){
                 var toEncode = new Array();
-                //var max = 0;
-                //var min = 0;
-                for (var i = 1; i < row.length; i++){
-                    //if (i == 1) min = row[i];
-                    //if (row[i] > max) max = row[i];                    
-                    //if (row[i] < min) min = row[i];                    
+                for (var i = 1; i < row.length; i++){                  
                     toEncode.push(row[i]);
                 }
-                //if (max > this.max) this.max = max;                
-                //if (min < this.min) this.min = min; 
-                console.log("Maximum: "+this.max);
                 return extEncode(toEncode, this.max);
             }
+            /**
+            * Converts labels into the right form
+            * @return labels
+            */
             this.getLabels = function(){
-                //var labels = new Array();
                 var labels = "&chdl=";
                 for (var i = 0; i < this.rows.length; i++){
                     if (i > 0) labels += "|";
@@ -239,6 +247,10 @@ var charts = {
                     return labels;
                 else return "";
             }
+            /**
+            * Converts data into the right form
+            * @return labels
+            */
             this.getData = function(){
                 
                 var data = "&chd=e:";
@@ -250,6 +262,10 @@ var charts = {
                     return data;
                 else return "";
             }
+            /**
+            * Returns data in the bar chart in the right form depending on the attribute orientation being vertical or horizontal
+            * @return data
+            */
             this.getColumns = function(){
                 var data = "";
                 if (this.type == "bar" && this.orientation == "vertical") 
@@ -267,6 +283,10 @@ var charts = {
                 }
                 return data;
             }
+            /**
+            * Converts given data into an oriented graph format
+            * @return data
+            */
             this.getOrientedGraph = function(){
                 var data = "";
                 for (var i = 0; i < this.rows.length; i++){
@@ -279,6 +299,10 @@ var charts = {
                 }
                 return data;
             }
+            /**
+            * Converts given data into graph format
+            * @return data
+            */
             this.getGraph = function(){
                 var data = "";
                 for (var i = 0; i < this.rows.length; i++){
@@ -291,6 +315,10 @@ var charts = {
                 }
                 return data;
             }
+            /**
+            * Created a bar type from the given data
+            * @return type
+            */
             this.getBarType = function(){
                 var type = "b";
                 if (this.orientation == "horizontal"){
@@ -306,6 +334,10 @@ var charts = {
                 console.log(this.stacked+" a " +this.orientation);
                 return type;
             }
+            /**
+            * Created a graph chart img from the given data, it is either directed or undirected
+            * @return img
+            */
             this.createGraphChart = function(){
                 var img = document.createElement('img');
                 img.setAttribute("class", "graphChart");
@@ -315,18 +347,20 @@ var charts = {
                     img.src = "https://chart.googleapis.com/chart?cht=gv&chl=graph{"+this.getGraph()+"}&chs="+this.width+"x"+this.height;
                 return img;
             }
+            /**
+            * Created a pie chart img from the given data
+            * @return img
+            */
             this.createPieChart = function(){
                 var img = document.createElement('img');
                 img.setAttribute("class", "pieChart");
                 var dimension = "p";
                 if (this.type == "pie3d") dimension="p3";
-                //var dimension
-                img.src = "http://chart.apis.google.com/chart\n";
+                img.src = "http://"+charts.server+".chart.apis.google.com/chart\n";
                 img.src += "?chf=a,s,000000|bg,s,FFFFFF\n";
                 img.src += "&chxs=0,000000,11.5\n";
                 img.src += "&chxt=x&chs="+this.width+"x"+this.height+"\n";
                 img.src += "&cht="+dimension+"\n";
-                //img.src +="&chco="+this.backgroundColor+","+this.foregroundColor+"\n";
                 if (this.colors.length > 0)
                     img.src +="&chco=";
                 for (var i = 0; i < this.colors.length; i++){
@@ -342,12 +376,16 @@ var charts = {
                 img.src += "&chts="+this.textColor+",11.5";
                 return img;
             }
+            /**
+            * Created a line chart img from the given data
+            * @return img
+            */
             this.createLineChart = function(){
                 var img = document.createElement('img');
                 img.setAttribute("class", "lineChart");
                 
                 
-                img.src = "http://chart.apis.google.com/chart\n";
+                img.src = "http://"+charts.server+".chart.apis.google.com/chart\n";
                 img.src += "?chf=bg,s,FFFFFF\n";
                 img.src += "&chxl="+this.getColumns();
                 
@@ -357,9 +395,7 @@ var charts = {
                 img.src += "&chxt=y,x&chs="+this.width+"x"+this.height+"\n";
                 img.src += "&cht=lc\n";
                 img.src += this.getData();   
-                // } catch (err) {
-                //     console.log("Chyba v grafu: "+err);
-                // }
+                
                 if (this.colors.length > 0)
                     img.src +="&chco=";
                 for (var i = 0; i < this.colors.length; i++){
@@ -374,24 +410,26 @@ var charts = {
                 
                 return img;
             }
+            /**
+            * Created a bar chart img from the given data
+            * @return img
+            */
             this.createBarChart = function(){
                 var img = document.createElement('img');
                 img.setAttribute("class", "lineChart");
                 
                 
-                img.src = "http://chart.apis.google.com/chart\n";
+                img.src = "http://"+charts.server+".chart.apis.google.com/chart\n";
                 img.src += "?chf=bg,s,FFFFFF\n";
                 img.src += "&chxl="+this.getColumns();
                 
-                //img.src += "&chxp=1,1,2,3\n";
+                
                 img.src += "&chxr=0,"+(this.min)+","+(this.max)+"|1,1,"+(this.max)+"\n";
                 img.src += "&chxs=1,676767,14,0,lt,676767\n";
                 img.src += "&chxt=x,y&chs="+this.width+"x"+this.height+"\n";
                 img.src += "&cht="+this.getBarType()+"\n";
-                img.src += this.getData();   
-                // } catch (err) {
-                //     console.log("Chyba v grafu: "+err);
-                // }
+                img.src += this.getData(); 
+                
                 if (this.colors.length > 0)
                     img.src +="&chco=";
                 for (var i = 0; i < this.colors.length; i++){
@@ -411,8 +449,12 @@ var charts = {
         var chart = new Chart(element);
         
         chart.initialize();
-        
+        //Decides which chart to draw according to the "type" parameter
         this.charts.push(chart);
+        charts.server++;
+        console.log("Vypis: "+charts.server);
+        if (charts.server > 9) charts.server = 0;
+        console.log("Vypis: "+charts.server);
         if (chart.type == "pie" || chart.type == "pie3d") {
             return chart.createPieChart();
         } else if (chart.type == "line"){
@@ -422,6 +464,7 @@ var charts = {
         } else if(chart.type == "bar"){
             return chart.createBarChart();
         }
+        
         return chart.createPieChart();
     }
 }
@@ -473,12 +516,16 @@ function extendedEncode(arrVals, maxVal) {
 
     return chartData;
 }
+/**
+* Encodes gived data to be shown in the graph according to the max value given by the user
+* @param arrVals chart data
+* @param maxVal max value
+* @return chartData
+*/
 function extEncode(arrVals, maxVal){
     var chartData = '';
     for(i = 0, len = arrVals.length; i < len; i++) {
-        // In case the array vals were translated to strings.
         var numericVal = new Number(arrVals[i]);
-        // Scale the value to maxVal.
         var scaledVal = Math.floor(EXTENDED_MAP_LENGTH *
             EXTENDED_MAP_LENGTH * numericVal / maxVal);
 
@@ -487,7 +534,6 @@ function extEncode(arrVals, maxVal){
         } else if (scaledVal < 0) {
             chartData += '__';
         } else {
-            // Calculate first and second digits and add them to the output.
             var quotient = Math.floor(scaledVal / EXTENDED_MAP_LENGTH);
             var remainder = scaledVal - EXTENDED_MAP_LENGTH * quotient;
             chartData += EXTENDED_MAP.charAt(quotient) + EXTENDED_MAP.charAt(remainder);
