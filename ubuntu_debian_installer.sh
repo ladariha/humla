@@ -112,7 +112,7 @@ if command -v npm >/dev/null 2>&1; then
 		npm install express
 		npm install mongoose
 		npm install jsdom
-		npm install cron
+		npm install cron@0.1.3
 		npm install passport
 		npm install passport-local
 		npm install passport-google
