@@ -89,7 +89,7 @@ exports.refreshLectures= function(){
             
                         man.maintenance_refreshIndexJSON = function(){
                             var _ref = this;
-                            slideindex_ext.index(this.object.courseID, this.object.lectureID, "json", undefined, undefined, function(err, data){
+                            slideindex_ext.index(this.object.courseID, this.object.lectureID, "json", undefined, config.server.domain+":"+config.server.port, function(err, data){
                                 if(err){
                                     console.error("refreshIndexFiles: "+err);
                                 }else{
@@ -100,7 +100,7 @@ exports.refreshLectures= function(){
     
                         man.maintenance_refreshIndexXML = function(){       
                             var _ref = this;
-                            slideindex_ext.index(this.object.courseID, this.object.lectureID, "xml", undefined, undefined, function(err, data){
+                            slideindex_ext.index(this.object.courseID, this.object.lectureID, "xml", undefined, config.server.domain+":"+config.server.port, function(err, data){
                                 if(err){
                                     console.error("refreshIndexFiles: "+err);
                                 }else{
